@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/select" android:title="@string/select">
+        <menu>
+            <group android:id="@+id/group" android:checkableBehavior="single" />
+        </menu>
+    </item>
+    <item android:id="@+id/search" android:title="@string/search" />
+    <item android:id="@+id/refresh" android:title="@string/refresh" />
+</menu>
+<!-- vim: set sta sw=4 et: -->

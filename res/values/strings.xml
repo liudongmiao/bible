@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bible</string>
+    <string name="select">Change Version</string>
+    <string name="refresh">Refresh</string>
+    <string name="search">Search Bible</string>
+    <string name="search_hint">Search Bible</string>
+    <string name="search_no_results">No Results for \"%1$s\" in \"%2$s\".</string>
+    <plurals name="search_results">
+      <item quantity="one">%1$d result for \"%2$s\" in \"%3$s\": </item>
+      <item quantity="other">%1$d results for \"%2$s\" in \"%3$s\": </item>
+    </plurals>
+    <string name="search_result_verse">%1$d:%2$d</string>
+    <string name="previous">Prev</string>
+    <string name="next">Next</string>
+    <string name="noversion">No available version.</string>
+    <string name="book">Book</string>
+    <string name="chapter">Chapter</string>
+    <string name="choosebook">Choose Book</string>
+    <string name="choosechapter">Choose Chapter</string>
+</resources>
