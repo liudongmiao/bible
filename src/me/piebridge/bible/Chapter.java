@@ -237,6 +237,7 @@ public class Chapter extends Activity {
         String body = "<!doctype html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n";
         body += "<style type=\"text/css\">\n";
         body += ".trans {display: none;}\n";
+        body += ".wordsofchrist {color: red;}\n";
         body += "h2 {font-size: large;}\n";
         body += "h1 {font-size: x-large;}\n";
         body += "</style>\n";
