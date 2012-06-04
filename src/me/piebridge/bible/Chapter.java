@@ -210,24 +210,8 @@ public class Chapter extends Activity {
         text_book.setText(Provider.books.get(Provider.osiss.indexOf(book)));
         text_chapter.setText(chapter);
 
-        if (Provider.versionChanged) {
-            Log.d(Provider.TAG, "update books");
-            adapter_book = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Provider.books);
-            adapter_book.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner_book.setAdapter(adapter_book);
-            spinner_book.setSelection(Provider.osiss.indexOf(book));
-        }
-
-        if (Provider.versionChanged || bookChanged) {
-            updateChapters(Provider.chapters.get(Provider.osiss.indexOf(book)));
-
-            Log.d(Provider.TAG, "update chapters");
-            adapter_chapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, chapters);
-            adapter_chapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner_chapter.setAdapter(adapter_chapter);
-            spinner_chapter.setSelection(chapters.indexOf(chapter));
-        }
-
+        updateSpinnerBook();
+        updateSpinnerChapter();
     }
 
     private void updateChapters(String count) {
@@ -350,13 +334,34 @@ public class Chapter extends Activity {
     }
 
     public void onClickBook(View v) {
-        spinner_book.setSelection(Provider.osiss.indexOf(book));
+        updateSpinnerBook();
         spinner_book.performClick();
     }
 
     public void onClickChapter(View v) {
-        spinner_chapter.setSelection(chapters.indexOf(chapter));
+        updateSpinnerChapter();
         spinner_chapter.performClick();
     }
 
+    private void updateSpinnerBook() {
+        if (Provider.versionChanged) {
+            Log.d(Provider.TAG, "update books");
+            adapter_book = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Provider.books);
+            adapter_book.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner_book.setAdapter(adapter_book);
+            spinner_book.setSelection(Provider.osiss.indexOf(book));
+        }
+    }
+
+    private void updateSpinnerChapter() {
+        if (Provider.versionChanged || bookChanged) {
+            updateChapters(Provider.chapters.get(Provider.osiss.indexOf(book)));
+
+            Log.d(Provider.TAG, "update chapters");
+            adapter_chapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, chapters);
+            adapter_chapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner_chapter.setAdapter(adapter_chapter);
+            spinner_chapter.setSelection(chapters.indexOf(chapter));
+        }
+    }
 }
