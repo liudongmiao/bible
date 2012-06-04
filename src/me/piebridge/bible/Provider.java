@@ -25,6 +25,7 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import android.os.Environment;
 
 public class Provider extends ContentProvider
 {
@@ -37,9 +38,9 @@ public class Provider extends ContentProvider
     public static final String COLUMN_CONTENT = "content";
     public static final String COLUMN_OSIS = "osis";
     public static final String COLUMN_CHAPTERS = "chapters";
-    public static final String PATH = "/sdcard/.piebridge/";
     public static final String TAG = "me.piebridge.bible";
 
+    public static String PATH = null;
     public static String databaseVersion = "";
     public static boolean versionChanged = true;
     public static ArrayList<String> books = new ArrayList<String>();
@@ -114,6 +115,15 @@ public class Provider extends ContentProvider
 
     }
 
+    private static boolean setDatabasePath() {
+        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + ".piebridge" + File.separator;
+            Log.d(TAG, "set database path: " + PATH);
+            return true;
+        }
+        return false;
+    }
+
     public boolean setVersion(String version) {
         if (database != null) {
             if (databaseVersion.equals(version)) {
@@ -123,6 +133,9 @@ public class Provider extends ContentProvider
             database.close();
         }
 
+        if (!setDatabasePath()) {
+            return false;
+        }
         versionChanged = true;
         String path = PATH + version + ".sqlite3";
         File file = new File(path);
@@ -215,8 +228,11 @@ public class Provider extends ContentProvider
         return cursor;
     }
 
-    public static void setVersions() {
+    public static boolean setVersions() {
         versions.clear();
+        if (!setDatabasePath()) {
+            return false;
+        }
         File path = new File(PATH);
         if (path.exists() && path.isDirectory()) {
             String[] names = path.list();
@@ -231,6 +247,7 @@ public class Provider extends ContentProvider
                 }
             }
         }
+        return true;
     }
 
     @Override
