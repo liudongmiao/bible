@@ -210,8 +210,8 @@ public class Chapter extends Activity {
         text_book.setText(Provider.books.get(Provider.osiss.indexOf(book)));
         text_chapter.setText(chapter);
 
-        updateSpinnerBook();
-        updateSpinnerChapter();
+        updateSpinnerBook(false);
+        updateSpinnerChapter(false);
     }
 
     private void updateChapters(String count) {
@@ -334,17 +334,17 @@ public class Chapter extends Activity {
     }
 
     public void onClickBook(View v) {
-        updateSpinnerBook();
+        updateSpinnerBook(true);
         spinner_book.performClick();
     }
 
     public void onClickChapter(View v) {
-        updateSpinnerChapter();
+        updateSpinnerChapter(true);
         spinner_chapter.performClick();
     }
 
-    private void updateSpinnerBook() {
-        if (Provider.versionChanged) {
+    private void updateSpinnerBook(boolean force) {
+        if (Provider.versionChanged || force) {
             Log.d(Provider.TAG, "update books");
             adapter_book = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Provider.books);
             adapter_book.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -353,8 +353,8 @@ public class Chapter extends Activity {
         }
     }
 
-    private void updateSpinnerChapter() {
-        if (Provider.versionChanged || bookChanged) {
+    private void updateSpinnerChapter(boolean force) {
+        if (Provider.versionChanged || bookChanged || force) {
             updateChapters(Provider.chapters.get(Provider.osiss.indexOf(book)));
 
             Log.d(Provider.TAG, "update chapters");
