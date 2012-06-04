@@ -54,7 +54,12 @@ public class Provider extends ContentProvider
     private static final String[] COLUMNS_VERSE = {"id as _id", "book", "human", "verse * 1000 as verse", "unformatted"};
 
     private static final String TABLE_CHAPTERS = "chapters";
-    private static final String[] COLUMNS_CHAPTER = {"reference_human as human", "content", "previous_reference_osis as previous", "next_reference_osis as next"};
+    private static final String[] COLUMNS_CHAPTER = {
+        "reference_osis as osis",
+        "reference_human as human",
+        "content",
+        "previous_reference_osis as previous",
+        "next_reference_osis as next"};
 
     private static final String TABLE_BOOKS = "books";
     private static final String[] COLUMNS_BOOKS = {"number as _id", "osis", "human", "chapters"};
@@ -208,15 +213,29 @@ public class Provider extends ContentProvider
             return null;
         }
 
-        Cursor cursor = database.query(
+        Cursor cursor = null;
+
+        if (!osis.equals("null")) {
+            cursor = database.query(
                 TABLE_CHAPTERS,
                 COLUMNS_CHAPTER,
-                "reference_osis like ?",
+                "reference_osis = ?",
                 new String[] {osis},
                 null,
                 null,
-                null
-                );
+                null,
+                "1");
+        } else {
+            cursor = database.query(
+                TABLE_CHAPTERS,
+                COLUMNS_CHAPTER,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "1");
+        }
 
         if (cursor == null) {
             return null;

@@ -137,7 +137,7 @@ public class Chapter extends Activity {
 
     private Uri setUri()
     {
-        osis = PreferenceManager.getDefaultSharedPreferences(this).getString("osis", "Gen.1");
+        osis = PreferenceManager.getDefaultSharedPreferences(this).getString("osis", "null");
         Log.d(Provider.TAG, "set osis: " + osis);
 
         setVersion();
@@ -152,13 +152,14 @@ public class Chapter extends Activity {
         if (cursor != null) {
             cursor.moveToFirst();
 
-            setBookChapter(uri);
-
+            osis = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_OSIS));
             final String human = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN));
             final String osis_next = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_NEXT));
             final String osis_prev = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_PREVIOUS));
             final String content = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CONTENT));
             cursor.close();
+
+            setBookChapter(osis);
 
             button_prev.setVisibility(View.INVISIBLE);
             if (!osis_prev.equals("")) {
@@ -183,6 +184,10 @@ public class Chapter extends Activity {
             }
 
             showContent(content);
+        } else {
+            Log.d(Provider.TAG, "no such chapter, try first chapter");
+            Uri nulluri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(null).fragment(version).build();
+            showUri(nulluri);
         }
     }
 
@@ -201,8 +206,7 @@ public class Chapter extends Activity {
         return true;
     }
 
-    private void setBookChapter(Uri uri) {
-        osis = uri.getLastPathSegment();
+    private void setBookChapter(String osis) {
         book = osis.split("\\.")[0];
         chapter = osis.split("\\.")[1];
         Log.d(Provider.TAG, "set book chapter, osis: " + osis);
