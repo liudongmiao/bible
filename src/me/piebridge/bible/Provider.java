@@ -296,6 +296,9 @@ public class Provider extends ContentProvider
         if (version != null && !setVersion(version)) {
             return null;
         }
+        if (database == null) {
+            return null;
+        }
         Log.d(TAG, "query database \"" + database.getPath() + "\"");
         if (databaseVersion.equals("")) {
             return null;
