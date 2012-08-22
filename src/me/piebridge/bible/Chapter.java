@@ -147,6 +147,10 @@ public class Chapter extends Activity {
     }
 
     private void showUri(Uri uri) {
+        if (uri == null) {
+            Log.d(Provider.TAG, "show null uri, use default");
+            uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(null).fragment(version).build();
+        }
         Log.d(Provider.TAG, "show uri: " + uri);
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         if (cursor != null) {

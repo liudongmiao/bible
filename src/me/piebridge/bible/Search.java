@@ -154,6 +154,9 @@ public class Search extends Activity
     }
 
     private boolean showVerse(String id) {
+        if (id == null) {
+            return false;
+        }
         Uri uri = Provider.CONTENT_URI_VERSE.buildUpon().appendEncodedPath(id).fragment(version).build();
         Cursor verseCursor = getContentResolver().query(uri, null, null, null, null);
 

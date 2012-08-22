@@ -277,6 +277,9 @@ public class Provider extends ContentProvider
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        if (uri == null) {
+            return null;
+        }
         Log.d(TAG, "query uri: " + uri);
         String version = uri.getFragment();
         if (version != null && !setVersion(version)) {
