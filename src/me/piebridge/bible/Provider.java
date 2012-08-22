@@ -26,6 +26,7 @@ import android.util.Log;
 import java.io.File;
 import java.util.ArrayList;
 import android.os.Environment;
+import android.content.Context;
 
 public class Provider extends ContentProvider
 {
@@ -40,7 +41,6 @@ public class Provider extends ContentProvider
     public static final String COLUMN_CHAPTERS = "chapters";
     public static final String TAG = "me.piebridge.bible";
 
-    public static String PATH = null;
     public static String databaseVersion = "";
     public static boolean versionChanged = true;
     public static ArrayList<String> books = new ArrayList<String>();
@@ -48,6 +48,8 @@ public class Provider extends ContentProvider
     public static ArrayList<String> chapters = new ArrayList<String>();
     public static ArrayList<String> versions = new ArrayList<String>();
 
+    private static Context context = null;
+    private static String databasePath = null;
     private static SQLiteDatabase database = null;
 
     private static final String TABLE_VERSES = "verses left outer join books on (verses.book = books.osis)";
@@ -122,8 +124,17 @@ public class Provider extends ContentProvider
 
     private static boolean setDatabasePath() {
         if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + ".piebridge" + File.separator;
-            Log.d(TAG, "set database path: " + PATH);
+            if (context == null) {
+                Log.e(TAG, "context is null");
+                return false;
+            }
+            File file = context.getExternalFilesDir(null);
+            if (file == null) {
+                Log.e(TAG, "file: " + file);
+                return false;
+            }
+            databasePath = file.getAbsolutePath();
+            Log.d(TAG, "set database path: " + databasePath);
             return true;
         }
         return false;
@@ -142,11 +153,10 @@ public class Provider extends ContentProvider
             return false;
         }
         versionChanged = true;
-        String path = PATH + version + ".sqlite3";
-        File file = new File(path);
+        File file = new File(databasePath, version + ".sqlite3");
         if (file.exists() && file.isFile()) {
             databaseVersion = version;
-            Log.d(TAG, "open database \"" + path + "\"");
+            Log.d(TAG, "open database \"" + file.getAbsolutePath() + "\"");
             database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
                     SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
             setBooks();
@@ -252,7 +262,7 @@ public class Provider extends ContentProvider
         if (!setDatabasePath()) {
             return false;
         }
-        File path = new File(PATH);
+        File path = new File(databasePath);
         if (path.exists() && path.isDirectory()) {
             String[] names = path.list();
             for (String name: names) {
@@ -271,6 +281,7 @@ public class Provider extends ContentProvider
 
     @Override
     public boolean onCreate() {
+        context = getContext();
         setVersions();
         return true;
     }
