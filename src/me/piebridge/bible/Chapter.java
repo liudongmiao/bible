@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
+import android.text.method.LinkMovementMethod;
 
 public class Chapter extends Activity {
 
@@ -115,7 +116,10 @@ public class Chapter extends Activity {
         if (version != null) {
             showUri(uri);
         } else {
-            showContent(getString(R.string.noversion));
+            setContentView(R.layout.main);
+            TextView textView = (TextView)findViewById(R.id.text);
+            textView.setText(R.string.noversion);
+            textView.setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
 
