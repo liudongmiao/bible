@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.piebridge.bible"
-    android:versionCode="5"
-    android:versionName="0.5">
+    android:sharedUserId="me.piebridge.bible"
+    android:versionCode="6"
+    android:versionName="0.5.1">
     <application android:label="@string/app_name" android:icon="@drawable/bible">
         <activity android:name="Search"
             android:theme="@android:style/Theme.NoTitleBar">
@@ -24,6 +25,7 @@
         <meta-data android:name="android.app.default_searchable"
             android:value=".Search" />
     </application>
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="8" />
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="8" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 </manifest>
 <!-- vim: set sta sw=4 et: -->
