@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.piebridge.bible"
     android:sharedUserId="me.piebridge.bible"
-    android:versionCode="6"
+    android:versionCode="7"
     android:versionName="0.5.1">
     <application android:label="@string/app_name" android:icon="@drawable/bible">
         <activity android:name="Search"
