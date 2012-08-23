@@ -59,7 +59,7 @@ public class Chapter extends Activity {
 
     private boolean bookChanged = true;
 
-    private WebView webview;
+    private WebView webview = null;
     private int fontsize = 16;
 
     @Override
@@ -206,7 +206,16 @@ public class Chapter extends Activity {
         }
     }
 
+    private void storeFontSize() {
+        if (webview != null && webview.getScale() != 1.0) {
+            fontsize = (int)(fontsize * webview.getScale() + 0.5f);
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putInt("fontsize", fontsize).commit();
+            Log.d(Provider.TAG, "set fontsize to " + fontsize);
+        }
+    }
+
     private boolean openOsis(String newOsis) {
+        storeFontSize();
         if (Provider.versionChanged || bookChanged) {
             bookChanged = false;
             Provider.versionChanged = false;
@@ -242,7 +251,6 @@ public class Chapter extends Activity {
     }
 
     private void storeOsisVersion() {
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putInt("fontsize", fontsize).commit();
         PreferenceManager.getDefaultSharedPreferences(this).edit().putString("osis", osis).commit();
         if (version != null) {
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString("version", version).commit();
@@ -250,7 +258,6 @@ public class Chapter extends Activity {
     }
 
     private void showContent(String content) {
-        fontsize = (int)(fontsize * webview.getScale() + 0.5f);
         String body = "<!doctype html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n";
         body += "<style type=\"text/css\">\n";
         body += "body {font-family: serif; line-height: 1.5em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
@@ -278,6 +285,7 @@ public class Chapter extends Activity {
 
     @Override
     public void onPause() {
+        storeFontSize();
         storeOsisVersion();
         super.onPause();
     }
@@ -322,9 +330,11 @@ public class Chapter extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.search) {
+            storeFontSize();
             onSearchRequested();
             return true;
         } else if (item.getItemId() == R.id.refresh) {
+            storeFontSize();
             refreshed = true;
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString("osis", osis).commit();
             showContent("");
@@ -339,6 +349,7 @@ public class Chapter extends Activity {
         if (item.isChecked()) {
             item.setChecked(false);
         } else {
+            storeFontSize();
             item.setChecked(true);
             version = Provider.versions.get(item.getItemId());
             Log.d(Provider.TAG, "choose version: " + version);
