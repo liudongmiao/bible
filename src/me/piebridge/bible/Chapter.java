@@ -266,6 +266,10 @@ public class Chapter extends Activity {
         body += content;
         body += "</div>\n</body>\n</html>\n";
 
+        // http://code.google.com/p/anddaaven/source/detail?r=1ca9566a994b
+        // http://code.google.com/p/android/issues/detail?id=16839
+        webview.clearCache(true);
+
         webview.loadData(body, "text/html", "utf-8");
         webview.getSettings().setSupportZoom(true);
         webview.getSettings().setBuiltInZoomControls(true);
