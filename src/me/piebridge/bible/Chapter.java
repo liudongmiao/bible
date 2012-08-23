@@ -59,6 +59,9 @@ public class Chapter extends Activity {
 
     private boolean bookChanged = true;
 
+    private WebView webview;
+    private int fontsize = 16;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +117,7 @@ public class Chapter extends Activity {
         }
 
         if (version != null) {
+            webview = (WebView) findViewById(R.id.webview);
             showUri(uri);
         } else {
             setContentView(R.layout.main);
@@ -137,6 +141,9 @@ public class Chapter extends Activity {
         }
 
         Log.d(Provider.TAG, "set version: " + version);
+
+        fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize", 16);
+        Log.d(Provider.TAG, "set fontsize: " + fontsize);
     }
 
     private Uri setUri()
@@ -235,6 +242,7 @@ public class Chapter extends Activity {
     }
 
     private void storeOsisVersion() {
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putInt("fontsize", fontsize).commit();
         PreferenceManager.getDefaultSharedPreferences(this).edit().putString("osis", osis).commit();
         if (version != null) {
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString("version", version).commit();
@@ -242,12 +250,14 @@ public class Chapter extends Activity {
     }
 
     private void showContent(String content) {
+        fontsize = (int)(fontsize * webview.getScale() + 0.5f);
         String body = "<!doctype html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n";
         body += "<style type=\"text/css\">\n";
+        body += "body {font-family: serif; line-height: 1.5em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
         body += ".trans {display: none;}\n";
         body += ".wordsofchrist {color: red;}\n";
-        body += "h2 {font-size: large;}\n";
-        body += "h1 {font-size: x-large;}\n";
+        body += "h1 {font-size: 2em;}\n";
+        body += "h2 {font-size: 1.5em;}\n";
         body += "</style>\n";
         // TODO: support javascript
         // body += "<link rel=\"stylesheet\" href=\"file:///android_asset/reader.css\">";
@@ -256,9 +266,7 @@ public class Chapter extends Activity {
         body += content;
         body += "</div>\n</body>\n</html>\n";
 
-        WebView webview = (WebView) findViewById(R.id.webview);
         webview.loadData(body, "text/html", "utf-8");
-        webview.getSettings().setTextSize(WebSettings.TextSize.LARGER);
         webview.getSettings().setSupportZoom(true);
         webview.getSettings().setBuiltInZoomControls(true);
         webview.computeScroll();
