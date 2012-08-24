@@ -269,15 +269,12 @@ public class Chapter extends Activity {
         context = context.replaceAll("title=\"[^\"]*\"", "");
         context = context.replaceAll("「", "“").replaceAll("」", "’");
         context = context.replaceAll("『", "‘").replaceAll("』", "’");
-        // define quote class for quote
-        context = context.replaceAll("([“”‘’])", "<span class=\"quote\">$1</span>");
 
         String body = "<!doctype html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n";
         body += "<style type=\"text/css\">\n";
-        body += "body {line-height: 1.5em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
+        body += "body {font-family: serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
         body += ".trans {display: none;}\n";
         body += ".wordsofchrist {color: red;}\n";
-        body += ".quote {font-family: serif;}\n";
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
         body += "</style>\n";
