@@ -262,7 +262,7 @@ public class Chapter extends Activity {
         // TODO: support translate notes
         context = context.replaceAll("title=\"[^\"]*\"", "");
         context = context.replaceAll("「", "“").replaceAll("」", "’");
-        context = context.replaceAll('『', '‘').replaceAll('』', '’');
+        context = context.replaceAll("『", "‘").replaceAll("』", "’");
         // define quote class for quote
         context = context.replaceAll("([“”‘’])", "<span class=\"quote\">$1</span>");
 
