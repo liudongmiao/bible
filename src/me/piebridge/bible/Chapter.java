@@ -346,7 +346,9 @@ public class Chapter extends Activity {
             storeFontSize();
             refreshed = true;
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString("osis", osis).commit();
-            showContent("");
+            if (webview != null) {
+                webview.clearView();
+            }
             showUri(setUri());
             return true;
         }
