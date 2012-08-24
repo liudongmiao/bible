@@ -61,6 +61,7 @@ public class Search extends Activity
         textView = (TextView) findViewById(R.id.text);
         listView = (ListView) findViewById(R.id.list);
 
+        // TODO: support choose version, chapters, ...
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             setVersion();
@@ -167,7 +168,6 @@ public class Search extends Activity
         Log.d(Provider.TAG, "show osis: " + osis + ", version: " + version);
         verseCursor.close();
 
-        // TODO: support verse
         Intent chapterIntent = new Intent(getApplicationContext(), Chapter.class);
         Uri data = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
         chapterIntent.setData(data);

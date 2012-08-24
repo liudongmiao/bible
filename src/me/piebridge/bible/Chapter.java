@@ -278,7 +278,7 @@ public class Chapter extends Activity {
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
         body += "</style>\n";
-        // TODO: support javascript
+        // TODO: support verse click-choose
         // body += "<link rel=\"stylesheet\" href=\"file:///android_asset/reader.css\">";
         // body += "<script type=\"text/javascript\" src=\"file:///android_asset/reader.js\"></script>";
         if (verse.equals("")) {
