@@ -263,10 +263,10 @@ public class Chapter extends Activity {
 
     private void showContent(String content) {
         String context = content;
-        // generate verse anchor
-        context = context.replaceAll("<strong>(\\d+)</strong>", "<a name=\"$1\"><strong>$1</strong></a>");
-        // TODO: support translate notes
-        context = context.replaceAll("title=\"[^\"]*\"", "");
+        if (!verse.equals("")) {
+            // generate verse anchor
+            context = context.replaceAll("<strong>(\\d+)</strong>", "<a name=\"$1\"><strong>$1</strong></a>");
+        }
         context = context.replaceAll("「", "“").replaceAll("」", "’");
         context = context.replaceAll("『", "‘").replaceAll("』", "’");
 
