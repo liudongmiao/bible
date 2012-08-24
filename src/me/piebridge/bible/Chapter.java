@@ -258,11 +258,20 @@ public class Chapter extends Activity {
     }
 
     private void showContent(String content) {
+        String context = content;
+        // TODO: support translate notes
+        context = context.replaceAll("title=\"[^\"]*\"", "");
+        context = context.replaceAll("「", "“").replaceAll("」", "’");
+        context = context.replaceAll('『', '‘').replaceAll('』', '’');
+        // define quote class for quote
+        context = context.replaceAll("([“”‘’])", "<span class=\"quote\">$1</span>");
+
         String body = "<!doctype html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n";
         body += "<style type=\"text/css\">\n";
-        body += "body {font-family: serif; line-height: 1.5em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
+        body += "body {line-height: 1.5em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
         body += ".trans {display: none;}\n";
         body += ".wordsofchrist {color: red;}\n";
+        body += ".quote {font-family: serif;}\n";
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
         body += "</style>\n";
@@ -270,7 +279,7 @@ public class Chapter extends Activity {
         // body += "<link rel=\"stylesheet\" href=\"file:///android_asset/reader.css\">";
         // body += "<script type=\"text/javascript\" src=\"file:///android_asset/reader.js\"></script>";
         body += "</head>\n<body>\n<div>\n";
-        body += content;
+        body += context;
         body += "</div>\n</body>\n</html>\n";
 
         // http://code.google.com/p/anddaaven/source/detail?r=1ca9566a994b
