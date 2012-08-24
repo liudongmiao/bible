@@ -61,6 +61,7 @@ public class Chapter extends Activity {
 
     private WebView webview = null;
     private int fontsize = 16;
+    private String verse = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +115,8 @@ public class Chapter extends Activity {
         } else {
             Log.d(Provider.TAG, "uri: " + uri);
             setVersion();
+            verse = "" + getIntent().getIntExtra("verse", 1);
+            Log.d(Provider.TAG, "verse: " + verse);
         }
 
         if (version != null) {
@@ -215,6 +218,7 @@ public class Chapter extends Activity {
     }
 
     private boolean openOsis(String newOsis) {
+        verse = "";
         storeFontSize();
         if (Provider.versionChanged || bookChanged) {
             bookChanged = false;
@@ -259,6 +263,8 @@ public class Chapter extends Activity {
 
     private void showContent(String content) {
         String context = content;
+        // generate verse anchor
+        context = context.replaceAll("<strong>(\\d+)</strong>", "<a name=\"$1\"><strong>$1</strong></a>");
         // TODO: support translate notes
         context = context.replaceAll("title=\"[^\"]*\"", "");
         context = context.replaceAll("「", "“").replaceAll("」", "’");
@@ -278,7 +284,12 @@ public class Chapter extends Activity {
         // TODO: support javascript
         // body += "<link rel=\"stylesheet\" href=\"file:///android_asset/reader.css\">";
         // body += "<script type=\"text/javascript\" src=\"file:///android_asset/reader.js\"></script>";
-        body += "</head>\n<body>\n<div>\n";
+        if (verse.equals("")) {
+            body += "</head>\n<body>\n<div>\n";
+        } else {
+            Log.d(Provider.TAG, "try jump to verse " + verse);
+            body += "</head>\n<body onload=\"window.location.hash='#" + verse + "'\">\n<div>\n";
+        }
         body += context;
         body += "</div>\n</body>\n</html>\n";
 
@@ -286,6 +297,7 @@ public class Chapter extends Activity {
         // http://code.google.com/p/android/issues/detail?id=16839
         webview.clearCache(true);
 
+        webview.getSettings().setJavaScriptEnabled(true);
         webview.loadData(body, "text/html", "utf-8");
         webview.getSettings().setSupportZoom(true);
         webview.getSettings().setBuiltInZoomControls(true);

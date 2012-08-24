@@ -171,6 +171,7 @@ public class Search extends Activity
         Intent chapterIntent = new Intent(getApplicationContext(), Chapter.class);
         Uri data = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
         chapterIntent.setData(data);
+        chapterIntent.putExtra("verse", chapterVerse[1]);
         startActivity(chapterIntent);
 
         return true;
