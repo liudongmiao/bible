@@ -263,11 +263,26 @@ public class Provider extends ContentProvider
             return false;
         }
         File path = new File(databasePath);
+        File oldpath = new File(Environment.getExternalStorageDirectory(), ".piebridge");
+        Log.d(Provider.TAG, "oldpath: " + oldpath.getAbsolutePath());
+        if (oldpath.exists() && oldpath.isDirectory()) {
+            String[] names = oldpath.list();
+            for (String name: names) {
+                if (!name.endsWith(".sqlite3")) {
+                    continue;
+                }
+                File oldfile = new File(oldpath, name);
+                File newfile = new File(path, name);
+                if (oldfile.exists() && oldfile.isFile() && !newfile.exists()) {
+                    oldfile.renameTo(newfile);
+                }
+            }
+        }
         if (path.exists() && path.isDirectory()) {
             String[] names = path.list();
             for (String name: names) {
                 File file = new File(path, name);
-                if (name.endsWith("sqlite3") && file.exists() && file.isFile()) {
+                if (name.endsWith(".sqlite3") && file.exists() && file.isFile()) {
                     if (name.equals("niv.sqlite3")) {
                         versions.add(0, name.replace(".sqlite3", ""));
                     } else {
