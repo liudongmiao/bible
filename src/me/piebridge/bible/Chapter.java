@@ -272,7 +272,10 @@ public class Chapter extends Activity {
 
         String body = "<!doctype html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n";
         body += "<style type=\"text/css\">\n";
-        body += "body {font-family: serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
+        // why webkit doesnt support font-face while browser does?
+        // body += "@font-face {font-family: punc; src: url(file:///android_asset/fonts/punc.ttf);}\n";
+        // body += "body {font-family: punc, sans-serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
+        body += "body {line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
         body += ".trans {display: none;}\n";
         body += ".wordsofchrist {color: red;}\n";
         body += "h1 {font-size: 2em;}\n";
