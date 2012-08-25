@@ -62,6 +62,8 @@ public class Chapter extends Activity {
     private WebView webview = null;
     private int fontsize = 16;
     private String verse = "";
+    private final String link_market = "<a href=\"market://search?q=pub:Liu+DongMiao\">market://search?q=pub:Liu DongMiao</a>";
+    private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/downloads\">https://github.com/liudongmiao/bible/downloads</a>";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,15 +121,8 @@ public class Chapter extends Activity {
             Log.d(Provider.TAG, "verse: " + verse);
         }
 
-        if (version != null) {
-            webview = (WebView) findViewById(R.id.webview);
-            showUri(uri);
-        } else {
-            setContentView(R.layout.main);
-            TextView textView = (TextView)findViewById(R.id.text);
-            textView.setText(R.string.noversion);
-            textView.setMovementMethod(LinkMovementMethod.getInstance());
-        }
+        webview = (WebView) findViewById(R.id.webview);
+        showUri(uri);
     }
 
     private void setVersion() {
@@ -161,6 +156,10 @@ public class Chapter extends Activity {
     }
 
     private void showUri(Uri uri) {
+        if (version == null) {
+            showContent(getString(R.string.noversion, new Object[] {link_market, link_github}));
+            return;
+        }
         if (uri == null) {
             Log.d(Provider.TAG, "show null uri, use default");
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(null).fragment(version).build();

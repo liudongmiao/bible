@@ -13,7 +13,7 @@
     <string name="search_result_verse">%1$d:%2$d</string>
     <string name="previous">Prev</string>
     <string name="next">Next</string>
-    <string name="noversion">No available version. Please install one or more version(s) from Google Play Store <a href="market://search?q=pub:Liu+DongMiao">market://search?q=pub:Liu DongMiao</a> or Project Website <a href="https://github.com/liudongmiao/bible/downloads">https://github.com/liudongmiao/bible/downloads</a>.</string>
+    <string name="noversion">No available version. Please install one or more version(s) from Google Play Store %1$s or Project Website %2$s.</string>
     <string name="book">Book</string>
     <string name="chapter">Chapter</string>
     <string name="choosebook">Choose Book</string>

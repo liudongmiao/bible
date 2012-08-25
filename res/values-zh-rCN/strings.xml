@@ -13,7 +13,7 @@
     <string name="search_result_verse">%1$d:%2$d</string>
     <string name="previous">上一章</string>
     <string name="next">下一章</string>
-    <string name="noversion">没有可用的版本。请从谷歌电子市场<a href="market://search?q=pub:Liu+DongMiao">market://search?q=pub:Liu DongMiao</a>或者项目网站<a href="https://github.com/liudongmiao/bible/downloads">https://github.com/liudongmiao/bible/downloads</a>下载安装一些版本数据库。</string>
+    <string name="noversion">没有可用的版本。请从谷歌电子市场%1$s或者项目网站%2$s下载安装一些版本数据库。</string>
     <string name="book">书</string>
     <string name="chapter">章</string>
     <string name="choosebook">选择</string>
