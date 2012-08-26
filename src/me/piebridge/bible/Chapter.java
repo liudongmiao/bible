@@ -264,24 +264,24 @@ public class Chapter extends Activity {
         String context = content;
         if (!verse.equals("")) {
             // generate verse anchor
-            context = context.replaceAll("<strong>(\\d+)</strong>", "<a name=\"$1\"><strong>$1</strong></a>");
+            context = context.replaceAll("(<strong>(\\d+).*?</strong>)", "<a name=\"$2\"></a>$1");
+            context = context.replaceAll("<sup(.*?>(\\d+).*?)</sup>", "<a name=\"$2\"></a><strong$1</strong>");
+        } else {
+            context = context.replaceAll("<sup(.*?)</sup>", "<strong$1</strong>");
         }
-        context = context.replaceAll("「", "“").replaceAll("」", "’");
+        context = context.replaceAll("「", "“").replaceAll("」", "”");
         context = context.replaceAll("『", "‘").replaceAll("』", "’");
 
         String body = "<!doctype html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n";
         body += "<style type=\"text/css\">\n";
-        // why webkit doesnt support font-face while browser does?
-        // body += "@font-face {font-family: punc; src: url(file:///android_asset/fonts/punc.ttf);}\n";
-        // body += "body {font-family: punc, sans-serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
-        body += "body {line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
+        body += "body {font-family: serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
         body += ".trans {display: none;}\n";
         body += ".wordsofchrist {color: red;}\n";
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
         body += "</style>\n";
         // TODO: support verse click-choose
-        // body += "<link rel=\"stylesheet\" href=\"file:///android_asset/reader.css\">";
+        body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\">";
         // body += "<script type=\"text/javascript\" src=\"file:///android_asset/reader.js\"></script>";
         if (verse.equals("")) {
             body += "</head>\n<body>\n<div>\n";
@@ -297,7 +297,7 @@ public class Chapter extends Activity {
         webview.clearCache(true);
 
         webview.getSettings().setJavaScriptEnabled(true);
-        webview.loadData(body, "text/html", "utf-8");
+        webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
         webview.getSettings().setSupportZoom(true);
         webview.getSettings().setBuiltInZoomControls(true);
         webview.computeScroll();

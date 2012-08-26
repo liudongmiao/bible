@@ -118,19 +118,19 @@ public class Search extends Activity
 
         String[] from = new String[] {
             Provider.COLUMN_HUMAN,
-                Provider.COLUMN_VERSE,
-                Provider.COLUMN_UNFORMATTED,
+            Provider.COLUMN_VERSE,
+            Provider.COLUMN_UNFORMATTED,
         };
 
         int[] to = new int[] {
             R.id.human,
-                R.id.verse,
-                R.id.unformatted,
+            R.id.verse,
+            R.id.unformatted,
         };
 
         closeAdapter();
         adapter = new SimpleCursorAdapter(this,
-                R.layout.result, cursor, from, to);
+            R.layout.result, cursor, from, to);
         adapter.setViewBinder(new ViewBinder() {
             public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
                 int verseIndex = cursor.getColumnIndexOrThrow(Provider.COLUMN_VERSE);
@@ -143,6 +143,13 @@ public class Search extends Activity
                     return true;
                 }
 
+                if (columnIndex == cursor.getColumnIndexOrThrow(Provider.COLUMN_UNFORMATTED)) {
+                    String context = cursor.getString(columnIndex);
+                    context = context.replaceAll("「", "“").replaceAll("」", "”");
+                    context = context.replaceAll("『", "‘").replaceAll("』", "’");
+                    ((TextView)view).setText(context);
+                    return true;
+                }
                 return false;
             }
         });
