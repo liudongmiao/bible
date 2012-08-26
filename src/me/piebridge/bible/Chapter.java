@@ -157,7 +157,7 @@ public class Chapter extends Activity {
 
     private void showUri(Uri uri) {
         if (version == null) {
-            showContent(getString(R.string.noversion, new Object[] {link_market, link_github}));
+            showContent("", getString(R.string.noversion, new Object[] {link_market, link_github}));
             return;
         }
         if (uri == null) {
@@ -200,7 +200,7 @@ public class Chapter extends Activity {
                 });
             }
 
-            showContent(content);
+            showContent(human + " | " + version, content);
         } else {
             Log.d(Provider.TAG, "no such chapter, try first chapter");
             Uri nulluri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(null).fragment(version).build();
@@ -260,7 +260,7 @@ public class Chapter extends Activity {
         }
     }
 
-    private void showContent(String content) {
+    private void showContent(String title, String content) {
         String context = content;
         if (!verse.equals("")) {
             // generate verse anchor
@@ -272,7 +272,9 @@ public class Chapter extends Activity {
         context = context.replaceAll("「", "“").replaceAll("」", "”");
         context = context.replaceAll("『", "‘").replaceAll("』", "’");
 
-        String body = "<!doctype html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n";
+        String body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">";
+        body += "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">";
+        body += "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
         body += "<style type=\"text/css\">\n";
         body += "body {font-family: serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
         body += ".trans {display: none;}\n";
@@ -280,6 +282,7 @@ public class Chapter extends Activity {
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
         body += "</style>\n";
+        body += "<title>" + title + "</title>\n";
         // TODO: support verse click-choose
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\">";
         // body += "<script type=\"text/javascript\" src=\"file:///android_asset/reader.js\"></script>";
