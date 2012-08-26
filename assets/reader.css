@@ -11,3 +11,4 @@
 .s { font-weight: bold; margin-bottom: 4pt; margin-top: 8pt; }
 .s2 { font-style: italic; margin-bottom: 4pt; margin-top: 8pt; }
 .sp { font-style: italic; margin-bottom: 4pt; margin-top: 8pt; }
+.li, .li1, .q2, .q3 { margin-left: 1em; margin-top: 0em; margin-bottom: 0.1em; line-height: 1.2em; }
