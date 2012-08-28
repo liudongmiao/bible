@@ -1,5 +1,5 @@
-.add { border-bottom: 2px dotted; }
-.addpn { border-bottom: 2px dotted; text-decoration: underline; }
+.add { border-bottom: 1px dotted; }
+.addpn { border-bottom: 1px dotted; text-decoration: underline; }
 .b { font-size: 1em; }
 .d { font-style: italic; margin-bottom: 4pt; margin-top: 4pt; }
 .ms { font-size: 1.2em; font-weight: bold; text-align: center; margin-bottom: 4pt; margin-top: 16pt; }

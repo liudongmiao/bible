@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Bible</string>
+    <string name="app_name">Bible(Offline)</string>
     <string name="select">Change Version</string>
     <string name="refresh">Refresh</string>
     <string name="search">Search Bible</string>

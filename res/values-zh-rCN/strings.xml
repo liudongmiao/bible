@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">圣经</string>
+    <string name="app_name">圣经(离线版)</string>
     <string name="select">更换版本</string>
     <string name="refresh">刷新</string>
     <string name="search">搜索圣经</string>
