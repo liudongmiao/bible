@@ -262,6 +262,9 @@ public class Chapter extends Activity {
 
     private void showContent(String title, String content) {
         String context = content;
+        // for biblegateway.com
+        context = context.replaceAll("<span class=\"chapternum\">.*?</span>", "<sup class=\"versenum\">1 </sup>");
+        context = context.replaceAll("<span class=\"chapternum mid-paragraph\">.*?</span>", "");
         if (!verse.equals("")) {
             // generate verse anchor
             context = context.replaceAll("(<strong>(\\d+).*?</strong>)", "<a name=\"$2\"></a>$1");
