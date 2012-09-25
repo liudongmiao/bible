@@ -44,13 +44,17 @@ public class Chapter extends Activity {
     private String chapter;
     private String version = null;
 
-    private Button button_next;
-    private Button button_prev;
-
-    private TextView text_book;
-    private TextView text_chapter;
+    private Button button_book;
+    private Button button_chapter;
     private Spinner spinner_book;
     private Spinner spinner_chapter;
+
+    private String osis_next;
+    private String osis_prev;
+    private Button button_next;
+    private Button button_prev;
+    private Button button_refresh;
+
     private ArrayAdapter<String> adapter_book;
     private ArrayAdapter<String> adapter_chapter;
 
@@ -71,13 +75,43 @@ public class Chapter extends Activity {
         setContentView(R.layout.chapter);
 
         button_next = (Button) findViewById(R.id.next);
+        button_next.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.d(Provider.TAG, "next osis: " + osis_next);
+                openOsis(osis_next);
+            }
+        });
+
         button_prev = (Button) findViewById(R.id.prev);
+        button_prev.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.d(Provider.TAG, "prev osis: " + osis_prev);
+                openOsis(osis_prev);
+            }
+        });
 
-        text_book = (TextView) findViewById(R.id.text_book);
-        text_chapter = (TextView) findViewById(R.id.text_chapter);
+        button_refresh = (Button) findViewById(R.id.refresh);
+        button_refresh.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                refresh();
+            }
+        });
 
-        text_book.setClickable(true);
-        text_chapter.setClickable(true);
+        button_book = (Button) findViewById(R.id.button_book);
+        button_book.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                updateSpinnerBook(true);
+                spinner_book.performClick();
+            }
+        });
+
+        button_chapter = (Button) findViewById(R.id.button_chapter);
+        button_chapter.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                updateSpinnerChapter(true);
+                spinner_chapter.performClick();
+            }
+        });
 
         spinner_book = (Spinner) findViewById(R.id.book);
         spinner_book.setPromptId(R.string.choosebook);
@@ -106,9 +140,6 @@ public class Chapter extends Activity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
-        button_prev.setVisibility(View.INVISIBLE);
-        button_next.setVisibility(View.INVISIBLE);
 
         Uri uri = getIntent().getData();
 
@@ -170,36 +201,15 @@ public class Chapter extends Activity {
             cursor.moveToFirst();
 
             osis = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_OSIS));
+            osis_next = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_NEXT));
+            osis_prev = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_PREVIOUS));
             final String human = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN));
-            final String osis_next = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_NEXT));
-            final String osis_prev = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_PREVIOUS));
             final String content = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CONTENT));
             cursor.close();
 
             setBookChapter(osis);
-
-            button_prev.setVisibility(View.INVISIBLE);
-            if (!osis_prev.equals("")) {
-                button_prev.setVisibility(View.VISIBLE);
-                button_prev.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        Log.d(Provider.TAG, "prev osis: " + osis_prev);
-                        openOsis(osis_prev);
-                    }
-                });
-            }
-
-            button_next.setVisibility(View.INVISIBLE);
-            if (!osis_next.equals("")) {
-                button_next.setVisibility(View.VISIBLE);
-                button_next.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        Log.d(Provider.TAG, "next osis: " + osis_next);
-                        openOsis(osis_next);
-                    }
-                });
-            }
-
+            button_prev.setEnabled(!osis_prev.equals(""));
+            button_next.setEnabled(!osis_next.equals(""));
             showContent(human + " | " + version, content);
         } else {
             Log.d(Provider.TAG, "no such chapter, try first chapter");
@@ -238,8 +248,8 @@ public class Chapter extends Activity {
         chapter = osis.split("\\.")[1];
         Log.d(Provider.TAG, "set book chapter, osis: " + osis);
 
-        text_book.setText(Provider.books.get(Provider.osiss.indexOf(book)));
-        text_chapter.setText(chapter);
+        button_book.setText(Provider.books.get(Provider.osiss.indexOf(book)));
+        button_chapter.setText(chapter);
 
         updateSpinnerBook(false);
         updateSpinnerChapter(false);
@@ -353,6 +363,16 @@ public class Chapter extends Activity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    private void refresh() {
+        storeFontSize();
+        refreshed = true;
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putString("osis", osis).commit();
+        if (webview != null) {
+            webview.clearView();
+        }
+        showUri(setUri());
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.search) {
@@ -360,13 +380,7 @@ public class Chapter extends Activity {
             onSearchRequested();
             return true;
         } else if (item.getItemId() == R.id.refresh) {
-            storeFontSize();
-            refreshed = true;
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("osis", osis).commit();
-            if (webview != null) {
-                webview.clearView();
-            }
-            showUri(setUri());
+            refresh();
             return true;
         }
 
@@ -397,14 +411,7 @@ public class Chapter extends Activity {
         super.onResume();
     }
 
-    public void onClickBook(View v) {
-        updateSpinnerBook(true);
-        spinner_book.performClick();
-    }
-
     public void onClickChapter(View v) {
-        updateSpinnerChapter(true);
-        spinner_chapter.performClick();
     }
 
     private void updateSpinnerBook(boolean force) {

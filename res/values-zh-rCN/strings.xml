@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">圣经(离线版)</string>
+    <string name="app_name">圣经</string>
     <string name="select">更换版本</string>
+    <!--
     <string name="refresh">刷新</string>
+    -->
     <string name="search">搜索圣经</string>
     <string name="search_hint">搜索圣经</string>
     <string name="search_no_results">在“%2$s”中无法找到“%1$s”。</string>
@@ -11,11 +13,13 @@
       <item quantity="other">在“%3$s”本中“%2$s”共出现%1$d次：</item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
+    <!--
     <string name="previous">上一章</string>
     <string name="next">下一章</string>
+    -->
     <string name="noversion">没有可用的版本。请从谷歌电子市场%1$s或者项目网站%2$s下载安装一些版本数据库。</string>
     <string name="book">书</string>
     <string name="chapter">章</string>
-    <string name="choosebook">选择</string>
+    <string name="choosebook">选择书</string>
     <string name="choosechapter">选择章</string>
 </resources>

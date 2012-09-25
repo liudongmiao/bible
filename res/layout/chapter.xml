@@ -9,69 +9,74 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentTop="true"
+        android:background="@drawable/mmtitle_bg"
         >
         <Button
-            android:id="@+id/prev"
-            android:text="@string/previous"
+            android:id="@+id/button_book"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:typeface="monospace"
             android:layout_alignParentLeft="true"
+            android:background="@drawable/mm_title_btn_right"
+            android:minWidth="70dip"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            style="@android:style/TextAppearance.Medium"
             />
         <Button
-            android:id="@+id/next"
-            android:text="@string/next"
+            android:id="@+id/button_chapter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:typeface="monospace"
             android:layout_alignParentRight="true"
+            android:background="@drawable/mm_title_btn_right"
+            android:minWidth="70dip"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            style="@android:style/TextAppearance.Medium"
             />
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            >
-            <TextView
-                android:id="@+id/text_book"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:onClick="onClickBook"
-                android:layout_toRightOf="@id/prev"
-                android:layout_marginRight="10dp"
-                style="@android:style/TextAppearance.Large"
-                />
-            <TextView
-                android:id="@+id/text_chapter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:onClick="onClickChapter"
-                android:layout_toLeftOf="@id/text_book"
-                android:layout_marginLeft="10dp"
-                style="@android:style/TextAppearance.Large"
-                />
-            <Spinner
-                android:id="@+id/book"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                />
-            <Spinner
-                android:id="@+id/chapter"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                />
-        </LinearLayout>
-            <!--
-        -->
+        <Spinner
+            android:id="@+id/book"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            />
+        <Spinner
+            android:id="@+id/chapter"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            />
     </RelativeLayout>
     <WebView
         android:id="@+id/webview"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
         />
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:background="@drawable/webviewtab_bg"
+        >
+        <Button
+            android:id="@+id/prev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/webview_tab_back_btn"
+            />
+        <Button
+            android:id="@+id/next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/webview_tab_forward_btn"
+            />
+        <Button
+            android:id="@+id/refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/webview_tab_refresh_btn"
+            />
+    </RelativeLayout>
 </LinearLayout>
 <!-- vim: set sta sw=4 et: -->
