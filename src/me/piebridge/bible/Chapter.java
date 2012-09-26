@@ -208,8 +208,8 @@ public class Chapter extends Activity {
             cursor.close();
 
             setBookChapter(osis);
-            button_prev.setEnabled(!osis_prev.equals(""));
-            button_next.setEnabled(!osis_next.equals(""));
+            button_prev.setVisibility(osis_prev.equals("") ? View.INVISIBLE : View.VISIBLE);
+            button_next.setVisibility(osis_next.equals("") ? View.INVISIBLE : View.VISIBLE);
             showContent(human + " | " + version, content);
         } else {
             Log.d(Provider.TAG, "no such chapter, try first chapter");

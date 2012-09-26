@@ -8,29 +8,26 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/mmtitle_bg"
+        android:background="@android:drawable/title_bar"
         >
         <Button
             android:id="@+id/button_book"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/mm_title_btn_right"
-            android:minWidth="70dip"
-            android:gravity="center"
-            android:textColor="@android:color/white"
+            android:background="@drawable/btn_default_transparent"
+            android:minWidth="66dip"
+            android:textColor="#fff6f6f6"
             style="@android:style/TextAppearance.Medium"
             />
         <Button
             android:id="@+id/button_chapter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/mm_title_btn_right"
-            android:minWidth="70dip"
-            android:gravity="center"
-            android:textColor="@android:color/white"
+            android:layout_toRightOf="@id/button_book"
+            android:background="@drawable/btn_default_transparent"
+            android:minWidth="66dip"
+            android:textColor="#fff6f6f6"
             style="@android:style/TextAppearance.Medium"
             />
         <Spinner
@@ -54,28 +51,31 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:background="@drawable/webviewtab_bg"
+        android:background="@drawable/gradient"
         >
         <Button
             android:id="@+id/prev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="7.0dip"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/webview_tab_back_btn"
+            android:background="@drawable/ic_menu_back"
             />
         <Button
             android:id="@+id/next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/webview_tab_forward_btn"
+            android:layout_toRightOf="@id/prev"
+            android:layout_marginLeft="14.0dip"
+            android:background="@drawable/ic_menu_forward"
             />
         <Button
             android:id="@+id/refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@drawable/webview_tab_refresh_btn"
+            android:layout_marginRight="7.0dip"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/ic_menu_refresh"
             />
     </RelativeLayout>
 </LinearLayout>
