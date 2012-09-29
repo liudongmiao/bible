@@ -37,6 +37,10 @@ import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.text.method.LinkMovementMethod;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import android.widget.ZoomButtonsController;
+
 public class Chapter extends Activity {
 
     private String osis;
@@ -153,6 +157,35 @@ public class Chapter extends Activity {
         }
 
         webview = (WebView) findViewById(R.id.webview);
+        webview.getSettings().setJavaScriptEnabled(true);
+        webview.getSettings().setSupportZoom(true);
+        webview.getSettings().setBuiltInZoomControls(true);
+        webview.getSettings().setUseWideViewPort(true);
+
+        try {
+            // webview.getZoomButtonsController()
+            Method method = WebView.class.getMethod("getZoomButtonsController");
+            ZoomButtonsController zoomController = (ZoomButtonsController) method.invoke(webview);
+            zoomController.setOnZoomListener(new ZoomListener());
+        } catch (NoSuchMethodException e1) {
+            try {
+                // webview.mZoomManager.getCurrentZoomControl().getControls()
+                Field field = WebView.class.getDeclaredField("mZoomManager");
+                field.setAccessible(true);
+                Object mZoomManager = field.get(webview);
+                Method getCurrentZoomControl = mZoomManager.getClass().getDeclaredMethod("getCurrentZoomControl");
+                getCurrentZoomControl.setAccessible(true);
+                Object mEmbeddedZoomControl = getCurrentZoomControl.invoke(mZoomManager);
+                Method getControls = mEmbeddedZoomControl.getClass().getDeclaredMethod("getControls");
+                getControls.setAccessible(true);
+                ZoomButtonsController zoomController = (ZoomButtonsController) getControls.invoke(mEmbeddedZoomControl);
+                zoomController.setOnZoomListener(new ZoomListener());
+            } catch (Exception e2) {
+                Log.d(Provider.TAG, "", e2);
+            }
+        } catch (Exception e3) {
+            Log.d(Provider.TAG, "", e3);
+        }
         showUri(uri);
     }
 
@@ -218,17 +251,8 @@ public class Chapter extends Activity {
         }
     }
 
-    private void storeFontSize() {
-        if (webview != null && webview.getScale() != 1.0) {
-            fontsize = (int)(fontsize * webview.getScale() + 0.5f);
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putInt("fontsize", fontsize).commit();
-            Log.d(Provider.TAG, "set fontsize to " + fontsize);
-        }
-    }
-
     private boolean openOsis(String newOsis) {
         verse = "";
-        storeFontSize();
         if (Provider.versionChanged || bookChanged) {
             bookChanged = false;
             Provider.versionChanged = false;
@@ -312,16 +336,12 @@ public class Chapter extends Activity {
         // http://code.google.com/p/android/issues/detail?id=16839
         webview.clearCache(true);
 
-        webview.getSettings().setJavaScriptEnabled(true);
         webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
-        webview.getSettings().setSupportZoom(true);
-        webview.getSettings().setBuiltInZoomControls(true);
         webview.computeScroll();
     }
 
     @Override
     public void onPause() {
-        storeFontSize();
         storeOsisVersion();
         super.onPause();
     }
@@ -364,19 +384,14 @@ public class Chapter extends Activity {
     }
 
     private void refresh() {
-        storeFontSize();
         refreshed = true;
         PreferenceManager.getDefaultSharedPreferences(this).edit().putString("osis", osis).commit();
-        if (webview != null) {
-            webview.clearView();
-        }
         showUri(setUri());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.search) {
-            storeFontSize();
             onSearchRequested();
             return true;
         } else if (item.getItemId() == R.id.refresh) {
@@ -391,7 +406,6 @@ public class Chapter extends Activity {
         if (item.isChecked()) {
             item.setChecked(false);
         } else {
-            storeFontSize();
             item.setChecked(true);
             version = Provider.versions.get(item.getItemId());
             Log.d(Provider.TAG, "choose version: " + version);
@@ -425,6 +439,14 @@ public class Chapter extends Activity {
     }
 
     private void updateSpinnerChapter(boolean force) {
+        if (Provider.osiss.indexOf(book) == -1) {
+            Provider.setVersions();
+        }
+
+        if (Provider.osiss.indexOf(book) == -1) {
+            return;
+        }
+
         if (Provider.versionChanged || bookChanged || force) {
             updateChapters(Provider.chapters.get(Provider.osiss.indexOf(book)));
 
@@ -433,6 +455,21 @@ public class Chapter extends Activity {
             adapter_chapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner_chapter.setAdapter(adapter_chapter);
             spinner_chapter.setSelection(chapters.indexOf(chapter));
+        }
+    }
+
+    private class ZoomListener implements ZoomButtonsController.OnZoomListener {
+        public void onVisibilityChanged(boolean visible) {
+        }
+
+        public void onZoom(boolean zoomIn) {
+            fontsize += (zoomIn ? 1 : -1);
+            if (fontsize == 0) {
+                fontsize = 1;
+            }
+            Log.d(Provider.TAG, "update fontsize to " + fontsize);
+            PreferenceManager.getDefaultSharedPreferences(Chapter.this).edit().putInt("fontsize", fontsize).commit();
+            refresh();
         }
     }
 }

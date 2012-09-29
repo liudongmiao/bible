@@ -18,7 +18,7 @@
             android:background="@drawable/btn_default_transparent"
             android:minWidth="66dip"
             android:textColor="#fff6f6f6"
-            style="@android:style/TextAppearance.Medium"
+            style="@android:style/TextAppearance.Large"
             />
         <Button
             android:id="@+id/button_chapter"
@@ -28,7 +28,7 @@
             android:background="@drawable/btn_default_transparent"
             android:minWidth="66dip"
             android:textColor="#fff6f6f6"
-            style="@android:style/TextAppearance.Medium"
+            style="@android:style/TextAppearance.Large"
             />
         <Spinner
             android:id="@+id/book"
