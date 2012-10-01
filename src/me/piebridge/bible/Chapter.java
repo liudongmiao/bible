@@ -73,6 +73,8 @@ public class Chapter extends Activity {
     private final String link_market = "<a href=\"market://search?q=pub:Liu+DongMiao\">market://search?q=pub:Liu DongMiao</a>";
     private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/downloads\">https://github.com/liudongmiao/bible/downloads</a>";
 
+    private ZoomButtonsController mZoomButtonsController = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,13 +162,13 @@ public class Chapter extends Activity {
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setSupportZoom(true);
         webview.getSettings().setBuiltInZoomControls(true);
-        webview.getSettings().setUseWideViewPort(true);
+        webview.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 
         try {
             // webview.getZoomButtonsController()
             Method method = WebView.class.getMethod("getZoomButtonsController");
-            ZoomButtonsController zoomController = (ZoomButtonsController) method.invoke(webview);
-            zoomController.setOnZoomListener(new ZoomListener());
+            mZoomButtonsController = (ZoomButtonsController) method.invoke(webview);
+            mZoomButtonsController.setOnZoomListener(new ZoomListener());
         } catch (NoSuchMethodException e1) {
             try {
                 // webview.mZoomManager.getCurrentZoomControl().getControls()
@@ -178,8 +180,12 @@ public class Chapter extends Activity {
                 Object mEmbeddedZoomControl = getCurrentZoomControl.invoke(mZoomManager);
                 Method getControls = mEmbeddedZoomControl.getClass().getDeclaredMethod("getControls");
                 getControls.setAccessible(true);
-                ZoomButtonsController zoomController = (ZoomButtonsController) getControls.invoke(mEmbeddedZoomControl);
-                zoomController.setOnZoomListener(new ZoomListener());
+                mZoomButtonsController = (ZoomButtonsController) getControls.invoke(mEmbeddedZoomControl);
+                mZoomButtonsController.setOnZoomListener(new ZoomListener());
+                // let canZoomOut always be true ...
+                Field MINIMUM_SCALE_INCREMENT = mZoomManager.getClass().getDeclaredField("MINIMUM_SCALE_INCREMENT");
+                MINIMUM_SCALE_INCREMENT.setAccessible(true);
+                MINIMUM_SCALE_INCREMENT.set(mZoomManager, -1f);
             } catch (Exception e2) {
                 Log.d(Provider.TAG, "", e2);
             }
@@ -332,10 +338,6 @@ public class Chapter extends Activity {
         body += context;
         body += "</div>\n</body>\n</html>\n";
 
-        // http://code.google.com/p/anddaaven/source/detail?r=1ca9566a994b
-        // http://code.google.com/p/android/issues/detail?id=16839
-        webview.clearCache(true);
-
         webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
         webview.computeScroll();
     }
@@ -460,13 +462,16 @@ public class Chapter extends Activity {
 
     private class ZoomListener implements ZoomButtonsController.OnZoomListener {
         public void onVisibilityChanged(boolean visible) {
+            if (visible && mZoomButtonsController != null && fontsize != 1) {
+                mZoomButtonsController.setZoomOutEnabled(true);
+            }
         }
 
         public void onZoom(boolean zoomIn) {
-            fontsize += (zoomIn ? 1 : -1);
-            if (fontsize == 0) {
-                fontsize = 1;
+            if (fontsize == 1 && !zoomIn) {
+                return;
             }
+            fontsize += (zoomIn ? 1 : -1);
             Log.d(Provider.TAG, "update fontsize to " + fontsize);
             PreferenceManager.getDefaultSharedPreferences(Chapter.this).edit().putInt("fontsize", fontsize).commit();
             refresh();
