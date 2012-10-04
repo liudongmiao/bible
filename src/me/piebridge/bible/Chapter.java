@@ -21,142 +21,84 @@ import android.webkit.WebView;
 import android.webkit.WebSettings;
 
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
+import java.util.ArrayList;
 
 import android.util.Log;
 import android.preference.PreferenceManager;
-
-import java.util.ArrayList;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuInflater;
-import android.text.method.LinkMovementMethod;
+import android.content.SharedPreferences.Editor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import android.widget.ZoomButtonsController;
 
-public class Chapter extends Activity {
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+
+public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private String osis;
     private String book;
     private String chapter;
+    private String verse = "";
     private String version = null;
-
-    private Button button_book;
-    private Button button_chapter;
-    private Spinner spinner_book;
-    private Spinner spinner_chapter;
 
     private String osis_next;
     private String osis_prev;
-    private Button button_next;
-    private Button button_prev;
-    private Button button_refresh;
 
-    private ArrayAdapter<String> adapter_book;
-    private ArrayAdapter<String> adapter_chapter;
-
-    private boolean refreshed = false;
-    private ArrayList<String> chapters = new ArrayList<String>();
-
-    private boolean bookChanged = true;
-
-    private WebView webview = null;
     private int fontsize = 16;
-    private String verse = "";
     private final String link_market = "<a href=\"market://search?q=pub:Liu+DongMiao\">market://search?q=pub:Liu DongMiao</a>";
     private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/downloads\">https://github.com/liudongmiao/bible/downloads</a>";
 
     private ZoomButtonsController mZoomButtonsController = null;
+    private ArrayList<String> abbrs = new ArrayList<String>();
+    private ArrayList<String> versions = new ArrayList<String>();
+
+    private Spinner spinner;
+    private WebView webview;
+    private ArrayAdapter<String> adapter;
+    private GestureDetector mGestureDetector;
+
+    private static final int DISTANCE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chapter);
+	findViewById(R.id.next).setOnClickListener(this);
+	findViewById(R.id.prev).setOnClickListener(this);
+	findViewById(R.id.book).setOnClickListener(this);
+	findViewById(R.id.chapter).setOnClickListener(this);
+	findViewById(R.id.search).setOnClickListener(this);
+	findViewById(R.id.version).setOnClickListener(this);
 
-        button_next = (Button) findViewById(R.id.next);
-        button_next.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Log.d(Provider.TAG, "next osis: " + osis_next);
-                openOsis(osis_next);
-            }
-        });
-
-        button_prev = (Button) findViewById(R.id.prev);
-        button_prev.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Log.d(Provider.TAG, "prev osis: " + osis_prev);
-                openOsis(osis_prev);
-            }
-        });
-
-        button_refresh = (Button) findViewById(R.id.refresh);
-        button_refresh.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                refresh();
-            }
-        });
-
-        button_book = (Button) findViewById(R.id.button_book);
-        button_book.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                updateSpinnerBook(true);
-                spinner_book.performClick();
-            }
-        });
-
-        button_chapter = (Button) findViewById(R.id.button_chapter);
-        button_chapter.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                updateSpinnerChapter(true);
-                spinner_chapter.performClick();
-            }
-        });
-
-        spinner_book = (Spinner) findViewById(R.id.book);
-        spinner_book.setPromptId(R.string.choosebook);
-        spinner_book.setOnItemSelectedListener(new OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                String newbook = Provider.osiss.get(pos);
-                if (!newbook.equals(book)) {
-                    Log.d(Provider.TAG, "book adapter selected book: " + newbook + ", old book: " + book);
-                    openOsis(newbook + ".1");
+        spinner = new Spinner(this);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, new ArrayList<String>());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+        ((ViewGroup) findViewById(R.id.book).getParent()).addView(spinner, 0, 0);
+        mGestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if (e1.getRawX() - e2.getRawX() > DISTANCE) {
+                    Log.d(Provider.TAG, "swipe left, prev osis: " + osis_prev);
+                    openOsis(osis_prev);
+                    return true;
+                } else if (e2.getRawX() - e1.getRawX() > DISTANCE) {
+                    Log.d(Provider.TAG, "swipe right, next osis: " + osis_next);
+                    openOsis(osis_next);
+                    return true;
                 }
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-        spinner_chapter = (Spinner) findViewById(R.id.chapter);
-        spinner_chapter.setPromptId(R.string.choosechapter);
-        spinner_chapter.setOnItemSelectedListener(new OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                String newchapter = chapters.get(pos);
-                if (!newchapter.equals(chapter)) {
-                    Log.d(Provider.TAG, "chapter adapter selected chapter: " + newchapter + ", old chapter: " + chapter);
-                    openOsis(book + "." + newchapter);
-                }
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
+                return false;
             }
         });
-
-        Uri uri = getIntent().getData();
-
-        if (uri == null) {
-            uri = setUri();
-        } else {
-            Log.d(Provider.TAG, "uri: " + uri);
-            setVersion();
-            verse = "" + getIntent().getIntExtra("verse", 1);
-            Log.d(Provider.TAG, "verse: " + verse);
-        }
 
         webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
@@ -192,6 +134,16 @@ public class Chapter extends Activity {
         } catch (Exception e3) {
             Log.d(Provider.TAG, "", e3);
         }
+
+        Uri uri = getIntent().getData();
+        if (uri == null) {
+            uri = setUri();
+        } else {
+            Log.d(Provider.TAG, "uri: " + uri);
+            setVersion();
+            verse = "" + getIntent().getIntExtra("verse", 1);
+            Log.d(Provider.TAG, "verse: " + verse);
+        }
         showUri(uri);
     }
 
@@ -207,6 +159,7 @@ public class Chapter extends Activity {
                 version = Provider.versions.get(0);
             }
         }
+	((Button)findViewById(R.id.version)).setText(String.valueOf(version).toUpperCase());
 
         Log.d(Provider.TAG, "set version: " + version);
 
@@ -247,8 +200,8 @@ public class Chapter extends Activity {
             cursor.close();
 
             setBookChapter(osis);
-            button_prev.setVisibility(osis_prev.equals("") ? View.INVISIBLE : View.VISIBLE);
-            button_next.setVisibility(osis_next.equals("") ? View.INVISIBLE : View.VISIBLE);
+            findViewById(R.id.prev).setVisibility(osis_prev.equals("") ? View.INVISIBLE : View.VISIBLE);
+            findViewById(R.id.next).setVisibility(osis_next.equals("") ? View.INVISIBLE : View.VISIBLE);
             showContent(human + " | " + version, content);
         } else {
             Log.d(Provider.TAG, "no such chapter, try first chapter");
@@ -258,15 +211,11 @@ public class Chapter extends Activity {
     }
 
     private boolean openOsis(String newOsis) {
-        verse = "";
-        if (Provider.versionChanged || bookChanged) {
-            bookChanged = false;
-            Provider.versionChanged = false;
+        if (newOsis == null || newOsis.equals("")) {
+            return false;
         }
+        verse = "";
         if (!osis.equals(newOsis)) {
-            if (!book.equals(newOsis.split("\\.")[0])) {
-                bookChanged = true;
-            }
             Uri uri = Uri.withAppendedPath(Provider.CONTENT_URI_CHAPTER, newOsis);
             showUri(uri);
         }
@@ -278,26 +227,17 @@ public class Chapter extends Activity {
         chapter = osis.split("\\.")[1];
         Log.d(Provider.TAG, "set book chapter, osis: " + osis);
 
-        button_book.setText(Provider.books.get(Provider.osiss.indexOf(book)));
-        button_chapter.setText(chapter);
-
-        updateSpinnerBook(false);
-        updateSpinnerChapter(false);
-    }
-
-    private void updateChapters(String count) {
-        int value = Integer.parseInt(count);
-        chapters.clear();
-        for (int i = 1; i <= value; i++) {
-            chapters.add(String.valueOf(i));
-        }
+	((Button)findViewById(R.id.book)).setText(Provider.books.get(Provider.osiss.indexOf(book)));
+	((Button)findViewById(R.id.chapter)).setText(chapter);
     }
 
     private void storeOsisVersion() {
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putString("osis", osis).commit();
+        final Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putString("osis", osis);
         if (version != null) {
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("version", version).commit();
+            editor.putString("version", version);
         }
+        editor.commit();
     }
 
     private void showContent(String title, String content) {
@@ -348,116 +288,30 @@ public class Chapter extends Activity {
         super.onPause();
     }
 
-    private void createMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+    private void initVersion() {
+        Resources res = getResources();
+        TypedArray abbr = res.obtainTypedArray(R.array.abbr);
+        TypedArray version = res.obtainTypedArray(R.array.version);
 
-        MenuItem select = menu.findItem(R.id.select);
-        Menu submenu = select.getSubMenu();
-        if (version == null) {
-            setVersion();
-        } else {
-            Provider.setVersions();
+        for (int i = 0; i < abbr.length(); i++) {
+            abbrs.add(abbr.getString(i));
+            versions.add(version.getString(i));
         }
-        for (String string: Provider.versions) {
-            MenuItem item = submenu.add(R.id.group, Provider.versions.indexOf(string), Menu.NONE, string);
-            item.setCheckable(true);
-            if (string.equals(version)) {
-                item.setChecked(true);
-            }
-        }
-        submenu.setGroupCheckable(R.id.group, true, true);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        createMenu(menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (refreshed) {
-            refreshed = false;
-            menu.clear();
-            createMenu(menu);
+    private String getVersion(String string) {
+        int index = abbrs.indexOf(string);
+        if (index == -1) {
+            return string;
         }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    private void refresh() {
-        refreshed = true;
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putString("osis", osis).commit();
-        showUri(setUri());
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.search) {
-            onSearchRequested();
-            return true;
-        } else if (item.getItemId() == R.id.refresh) {
-            refresh();
-            return true;
-        }
-
-        if (item.getGroupId() != R.id.group) {
-            return super.onOptionsItemSelected(item);
-        }
-
-        if (item.isChecked()) {
-            item.setChecked(false);
-        } else {
-            item.setChecked(true);
-            version = Provider.versions.get(item.getItemId());
-            Log.d(Provider.TAG, "choose version: " + version);
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("osis", osis).commit();
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("version", version).commit();
-            Provider.closeDatabase();
-            showUri(setUri());
-        }
-
-        return true;
+        return versions.get(index);
     }
 
     @Override
     public void onResume() {
-        Provider.versionChanged = true;
         Provider.setVersions();
+        initVersion();
         super.onResume();
-    }
-
-    public void onClickChapter(View v) {
-    }
-
-    private void updateSpinnerBook(boolean force) {
-        if (Provider.versionChanged || force) {
-            Log.d(Provider.TAG, "update books");
-            adapter_book = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Provider.books);
-            adapter_book.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner_book.setAdapter(adapter_book);
-            spinner_book.setSelection(Provider.osiss.indexOf(book));
-        }
-    }
-
-    private void updateSpinnerChapter(boolean force) {
-        if (Provider.osiss.indexOf(book) == -1) {
-            Provider.setVersions();
-        }
-
-        if (Provider.osiss.indexOf(book) == -1) {
-            return;
-        }
-
-        if (Provider.versionChanged || bookChanged || force) {
-            updateChapters(Provider.chapters.get(Provider.osiss.indexOf(book)));
-
-            Log.d(Provider.TAG, "update chapters");
-            adapter_chapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, chapters);
-            adapter_chapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner_chapter.setAdapter(adapter_chapter);
-            spinner_chapter.setSelection(chapters.indexOf(chapter));
-        }
     }
 
     private class ZoomListener implements ZoomButtonsController.OnZoomListener {
@@ -474,7 +328,105 @@ public class Chapter extends Activity {
             fontsize += (zoomIn ? 1 : -1);
             Log.d(Provider.TAG, "update fontsize to " + fontsize);
             PreferenceManager.getDefaultSharedPreferences(Chapter.this).edit().putInt("fontsize", fontsize).commit();
-            refresh();
+            showUri(Uri.withAppendedPath(Provider.CONTENT_URI_CHAPTER, osis));
         }
     }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.next:
+                Log.d(Provider.TAG, "next osis: " + osis_next);
+                openOsis(osis_next);
+                break;
+            case R.id.prev:
+                Log.d(Provider.TAG, "prev osis: " + osis_prev);
+                openOsis(osis_prev);
+                break;
+            case R.id.book:
+            case R.id.chapter:
+            case R.id.version:
+                showSpinner(v);
+                break;
+            case R.id.search:
+                onSearchRequested();
+                break;
+        }
+    }
+
+    private void showSpinner(View v) {
+        int promptId = 0;
+        int selected = 0;
+        ArrayList<String> strings = null;
+
+        adapter.clear();
+        switch (v.getId()) {
+            case R.id.book:
+                selected = Provider.osiss.indexOf(book);
+                promptId = R.string.choosebook;
+                for (String string: Provider.books) {
+                    adapter.add(string);
+                }
+                break;
+            case R.id.chapter:
+                selected = Integer.parseInt(chapter) - 1;
+                promptId = R.string.choosechapter;
+                for (int i = 1; i <= Integer.parseInt(Provider.chapters.get(Provider.osiss.indexOf(book))); i++) {
+                    adapter.add(String.valueOf(i));
+                }
+                break;
+            case R.id.version:
+                Provider.setVersions();
+                selected = Provider.versions.indexOf(version);
+                promptId = R.string.chooseversion;
+                for (String string: Provider.versions) {
+                    adapter.add(getVersion(string));
+                }
+                break;
+        }
+
+        spinner.setId(promptId);
+        spinner.setPromptId(promptId);
+        spinner.setSelection(selected);
+        spinner.performClick();
+    }
+
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        switch (spinner.getId()) {
+            case R.string.choosebook:
+                String newbook = Provider.osiss.get(pos);
+                if (!newbook.equals(book)) {
+                    Log.d(Provider.TAG, "book adapter selected book: " + newbook + ", old book: " + book);
+                    openOsis(newbook + ".1");
+                }
+                break;
+            case R.string.choosechapter:
+                String newchapter = String.valueOf(pos + 1);
+                if (!newchapter.equals(chapter)) {
+                    Log.d(Provider.TAG, "chapter adapter selected chapter: " + newchapter + ", old chapter: " + chapter);
+                    openOsis(book + "." + newchapter);
+                }
+                break;
+            case R.string.chooseversion:
+                String newversion = Provider.versions.get(pos);
+                if (!newversion.equals(version)) {
+                    version = newversion;
+                    Log.d(Provider.TAG, "choose version: " + version);
+                    storeOsisVersion();
+                    Provider.closeDatabase();
+                    showUri(setUri());
+                }
+                break;
+        }
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent e){
+        super.dispatchTouchEvent(e);
+        return mGestureDetector.onTouchEvent(e);
+    }
+
 }

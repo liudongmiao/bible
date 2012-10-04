@@ -36,10 +36,6 @@ import android.database.Cursor;
 
 import android.preference.PreferenceManager;
 
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuInflater;
-
 public class Search extends Activity
 {
     private TextView textView = null;
@@ -198,74 +194,6 @@ public class Search extends Activity
         }
 
         Log.d(Provider.TAG, "set version: " + version);
-    }
-
-    private void createMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-
-        MenuItem select = menu.findItem(R.id.select);
-        Menu submenu = select.getSubMenu();
-        if (version == null) {
-            setVersion();
-        } else {
-            Provider.setVersions();
-        }
-        for (String string: Provider.versions) {
-            MenuItem item = submenu.add(R.id.group, Provider.versions.indexOf(string), Menu.NONE, string);
-            item.setCheckable(true);
-            if (string.equals(version)) {
-                item.setChecked(true);
-            }
-        }
-        submenu.setGroupCheckable(R.id.group, true, true);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        createMenu(menu);
-        refreshed = false;
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (refreshed) {
-            refreshed = false;
-            menu.clear();
-            createMenu(menu);
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.search) {
-            onSearchRequested();
-            return true;
-        } else if (item.getItemId() == R.id.refresh) {
-            refreshed = true;
-            doSearch(query);
-            return true;
-        }
-
-        if (item.getGroupId() != R.id.group) {
-            return super.onOptionsItemSelected(item);
-        }
-
-        if (item.isChecked()) {
-            item.setChecked(false);
-        } else {
-            item.setChecked(true);
-            version = Provider.versions.get(item.getItemId());
-            Log.d(Provider.TAG, "choose version: " + version);
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("version", version).commit();
-            closeAdapter();
-            Provider.closeDatabase();
-            doSearch(query);
-        }
-
-        return true;
     }
 
     @Override

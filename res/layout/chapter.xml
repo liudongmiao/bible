@@ -11,34 +11,31 @@
         android:background="@android:drawable/title_bar"
         >
         <Button
-            android:id="@+id/button_book"
+            android:id="@+id/book"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:background="@drawable/btn_default_transparent"
-            android:minWidth="66dip"
             android:textColor="#fff6f6f6"
-            style="@android:style/TextAppearance.Large"
+            android:textSize="20sp"
             />
         <Button
-            android:id="@+id/button_chapter"
+            android:id="@+id/chapter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/button_book"
+            android:layout_toRightOf="@id/book"
             android:background="@drawable/btn_default_transparent"
-            android:minWidth="66dip"
             android:textColor="#fff6f6f6"
-            style="@android:style/TextAppearance.Large"
+            android:textSize="20sp"
             />
-        <Spinner
-            android:id="@+id/book"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            />
-        <Spinner
-            android:id="@+id/chapter"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+        <Button
+            android:id="@+id/version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/btn_default_transparent"
+            android:textColor="#fff6f6f6"
+            android:textSize="20sp"
             />
     </RelativeLayout>
     <WebView
@@ -70,12 +67,12 @@
             android:background="@drawable/ic_menu_forward"
             />
         <Button
-            android:id="@+id/refresh"
+            android:id="@+id/search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="7.0dip"
+            android:background="@drawable/ic_menu_search"
             android:layout_alignParentRight="true"
-            android:background="@drawable/ic_menu_refresh"
+            android:layout_centerVertical="true"
             />
     </RelativeLayout>
 </LinearLayout>

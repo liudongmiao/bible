@@ -42,7 +42,6 @@ public class Provider extends ContentProvider
     public static final String TAG = "me.piebridge.bible";
 
     public static String databaseVersion = "";
-    public static boolean versionChanged = true;
     public static ArrayList<String> books = new ArrayList<String>();
     public static ArrayList<String> osiss = new ArrayList<String>();
     public static ArrayList<String> chapters = new ArrayList<String>();
@@ -128,7 +127,26 @@ public class Provider extends ContentProvider
                 Log.e(TAG, "context is null");
                 return false;
             }
-            File file = context.getExternalFilesDir(null);
+            File file = null;
+            try {
+                file = context.getExternalFilesDir(null);
+            } catch (NoSuchMethodError e) {
+                // /mnt/sdcard/Android/data/me.piebridge.bible/files
+                file = new File(new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), context.getPackageName()), "files");
+                if (file == null) {
+                    return false;
+                }
+                if (!file.exists()) {
+                    if (!file.mkdirs()) {
+                        Log.w(TAG, "cannot create directory: " + file);
+                        return false;
+                    }
+                    try {
+                        (new File(file, ".nomedia")).createNewFile();
+                    } catch (java.io.IOException ioe) {
+                    }
+                }
+            }
             if (file == null) {
                 Log.e(TAG, "file: " + file);
                 return false;
@@ -152,7 +170,6 @@ public class Provider extends ContentProvider
         if (!setDatabasePath()) {
             return false;
         }
-        versionChanged = true;
         File file = new File(databasePath, version + ".sqlite3");
         if (file.exists() && file.isFile()) {
             databaseVersion = version;
