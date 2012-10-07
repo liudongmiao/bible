@@ -1,18 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#ffffffff"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    <TextView
-        android:id="@+id/text"
-        android:textColor="?android:textColorPrimary"
-        android:textSize="17dp"
+    android:layout_height="fill_parent"
+    >
+    <RelativeLayout
+        android:id="@+id/search"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        >
+        <EditText
+            android:id="@+id/searchtext"
+            android:ems="10"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/searchbutton"
+            android:maxLines="1"
+            />
+        <ImageButton
+            android:id="@id/searchbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@*android:drawable/ic_search_category_default"
+            android:layout_alignBottom="@id/searchtext"
+            android:layout_alignParentRight="true"
+            />
+    </RelativeLayout>
     <ListView
-        android:id="@+id/list"
+        android:id="@+id/searchlist"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search"
         />
-</LinearLayout>
+</RelativeLayout>
 <!-- vim: set sta sw=4 et: -->

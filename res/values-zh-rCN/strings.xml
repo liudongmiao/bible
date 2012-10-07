@@ -7,10 +7,10 @@
     -->
     <string name="search">搜索圣经</string>
     <string name="search_hint">搜索圣经</string>
-    <string name="search_no_results">在“%2$s”中无法找到“%1$s”。</string>
+    <string name="search_no_results">在“%4$s”本中从“%2$s”至“%3$s”无法找到“%1$s”。</string>
     <plurals name="search_results">
-      <item quantity="one">在“%3$s”本中“%2$s”共出现%1$d次：</item>
-      <item quantity="other">在“%3$s”本中“%2$s”共出现%1$d次：</item>
+      <item quantity="one">在“%5$s”本中从“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
+      <item quantity="other">在“%5$s”本中从“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
     <!--
@@ -18,9 +18,15 @@
     <string name="next">下一章</string>
     -->
     <string name="noversion">没有可用的版本。请从谷歌电子市场%1$s或者项目网站%2$s下载安装一些版本数据库。</string>
-    <string name="book">书</string>
-    <string name="chapter">章</string>
-    <string name="choosebook">选择书</string>
-    <string name="choosechapter">选择章</string>
+    <string name="book">书目</string>
+    <string name="chapter">章节</string>
+    <string name="choosebook">选择书目</string>
+    <string name="choosechapter">选择章节</string>
     <string name="chooseversion">选择版本</string>
+    <string name="searchall">搜索整本圣经</string>
+    <string name="searchold">搜索旧约圣经</string>
+    <string name="searchnew">搜索新约圣经</string>
+    <string name="searchgospel">搜索四福音书</string>
+    <string name="searchfrom">选择开始书目</string>
+    <string name="searchto">选择结束书目</string>
 </resources>

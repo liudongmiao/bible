@@ -65,6 +65,8 @@ public class Provider extends ContentProvider
     private static final String TABLE_BOOKS = "books";
     private static final String[] COLUMNS_BOOKS = {"number as _id", "osis", "human", "chapters"};
 
+    private static String queryBooks;
+
     public static final String AUTHORITY = "me.piebridge.bible.provider";
     public static final Uri CONTENT_URI_SEARCH = Uri.parse("content://" + AUTHORITY + "/search");
     public static final Uri CONTENT_URI_VERSE = Uri.parse("content://" + AUTHORITY + "/verse");
@@ -101,7 +103,7 @@ public class Provider extends ContentProvider
         }
     }
 
-    public void setBooks() {
+    public static void setBooks() {
         books.clear();
         osiss.clear();
         chapters.clear();
@@ -158,7 +160,7 @@ public class Provider extends ContentProvider
         return false;
     }
 
-    public boolean setVersion(String version) {
+    public static boolean setVersion(String version) {
         if (database != null) {
             if (databaseVersion.equals(version)) {
                 return true;
@@ -193,8 +195,8 @@ public class Provider extends ContentProvider
         Cursor cursor = database.query(
                 TABLE_VERSES,
                 COLUMNS_VERSE,
-                "unformatted like ?",
-                new String[] { "%" + query + "%" },
+                "unformatted like ? and book in (" + queryBooks + ")",
+                new String[] { "%" + query + "%"},
                 null,
                 null,
                 null
@@ -281,8 +283,8 @@ public class Provider extends ContentProvider
         }
         File path = new File(databasePath);
         File oldpath = new File(Environment.getExternalStorageDirectory(), ".piebridge");
-        Log.d(Provider.TAG, "oldpath: " + oldpath.getAbsolutePath());
         if (oldpath.exists() && oldpath.isDirectory()) {
+            Log.d(Provider.TAG, "oldpath: " + oldpath.getAbsolutePath());
             String[] names = oldpath.list();
             for (String name: names) {
                 if (!name.endsWith(".sqlite3")) {
@@ -377,20 +379,8 @@ public class Provider extends ContentProvider
         return new int[] {chapter, verse};
     }
 
-    public static boolean isCJK(char c) {
-        int v = (int) c;
-
-        if(v >= 0x3400 && v <= 0x4db5) return true;
-        if(v >= 0x4e00 && v <= 0x9fa5) return true;
-
-        return false;
-    }
-
-    public static boolean isCJKVersion(String string) {
-        if (string.equals("rcuvss") || string.equals("cunpss") || string.equals("ccb")) {
-            return true;
-        }
-        return false;
+    public static void setQueryBooks(String string) {
+        queryBooks = string;
     }
 
 }

@@ -38,6 +38,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import android.widget.ZoomButtonsController;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 
@@ -57,8 +58,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/downloads\">https://github.com/liudongmiao/bible/downloads</a>";
 
     private ZoomButtonsController mZoomButtonsController = null;
-    private ArrayList<String> abbrs = new ArrayList<String>();
-    private ArrayList<String> versions = new ArrayList<String>();
+    private static ArrayList<String> abbrs = new ArrayList<String>();
+    private static ArrayList<String> versions = new ArrayList<String>();
 
     private Spinner spinner;
     private WebView webview;
@@ -88,12 +89,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                 if (e1.getRawX() - e2.getRawX() > DISTANCE) {
-                    Log.d(Provider.TAG, "swipe left, prev osis: " + osis_prev);
-                    openOsis(osis_prev);
+                    Log.d(Provider.TAG, "swipe left, next osis: " + osis_next);
+                    openOsis(osis_next);
                     return true;
                 } else if (e2.getRawX() - e1.getRawX() > DISTANCE) {
-                    Log.d(Provider.TAG, "swipe right, next osis: " + osis_next);
-                    openOsis(osis_next);
+                    Log.d(Provider.TAG, "swipe right, prev osis: " + osis_prev);
+                    openOsis(osis_prev);
                     return true;
                 }
                 return false;
@@ -159,10 +160,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 version = Provider.versions.get(0);
             }
         }
-	((Button)findViewById(R.id.version)).setText(String.valueOf(version).toUpperCase());
-
-        Log.d(Provider.TAG, "set version: " + version);
-
         fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize", 16);
         Log.d(Provider.TAG, "set fontsize: " + fontsize);
     }
@@ -227,6 +224,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         chapter = osis.split("\\.")[1];
         Log.d(Provider.TAG, "set book chapter, osis: " + osis);
 
+	((Button)findViewById(R.id.version)).setText(String.valueOf(Provider.databaseVersion).toUpperCase());
 	((Button)findViewById(R.id.book)).setText(Provider.books.get(Provider.osiss.indexOf(book)));
 	((Button)findViewById(R.id.chapter)).setText(chapter);
     }
@@ -299,7 +297,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     }
 
-    private String getVersion(String string) {
+    public static String getVersion(String string) {
         int index = abbrs.indexOf(string);
         if (index == -1) {
             return string;
@@ -394,28 +392,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         switch (spinner.getId()) {
             case R.string.choosebook:
-                String newbook = Provider.osiss.get(pos);
-                if (!newbook.equals(book)) {
-                    Log.d(Provider.TAG, "book adapter selected book: " + newbook + ", old book: " + book);
-                    openOsis(newbook + ".1");
-                }
+                openOsis(Provider.osiss.get(pos) + ".1");
                 break;
             case R.string.choosechapter:
-                String newchapter = String.valueOf(pos + 1);
-                if (!newchapter.equals(chapter)) {
-                    Log.d(Provider.TAG, "chapter adapter selected chapter: " + newchapter + ", old chapter: " + chapter);
-                    openOsis(book + "." + newchapter);
-                }
+                openOsis(String.format("%s.%d", book, pos + 1));
                 break;
             case R.string.chooseversion:
-                String newversion = Provider.versions.get(pos);
-                if (!newversion.equals(version)) {
-                    version = newversion;
-                    Log.d(Provider.TAG, "choose version: " + version);
-                    storeOsisVersion();
-                    Provider.closeDatabase();
-                    showUri(setUri());
-                }
+                version = Provider.versions.get(pos);
+                storeOsisVersion();
+                Provider.closeDatabase();
+                showUri(setUri());
                 break;
         }
     }
@@ -429,4 +415,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         return mGestureDetector.onTouchEvent(e);
     }
 
+    @Override
+    public boolean onSearchRequested() {
+        startActivity(new Intent(Chapter.this, Search.class));
+        return false;
+    }
 }

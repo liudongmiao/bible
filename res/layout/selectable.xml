@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ?android:listPreferredItemHeight" -->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:listPreferredItemHeight"
+    >
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10.0dip"
+        android:layout_marginRight="10.0dip"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text"
+            android:text="Sample text goes here"
+            android:textSize="19.0dip"
+            android:textColor="#ff000000"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/subtext"
+            android:text="Sample"
+            android:textSize="17.0dip"
+            android:textColor="#ff888888"
+            android:maxLines="1"
+            />
+    </LinearLayout>
+    <!--
+    <Button
+        android:id="@+id/button"
+        android:background="@android:drawable/ic_menu_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10.0dip"
+        android:layout_marginRight="10.0dip"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        />
+    -->
+</RelativeLayout>
+<!-- vim: set sta sw=4 et: -->
