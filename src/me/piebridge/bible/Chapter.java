@@ -85,7 +85,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
         ((ViewGroup) findViewById(R.id.book).getParent()).addView(spinner, 0, 0);
-        mGestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+        mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                 if (e1.getRawX() - e2.getRawX() > DISTANCE) {
