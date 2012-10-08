@@ -433,18 +433,22 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
             return options.get(position);
         }
 
+        @Override
+        public int getViewTypeCount() {
+            return options.size();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return position;
+        }
+
         public View getView(int position, View view, ViewGroup parent) {
             ViewHolder holder;
-            Option option;
-            // why ???
-            if (view != null) {
-                view = null;
-            }
+            Option option = options.get(position);
 
             if (view == null) {
                 holder = new ViewHolder();
-                option = options.get(position);
-                holder.option = option;
                 if (option.checkable) {
                     view = inflater.inflate(R.layout.checkable, null);
                     holder.radio = (RadioButton) view.findViewById(R.id.radio);
@@ -456,7 +460,6 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
                 view.setTag(holder);
             } else {
                 holder = (ViewHolder) view.getTag();
-                option = holder.option;
             }
 
             view.setId(option.text);
