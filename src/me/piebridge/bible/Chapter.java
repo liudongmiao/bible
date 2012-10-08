@@ -417,7 +417,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public boolean onSearchRequested() {
-        startActivity(new Intent(Chapter.this, Search.class));
+        if (Provider.versions.size() > 0) {
+            startActivity(new Intent(Chapter.this, Search.class));
+        }
         return false;
     }
 }
