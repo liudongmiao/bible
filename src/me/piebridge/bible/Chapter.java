@@ -142,7 +142,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         } else {
             Log.d(Provider.TAG, "uri: " + uri);
             setVersion();
-            verse = "" + getIntent().getIntExtra("verse", 1);
+            verse = String.format("%d", getIntent().getIntExtra("verse", 1));
             Log.d(Provider.TAG, "verse: " + verse);
         }
         showUri(uri);
@@ -211,7 +211,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (newOsis == null || newOsis.equals("")) {
             return false;
         }
-        verse = "";
         if (!osis.equals(newOsis)) {
             Uri uri = Uri.withAppendedPath(Provider.CONTENT_URI_CHAPTER, newOsis);
             showUri(uri);
@@ -245,8 +244,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         context = context.replaceAll("<span class=\"chapternum mid-paragraph\">.*?</span>", "");
         if (!verse.equals("")) {
             // generate verse anchor
-            context = context.replaceAll("(<strong>(\\d+).*?</strong>)", "<a name=\"$2\"></a>$1");
-            context = context.replaceAll("<sup(.*?>(\\d+).*?)</sup>", "<a name=\"$2\"></a><strong$1</strong>");
+            context = context.replaceAll("(<strong>\\D*?(\\d+).*?</strong>)", "<a name=\"$2\"></a>$1");
+            context = context.replaceAll("<sup(.*?>\\D*?(\\d+).*?)</sup>", "<a name=\"$2\"></a><strong$1</strong>");
         } else {
             context = context.replaceAll("<sup(.*?)</sup>", "<strong$1</strong>");
         }
@@ -273,11 +272,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             Log.d(Provider.TAG, "try jump to verse " + verse);
             body += "</head>\n<body onload=\"window.location.hash='#" + verse + "'\">\n<div>\n";
         }
+        verse = "";
         body += context;
         body += "</div>\n</body>\n</html>\n";
 
+        webview.clearCache(true);
         webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
-        webview.computeScroll();
     }
 
     @Override

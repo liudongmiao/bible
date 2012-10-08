@@ -199,7 +199,7 @@ public class Provider extends ContentProvider
                 new String[] { "%" + query + "%"},
                 null,
                 null,
-                null
+                "id ASC"
                 );
 
         if (cursor == null) {
