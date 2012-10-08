@@ -344,6 +344,15 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
             tobook = frombook;
             frombook = swap;
         }
+        if (frombook == 0 && tobook == (Provider.books.size() - 1)) {
+            searchtype = SEARCH_ALL;
+        } else if (frombook == Provider.osiss.indexOf("Gen") && tobook == Provider.osiss.indexOf("Mal")) {
+            searchtype = SEARCH_OLD;
+        } else if (frombook == Provider.osiss.indexOf("Matt") && tobook == Provider.osiss.indexOf("Rev")) {
+            searchtype = SEARCH_NEW;
+        } else if (frombook == Provider.osiss.indexOf("Matt") && tobook == Provider.osiss.indexOf("John")) {
+            searchtype = SEARCH_GOSPEL;
+        }
         updateOptions();
     }
 
