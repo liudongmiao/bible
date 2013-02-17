@@ -72,12 +72,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chapter);
-	findViewById(R.id.next).setOnClickListener(this);
-	findViewById(R.id.prev).setOnClickListener(this);
-	findViewById(R.id.book).setOnClickListener(this);
-	findViewById(R.id.chapter).setOnClickListener(this);
-	findViewById(R.id.search).setOnClickListener(this);
-	findViewById(R.id.version).setOnClickListener(this);
+        findViewById(R.id.next).setOnClickListener(this);
+        findViewById(R.id.prev).setOnClickListener(this);
+        findViewById(R.id.book).setOnClickListener(this);
+        findViewById(R.id.chapter).setOnClickListener(this);
+        findViewById(R.id.search).setOnClickListener(this);
+        findViewById(R.id.version).setOnClickListener(this);
 
         spinner = new Spinner(this);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, new ArrayList<String>());
@@ -223,9 +223,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         chapter = osis.split("\\.")[1];
         Log.d(Provider.TAG, "set book chapter, osis: " + osis);
 
-	((Button)findViewById(R.id.version)).setText(String.valueOf(Provider.databaseVersion).toUpperCase());
-	((Button)findViewById(R.id.book)).setText(Provider.books.get(Provider.osiss.indexOf(book)));
-	((Button)findViewById(R.id.chapter)).setText(chapter);
+        ((Button)findViewById(R.id.version)).setText(String.valueOf(Provider.databaseVersion).toUpperCase());
+        ((Button)findViewById(R.id.book)).setText(Provider.books.get(Provider.osiss.indexOf(book)));
+        ((Button)findViewById(R.id.chapter)).setText(chapter);
     }
 
     private void storeOsisVersion() {
