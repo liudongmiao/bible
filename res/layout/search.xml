@@ -17,7 +17,9 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/searchbutton"
-            android:maxLines="1"
+            android:singleLine="true"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
             />
         <ImageButton
             android:id="@id/searchbutton"

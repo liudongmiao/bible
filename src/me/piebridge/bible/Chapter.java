@@ -41,6 +41,7 @@ import android.widget.ZoomButtonsController;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.database.sqlite.SQLiteException;
 
 public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -88,6 +89,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if (Math.abs(e1.getRawY() - e2.getRawY()) > Math.abs(e1.getRawX() - e2.getRawX())) {
+                    return false;
+                }
                 if (e1.getRawX() - e2.getRawX() > DISTANCE) {
                     Log.d(Provider.TAG, "swipe left, next osis: " + osis_next);
                     openOsis(osis_next);
@@ -113,11 +117,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             mZoomButtonsController = (ZoomButtonsController) method.invoke(webview);
             mZoomButtonsController.setOnZoomListener(new ZoomListener());
         } catch (NoSuchMethodException e1) {
+            // webview.mZoomManager.getCurrentZoomControl().getControls()
+            Object mZoomManager = getField(webview, WebView.class, "mZoomManager");
+            if (mZoomManager == null) {
+                // webview.mProvider.mZoomManager.getCurrentZoomControl().getControls()
+                Object mProvider = getField(webview, WebView.class, "mProvider");
+                if (mProvider != null) {
+                    mZoomManager = getField(mProvider, mProvider.getClass(), "mZoomManager");
+                }
+            }
             try {
-                // webview.mZoomManager.getCurrentZoomControl().getControls()
-                Field field = WebView.class.getDeclaredField("mZoomManager");
-                field.setAccessible(true);
-                Object mZoomManager = field.get(webview);
                 Method getCurrentZoomControl = mZoomManager.getClass().getDeclaredMethod("getCurrentZoomControl");
                 getCurrentZoomControl.setAccessible(true);
                 Object mEmbeddedZoomControl = getCurrentZoomControl.invoke(mZoomManager);
@@ -146,6 +155,17 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             Log.d(Provider.TAG, "verse: " + verse);
         }
         showUri(uri);
+    }
+
+    private Object getField(Object object, final Class<?> clazz, final String fieldName) {
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(object);
+        } catch (Exception e) {
+            Log.d(Provider.TAG, "", e);
+        }
+        return null;
     }
 
     private void setVersion() {
@@ -177,15 +197,29 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private void showUri(Uri uri) {
         if (version == null) {
+            ((Button)findViewById(R.id.version)).setText(R.string.refreshversion);
+            findViewById(R.id.book).setVisibility(View.INVISIBLE);
+            findViewById(R.id.chapter).setVisibility(View.INVISIBLE);
+            findViewById(R.id.prev).setVisibility(View.INVISIBLE);
+            findViewById(R.id.next).setVisibility(View.INVISIBLE);
+            findViewById(R.id.search).setVisibility(View.INVISIBLE);
             showContent("", getString(R.string.noversion, new Object[] {link_market, link_github}));
             return;
         }
+
+
         if (uri == null) {
             Log.d(Provider.TAG, "show null uri, use default");
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(null).fragment(version).build();
         }
         Log.d(Provider.TAG, "show uri: " + uri);
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor = null;
+        try {
+            cursor = getContentResolver().query(uri, null, null, null, null);
+        } catch (SQLiteException e) {
+            showContent("", getString(R.string.queryerror));
+            return;
+        }
         if (cursor != null) {
             cursor.moveToFirst();
 
@@ -199,6 +233,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             setBookChapter(osis);
             findViewById(R.id.prev).setVisibility(osis_prev.equals("") ? View.INVISIBLE : View.VISIBLE);
             findViewById(R.id.next).setVisibility(osis_next.equals("") ? View.INVISIBLE : View.VISIBLE);
+            findViewById(R.id.book).setVisibility(View.VISIBLE);
+            findViewById(R.id.chapter).setVisibility(View.VISIBLE);
+            findViewById(R.id.search).setVisibility(View.VISIBLE);
             showContent(human + " | " + version, content);
         } else {
             Log.d(Provider.TAG, "no such chapter, try first chapter");
@@ -332,6 +369,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public void onClick(View v) {
+        if (Provider.versions.size() == 0 && v.getId() != R.id.version) {
+            return;
+        }
         switch (v.getId()) {
             case R.id.next:
                 Log.d(Provider.TAG, "next osis: " + osis_next);
@@ -376,6 +416,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case R.id.version:
                 Provider.setVersions();
                 selected = Provider.versions.indexOf(version);
+                if (selected == -1) {
+                    selected = 0;
+                }
                 promptId = R.string.chooseversion;
                 for (String string: Provider.versions) {
                     adapter.add(getVersion(string));
@@ -383,16 +426,21 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 break;
         }
 
-        spinner.setId(promptId);
-        spinner.setPromptId(promptId);
-        spinner.setSelection(selected);
-        spinner.performClick();
+        if (adapter.getCount() > 0) {
+            spinner.setId(promptId);
+            spinner.setPromptId(promptId);
+            spinner.setSelection(selected);
+            spinner.performClick();
+        }
     }
 
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         switch (spinner.getId()) {
             case R.string.choosebook:
-                openOsis(Provider.osiss.get(pos) + ".1");
+                String newbook = Provider.osiss.get(pos);
+                if (!newbook.equals(book)) {
+                    openOsis(newbook + ".1");
+                }
                 break;
             case R.string.choosechapter:
                 openOsis(String.format("%s.%d", book, pos + 1));

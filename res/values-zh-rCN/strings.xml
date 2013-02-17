@@ -13,11 +13,7 @@
       <item quantity="other">在“%5$s”本中从“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
-    <!--
-    <string name="previous">上一章</string>
-    <string name="next">下一章</string>
-    -->
-    <string name="noversion">没有可用的版本。请从谷歌电子市场%1$s或者项目网站%2$s下载安装一些版本数据库。</string>
+    <string name="noversion">非常抱歉，由于某些原因，圣经阅读器不自带圣经数据库。请从谷歌电子市场%1$s或者项目网站%2$s下载安装一些圣经数据库。</string>
     <string name="book">书目</string>
     <string name="chapter">章节</string>
     <string name="choosebook">选择书目</string>
@@ -29,4 +25,6 @@
     <string name="searchgospel">搜索四福音书</string>
     <string name="searchfrom">选择开始书目</string>
     <string name="searchto">选择结束书目</string>
+    <string name="queryerror">无法打开数据库，请稍候再试。</string>
+    <string name="refreshversion">刷新版本</string>
 </resources>

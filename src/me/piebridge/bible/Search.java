@@ -18,6 +18,9 @@ import android.app.SearchManager;
 import android.os.Bundle;
 
 import android.view.View;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 
 import android.widget.TextView;
 import android.widget.ListView;
@@ -25,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.SimpleCursorAdapter;
 
 import android.content.Intent;
+import android.content.Context;
 
 import android.net.Uri;
 import android.util.Log;
@@ -43,7 +47,7 @@ import android.widget.RadioButton;
 import android.widget.BaseAdapter;
 import android.widget.ArrayAdapter;
 
-public class Search extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener
+public class Search extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener
 {
     private TextView textView = null;
     private ListView listView = null;;
@@ -241,12 +245,21 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
     }
 
     public void showSearch() {
+        if (Provider.books.size() == 0) {
+            setContentView(R.layout.result);
+            textView = (TextView) findViewById(R.id.text);
+            textView.setText(R.string.noversion);
+            return;
+        }
         inflater = LayoutInflater.from(this);
         setContentView(R.layout.search);
         searching = false;
         searchlist = (ListView) findViewById(R.id.searchlist);
         findViewById(R.id.searchbutton).setOnClickListener(this);
-        ((EditText) findViewById(R.id.searchtext)).setText(query);
+        final EditText edittext = (EditText) findViewById(R.id.searchtext);
+        edittext.setText(query);
+        edittext.selectAll();
+        edittext.setOnEditorActionListener(this);
 
         spinner = new Spinner(this);
         spinneradapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, new ArrayList<String>());
@@ -515,4 +528,24 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
         Log.d(Provider.TAG, "on pause");
         super.onPause();
     }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        View view = findViewById(R.id.searchbutton);
+        if (view == null) {
+            return false;
+        }
+        if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+            // why some system report IME_ACTION_UNSPECIFIED ???
+            (event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+            view.performClick();
+            return true;
+                }
+        return false;
+    }
+
 }

@@ -9,7 +9,7 @@
       <item quantity="other">%1$d results for \"%2$s\" from \"%3$s\" to \"%4$s\" in \"%5$s\": </item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
-    <string name="noversion">No available version. Please install one or more version(s) from Google Play Store %1$s or Project Website %2$s.</string>
+    <string name="noversion">Sorry, Bible Reader doesn\'t contains any Bible Data for some reasons. Please install one or more Bible Data from Google Play Store %1$s or Project Website %2$s.</string>
     <string name="book">Book</string>
     <string name="chapter">Chapter</string>
     <string name="choosebook">Choose Book</string>
@@ -21,4 +21,6 @@
     <string name="searchgospel">Search Four Gospels</string>
     <string name="searchfrom">Choose From Book</string>
     <string name="searchto">Choose To Book</string>
+    <string name="queryerror">Cannot open database, please try again later.</string>
+    <string name="refreshversion">Refresh Version</string>
 </resources>
