@@ -38,6 +38,18 @@
             android:textSize="20sp"
             />
     </RelativeLayout>
+    <GridView
+        android:id="@+id/gridview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:columnWidth="90dp"
+        android:verticalSpacing="5dp"
+        android:horizontalSpacing="5dp"
+        android:stretchMode="columnWidth"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="@android:drawable/screen_background_light_transparent"
+        />
     <WebView
         android:id="@+id/webview"
         android:layout_width="fill_parent"

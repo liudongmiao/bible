@@ -376,6 +376,10 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
     public void onClick(View v) {
         int from;
         int to;
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
         switch (v.getId()) {
             case R.string.searchall:
                 frombook = 0;
@@ -544,7 +548,7 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
             }
             view.performClick();
             return true;
-                }
+        }
         return false;
     }
 

@@ -20,14 +20,17 @@ import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
 
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.GridView;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
+import android.text.Html;
+import android.text.Spanned;
 import java.util.ArrayList;
 
 import android.util.Log;
@@ -43,7 +46,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.sqlite.SQLiteException;
 
-public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private String osis;
     private String book;
@@ -62,9 +65,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private static ArrayList<String> abbrs = new ArrayList<String>();
     private static ArrayList<String> versions = new ArrayList<String>();
 
-    private Spinner spinner;
+    private GridView gridview;
     private WebView webview;
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<Spanned> adapter;
     private GestureDetector mGestureDetector;
 
     private static final int DISTANCE = 100;
@@ -80,12 +83,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         findViewById(R.id.search).setOnClickListener(this);
         findViewById(R.id.version).setOnClickListener(this);
 
-        spinner = new Spinner(this);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, new ArrayList<String>());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
-        ((ViewGroup) findViewById(R.id.book).getParent()).addView(spinner, 0, 0);
+        // adapter = new ArrayAdapter<String>(this, android.R.layout.simple_gallery_item, new ArrayList<String>());
+
+        adapter = new ArrayAdapter<Spanned>(this, R.layout.grid, new ArrayList<Spanned>());
+        gridview = (GridView) findViewById(R.id.gridview);
+        gridview.setAdapter(adapter);
+        gridview.setVisibility(View.GONE);
+        gridview.setOnItemClickListener(this);
         mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
@@ -392,69 +396,105 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     }
 
+    private int getMatt() {
+        int matt = Provider.osiss.indexOf("Matt");
+        if (matt > 0 && matt * 2 > Provider.osiss.size()) {
+                return matt;
+        } else {
+                return -1;
+        }
+    }
+
+    private String select(String string) {
+        return "<b><u>" + string + "</u></b>";
+    }
+
     private void showSpinner(View v) {
-        int promptId = 0;
-        int selected = 0;
-        ArrayList<String> strings = null;
+        String selected = "";
 
         adapter.clear();
         switch (v.getId()) {
             case R.id.book:
-                selected = Provider.osiss.indexOf(book);
-                promptId = R.string.choosebook;
-                for (String string: Provider.books) {
-                    adapter.add(string);
+                int id;
+                int matt = getMatt();
+                gridview.setNumColumns(2);
+                gridview.setGravity(Gravity.LEFT);
+                Log.d(Provider.TAG, "book=" + book);
+                selected = select(Provider.books.get(Provider.osiss.indexOf(book)));
+                if (matt > 0) {
+                    for (id = 0; id < matt; id++) {
+                        adapter.add(Html.fromHtml(Provider.osiss.get(id).equals(book) ? selected : Provider.books.get(id)));
+                        if (matt + id < Provider.osiss.size()) {
+                            adapter.add(Html.fromHtml(Provider.osiss.get(matt + id).equals(book) ? selected : Provider.books.get(matt + id)));
+                        } else {
+                            adapter.add(Html.fromHtml(""));
+                        }
+                    }
+                } else {
+                    for (String string: Provider.books) {
+                        adapter.add(Html.fromHtml(string.equals(book) ? selected : string));
+                    }
                 }
                 break;
             case R.id.chapter:
-                selected = Integer.parseInt(chapter) - 1;
-                promptId = R.string.choosechapter;
+                gridview.setNumColumns(5);
+                gridview.setGravity(Gravity.CENTER);
+                selected = select(chapter);
                 for (int i = 1; i <= Integer.parseInt(Provider.chapters.get(Provider.osiss.indexOf(book))); i++) {
-                    adapter.add(String.valueOf(i));
+                    adapter.add(Html.fromHtml(String.valueOf(i).equals(chapter) ? selected : String.valueOf(i)));
                 }
                 break;
             case R.id.version:
+                gridview.setNumColumns(1);
+                gridview.setGravity(Gravity.LEFT);
                 Provider.setVersions();
-                selected = Provider.versions.indexOf(version);
-                if (selected == -1) {
-                    selected = 0;
-                }
-                promptId = R.string.chooseversion;
+                Log.d(Provider.TAG, "version=" + version);
+                selected = select(getVersion(version));
                 for (String string: Provider.versions) {
-                    adapter.add(getVersion(string));
+                    adapter.add(Html.fromHtml(string.equals(version) ? selected : getVersion(string)));
                 }
                 break;
         }
 
-        if (adapter.getCount() > 0) {
-            spinner.setId(promptId);
-            spinner.setPromptId(promptId);
-            spinner.setSelection(selected);
-            spinner.performClick();
+        if (adapter.getCount() > 1) {
+            gridview.setId(v.getId());
+            gridview.setVisibility(View.VISIBLE);
+            gridview.setSelection(adapter.getPosition(Html.fromHtml(selected)));
+        } else {
+            gridview.setVisibility(View.GONE);
         }
     }
 
-    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        switch (spinner.getId()) {
-            case R.string.choosebook:
-                String newbook = Provider.osiss.get(pos);
-                if (!newbook.equals(book)) {
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+        gridview.setVisibility(View.GONE);
+        switch (parent.getId()) {
+            case R.id.book:
+                int matt = getMatt();
+                String newbook;
+                if (matt > 0) {
+                    if (pos % 2 == 0) {
+                        newbook = Provider.osiss.get(pos / 2);
+                    } else {
+                        newbook = Provider.osiss.get(matt + pos / 2);
+                    }
+                } else {
+                    newbook = Provider.osiss.get(pos);
+                }
+                if (!newbook.equals("") && !newbook.equals(book)) {
                     openOsis(newbook + ".1");
                 }
                 break;
-            case R.string.choosechapter:
+            case R.id.chapter:
                 openOsis(String.format("%s.%d", book, pos + 1));
                 break;
-            case R.string.chooseversion:
+            case R.id.version:
                 version = Provider.versions.get(pos);
                 storeOsisVersion();
                 Provider.closeDatabase();
                 showUri(setUri());
                 break;
         }
-    }
-
-    public void onNothingSelected(AdapterView<?> parent) {
     }
 
     @Override

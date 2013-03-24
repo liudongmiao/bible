@@ -28,7 +28,7 @@
         android:id="@+id/unformatted"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@android:style/TextAppearance.Small"
+        style="@android:style/TextAppearance.Medium"
         />
 </LinearLayout>
 <!-- vim: set sta sw=4 et: -->
