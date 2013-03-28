@@ -22,4 +22,5 @@
     <string name="searchto">选择结束书目</string>
     <string name="queryerror">无法打开数据库，请稍候再试。</string>
     <string name="refreshversion">刷新版本</string>
+    <string name="copied">经句已经复制，可直接粘贴。</string>
 </resources>

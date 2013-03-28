@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
 
+import android.text.ClipboardManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,8 @@ import android.widget.GridView;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.Locale;
 
 import android.preference.PreferenceManager;
@@ -73,6 +76,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private Bible bible;
     private String selected = "";
+    private String versename = "";
     private int gridviewid = 0;
     protected float scale = 1.0f;
 
@@ -129,6 +133,20 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         webview.getSettings().setSupportZoom(true);
         webview.getSettings().setBuiltInZoomControls(true);
         webview.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webview.addJavascriptInterface(new Object() {
+            public void setVerse(String string) {
+                verse = string;
+                Log.d(TAG, "verse from javascript: " + verse);
+            }
+
+            public void setCopyText(String text) {
+                String copytext = version + " " + bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)) + " " + chapter + ":" + text;
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboard.setText(copytext);
+                showToast();
+                Log.d(TAG, "copy from javascript: " + copytext);
+            }
+        }, "android");
         setZoomButtonsController(webview);
 
         bible = Bible.getBible(getBaseContext());
@@ -140,8 +158,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             verse = String.format("%d", getIntent().getIntExtra("verse", 1));
             Log.d(TAG, "verse: " + verse);
         }
-        fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize", 16);
+        fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize-" + bible.getVersion(), 0);
+        if (fontsize == 0) {
+            fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize", 16);
+        }
+        verse = PreferenceManager.getDefaultSharedPreferences(this).getString("verse", "");
         showUri(uri);
+        Log.d(TAG, "onCreate");
     }
 
     private Uri setUri()
@@ -229,31 +252,28 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private void storeOsisVersion() {
         final Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString("osis", osis);
-        if (version != null) {
-            editor.putString("version", version);
-        }
+        editor.putString("version", version);
+        editor.putString("verse", verse);
+        editor.putInt("fontsize", fontsize);
+        editor.putInt("fontsize-" + version, fontsize);
         editor.commit();
     }
 
     private void showContent(String title, String content) {
+        versename = "pb-" + version + "-" + book.toLowerCase(Locale.US) + "-" + chapter;
         String context = content;
         // for biblegateway.com
         context = context.replaceAll("<span class=\"chapternum\">.*?</span>", "<sup class=\"versenum\">1 </sup>");
         context = context.replaceAll("<span class=\"chapternum mid-paragraph\">.*?</span>", "");
-        if (!verse.equals("")) {
-            // generate verse anchor
-        } else {
-            context = context.replaceAll("<sup(.*?)</sup>", "<sup><strong$1</strong></sup>");
-        }
-        context = context.replaceAll("(<strong>\\D*?(\\d+).*?</strong>)", "<a id=\"" + osis + "_$2\" name=\"$2\"></a><sup>$1</sup>");
-        context = context.replaceAll("<sup(.*?>\\D*?(\\d+).*?)</sup>", "<a id=\"" + osis + "_$2\" name=\"$2\"></a><sup><strong$1</strong></sup>");
+        context = context.replaceAll("(<strong>\\D*?(\\d+).*?</strong>)", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup>$1</sup></span>");
+        context = context.replaceAll("<sup(.*?>\\D*?(\\d+).*?)</sup>", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup><strong$1</strong></sup></span>");
         context = context.replaceAll("「", "“").replaceAll("」", "”");
         context = context.replaceAll("『", "‘").replaceAll("』", "’");
 
         fontsize = (int)(fontsize * scale);
 
-        String body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">";
-        body += "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">";
+        String body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
+        body += "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">\n";
         body += "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
         body += "<style type=\"text/css\">\n";
         body += "body {font-family: serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
@@ -263,27 +283,40 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "h2 {font-size: 1.5em;}\n";
         body += "</style>\n";
         body += "<title>" + title + "</title>\n";
-        // TODO: support verse click-choose
-        body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>";
-        // body += "<script type=\"text/javascript\" src=\"file:///android_asset/reader.js\"></script>";
+        body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
+        body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
         if (verse.equals("")) {
             body += "</head>\n<body>\n<div id=\"content\">\n";
         } else {
             Log.d(TAG, "try jump to verse " + verse);
-            body += "</head>\n<body onload=\"window.location.hash='#" + verse + "'\">\n<div id=\"content\">\n";
+            body += "</head>\n<body onload=\"window.location.hash='#" + versename + "-" + verse + "'\">\n<div id=\"content\">\n";
+            verse = "";
         }
-        verse = "";
         body += context;
         body += "</div>\n</body>\n</html>\n";
-
         webview.clearCache(true);
         webview.setInitialScale(100);
         scale = 1.0f;
         webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
+        /*
+        {
+            String path = "/sdcard/" + versename + ".html";
+            try {
+                Log.d("write", path);
+                java.io.OutputStream os = new java.io.BufferedOutputStream(new java.io.FileOutputStream(new java.io.File(path)));
+                os.write(body.getBytes());
+                os.close();
+                return true;
+            } catch (Exception e) {
+                Log.e("write", path, e);
+            }
+        }
+        */
     }
 
     @Override
     public void onPause() {
+        Log.d(TAG, "onPause");
         storeOsisVersion();
         super.onPause();
     }
@@ -302,9 +335,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 Log.d(TAG, "prev osis: " + osis_prev);
                 openOsis(osis_prev);
                 break;
+            case R.id.version:
+                if (webview.getScrollY() != 0) {
+                    verse = "";
+                    webview.loadUrl("javascript:getFirstVisibleVerse();");
+                }
             case R.id.book:
             case R.id.chapter:
-            case R.id.version:
                 showSpinner(v);
                 break;
             case R.id.search:
@@ -397,9 +434,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 openOsis(String.format("%s.%d", book, pos + 1));
                 break;
             case R.id.version:
+                storeOsisVersion();
                 version = bible.get(Bible.TYPE.VERSION, pos);
                 Log.d(TAG, "version: " + version);
                 bible.setVersion(version);
+                fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize-" + version, fontsize);
                 Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
                 showUri(uri);
                 break;
@@ -409,6 +448,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume");
         if (!version.equals(bible.getVersion()) && !osis.equals("")) {
             Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
             showUri(uri);
@@ -418,6 +458,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     @Override
     public boolean dispatchTouchEvent(MotionEvent e){
         int scrollY = webview.getScrollY();
+        Log.d(TAG, "scrollY: " + scrollY);
         if (scrollY == 0 || (float) scrollY >= webview.getContentHeight() * webview.getScale() - webview.getHeight()) {
             setDisplayZoomControls(true);
         } else {
@@ -573,5 +614,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 return false;
             }
         });
+    }
+
+    private void showToast() {
+        Toast.makeText(getApplicationContext(), R.string.copied, Toast.LENGTH_SHORT).show();
+        /*
+        if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("showedcopytip", false)) {
+            Toast.makeText(getApplicationContext(), R.string.copied, Toast.LENGTH_SHORT).show();
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("showedcopytip", true).commit();
+        }
+        */
     }
 }

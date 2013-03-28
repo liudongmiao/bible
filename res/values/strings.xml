@@ -18,4 +18,5 @@
     <string name="searchto">Choose To Book</string>
     <string name="queryerror">Cannot open database, please try again later.</string>
     <string name="refreshversion">Refresh Version</string>
+    <string name="copied">Verses are copied, can be pasted directly.</string>
 </resources>
