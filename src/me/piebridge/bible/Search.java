@@ -1,7 +1,7 @@
 /*
  * vim: set sta sw=4 et:
  *
- * Copyright (C) 2012 Liu DongMiao <thom@piebridge.me>
+ * Copyright (C) 2012, 2013 Liu DongMiao <thom@piebridge.me>
  *
  * This program is free software. It comes without any warranty, to
  * the extent permitted by applicable law. You can redistribute it
@@ -31,7 +31,6 @@ import android.content.Intent;
 import android.content.Context;
 
 import android.net.Uri;
-import android.util.Log;
 import android.database.Cursor;
 
 import android.preference.PreferenceManager;
@@ -39,6 +38,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 import java.util.ArrayList;
+import java.util.Locale;
+
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.widget.Spinner;
@@ -49,6 +50,8 @@ import android.widget.ArrayAdapter;
 
 public class Search extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener
 {
+    private final String TAG = "me.piebridge.bible$Search";
+
     private TextView textView = null;
     private ListView listView = null;;
 
@@ -68,16 +71,16 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
     private String query = null;
     private boolean searching = false;
 
+    private Bible bible;
     private SimpleCursorAdapter adapter = null;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setVersion();
-
         Intent intent = getIntent();
+        bible = Bible.getBible(getBaseContext());
+        version = bible.getVersion();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             query = intent.getStringExtra(SearchManager.QUERY);
             doSearch(query);
@@ -86,10 +89,15 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
             query = sp.getString("query", "");
             searchtype = sp.getInt("searchtype", SEARCH_ALL);
             frombook = sp.getInt("frombook", 0);
-            tobook = sp.getInt("tobook", Provider.osiss.size() - 1);
+            tobook = sp.getInt("tobook", bible.getCount(Bible.TYPE.OSIS) - 1);
             showSearch();
         }
+    }
 
+    @Override
+    public void onResume() {
+        version = bible.getVersion();
+        super.onResume();
     }
 
     private boolean doSearch(String query) {
@@ -102,19 +110,28 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
             return false;
         }
 
-        setBooks();
-        Log.d(Provider.TAG, "search \"" + query + "\" in version \"" + version + "\"");
+        Log.d(TAG, "search \"" + query + "\" in version \"" + version + "\"");
 
-        Uri uri = Provider.CONTENT_URI_SEARCH.buildUpon().appendEncodedPath(query).fragment(version).build();
+        Uri uri = Provider.CONTENT_URI_SEARCH.buildUpon().appendQueryParameter("books", getQueryBooks()).appendEncodedPath(query).fragment(version).build();
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
 
         if (cursor == null) {
-            textView.setText(getString(R.string.search_no_results, new Object[] {query, Provider.books.get(frombook), Provider.books.get(tobook), String.valueOf(version).toUpperCase()}));
+            textView.setText(getString(R.string.search_no_results, new Object[] {
+                query,
+                bible.get(Bible.TYPE.BOOK, frombook),
+                bible.get(Bible.TYPE.BOOK, tobook),
+                String.valueOf(version).toUpperCase(Locale.US)
+            }));
             return false;
         } else {
             int count = cursor.getCount();
-            String countString = getResources().getQuantityString(R.plurals.search_results, count,
-                    new Object[] {count, query, Provider.books.get(frombook), Provider.books.get(tobook), String.valueOf(version).toUpperCase()});
+            String countString = getResources().getQuantityString(R.plurals.search_results, count, new Object[] {
+                count,
+                query,
+                bible.get(Bible.TYPE.BOOK, frombook),
+                bible.get(Bible.TYPE.BOOK, tobook),
+                String.valueOf(version).toUpperCase(Locale.US)
+            });
             textView.setText(countString);
         }
         showResults(cursor);
@@ -150,7 +167,7 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
             public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
                 int verseIndex = cursor.getColumnIndexOrThrow(Provider.COLUMN_VERSE);
                 if (columnIndex == verseIndex) {
-                    int[] chapterVerse = Provider.getChapterVerse(cursor.getString(verseIndex));
+                    int[] chapterVerse = bible.getChapterVerse(cursor.getString(verseIndex));
                     String string = getString(R.string.search_result_verse,
                         new Object[] {chapterVerse[0], chapterVerse[1]});
                     TextView textView = (TextView) view;
@@ -185,9 +202,9 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
 
         String book = verseCursor.getString(verseCursor.getColumnIndexOrThrow(Provider.COLUMN_BOOK));
         String verse = verseCursor.getString(verseCursor.getColumnIndexOrThrow(Provider.COLUMN_VERSE));
-        int[] chapterVerse = Provider.getChapterVerse(verse);
+        int[] chapterVerse = bible.getChapterVerse(verse);
         String osis = book + "." + chapterVerse[0];
-        Log.d(Provider.TAG, "show osis: " + osis + ", version: " + version);
+        Log.d(TAG, "show osis: " + osis + ", version: " + version);
         verseCursor.close();
 
         Intent chapterIntent = new Intent(getApplicationContext(), Chapter.class);
@@ -199,27 +216,11 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
         return true;
     }
 
-    private void setVersion() {
-        Provider.setVersions();
-        version = Provider.databaseVersion;
-        if (version.equals("")) {
-            version = PreferenceManager.getDefaultSharedPreferences(this).getString("version", null);
-            if (version != null && Provider.versions.indexOf(version) < 0) {
-                version = null;
-            }
-            if (version == null && Provider.versions.size() > 0) {
-                version = Provider.versions.get(0);
-            }
-        }
-
-        Log.d(Provider.TAG, "set version: " + version);
-    }
-
     private void updateOptions() {
         for (Option option: options) {
             switch (option.text) {
                 case R.string.chooseversion:
-                    option.subtext = String.valueOf(version).toUpperCase();
+                    option.subtext = String.valueOf(version).toUpperCase(Locale.US);
                     break;
                 case R.string.searchall:
                     option.checked = (searchtype == SEARCH_ALL);
@@ -234,10 +235,10 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
                     option.checked = (searchtype == SEARCH_GOSPEL);
                     break;
                 case R.string.searchfrom:
-                    option.subtext = Provider.books.get(frombook);
+                    option.subtext = bible.get(Bible.TYPE.BOOK, frombook);
                     break;
                 case R.string.searchto:
-                    option.subtext = Provider.books.get(tobook);
+                    option.subtext = bible.get(Bible.TYPE.BOOK, tobook);
                     break;
             }
         }
@@ -245,7 +246,7 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
     }
 
     public void showSearch() {
-        if (Provider.books.size() == 0) {
+        if (bible.getCount(Bible.TYPE.BOOK) == 0) {
             setContentView(R.layout.result);
             textView = (TextView) findViewById(R.id.text);
             textView.setText(R.string.noversion);
@@ -270,13 +271,13 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
         ((ViewGroup) searchlist.getParent()).addView(spinner, 0, 0);
 
         options.clear();
-        options.add(new Option(R.string.chooseversion, String.valueOf(version).toUpperCase()));
+        options.add(new Option(R.string.chooseversion, String.valueOf(bible.getVersion()).toUpperCase(Locale.US)));
         options.add(new Option(R.string.searchall, (searchtype == SEARCH_ALL)));
         options.add(new Option(R.string.searchold, (searchtype == SEARCH_OLD)));
         options.add(new Option(R.string.searchnew, (searchtype == SEARCH_NEW)));
         options.add(new Option(R.string.searchgospel, (searchtype == SEARCH_GOSPEL)));
-        options.add(new Option(R.string.searchfrom, Provider.books.get(frombook)));
-        options.add(new Option(R.string.searchto, Provider.books.get(tobook)));
+        options.add(new Option(R.string.searchfrom, bible.get(Bible.TYPE.BOOK, frombook)));
+        options.add(new Option(R.string.searchto, bible.get(Bible.TYPE.BOOK, tobook)));
         optionadapter = new OptionAdapter();
         searchlist.setAdapter(optionadapter);
     }
@@ -305,27 +306,26 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
 
     private void showSpinner(View v) {
         int selected = 0;
-        ArrayList<String> strings = null;
 
         spinneradapter.clear();
         switch (v.getId()) {
             case R.string.searchfrom:
                 selected = frombook;
-                for (String string: Provider.books) {
+                for (String string: bible.get(Bible.TYPE.BOOK)) {
                     spinneradapter.add(string);
                 }
                 break;
             case R.string.searchto:
                 selected = tobook;
-                for (String string: Provider.books) {
+                for (String string: bible.get(Bible.TYPE.BOOK)) {
                     spinneradapter.add(string);
                 }
                 break;
             case R.string.chooseversion:
-                Provider.setVersions();
-                selected = Provider.versions.indexOf(version);
-                for (String string: Provider.versions) {
-                    spinneradapter.add(Chapter.getVersion(string));
+                bible.checkVersions();
+                selected = bible.getPosition(Bible.TYPE.VERSION, version);
+                for (String string: bible.get(Bible.TYPE.VERSION)) {
+                    spinneradapter.add(bible.getVersionResource(string));
                 }
                 break;
         }
@@ -347,9 +347,9 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
                 searchtype = SEARCH_CUSTOM;
                 break;
             case R.string.chooseversion:
-                version = Provider.versions.get(pos);
-                Provider.setVersion(version);
-                Log.d(Provider.TAG, "choose version: " + version);
+                version = bible.get(Bible.TYPE.VERSION, pos);
+                bible.setVersion(version);
+                Log.d(TAG, "choose version: " + version);
                 break;
         }
         if (frombook > tobook) {
@@ -357,13 +357,13 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
             tobook = frombook;
             frombook = swap;
         }
-        if (frombook == 0 && tobook == (Provider.books.size() - 1)) {
+        if (frombook == 0 && tobook == (bible.getCount(Bible.TYPE.BOOK) - 1)) {
             searchtype = SEARCH_ALL;
-        } else if (frombook == Provider.osiss.indexOf("Gen") && tobook == Provider.osiss.indexOf("Mal")) {
+        } else if (frombook == bible.getPosition(Bible.TYPE.OSIS, "Gen") && tobook == bible.getPosition(Bible.TYPE.OSIS, "Mal")) {
             searchtype = SEARCH_OLD;
-        } else if (frombook == Provider.osiss.indexOf("Matt") && tobook == Provider.osiss.indexOf("Rev")) {
+        } else if (frombook == bible.getPosition(Bible.TYPE.OSIS, "Matt") && tobook == bible.getPosition(Bible.TYPE.OSIS, "Rev")) {
             searchtype = SEARCH_NEW;
-        } else if (frombook == Provider.osiss.indexOf("Matt") && tobook == Provider.osiss.indexOf("John")) {
+        } else if (frombook == bible.getPosition(Bible.TYPE.OSIS, "Matt") && tobook == bible.getPosition(Bible.TYPE.OSIS, "John")) {
             searchtype = SEARCH_GOSPEL;
         }
         updateOptions();
@@ -383,14 +383,14 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
         switch (v.getId()) {
             case R.string.searchall:
                 frombook = 0;
-                tobook = Provider.books.size() - 1;
+                tobook = bible.getCount(Bible.TYPE.OSIS) - 1;
                 searchtype = SEARCH_ALL;
                 updateOptions();
                 break;
             case R.string.searchold:
                 // Gen, Mal
-                from = Provider.osiss.indexOf("Gen");
-                to = Provider.osiss.indexOf("Mal");
+                from = bible.getPosition(Bible.TYPE.OSIS, "Gen");
+                to = bible.getPosition(Bible.TYPE.OSIS, "Mal");
                 if (from != -1 && to != -1) {
                     frombook = from;
                     tobook = to;
@@ -400,8 +400,8 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
                 break;
             case R.string.searchnew:
                 // Matt, Rev
-                from = Provider.osiss.indexOf("Matt");
-                to = Provider.osiss.indexOf("Rev");
+                from = bible.getPosition(Bible.TYPE.OSIS, "Matt");
+                to = bible.getPosition(Bible.TYPE.OSIS, "Rev");
                 if (from != -1 && to != -1) {
                     frombook = from;
                     tobook = to;
@@ -410,8 +410,8 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
                 updateOptions();
                 break;
             case R.string.searchgospel:
-                from = Provider.osiss.indexOf("Matt");
-                to = Provider.osiss.indexOf("John");
+                from = bible.getPosition(Bible.TYPE.OSIS, "Matt");
+                to = bible.getPosition(Bible.TYPE.OSIS, "John");
                 if (from != -1 && to != -1) {
                     frombook = from;
                     tobook = to;
@@ -434,12 +434,12 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
         }
     }
 
-    public void setBooks() {
-        String queryBooks = String.format("'%s'", Provider.osiss.get(frombook));
+    public String getQueryBooks() {
+        String queryBooks = String.format("'%s'", bible.get(Bible.TYPE.OSIS, frombook));
         for (int i = frombook + 1; i <= tobook; i++) {
-            queryBooks += String.format(", '%s'", Provider.osiss.get(i));
+            queryBooks += String.format(", '%s'", bible.get(Bible.TYPE.OSIS, i));
         }
-        Provider.setQueryBooks(queryBooks);
+        return queryBooks;
     }
 
     private ListView searchlist;
@@ -529,7 +529,7 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
         editor.putInt("frombook", frombook);
         editor.putInt("tobook", tobook);
         editor.commit();
-        Log.d(Provider.TAG, "on pause");
+        Log.d(TAG, "on pause");
         super.onPause();
     }
 

@@ -5,7 +5,6 @@
     <string name="select">更换版本</string>
     <string name="refresh">刷新</string>
     -->
-    <string name="search">搜索圣经</string>
     <string name="search_hint">搜索圣经</string>
     <string name="search_no_results">在“%4$s”本中从“%2$s”至“%3$s”无法找到“%1$s”。</string>
     <plurals name="search_results">
@@ -14,10 +13,6 @@
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
     <string name="noversion">非常抱歉，由于某些原因，圣经阅读器不自带圣经数据库。请从谷歌电子市场%1$s或者项目网站%2$s下载安装一些圣经数据库。</string>
-    <string name="book">书目</string>
-    <string name="chapter">章节</string>
-    <string name="choosebook">选择书目</string>
-    <string name="choosechapter">选择章节</string>
     <string name="chooseversion">选择版本</string>
     <string name="searchall">搜索整本圣经</string>
     <string name="searchold">搜索旧约圣经</string>

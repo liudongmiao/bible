@@ -1,7 +1,7 @@
 /*
  * vim: set sta sw=4 et:
  *
- * Copyright (C) 2012 Liu DongMiao <thom@piebridge.me>
+ * Copyright (C) 2012, 2013 Liu DongMiao <thom@piebridge.me>
  *
  * This program is free software. It comes without any warranty, to
  * the extent permitted by applicable law. You can redistribute it
@@ -21,15 +21,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import android.net.Uri;
-import android.util.Log;
-
-import java.io.File;
-import java.util.ArrayList;
-import android.os.Environment;
-import android.content.Context;
 
 public class Provider extends ContentProvider
 {
+    private static final String TAG = "me.piebridge.bible$Provider";
+
     public static final String COLUMN_BOOK = "book";
     public static final String COLUMN_VERSE = "verse";
     public static final String COLUMN_HUMAN = "human";
@@ -39,17 +35,6 @@ public class Provider extends ContentProvider
     public static final String COLUMN_CONTENT = "content";
     public static final String COLUMN_OSIS = "osis";
     public static final String COLUMN_CHAPTERS = "chapters";
-    public static final String TAG = "me.piebridge.bible";
-
-    public static String databaseVersion = "";
-    public static ArrayList<String> books = new ArrayList<String>();
-    public static ArrayList<String> osiss = new ArrayList<String>();
-    public static ArrayList<String> chapters = new ArrayList<String>();
-    public static ArrayList<String> versions = new ArrayList<String>();
-
-    private static Context context = null;
-    private static String databasePath = null;
-    private static SQLiteDatabase database = null;
 
     private static final String TABLE_VERSES = "verses left outer join books on (verses.book = books.osis)";
     private static final String[] COLUMNS_VERSE = {"id as _id", "book", "human", "verse * 1000 as verse", "unformatted"};
@@ -62,10 +47,8 @@ public class Provider extends ContentProvider
         "previous_reference_osis as previous",
         "next_reference_osis as next"};
 
-    private static final String TABLE_BOOKS = "books";
-    private static final String[] COLUMNS_BOOKS = {"number as _id", "osis", "human", "chapters"};
-
-    private static String queryBooks;
+    public static final String TABLE_BOOKS = "books";
+    public static final String[] COLUMNS_BOOKS = {"number as _id", "osis", "human", "chapters"};
 
     public static final String AUTHORITY = "me.piebridge.bible.provider";
     public static final Uri CONTENT_URI_SEARCH = Uri.parse("content://" + AUTHORITY + "/search");
@@ -76,8 +59,11 @@ public class Provider extends ContentProvider
     private static final int URI_VERSE = 1;
     private static final int URI_CHAPTER = 2;
 
-    private static final UriMatcher uriMatcher = buildUriMatcher();
-    private static UriMatcher buildUriMatcher() {
+    private Bible bible;
+
+    private final UriMatcher uriMatcher = buildUriMatcher();
+
+    private UriMatcher buildUriMatcher() {
         UriMatcher matcher =  new UriMatcher(UriMatcher.NO_MATCH);
         matcher.addURI(AUTHORITY, "search/*", URI_SEARCH);
         matcher.addURI(AUTHORITY, "verse/#", URI_VERSE);
@@ -94,100 +80,8 @@ public class Provider extends ContentProvider
         return matcher;
     }
 
-    public static void closeDatabase() {
-        if (database != null) {
-            Log.d(TAG, "close database \"" + database.getPath() + "\"");
-            database.close();
-            database = null;
-            databaseVersion = "";
-        }
-    }
-
-    public static void setBooks() {
-        books.clear();
-        osiss.clear();
-        chapters.clear();
-        Cursor cursor = database.query(TABLE_BOOKS, COLUMNS_BOOKS, null, null, null, null, null);
-        try {
-            while (cursor.moveToNext()) {
-                String osis = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_OSIS));
-                String human = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_HUMAN));
-                String count = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CHAPTERS));
-                osiss.add(osis);
-                books.add(human);
-                chapters.add(count);
-            }
-        } finally {
-            cursor.close();
-        }
-
-    }
-
-    private static boolean setDatabasePath() {
-        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            if (context == null) {
-                Log.e(TAG, "context is null");
-                return false;
-            }
-            File file = null;
-            try {
-                file = context.getExternalFilesDir(null);
-            } catch (NoSuchMethodError e) {
-                // /mnt/sdcard/Android/data/me.piebridge.bible/files
-                file = new File(new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), context.getPackageName()), "files");
-                if (file == null) {
-                    return false;
-                }
-                if (!file.exists()) {
-                    if (!file.mkdirs()) {
-                        Log.w(TAG, "cannot create directory: " + file);
-                        return false;
-                    }
-                    try {
-                        (new File(file, ".nomedia")).createNewFile();
-                    } catch (java.io.IOException ioe) {
-                    }
-                }
-            }
-            if (file == null) {
-                Log.e(TAG, "file: " + file);
-                return false;
-            }
-            databasePath = file.getAbsolutePath();
-            Log.d(TAG, "set database path: " + databasePath);
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean setVersion(String version) {
-        if (database != null) {
-            if (databaseVersion.equals(version)) {
-                return true;
-            }
-            Log.d(TAG, "close database \"" + database.getPath() + "\"");
-            database.close();
-        }
-
-        if (!setDatabasePath()) {
-            return false;
-        }
-        File file = new File(databasePath, version + ".sqlite3");
-        if (file.exists() && file.isFile()) {
-            databaseVersion = version;
-            Log.d(TAG, "open database \"" + file.getAbsolutePath() + "\"");
-            database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
-                    SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-            setBooks();
-            return true;
-        } else {
-            databaseVersion = "";
-            database = null;
-            return false;
-        }
-    }
-
-    private Cursor queryVerse(String query) {
+    private Cursor queryVerse(String books, String query) {
+        SQLiteDatabase database = bible.getDatabase();
         if (database == null) {
             return null;
         }
@@ -195,7 +89,7 @@ public class Provider extends ContentProvider
         Cursor cursor = database.query(
                 TABLE_VERSES,
                 COLUMNS_VERSE,
-                "unformatted like ? and book in (" + queryBooks + ")",
+                "unformatted like ? and book in (" + books + ")",
                 new String[] { "%" + query + "%"},
                 null,
                 null,
@@ -213,6 +107,8 @@ public class Provider extends ContentProvider
     }
 
     private Cursor getVerse(String id) {
+        SQLiteDatabase database = bible.getDatabase();
+
         if (database == null) {
             return null;
         }
@@ -238,7 +134,10 @@ public class Provider extends ContentProvider
     }
 
     private Cursor getChapter(String osis) {
+        SQLiteDatabase database = bible.getDatabase();
+
         if (database == null) {
+            Log.e(TAG, "database is null");
             return null;
         }
 
@@ -276,47 +175,9 @@ public class Provider extends ContentProvider
         return cursor;
     }
 
-    public static boolean setVersions() {
-        versions.clear();
-        if (!setDatabasePath()) {
-            return false;
-        }
-        File path = new File(databasePath);
-        File oldpath = new File(Environment.getExternalStorageDirectory(), ".piebridge");
-        if (oldpath.exists() && oldpath.isDirectory()) {
-            Log.d(Provider.TAG, "oldpath: " + oldpath.getAbsolutePath());
-            String[] names = oldpath.list();
-            for (String name: names) {
-                if (!name.endsWith(".sqlite3")) {
-                    continue;
-                }
-                File oldfile = new File(oldpath, name);
-                File newfile = new File(path, name);
-                if (oldfile.exists() && oldfile.isFile() && !newfile.exists()) {
-                    oldfile.renameTo(newfile);
-                }
-            }
-        }
-        if (path.exists() && path.isDirectory()) {
-            String[] names = path.list();
-            for (String name: names) {
-                File file = new File(path, name);
-                if (name.endsWith(".sqlite3") && file.exists() && file.isFile()) {
-                    if (name.equals("niv.sqlite3")) {
-                        versions.add(0, name.replace(".sqlite3", ""));
-                    } else {
-                        versions.add(name.replace(".sqlite3", ""));
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
     @Override
     public boolean onCreate() {
-        context = getContext();
-        setVersions();
+        bible = Bible.getBible(getContext());
         return true;
     }
 
@@ -327,20 +188,22 @@ public class Provider extends ContentProvider
         }
         Log.d(TAG, "query uri: " + uri);
         String version = uri.getFragment();
-        if (version != null && !setVersion(version)) {
+        if (version != null && !version.equals("") && !bible.setVersion(version)) {
             return null;
         }
+        SQLiteDatabase database = bible.getDatabase();
         if (database == null) {
+            Log.e(TAG, "database is null");
             return null;
         }
-        Log.d(TAG, "query database \"" + database.getPath() + "\"");
-        if (databaseVersion.equals("")) {
+        if (bible.getVersion().equals("")) {
             return null;
         }
         switch (uriMatcher.match(uri)) {
             case URI_SEARCH:
                 String query = uri.getLastPathSegment();
-                return queryVerse(query);
+                String books = uri.getQueryParameter("books");
+                return queryVerse(books, query);
             case URI_VERSE:
                 String id = uri.getLastPathSegment();
                 return getVerse(id);
@@ -370,17 +233,6 @@ public class Provider extends ContentProvider
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         throw new UnsupportedOperationException();
-    }
-
-    public static int[] getChapterVerse(String string) {
-        Integer value = Integer.parseInt(string);
-        Integer chapter = value / 1000;
-        Integer verse = value - chapter * 1000;
-        return new int[] {chapter, verse};
-    }
-
-    public static void setQueryBooks(String string) {
-        queryBooks = string;
     }
 
 }

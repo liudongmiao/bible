@@ -1,7 +1,7 @@
 /*
  * vim: set sta sw=4 et:
  *
- * Copyright (C) 2012 Liu DongMiao <thom@piebridge.me>
+ * Copyright (C) 2012, 2013 Liu DongMiao <thom@piebridge.me>
  *
  * This program is free software. It comes without any warranty, to
  * the extent permitted by applicable law. You can redistribute it
@@ -13,6 +13,7 @@
 
 package me.piebridge.bible;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
@@ -21,6 +22,7 @@ import android.webkit.WebView;
 import android.webkit.WebSettings;
 
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.GestureDetector;
@@ -29,12 +31,11 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
-import android.text.Html;
-import android.text.Spanned;
-import java.util.ArrayList;
+import android.widget.TextView;
+import java.util.Locale;
 
-import android.util.Log;
 import android.preference.PreferenceManager;
+import android.content.Context;
 import android.content.SharedPreferences.Editor;
 
 import java.lang.reflect.Field;
@@ -42,17 +43,17 @@ import java.lang.reflect.Method;
 import android.widget.ZoomButtonsController;
 
 import android.content.Intent;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.database.sqlite.SQLiteException;
 
 public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
-    private String osis;
+    private final String TAG = "me.piebridge.bible$Chapter";
+
+    private String osis = "";
     private String book;
     private String chapter;
     private String verse = "";
-    private String version = null;
+    private String version = "";
 
     private String osis_next;
     private String osis_prev;
@@ -62,17 +63,21 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/downloads\">https://github.com/liudongmiao/bible/downloads</a>";
 
     private ZoomButtonsController mZoomButtonsController = null;
-    private static ArrayList<String> abbrs = new ArrayList<String>();
-    private static ArrayList<String> versions = new ArrayList<String>();
 
     private GridView gridview;
     private WebView webview;
-    private ArrayAdapter<Spanned> adapter;
-    private GestureDetector mGestureDetector;
+    private ArrayAdapter<String> adapter;
 
-    private static final int DISTANCE = 100;
+    private final int DISTANCE = 100;
+    private GestureDetector mGestureDetector = null;
+
+    private Bible bible;
+    private String selected = "";
+    private int gridviewid = 0;
+    protected float scale = 1.0f;
 
     @Override
+    @SuppressLint("SetJavaScriptEnabled")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chapter);
@@ -83,124 +88,73 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         findViewById(R.id.search).setOnClickListener(this);
         findViewById(R.id.version).setOnClickListener(this);
 
-        // adapter = new ArrayAdapter<String>(this, android.R.layout.simple_gallery_item, new ArrayList<String>());
+        adapter = new ArrayAdapter<String>(this, R.layout.grid) {
+            private LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = convertView;
+                TextView textview = null;
+                if (view == null) {
+                    view = inflater.inflate(R.layout.grid, null);
+                }
+                textview = (TextView) view.findViewById(R.id.text1);
+                if (getItem(position).equals("")) {
+                    textview.setVisibility(View.INVISIBLE);
+                } else {
+                    textview.setText(getItem(position));
+                    textview.setVisibility(View.VISIBLE);
+                }
+                if (gridviewid == R.id.chapter) {
+                    textview.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
+                } else {
+                    textview.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+                }
+                if (getItem(position).equals(selected)) {
+                    textview.getPaint().setUnderlineText(true);
+                } else {
+                    textview.getPaint().setUnderlineText(false);
+                }
+                return view;
+            }
+        };
 
-        adapter = new ArrayAdapter<Spanned>(this, R.layout.grid, new ArrayList<Spanned>());
         gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(adapter);
         gridview.setVisibility(View.GONE);
         gridview.setOnItemClickListener(this);
-        mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                if (Math.abs(e1.getRawY() - e2.getRawY()) > Math.abs(e1.getRawX() - e2.getRawX())) {
-                    return false;
-                }
-                if (e1.getRawX() - e2.getRawX() > DISTANCE) {
-                    Log.d(Provider.TAG, "swipe left, next osis: " + osis_next);
-                    openOsis(osis_next);
-                    return true;
-                } else if (e2.getRawX() - e1.getRawX() > DISTANCE) {
-                    Log.d(Provider.TAG, "swipe right, prev osis: " + osis_prev);
-                    openOsis(osis_prev);
-                    return true;
-                }
-                return false;
-            }
-        });
 
+        setGestureDetector();
         webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setSupportZoom(true);
         webview.getSettings().setBuiltInZoomControls(true);
         webview.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        setZoomButtonsController(webview);
 
-        try {
-            // webview.getZoomButtonsController()
-            Method method = WebView.class.getMethod("getZoomButtonsController");
-            mZoomButtonsController = (ZoomButtonsController) method.invoke(webview);
-            mZoomButtonsController.setOnZoomListener(new ZoomListener());
-        } catch (NoSuchMethodException e1) {
-            // webview.mZoomManager.getCurrentZoomControl().getControls()
-            Object mZoomManager = getField(webview, WebView.class, "mZoomManager");
-            if (mZoomManager == null) {
-                // webview.mProvider.mZoomManager.getCurrentZoomControl().getControls()
-                Object mProvider = getField(webview, WebView.class, "mProvider");
-                if (mProvider != null) {
-                    mZoomManager = getField(mProvider, mProvider.getClass(), "mZoomManager");
-                }
-            }
-            try {
-                Method getCurrentZoomControl = mZoomManager.getClass().getDeclaredMethod("getCurrentZoomControl");
-                getCurrentZoomControl.setAccessible(true);
-                Object mEmbeddedZoomControl = getCurrentZoomControl.invoke(mZoomManager);
-                Method getControls = mEmbeddedZoomControl.getClass().getDeclaredMethod("getControls");
-                getControls.setAccessible(true);
-                mZoomButtonsController = (ZoomButtonsController) getControls.invoke(mEmbeddedZoomControl);
-                mZoomButtonsController.setOnZoomListener(new ZoomListener());
-                // let canZoomOut always be true ...
-                Field MINIMUM_SCALE_INCREMENT = mZoomManager.getClass().getDeclaredField("MINIMUM_SCALE_INCREMENT");
-                MINIMUM_SCALE_INCREMENT.setAccessible(true);
-                MINIMUM_SCALE_INCREMENT.set(mZoomManager, -1f);
-            } catch (Exception e2) {
-                Log.d(Provider.TAG, "", e2);
-            }
-        } catch (Exception e3) {
-            Log.d(Provider.TAG, "", e3);
-        }
-
+        bible = Bible.getBible(getBaseContext());
         Uri uri = getIntent().getData();
         if (uri == null) {
             uri = setUri();
         } else {
-            Log.d(Provider.TAG, "uri: " + uri);
-            setVersion();
+            Log.d(TAG, "uri: " + uri);
             verse = String.format("%d", getIntent().getIntExtra("verse", 1));
-            Log.d(Provider.TAG, "verse: " + verse);
-        }
-        showUri(uri);
-    }
-
-    private Object getField(Object object, final Class<?> clazz, final String fieldName) {
-        try {
-            Field field = clazz.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(object);
-        } catch (Exception e) {
-            Log.d(Provider.TAG, "", e);
-        }
-        return null;
-    }
-
-    private void setVersion() {
-        Provider.setVersions();
-        version = Provider.databaseVersion;
-        if (version.equals("")) {
-            version = PreferenceManager.getDefaultSharedPreferences(this).getString("version", null);
-            if (version != null && Provider.versions.indexOf(version) < 0) {
-                version = null;
-            }
-            if (version == null && Provider.versions.size() > 0) {
-                version = Provider.versions.get(0);
-            }
+            Log.d(TAG, "verse: " + verse);
         }
         fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize", 16);
-        Log.d(Provider.TAG, "set fontsize: " + fontsize);
+        showUri(uri);
     }
 
     private Uri setUri()
     {
         osis = PreferenceManager.getDefaultSharedPreferences(this).getString("osis", "null");
-        Log.d(Provider.TAG, "set osis: " + osis);
-
-        setVersion();
+        Log.d(TAG, "set osis: " + osis);
         Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
-
         return uri;
     }
 
     private void showUri(Uri uri) {
-        if (version == null) {
+        version = bible.getVersion();
+        if (version.equals("")) {
             ((Button)findViewById(R.id.version)).setText(R.string.refreshversion);
             findViewById(R.id.book).setVisibility(View.INVISIBLE);
             findViewById(R.id.chapter).setVisibility(View.INVISIBLE);
@@ -211,12 +165,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             return;
         }
 
-
         if (uri == null) {
-            Log.d(Provider.TAG, "show null uri, use default");
+            Log.d(TAG, "show null uri, use default");
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(null).fragment(version).build();
         }
-        Log.d(Provider.TAG, "show uri: " + uri);
+        Log.d(TAG, "show uri: " + uri);
         Cursor cursor = null;
         try {
             cursor = getContentResolver().query(uri, null, null, null, null);
@@ -242,9 +195,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             findViewById(R.id.search).setVisibility(View.VISIBLE);
             showContent(human + " | " + version, content);
         } else {
-            Log.d(Provider.TAG, "no such chapter, try first chapter");
+            Log.d(TAG, "no such chapter, try first chapter");
             Uri nulluri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(null).fragment(version).build();
-            showUri(nulluri);
+            if (!nulluri.equals(uri)) {
+                showUri(nulluri);
+            } else {
+                showContent("", getString(R.string.queryerror));
+            }
         }
     }
 
@@ -253,7 +210,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             return false;
         }
         if (!osis.equals(newOsis)) {
-            Uri uri = Uri.withAppendedPath(Provider.CONTENT_URI_CHAPTER, newOsis);
+            Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(newOsis).build();
             showUri(uri);
         }
         return true;
@@ -262,10 +219,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private void setBookChapter(String osis) {
         book = osis.split("\\.")[0];
         chapter = osis.split("\\.")[1];
-        Log.d(Provider.TAG, "set book chapter, osis: " + osis);
+        Log.d(TAG, "set book chapter, osis: " + osis);
 
-        ((Button)findViewById(R.id.version)).setText(String.valueOf(Provider.databaseVersion).toUpperCase());
-        ((Button)findViewById(R.id.book)).setText(Provider.books.get(Provider.osiss.indexOf(book)));
+        ((Button)findViewById(R.id.version)).setText(String.valueOf(bible.getVersion()).toUpperCase(Locale.US));
+        ((Button)findViewById(R.id.book)).setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
         ((Button)findViewById(R.id.chapter)).setText(chapter);
     }
 
@@ -285,13 +242,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         context = context.replaceAll("<span class=\"chapternum mid-paragraph\">.*?</span>", "");
         if (!verse.equals("")) {
             // generate verse anchor
-            context = context.replaceAll("(<strong>\\D*?(\\d+).*?</strong>)", "<a name=\"$2\"></a>$1");
-            context = context.replaceAll("<sup(.*?>\\D*?(\\d+).*?)</sup>", "<a name=\"$2\"></a><strong$1</strong>");
         } else {
-            context = context.replaceAll("<sup(.*?)</sup>", "<strong$1</strong>");
+            context = context.replaceAll("<sup(.*?)</sup>", "<sup><strong$1</strong></sup>");
         }
+        context = context.replaceAll("(<strong>\\D*?(\\d+).*?</strong>)", "<a id=\"" + osis + "_$2\" name=\"$2\"></a><sup>$1</sup>");
+        context = context.replaceAll("<sup(.*?>\\D*?(\\d+).*?)</sup>", "<a id=\"" + osis + "_$2\" name=\"$2\"></a><sup><strong$1</strong></sup>");
         context = context.replaceAll("「", "“").replaceAll("」", "”");
         context = context.replaceAll("『", "‘").replaceAll("』", "’");
+
+        fontsize = (int)(fontsize * scale);
 
         String body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">";
         body += "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">";
@@ -305,19 +264,21 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "</style>\n";
         body += "<title>" + title + "</title>\n";
         // TODO: support verse click-choose
-        body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\">";
+        body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>";
         // body += "<script type=\"text/javascript\" src=\"file:///android_asset/reader.js\"></script>";
         if (verse.equals("")) {
-            body += "</head>\n<body>\n<div>\n";
+            body += "</head>\n<body>\n<div id=\"content\">\n";
         } else {
-            Log.d(Provider.TAG, "try jump to verse " + verse);
-            body += "</head>\n<body onload=\"window.location.hash='#" + verse + "'\">\n<div>\n";
+            Log.d(TAG, "try jump to verse " + verse);
+            body += "</head>\n<body onload=\"window.location.hash='#" + verse + "'\">\n<div id=\"content\">\n";
         }
         verse = "";
         body += context;
         body += "</div>\n</body>\n</html>\n";
 
         webview.clearCache(true);
+        webview.setInitialScale(100);
+        scale = 1.0f;
         webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
     }
 
@@ -327,62 +288,18 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         super.onPause();
     }
 
-    private void initVersion() {
-        Resources res = getResources();
-        TypedArray abbr = res.obtainTypedArray(R.array.abbr);
-        TypedArray version = res.obtainTypedArray(R.array.version);
-
-        for (int i = 0; i < abbr.length(); i++) {
-            abbrs.add(abbr.getString(i));
-            versions.add(version.getString(i));
-        }
-    }
-
-    public static String getVersion(String string) {
-        int index = abbrs.indexOf(string);
-        if (index == -1) {
-            return string;
-        }
-        return versions.get(index);
-    }
-
-    @Override
-    public void onResume() {
-        Provider.setVersions();
-        initVersion();
-        super.onResume();
-    }
-
-    private class ZoomListener implements ZoomButtonsController.OnZoomListener {
-        public void onVisibilityChanged(boolean visible) {
-            if (visible && mZoomButtonsController != null && fontsize != 1) {
-                mZoomButtonsController.setZoomOutEnabled(true);
-            }
-        }
-
-        public void onZoom(boolean zoomIn) {
-            if (fontsize == 1 && !zoomIn) {
-                return;
-            }
-            fontsize += (zoomIn ? 1 : -1);
-            Log.d(Provider.TAG, "update fontsize to " + fontsize);
-            PreferenceManager.getDefaultSharedPreferences(Chapter.this).edit().putInt("fontsize", fontsize).commit();
-            showUri(Uri.withAppendedPath(Provider.CONTENT_URI_CHAPTER, osis));
-        }
-    }
-
     @Override
     public void onClick(View v) {
-        if (Provider.versions.size() == 0 && v.getId() != R.id.version) {
+        if (bible.getCount(Bible.TYPE.VERSION) == 0 && v.getId() != R.id.version) {
             return;
         }
         switch (v.getId()) {
             case R.id.next:
-                Log.d(Provider.TAG, "next osis: " + osis_next);
+                Log.d(TAG, "next osis: " + osis_next);
                 openOsis(osis_next);
                 break;
             case R.id.prev:
-                Log.d(Provider.TAG, "prev osis: " + osis_prev);
+                Log.d(TAG, "prev osis: " + osis_prev);
                 openOsis(osis_prev);
                 break;
             case R.id.book:
@@ -397,69 +314,60 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private int getMatt() {
-        int matt = Provider.osiss.indexOf("Matt");
-        if (matt > 0 && matt * 2 > Provider.osiss.size()) {
+        int matt = bible.getPosition(Bible.TYPE.OSIS, "Matt");
+        if (matt > 0 && matt * 2 > bible.getCount(Bible.TYPE.OSIS)) {
                 return matt;
         } else {
                 return -1;
         }
     }
 
-    private String select(String string) {
-        return "<b><u>" + string + "</u></b>";
-    }
-
     private void showSpinner(View v) {
-        String selected = "";
-
         adapter.clear();
+        gridviewid = v.getId();
         switch (v.getId()) {
             case R.id.book:
-                int id;
                 int matt = getMatt();
                 gridview.setNumColumns(2);
-                gridview.setGravity(Gravity.LEFT);
-                Log.d(Provider.TAG, "book=" + book);
-                selected = select(Provider.books.get(Provider.osiss.indexOf(book)));
+                Log.d(TAG, "book=" + book);
+                selected = bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book));
                 if (matt > 0) {
-                    for (id = 0; id < matt; id++) {
-                        adapter.add(Html.fromHtml(Provider.osiss.get(id).equals(book) ? selected : Provider.books.get(id)));
-                        if (matt + id < Provider.osiss.size()) {
-                            adapter.add(Html.fromHtml(Provider.osiss.get(matt + id).equals(book) ? selected : Provider.books.get(matt + id)));
+                    for (int id = 0; id < matt; id++) {
+                        int right = matt + id;
+                        adapter.add(bible.get(Bible.TYPE.OSIS, id).equals(book) ? selected : bible.get(Bible.TYPE.BOOK, id));
+                        if (right < bible.getCount(Bible.TYPE.OSIS)) {
+                            adapter.add(bible.get(Bible.TYPE.OSIS, right).equals(book) ? selected : bible.get(Bible.TYPE.BOOK, right));
                         } else {
-                            adapter.add(Html.fromHtml(""));
+                            adapter.add("");
                         }
                     }
                 } else {
-                    for (String string: Provider.books) {
-                        adapter.add(Html.fromHtml(string.equals(book) ? selected : string));
+                    for (String string: bible.get(Bible.TYPE.BOOK)) {
+                        adapter.add(string.equals(book) ? selected : string);
                     }
                 }
                 break;
             case R.id.chapter:
                 gridview.setNumColumns(5);
-                gridview.setGravity(Gravity.CENTER);
-                selected = select(chapter);
-                for (int i = 1; i <= Integer.parseInt(Provider.chapters.get(Provider.osiss.indexOf(book))); i++) {
-                    adapter.add(Html.fromHtml(String.valueOf(i).equals(chapter) ? selected : String.valueOf(i)));
+                selected = chapter;
+                for (int i = 1; i <= Integer.parseInt(bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, book))); i++) {
+                    adapter.add(String.valueOf(i).equals(chapter) ? selected : String.valueOf(i));
                 }
                 break;
             case R.id.version:
                 gridview.setNumColumns(1);
-                gridview.setGravity(Gravity.LEFT);
-                Provider.setVersions();
-                Log.d(Provider.TAG, "version=" + version);
-                selected = select(getVersion(version));
-                for (String string: Provider.versions) {
-                    adapter.add(Html.fromHtml(string.equals(version) ? selected : getVersion(string)));
+                bible.checkVersions();
+                Log.d(TAG, "version=" + version);
+                selected = bible.getVersionResource(version);
+                for (String string: bible.get(Bible.TYPE.VERSION)) {
+                    adapter.add(string.equals(version) ? selected : bible.getVersionResource(string));
                 }
                 break;
         }
 
         if (adapter.getCount() > 1) {
-            gridview.setId(v.getId());
             gridview.setVisibility(View.VISIBLE);
-            gridview.setSelection(adapter.getPosition(Html.fromHtml(selected)));
+            gridview.setSelection(adapter.getPosition(selected));
         } else {
             gridview.setVisibility(View.GONE);
         }
@@ -468,18 +376,18 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
         gridview.setVisibility(View.GONE);
-        switch (parent.getId()) {
+        switch (gridviewid) {
             case R.id.book:
                 int matt = getMatt();
                 String newbook;
                 if (matt > 0) {
                     if (pos % 2 == 0) {
-                        newbook = Provider.osiss.get(pos / 2);
+                        newbook = bible.get(Bible.TYPE.OSIS, pos / 2);
                     } else {
-                        newbook = Provider.osiss.get(matt + pos / 2);
+                        newbook = bible.get(Bible.TYPE.OSIS, matt + pos / 2);
                     }
                 } else {
-                    newbook = Provider.osiss.get(pos);
+                    newbook = bible.get(Bible.TYPE.OSIS, pos);
                 }
                 if (!newbook.equals("") && !newbook.equals(book)) {
                     openOsis(newbook + ".1");
@@ -489,25 +397,181 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 openOsis(String.format("%s.%d", book, pos + 1));
                 break;
             case R.id.version:
-                version = Provider.versions.get(pos);
-                storeOsisVersion();
-                Provider.closeDatabase();
-                showUri(setUri());
+                version = bible.get(Bible.TYPE.VERSION, pos);
+                Log.d(TAG, "version: " + version);
+                bible.setVersion(version);
+                Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
+                showUri(uri);
                 break;
         }
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (!version.equals(bible.getVersion()) && !osis.equals("")) {
+            Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
+            showUri(uri);
+        }
+    }
+
+    @Override
     public boolean dispatchTouchEvent(MotionEvent e){
+        int scrollY = webview.getScrollY();
+        if (scrollY == 0 || (float) scrollY >= webview.getContentHeight() * webview.getScale() - webview.getHeight()) {
+            setDisplayZoomControls(true);
+        } else {
+            setDisplayZoomControls(false);
+        }
+
         super.dispatchTouchEvent(e);
+
+        // getActionMasked since api-8
+        switch (e.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                scale = webview.getScale();
+                break;
+        }
+
         return mGestureDetector.onTouchEvent(e);
     }
 
     @Override
     public boolean onSearchRequested() {
-        if (Provider.versions.size() > 0) {
+        if (bible.getCount(Bible.TYPE.VERSION) > 0) {
             startActivity(new Intent(Chapter.this, Search.class));
         }
         return false;
+    }
+
+    private Object getField(Object object, final Class<?> clazz, final String fieldName) {
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(object);
+        } catch (Exception e) {
+            Log.e(TAG, "no such filed " + object.getClass().getName() + "." + fieldName);
+        }
+        return null;
+    }
+
+    private boolean setButtonsControllerAPI11(WebView webview) {
+        Object mZoomManager = null;
+
+        // android 4.1,  webview.mProvider.mZoomManager.getCurrentZoomControl().getControls()
+        Object mProvider = getField(webview, WebView.class, "mProvider");
+        if (mProvider != null) {
+            mZoomManager = getField(mProvider, mProvider.getClass(), "mZoomManager");
+        } else {
+            // android 4.0, webview.mZoomManager.getCurrentZoomControl().getControls()
+            mZoomManager = getField(webview, WebView.class, "mZoomManager");
+        }
+
+        if (mZoomManager == null) {
+            return false;
+        }
+
+        try {
+            // let canZoomOut always be true ...
+            Field MINIMUM_SCALE_INCREMENT = mZoomManager.getClass().getDeclaredField("MINIMUM_SCALE_INCREMENT");
+            MINIMUM_SCALE_INCREMENT.setAccessible(true);
+            MINIMUM_SCALE_INCREMENT.set(mZoomManager, -1f);
+        } catch (Exception e) {
+            Log.e(TAG, "cannot set " + mZoomManager.getClass().getName() + ".MINIMUM_SCALE_INCREMENT to -1", e);
+        }
+
+        try {
+            Method getCurrentZoomControl = mZoomManager.getClass().getDeclaredMethod("getCurrentZoomControl");
+            getCurrentZoomControl.setAccessible(true);
+            Object mEmbeddedZoomControl = getCurrentZoomControl.invoke(mZoomManager);
+            Method getControls = mEmbeddedZoomControl.getClass().getDeclaredMethod("getControls");
+            getControls.setAccessible(true);
+            mZoomButtonsController = (ZoomButtonsController) getControls.invoke(mEmbeddedZoomControl);
+        } catch (Exception e) {
+            Log.e(TAG, "cannot call " + mZoomManager.getClass().getName() + ".getCurrentZoomControl().getControls()", e);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean setButtonsControllerAPI(WebView webview) {
+        try {
+            Method method = WebView.class.getMethod("getZoomButtonsController");
+            mZoomButtonsController = (ZoomButtonsController) method.invoke(webview);
+            mZoomButtonsController.setOnZoomListener(new ZoomListener());
+        } catch (Exception e) {
+            Log.e(TAG, "cannot call " + WebView.class.getName() + ".getZoomButtonsController()", e);
+            return false;
+        }
+        return true;
+    }
+
+    private class ZoomListener implements ZoomButtonsController.OnZoomListener {
+        public void onVisibilityChanged(boolean visible) {
+            if (visible && mZoomButtonsController != null && fontsize != 1) {
+                mZoomButtonsController.setZoomOutEnabled(true);
+            }
+        }
+
+        public void onZoom(boolean zoomIn) {
+            if (fontsize == 1 && !zoomIn) {
+                return;
+            }
+            fontsize += (zoomIn ? 1 : -1);
+            Log.d(TAG, "update fontsize to " + fontsize);
+            Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
+            showUri(uri);
+        }
+    }
+
+    private boolean setZoomButtonsController(WebView webview) {
+        boolean hasZoomButtons = false;
+        if (android.os.Build.VERSION.SDK_INT > 10) {
+            hasZoomButtons = setButtonsControllerAPI11(webview);
+            if (!hasZoomButtons) {
+                hasZoomButtons = setButtonsControllerAPI(webview);
+            }
+        } else {
+            hasZoomButtons = setButtonsControllerAPI(webview);
+            if (!hasZoomButtons) {
+                hasZoomButtons = setButtonsControllerAPI11(webview);
+            }
+        }
+
+        if (hasZoomButtons) {
+            mZoomButtonsController.setOnZoomListener(new ZoomListener());
+            return true;
+        }
+
+        return false;
+    }
+
+    private void setDisplayZoomControls(boolean enable) {
+        if (mZoomButtonsController != null) {
+            mZoomButtonsController.getContainer().setVisibility(enable ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void setGestureDetector() {
+        mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if (Math.abs(e1.getRawY() - e2.getRawY()) > Math.abs(e1.getRawX() - e2.getRawX())) {
+                    return false;
+                }
+                if (e1.getRawX() - e2.getRawX() > DISTANCE) {
+                    Log.d(TAG, "swipe left, next osis: " + osis_next);
+                    openOsis(osis_next);
+                    return true;
+                } else if (e2.getRawX() - e1.getRawX() > DISTANCE) {
+                    Log.d(TAG, "swipe right, prev osis: " + osis_prev);
+                    openOsis(osis_prev);
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 }
