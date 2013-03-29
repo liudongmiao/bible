@@ -52,10 +52,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private final String TAG = "me.piebridge.bible$Chapter";
 
+    private Uri uri = null;
     private String osis = "";
     private String book;
     private String chapter;
     private String verse = "";
+    private Object verseLock = new Object();
     private String version = "";
 
     private String osis_next;
@@ -135,8 +137,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         webview.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webview.addJavascriptInterface(new Object() {
             public void setVerse(String string) {
-                verse = string;
-                Log.d(TAG, "verse from javascript: " + verse);
+                synchronized(verseLock) {
+                    verse = string;
+                    Log.d(TAG, "verse from javascript: " + verse);
+                    verseLock.notifyAll();
+                }
             }
 
             public void setCopyText(String text) {
@@ -150,7 +155,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         setZoomButtonsController(webview);
 
         bible = Bible.getBible(getBaseContext());
-        Uri uri = getIntent().getData();
+        uri = getIntent().getData();
         if (uri == null) {
             uri = setUri();
         } else {
@@ -158,13 +163,26 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             verse = String.format("%d", getIntent().getIntExtra("verse", 1));
             Log.d(TAG, "verse: " + verse);
         }
-        fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize-" + bible.getVersion(), 0);
-        if (fontsize == 0) {
-            fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize", 16);
-        }
-        verse = PreferenceManager.getDefaultSharedPreferences(this).getString("verse", "");
-        showUri(uri);
         Log.d(TAG, "onCreate");
+    }
+
+    private void getVerse() {
+        if (webview.getScrollY() != 0) {
+            verse = "";
+            webview.loadUrl("javascript:getFirstVisibleVerse();");
+            while(true)  {
+                synchronized(verseLock) {
+                    if (!verse.equals("")) {
+                        break;
+                    }
+                    try {
+                        verseLock.wait(3000);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     private Uri setUri()
@@ -255,12 +273,18 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         editor.putString("version", version);
         editor.putString("verse", verse);
         editor.putInt("fontsize", fontsize);
-        editor.putInt("fontsize-" + version, fontsize);
+        if (!version.equals("")) {
+            editor.putInt("fontsize-" + version, fontsize);
+        }
         editor.commit();
     }
 
     private void showContent(String title, String content) {
-        versename = "pb-" + version + "-" + book.toLowerCase(Locale.US) + "-" + chapter;
+        if (!title.equals("")) {
+            versename = "pb-" + version + "-" + book.toLowerCase(Locale.US) + "-" + chapter;
+        } else {
+            versename = "versename";
+        }
         String context = content;
         // for biblegateway.com
         context = context.replaceAll("<span class=\"chapternum\">.*?</span>", "<sup class=\"versenum\">1 </sup>");
@@ -316,6 +340,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public void onPause() {
+        getVerse();
         Log.d(TAG, "onPause");
         storeOsisVersion();
         super.onPause();
@@ -336,10 +361,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 openOsis(osis_prev);
                 break;
             case R.id.version:
-                if (webview.getScrollY() != 0) {
-                    verse = "";
-                    webview.loadUrl("javascript:getFirstVisibleVerse();");
-                }
+                getVerse();
             case R.id.book:
             case R.id.chapter:
                 showSpinner(v);
@@ -449,16 +471,20 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        if (!version.equals(bible.getVersion()) && !osis.equals("")) {
-            Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
-            showUri(uri);
+        verse = PreferenceManager.getDefaultSharedPreferences(this).getString("verse", "");
+        fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize-" + bible.getVersion(), 0);
+        if (fontsize == 0) {
+            fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize", 16);
         }
+        if (!version.equals(bible.getVersion()) && !osis.equals("")) {
+            uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
+        }
+        showUri(uri);
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent e){
         int scrollY = webview.getScrollY();
-        Log.d(TAG, "scrollY: " + scrollY);
         if (scrollY == 0 || (float) scrollY >= webview.getContentHeight() * webview.getScale() - webview.getHeight()) {
             setDisplayZoomControls(true);
         } else {

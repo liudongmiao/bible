@@ -111,6 +111,9 @@ public class Bible
     }
 
     public boolean setVersion(String version) {
+        if (databasePath == null) {
+            return false;
+        }
         if (database != null) {
             if (databaseVersion.equals(version)) {
                 return true;
