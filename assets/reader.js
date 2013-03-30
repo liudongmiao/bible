@@ -18,8 +18,15 @@ function getFirstVisibleVerse() {
     android.setVerse(verse);
 }
 
+// http://stackoverflow.com/questions/280634/endswith-in-javascript
+if (typeof String.prototype.endsWith !== 'function') {
+    String.prototype.endsWith = function(suffix) {
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    };
+}
+
 function getCopyText() {
-    var html = "", text="", content, span, spans, verse = "", verses = [];
+    var html = "", text="", content, span, spans, verse = "", lastverse=NaN;
     span = document.createElement("span");
     spans = document.getElementsByTagName("span");
     for (var i = 0; i < spans.length; i++) {
@@ -33,16 +40,39 @@ function getCopyText() {
     span.innerHTML = html;
     spans = span.getElementsByClassName("pb-verse");
     for (var i = 0; i < spans.length; i++) {
-        verses.push(spans[i].getAttribute("title"))
+        var title = parseInt(spans[i].getAttribute("title"));
+        if (isNaN(title)) {
+            continue;
+        }
+        if (isNaN(lastverse)) {
+            verse += title;
+        } else if (title - lastverse == 1) {
+            if (!verse.endsWith("-")) {
+                verse += "-";
+            }
+        } else {
+            if (verse.endsWith("-")) {
+                verse += lastverse;
+            }
+            verse += ",";
+            verse += title;
+        }
+        lastverse = title;
     }
-    verse = verses.join(",");
+
+    if (verse.endsWith("-") && !isNaN(lastverse)) {
+        verse += lastverse;
+    }
 
     // get content
     span.innerHTML = content;
+    text = span.textContent.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
 
-    text = verse + "\n" + span.textContent.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
-
-    android.setCopyText(text);
+    if (text) {
+        android.setCopyText(verse + "\n" + text);
+    } else {
+        android.setCopyText("");
+    }
 }
 
 function selectVerse(element) {
@@ -74,19 +104,19 @@ function load() {
 }
 
 var alarm = {
-  setup: function(callback, timeout) {
-    this.cancel();
-    this.timeoutID = window.setTimeout(function(func) {
-        func();
-    }, timeout, callback);
-  },
- 
-  cancel: function() {
-    if(typeof this.timeoutID == "number") {
-      window.clearTimeout(this.timeoutID);
-      delete this.timeoutID;
+    setup: function(callback, timeout) {
+        this.cancel();
+        this.timeoutID = window.setTimeout(function(func) {
+            func();
+        }, timeout, callback);
+    },
+
+    cancel: function() {
+        if(typeof this.timeoutID == "number") {
+            window.clearTimeout(this.timeoutID);
+            delete this.timeoutID;
+        }
     }
-  }
 };
 
 window.addEventListener("load", load);
