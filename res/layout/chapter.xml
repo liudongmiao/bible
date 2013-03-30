@@ -15,7 +15,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/btn_default_transparent"
             android:textColor="#fff6f6f6"
             android:textSize="20sp"
             />
@@ -24,7 +23,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/book"
-            android:background="@drawable/btn_default_transparent"
             android:textColor="#fff6f6f6"
             android:textSize="20sp"
             />
@@ -33,7 +31,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:background="@drawable/btn_default_transparent"
             android:textColor="#fff6f6f6"
             android:textSize="20sp"
             />
@@ -63,27 +60,30 @@
         >
         <Button
             android:id="@+id/prev"
+            android:layout_weight="1.0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="7.0dip"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/ic_menu_back"
+            android:background="@*android:drawable/ic_menu_back"
             />
         <Button
             android:id="@+id/next"
+            android:layout_weight="1.0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/prev"
             android:layout_marginLeft="14.0dip"
-            android:background="@drawable/ic_menu_forward"
+            android:background="@*android:drawable/ic_menu_forward"
             />
         <Button
             android:id="@+id/search"
+            android:layout_weight="1.0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/ic_menu_search"
+            android:background="@android:drawable/ic_menu_search"
             />
     </RelativeLayout>
 </LinearLayout>
