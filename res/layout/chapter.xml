@@ -10,29 +10,20 @@
         android:orientation="horizontal"
         android:background="@android:drawable/title_bar"
         >
-        <Button
+        <TextView
+            style="@style/button"
             android:id="@+id/book"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:textColor="#fff6f6f6"
-            android:textSize="20sp"
             />
-        <Button
+        <TextView
+            style="@style/button"
             android:id="@+id/chapter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_toRightOf="@id/book"
-            android:textColor="#fff6f6f6"
-            android:textSize="20sp"
             />
-        <Button
+        <TextView
+            style="@style/button"
             android:id="@+id/version"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:textColor="#fff6f6f6"
-            android:textSize="20sp"
             />
     </RelativeLayout>
     <GridView
@@ -53,35 +44,37 @@
         android:layout_weight="1.0"
         />
     <RelativeLayout
+        android:id="@+id/nokeys"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:background="@drawable/gradient"
+        android:background="@android:drawable/title_bar"
         >
         <Button
             android:id="@+id/prev"
-            android:layout_weight="1.0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="7.0dip"
             android:layout_alignParentLeft="true"
-            android:background="@*android:drawable/ic_menu_back"
+            android:background="@*android:drawable/ic_media_previous"
             />
         <Button
             android:id="@+id/next"
-            android:layout_weight="1.0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/prev"
+            android:layout_alignTop="@+id/prev"
+            android:layout_alignBottom="@+id/prev"
             android:layout_marginLeft="14.0dip"
-            android:background="@*android:drawable/ic_menu_forward"
+            android:background="@*android:drawable/ic_media_next"
             />
         <Button
             android:id="@+id/search"
-            android:layout_weight="1.0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/prev"
+            android:layout_alignBottom="@+id/prev"
             android:layout_centerVertical="true"
             android:background="@android:drawable/ic_menu_search"
             />

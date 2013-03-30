@@ -2,21 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.piebridge.bible"
     android:sharedUserId="me.piebridge.bible"
-    android:versionCode="28"
-    android:versionName="0.8.6">
+    android:versionCode="29"
+    android:versionName="0.8.7">
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="10" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <application android:label="@string/app_name" android:icon="@drawable/bible">
-        <activity android:name="Search"
-            android:theme="@android:style/Theme.Light.NoTitleBar">
+    <application android:label="@string/app_name" android:icon="@drawable/bible"
+        android:theme="@style/PBTheme">
+        <activity android:name="Search">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name="Chapter"
-            android:theme="@android:style/Theme.Light.NoTitleBar">
+        <activity android:name="Chapter">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

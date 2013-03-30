@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="false"
-        android:drawable="@*android:drawable/btn_default_normal_holo_light" />
-    <item
-        android:drawable="@*android:drawable/btn_default_pressed_holo_light" />
+    <item android:state_pressed="true"
+        android:drawable="@*android:drawable/btn_default_holo_light" />
+    <item android:state_enabled="true"
+        android:drawable="@drawable/btn_default_transparent_normal" />
 </selector>
-<!-- vim: set sta sw=4 et: -->

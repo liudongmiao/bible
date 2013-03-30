@@ -81,6 +81,7 @@ public class Bible
         }
         File path = new File(databasePath);
         File oldpath = new File(Environment.getExternalStorageDirectory(), ".piebridge");
+        Log.d(TAG, "path=" + path + ", oldpath=" + oldpath);
         if (oldpath.exists() && oldpath.isDirectory()) {
             String[] names = oldpath.list();
             for (String name: names) {
@@ -99,6 +100,7 @@ public class Bible
             for (String name: names) {
                 File file = new File(path, name);
                 if (name.endsWith(".sqlite3") && file.exists() && file.isFile()) {
+                    Log.d(TAG, "add version " + name);
                     if (name.equals("niv.sqlite3")) {
                         versions.add(0, name.replace(".sqlite3", ""));
                     } else {
@@ -197,6 +199,8 @@ public class Bible
             databasePath = file.getAbsolutePath();
             Log.d(TAG, "set database path: " + databasePath);
             return true;
+        } else {
+            Log.d(TAG, "not mounted");
         }
         return false;
     }
@@ -237,6 +241,9 @@ public class Bible
     }
 
     public String getVersion() {
+        if (databaseVersion.equals("")) {
+            setDefaultVersion();
+        }
         return databaseVersion;
     }
 

@@ -46,6 +46,7 @@ import java.lang.reflect.Method;
 import android.widget.ZoomButtonsController;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.sqlite.SQLiteException;
 
 public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
@@ -81,6 +82,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private String versename = "";
     private int gridviewid = 0;
     protected float scale = 1.0f;
+    protected String background = null;
 
     @Override
     @SuppressLint("SetJavaScriptEnabled")
@@ -93,6 +95,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         findViewById(R.id.chapter).setOnClickListener(this);
         findViewById(R.id.search).setOnClickListener(this);
         findViewById(R.id.version).setOnClickListener(this);
+        if (getResources().getConfiguration().keyboard == Configuration.KEYBOARD_QWERTY) {
+            findViewById(R.id.nokeys).setVisibility(View.GONE);
+        }
 
         adapter = new ArrayAdapter<String>(this, R.layout.grid) {
             private LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -116,9 +121,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     textview.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
                 }
                 if (getItem(position).equals(selected)) {
-                    textview.getPaint().setUnderlineText(true);
+                    view.setBackgroundResource(R.drawable.focused);
                 } else {
-                    textview.getPaint().setUnderlineText(false);
+                    view.setBackgroundResource(R.drawable.normal);
                 }
                 return view;
             }
@@ -145,11 +150,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             }
 
             public void setCopyText(String text) {
-                String copytext = version + " " + bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)) + " " + chapter + ":" + text;
-                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                clipboard.setText(copytext);
-                showToast();
-                Log.d(TAG, "copy from javascript: " + copytext);
+                if (!text.equals("")) {
+                    String copytext = version.toUpperCase(Locale.US) + " " + bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)) + " " + chapter + ":" + text;
+                    ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    clipboard.setText(copytext);
+                    showToast();
+                    Log.d(TAG, "copy from javascript: " + copytext);
+                }
             }
         }, "android");
         setZoomButtonsController(webview);
@@ -157,7 +164,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         bible = Bible.getBible(getBaseContext());
         uri = getIntent().getData();
         if (uri == null) {
-            uri = setUri();
+            setUri();
         } else {
             Log.d(TAG, "uri: " + uri);
             verse = String.format("%d", getIntent().getIntExtra("verse", 1));
@@ -185,18 +192,17 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     }
 
-    private Uri setUri()
+    private void setUri()
     {
         osis = PreferenceManager.getDefaultSharedPreferences(this).getString("osis", "null");
         Log.d(TAG, "set osis: " + osis);
-        Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
-        return uri;
+        uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
     }
 
     private void showUri(Uri uri) {
         version = bible.getVersion();
         if (version.equals("")) {
-            ((Button)findViewById(R.id.version)).setText(R.string.refreshversion);
+            ((TextView)findViewById(R.id.version)).setText(R.string.refreshversion);
             findViewById(R.id.book).setVisibility(View.INVISIBLE);
             findViewById(R.id.chapter).setVisibility(View.INVISIBLE);
             findViewById(R.id.prev).setVisibility(View.INVISIBLE);
@@ -251,7 +257,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             return false;
         }
         if (!osis.equals(newOsis)) {
-            Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(newOsis).build();
+            uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(newOsis).build();
             showUri(uri);
         }
         return true;
@@ -262,9 +268,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         chapter = osis.split("\\.")[1];
         Log.d(TAG, "set book chapter, osis: " + osis);
 
-        ((Button)findViewById(R.id.version)).setText(String.valueOf(bible.getVersion()).toUpperCase(Locale.US));
-        ((Button)findViewById(R.id.book)).setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
-        ((Button)findViewById(R.id.chapter)).setText(chapter);
+        ((TextView)findViewById(R.id.version)).setText(String.valueOf(bible.getVersion()).toUpperCase(Locale.US));
+        ((TextView)findViewById(R.id.book)).setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
+        ((TextView)findViewById(R.id.chapter)).setText(chapter);
     }
 
     private void storeOsisVersion() {
@@ -305,6 +311,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += ".wordsofchrist {color: red;}\n";
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
+        body += background;
         body += "</style>\n";
         body += "<title>" + title + "</title>\n";
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
@@ -348,7 +355,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public void onClick(View v) {
-        if (bible.getCount(Bible.TYPE.VERSION) == 0 && v.getId() != R.id.version) {
+        if (bible.getCount(Bible.TYPE.VERSION) == 0 && bible.getDatabase() == null && v.getId() != R.id.version) {
             return;
         }
         switch (v.getId()) {
@@ -419,6 +426,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 Log.d(TAG, "version=" + version);
                 selected = bible.getVersionResource(version);
                 for (String string: bible.get(Bible.TYPE.VERSION)) {
+                    Log.d(TAG, "add version " + string);
                     adapter.add(string.equals(version) ? selected : bible.getVersionResource(string));
                 }
                 break;
@@ -429,6 +437,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             gridview.setSelection(adapter.getPosition(selected));
         } else {
             gridview.setVisibility(View.GONE);
+            showUri(uri);
         }
     }
 
@@ -461,7 +470,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 Log.d(TAG, "version: " + version);
                 bible.setVersion(version);
                 fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize-" + version, fontsize);
-                Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
+                uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
                 showUri(uri);
                 break;
         }
@@ -476,8 +485,21 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (fontsize == 0) {
             fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize", 16);
         }
+        if (fontsize > 32) {
+            fontsize = 32;
+        }
         if (!version.equals(bible.getVersion()) && !osis.equals("")) {
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
+        }
+        if (background == null) {
+            int color = 0x6633B5E5;
+            Integer mHighlightColor = (Integer) getField(findViewById(R.id.version), TextView.class, "mHighlightColor");
+            if (mHighlightColor != null) {
+                color = mHighlightColor.intValue();
+            }
+            background = String.format(".selected { background: rgba(%d, %d, %d, %.2f); }\n",
+                    (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >>> 24) / 255.0);
+            Log.d(TAG, String.format("color: 0x%08x, background: %s", color, background));
         }
         showUri(uri);
     }
@@ -540,12 +562,27 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
 
         try {
-            // let canZoomOut always be true ...
+            // let canZoomOut always be true, part1
             Field MINIMUM_SCALE_INCREMENT = mZoomManager.getClass().getDeclaredField("MINIMUM_SCALE_INCREMENT");
             MINIMUM_SCALE_INCREMENT.setAccessible(true);
-            MINIMUM_SCALE_INCREMENT.set(mZoomManager, -1f);
+            MINIMUM_SCALE_INCREMENT.set(mZoomManager, -128.0f);
         } catch (Exception e) {
-            Log.e(TAG, "cannot set " + mZoomManager.getClass().getName() + ".MINIMUM_SCALE_INCREMENT to -1", e);
+            Log.e(TAG, "cannot set " + mZoomManager.getClass().getName() + ".MINIMUM_SCALE_INCREMENT to -128.0f", e);
+            return false;
+        }
+
+        try {
+            // let canZoomOut always be true, part2
+            Field mInZoomOverview = mZoomManager.getClass().getDeclaredField("mInZoomOverview");
+            mInZoomOverview.setAccessible(true);
+            mInZoomOverview.set(mZoomManager, false);
+        } catch (Exception e) {
+            Log.e(TAG, "cannot set " + mZoomManager.getClass().getName() + ".mInZoomOverview to false", e);
+            return false;
+        }
+
+        if (mZoomButtonsController != null) {
+            return true;
         }
 
         try {
@@ -564,6 +601,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private boolean setButtonsControllerAPI(WebView webview) {
+        if (mZoomButtonsController != null) {
+            return true;
+        }
+
         try {
             Method method = WebView.class.getMethod("getZoomButtonsController");
             mZoomButtonsController = (ZoomButtonsController) method.invoke(webview);
@@ -577,8 +618,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private class ZoomListener implements ZoomButtonsController.OnZoomListener {
         public void onVisibilityChanged(boolean visible) {
-            if (visible && mZoomButtonsController != null && fontsize != 1) {
-                mZoomButtonsController.setZoomOutEnabled(true);
+            setZoomButtonsController(webview);
+            if (visible && mZoomButtonsController != null) {
+                mZoomButtonsController.setZoomOutEnabled(fontsize > 1);
+                mZoomButtonsController.setZoomInEnabled(fontsize < 32);
             }
         }
 
@@ -586,10 +629,18 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             if (fontsize == 1 && !zoomIn) {
                 return;
             }
+            if (fontsize == 32 && zoomIn) {
+                return;
+            }
             fontsize += (zoomIn ? 1 : -1);
             Log.d(TAG, "update fontsize to " + fontsize);
-            Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
+            uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
             showUri(uri);
+            setZoomButtonsController(webview);
+            if (mZoomButtonsController != null) {
+                mZoomButtonsController.setZoomOutEnabled(fontsize > 1);
+                mZoomButtonsController.setZoomInEnabled(fontsize < 32);
+            }
         }
     }
 
@@ -644,11 +695,5 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private void showToast() {
         Toast.makeText(getApplicationContext(), R.string.copied, Toast.LENGTH_SHORT).show();
-        /*
-        if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("showedcopytip", false)) {
-            Toast.makeText(getApplicationContext(), R.string.copied, Toast.LENGTH_SHORT).show();
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("showedcopytip", true).commit();
-        }
-        */
     }
 }

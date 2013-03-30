@@ -101,8 +101,8 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
     }
 
     private boolean doSearch(String query) {
+        searching = false;
         setContentView(R.layout.result);
-        searching = true;
         textView = (TextView) findViewById(R.id.text);
         listView = (ListView) findViewById(R.id.list);
         if (version == null) {
@@ -246,6 +246,7 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
     }
 
     public void showSearch() {
+        searching = true;
         if (bible.getCount(Bible.TYPE.BOOK) == 0) {
             setContentView(R.layout.result);
             textView = (TextView) findViewById(R.id.text);
@@ -254,7 +255,6 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
         }
         inflater = LayoutInflater.from(this);
         setContentView(R.layout.search);
-        searching = false;
         searchlist = (ListView) findViewById(R.id.searchlist);
         findViewById(R.id.searchbutton).setOnClickListener(this);
         final EditText edittext = (EditText) findViewById(R.id.searchtext);
@@ -514,11 +514,10 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
 
     @Override
     public boolean onSearchRequested() {
-        if (searching) {
+        if (!searching) {
             showSearch();
-            return false;
         }
-        return super.onSearchRequested();
+        return false;
     }
 
     @Override
