@@ -43,45 +43,5 @@
         android:layout_height="0dp"
         android:layout_weight="1.0"
         />
-    <RelativeLayout
-        android:id="@+id/nokeys"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:background="@android:drawable/title_bar"
-        >
-        <ImageButton
-            android:id="@+id/prev"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="7.0dip"
-            android:layout_alignParentLeft="true"
-            android:contentDescription="@null"
-            style="@android:style/MediaButton.Previous"
-            android:background="@null"
-            />
-        <ImageButton
-            android:id="@+id/next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/prev"
-            android:layout_alignTop="@+id/prev"
-            android:layout_alignBottom="@+id/prev"
-            android:layout_marginLeft="14.0dip"
-            android:contentDescription="@null"
-            style="@android:style/MediaButton.Next"
-            android:background="@null"
-            />
-        <Button
-            android:id="@+id/search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/prev"
-            android:layout_alignBottom="@+id/prev"
-            android:layout_centerVertical="true"
-            android:background="@android:drawable/ic_menu_search"
-            />
-    </RelativeLayout>
 </LinearLayout>
 <!-- vim: set sta sw=4 et: -->

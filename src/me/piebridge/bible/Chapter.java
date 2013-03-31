@@ -89,8 +89,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chapter);
-        findViewById(R.id.next).setOnClickListener(this);
-        findViewById(R.id.prev).setOnClickListener(this);
         findViewById(R.id.book).setOnClickListener(this);
         findViewById(R.id.chapter).setOnClickListener(this);
         findViewById(R.id.search).setOnClickListener(this);
@@ -205,8 +203,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             ((TextView)findViewById(R.id.version)).setText(R.string.refreshversion);
             findViewById(R.id.book).setVisibility(View.INVISIBLE);
             findViewById(R.id.chapter).setVisibility(View.INVISIBLE);
-            findViewById(R.id.prev).setVisibility(View.INVISIBLE);
-            findViewById(R.id.next).setVisibility(View.INVISIBLE);
             findViewById(R.id.search).setVisibility(View.INVISIBLE);
             showContent("", getString(R.string.noversion, new Object[] {link_market, link_github}));
             return;
@@ -235,8 +231,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             cursor.close();
 
             setBookChapter(osis);
-            findViewById(R.id.prev).setVisibility(osis_prev.equals("") ? View.INVISIBLE : View.VISIBLE);
-            findViewById(R.id.next).setVisibility(osis_next.equals("") ? View.INVISIBLE : View.VISIBLE);
             findViewById(R.id.book).setVisibility(View.VISIBLE);
             findViewById(R.id.chapter).setVisibility(View.VISIBLE);
             findViewById(R.id.search).setVisibility(View.VISIBLE);
@@ -360,14 +354,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             return;
         }
         switch (v.getId()) {
-            case R.id.next:
-                Log.d(TAG, "next osis: " + osis_next);
-                openOsis(osis_next);
-                break;
-            case R.id.prev:
-                Log.d(TAG, "prev osis: " + osis_prev);
-                openOsis(osis_prev);
-                break;
             case R.id.version:
                 getVerse();
             case R.id.book:
