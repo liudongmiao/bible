@@ -58,6 +58,7 @@
             android:layout_alignParentLeft="true"
             android:contentDescription="@null"
             style="@android:style/MediaButton.Previous"
+            android:background="@null"
             />
         <ImageButton
             android:id="@+id/next"
@@ -69,6 +70,7 @@
             android:layout_marginLeft="14.0dip"
             android:contentDescription="@null"
             style="@android:style/MediaButton.Next"
+            android:background="@null"
             />
         <Button
             android:id="@+id/search"
