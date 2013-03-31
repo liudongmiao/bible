@@ -305,6 +305,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         String body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
         body += "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">\n";
         body += "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
+        body += "<meta name=\"viewport\" content=\"target-densitydpi=device-dpi, width=device-width\" />\n";
         body += "<style type=\"text/css\">\n";
         body += "body {font-family: serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
         body += ".trans {display: none;}\n";
