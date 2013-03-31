@@ -8,7 +8,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@android:drawable/title_bar"
         >
         <TextView
             style="@style/button"
@@ -35,7 +34,6 @@
         android:stretchMode="columnWidth"
         android:paddingLeft="13dp"
         android:paddingRight="13dp"
-        android:background="@android:drawable/title_bar"
         />
     <WebView
         android:id="@+id/webview"
