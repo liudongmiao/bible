@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="PBTheme" parent="@android:style/Theme.Holo.Light">
+    <style name="PBTheme" parent="@android:style/Theme.Holo">
         <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="PSTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="button" parent="@android:style/Widget.Holo.Spinner">
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="spinner" parent="@android:style/Widget.Holo.Spinner">
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="grid" parent="@android:style/Widget.Holo.Button.Toggle">
+        <item name="android:textSize">18sp</item>
     </style>
 </resources>
 <!-- vim: set sta sw=4 et: -->

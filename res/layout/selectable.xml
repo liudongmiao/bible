@@ -6,15 +6,15 @@
     android:layout_height="?android:listPreferredItemHeight"
     android:paddingLeft="10.0dip"
     android:paddingRight="10.0dip"
+    style="@style/spinner"
     >
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/text"
         android:textSize="19.0dip"
-        android:textColor="#ff000000"
+        android:textColor="?android:textColorPrimary"
         android:ellipsize="end"
-        android:gravity="center_vertical"
         android:maxLines="1"
         />
     <TextView
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/subtext"
         android:textSize="17.0dip"
-        android:textColor="#ff888888"
+        android:textColor="?android:textColorSecondary"
         android:maxLines="1"
         />
 </LinearLayout>

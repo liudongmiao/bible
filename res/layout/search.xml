@@ -20,19 +20,18 @@
             android:imeOptions="actionSearch"
             android:inputType="text"
             />
-        <ImageButton
+        <TextView
             android:id="@id/searchbutton"
+            android:layout_alignBottom="@+id/searchtext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_search_category_default"
-            android:contentDescription="@null"
-            android:layout_alignBottom="@id/searchtext"
             android:layout_alignParentRight="true"
+            android:background="@android:drawable/ic_menu_search"
             />
     </RelativeLayout>
     <ListView
         android:id="@+id/searchlist"
-        android:cacheColorHint="#00000000"
+        android:cacheColorHint="@null"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/search"

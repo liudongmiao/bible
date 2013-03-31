@@ -12,17 +12,32 @@
         <TextView
             style="@style/button"
             android:id="@+id/book"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             />
         <TextView
             style="@style/button"
             android:id="@+id/chapter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_toRightOf="@id/book"
+            />
+        <TextView
+            android:id="@+id/search"
+            android:layout_alignBottom="@+id/version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7.0dip"
+            android:background="@android:drawable/ic_menu_search"
+            android:layout_alignParentRight="true"
             />
         <TextView
             style="@style/button"
             android:id="@+id/version"
-            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/search"
             />
     </RelativeLayout>
     <GridView
