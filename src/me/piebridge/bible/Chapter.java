@@ -28,12 +28,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.util.Locale;
 
@@ -46,7 +46,6 @@ import java.lang.reflect.Method;
 import android.widget.ZoomButtonsController;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.sqlite.SQLiteException;
 
 public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
@@ -93,36 +92,22 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         findViewById(R.id.chapter).setOnClickListener(this);
         findViewById(R.id.search).setOnClickListener(this);
         findViewById(R.id.version).setOnClickListener(this);
-        if (getResources().getConfiguration().keyboard == Configuration.KEYBOARD_QWERTY) {
-            findViewById(R.id.nokeys).setVisibility(View.GONE);
-        }
 
         adapter = new ArrayAdapter<String>(this, R.layout.grid) {
             private LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = convertView;
-                TextView textview = null;
+                ToggleButton grid = null;
                 if (view == null) {
                     view = inflater.inflate(R.layout.grid, null);
                 }
-                textview = (TextView) view.findViewById(R.id.text1);
-                if (getItem(position).equals("")) {
-                    textview.setVisibility(View.INVISIBLE);
-                } else {
-                    textview.setText(getItem(position));
-                    textview.setVisibility(View.VISIBLE);
-                }
-                if (gridviewid == R.id.chapter) {
-                    textview.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
-                } else {
-                    textview.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-                }
-                if (getItem(position).equals(selected)) {
-                    view.setBackgroundResource(R.drawable.focused);
-                } else {
-                    view.setBackgroundResource(R.drawable.normal);
-                }
+                grid = (ToggleButton) view.findViewById(R.id.text1);
+                grid.setTextOn(getItem(position));
+                grid.setTextOff(getItem(position));
+                grid.setChecked(getItem(position).equals(selected));
+                grid.setVisibility(getItem(position).equals("") ? View.INVISIBLE : View.VISIBLE);
+                grid.setGravity(gridviewid == R.id.chapter ? Gravity.CENTER | Gravity.CENTER_VERTICAL : Gravity.LEFT | Gravity.CENTER_VERTICAL);
                 return view;
             }
         };
@@ -295,11 +280,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         context = context.replaceAll("『", "‘").replaceAll("』", "’");
 
         fontsize = (int)(fontsize * scale);
+        if (fontsize > 32) {
+            fontsize = 24;
+        }
 
         String body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
         body += "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">\n";
         body += "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
-        body += "<meta name=\"viewport\" content=\"target-densitydpi=device-dpi, width=device-width\" />\n";
+        body += "<meta name=\"viewport\" content=\"target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=2\" />\n";
         body += "<style type=\"text/css\">\n";
         body += "body {font-family: serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
         body += ".trans {display: none;}\n";
