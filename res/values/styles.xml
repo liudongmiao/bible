@@ -7,11 +7,8 @@
         <item name="android:windowNoTitle">true</item>
     </style>
     <!-- spinner in android 2.X is waste screen space -->
-    <style name="button" parent="@android:style/Widget.Button">
-        <item name="android:textSize">18sp</item>
-    </style>
-    <style name="spinner" parent="@android:style/Widget.Spinner">
-        <item name="android:textSize">18sp</item>
+    <style name="button" parent="@android:style/Widget.Button.Inset">
+        <item name="android:textSize">20sp</item>
     </style>
     <style name="grid" parent="@android:style/Widget.Button.Toggle">
         <item name="android:textSize">16sp</item>

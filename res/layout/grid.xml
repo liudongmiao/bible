@@ -8,5 +8,6 @@
     android:focusable="false"
     android:focusableInTouchMode="false"
     android:clickable="false"
+    android:gravity="center|center_vertical"
     />
 <!-- vim: set sta sw=4 et: -->

@@ -22,7 +22,6 @@ import android.webkit.WebView;
 import android.webkit.WebSettings;
 
 import android.text.ClipboardManager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,7 +106,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 grid.setTextOff(getItem(position));
                 grid.setChecked(getItem(position).equals(selected));
                 grid.setVisibility(getItem(position).equals("") ? View.INVISIBLE : View.VISIBLE);
-                grid.setGravity(gridviewid == R.id.chapter ? Gravity.CENTER | Gravity.CENTER_VERTICAL : Gravity.LEFT | Gravity.CENTER_VERTICAL);
                 return view;
             }
         };
@@ -148,12 +146,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         uri = getIntent().getData();
         if (uri == null) {
             setUri();
+            verse = PreferenceManager.getDefaultSharedPreferences(this).getString("verse", "");
         } else {
             Log.d(TAG, "uri: " + uri);
             verse = String.format("%d", getIntent().getIntExtra("verse", 1));
-            Log.d(TAG, "verse: " + verse);
         }
-        Log.d(TAG, "onCreate");
+        Log.d(TAG, "onCreate, verse=" + verse);
     }
 
     private void getVerse() {
@@ -455,7 +453,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        verse = PreferenceManager.getDefaultSharedPreferences(this).getString("verse", "");
         fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize-" + bible.getVersion(), 0);
         if (fontsize == 0) {
             fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize", 16);

@@ -516,6 +516,12 @@ public class Search extends Activity implements View.OnClickListener, AdapterVie
     public boolean onSearchRequested() {
         if (!searching) {
             showSearch();
+        } else {
+            query = ((EditText) findViewById(R.id.searchtext)).getText().toString();
+            // isEmpty since api-9 ?
+            if (query.length() > 0) {
+                doSearch(query);
+            }
         }
         return false;
     }
