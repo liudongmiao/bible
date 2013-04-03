@@ -81,6 +81,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private int gridviewid = 0;
     protected float scale = 1.0f;
     protected String background = null;
+    protected String copytext = "";
 
     @Override
     @SuppressLint("SetJavaScriptEnabled")
@@ -132,7 +133,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
             public void setCopyText(String text) {
                 if (!text.equals("")) {
-                    String copytext = version.toUpperCase(Locale.US) + " " + bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)) + " " + chapter + ":" + text;
+                    copytext = version.toUpperCase(Locale.US) + " " + bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, book)) + " " + chapter + ":" + text;
                     ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                     clipboard.setText(copytext);
                     showToast();
@@ -271,6 +272,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         } else {
             versename = "versename";
         }
+        copytext = "";
         String context = content;
         // for biblegateway.com
         context = context.replaceAll("<span class=\"chapternum\">.*?</span>", "<sup class=\"versenum\">1 </sup>");

@@ -35,6 +35,7 @@ public class Bible
         CHAPTER,
         BOOK,
         OSIS,
+        HUMAN,
     }
 
     private SQLiteDatabase database = null;
@@ -47,6 +48,7 @@ public class Bible
     private ArrayList<String> osiss = new ArrayList<String>();
     private ArrayList<String> chapters = new ArrayList<String>();
     private ArrayList<String> versions = new ArrayList<String>();
+    private ArrayList<String> humans = new ArrayList<String>();
 
     private ArrayList<String> abbrs = new ArrayList<String>();
     private ArrayList<String> resources = new ArrayList<String>();
@@ -149,12 +151,17 @@ public class Bible
         osiss.clear();
         books.clear();
         chapters.clear();
+        humans.clear();
         Cursor cursor = database.query(Provider.TABLE_BOOKS, Provider.COLUMNS_BOOKS, null, null, null, null, null);
         try {
             while (cursor.moveToNext()) {
-                osiss.add(cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_OSIS)));
-                books.add(cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN)));
-                chapters.add(cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CHAPTERS)));
+                String osis = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_OSIS));
+                String human = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN));
+                String chapter = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CHAPTERS));
+                osiss.add(osis);
+                books.add(human.length() > 7 ? osis : human);
+                chapters.add(chapter);
+                humans.add(human);
             }
         } finally {
             cursor.close();
@@ -215,6 +222,8 @@ public class Bible
                 return books;
             case OSIS:
                 return osiss;
+            case HUMAN:
+                return humans;
         }
         return new ArrayList<String>();
     }
