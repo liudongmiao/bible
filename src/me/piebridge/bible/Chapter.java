@@ -53,8 +53,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private Uri uri = null;
     private String osis = "";
-    private String book;
-    private String chapter;
+    private String book = "";
+    private String chapter = "";
     private String verse = "";
     private Object verseLock = new Object();
     private String version = "";
@@ -256,6 +256,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         editor.putString("version", version);
         editor.putString("verse", verse);
         editor.putInt("fontsize", fontsize);
+        if (!book.equals("") && !chapter.equals("")) {
+            editor.putString(book, chapter);
+        }
         if (!version.equals("")) {
             editor.putInt("fontsize-" + version, fontsize);
         }
@@ -431,7 +434,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     newbook = bible.get(Bible.TYPE.OSIS, pos);
                 }
                 if (!newbook.equals("") && !newbook.equals(book)) {
-                    openOsis(newbook + ".1");
+                    verse = "";
+                    storeOsisVersion();
+                    chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(newbook, "1");
+                    openOsis(newbook + "." + chapter);
                 }
                 break;
             case R.id.chapter:
