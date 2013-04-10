@@ -89,7 +89,7 @@ public class Provider extends ContentProvider
         Cursor cursor = database.query(
                 TABLE_VERSES,
                 COLUMNS_VERSE,
-                "unformatted like ? and book in (" + books + ")",
+                books == null ? "unformatted like ?" : "unformatted like ? and book in (" + books + ")",
                 new String[] { "%" + query + "%"},
                 null,
                 null,
@@ -186,8 +186,8 @@ public class Provider extends ContentProvider
         if (uri == null) {
             return null;
         }
-        Log.d(TAG, "query uri: " + uri);
         String version = uri.getFragment();
+        Log.d(TAG, "query uri: " + uri + ", version: " + version);
         if (version != null && !version.equals("") && !bible.setVersion(version)) {
             return null;
         }

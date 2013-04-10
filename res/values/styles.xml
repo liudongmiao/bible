@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="PBTheme" parent="@android:style/Theme">
-        <item name="android:windowNoTitle">true</item>
+    <style name="Theme" parent="@android:style/Theme.NoTitleBar">
     </style>
-    <style name="PSTheme" parent="@android:style/Theme.Light">
-        <item name="android:windowNoTitle">true</item>
+    <style name="Theme.Light" parent="@android:style/Theme.Light.NoTitleBar">
     </style>
     <!-- spinner in android 2.X is waste screen space -->
-    <style name="button" parent="@android:style/Widget.Button.Inset">
-        <item name="android:textSize">20sp</item>
+    <style name="button" parent="@android:style/Widget.Button">
+        <item name="android:textSize">18sp</item>
     </style>
     <style name="grid" parent="@android:style/Widget.Button.Toggle">
         <item name="android:textSize">16sp</item>

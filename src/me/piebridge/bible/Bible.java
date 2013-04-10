@@ -13,11 +13,17 @@
 
 package me.piebridge.bible;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.content.Context;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.Cursor;
@@ -54,9 +60,14 @@ public class Bible
     private ArrayList<String> resources = new ArrayList<String>();
 
     private static Bible bible = null;
+    private static float scale;
 
     private Bible(Context context) {
         mContext = context;
+        scale = context.getResources().getDisplayMetrics().density;
+        if (scale <= 1.0) {
+            initMap();
+        }
         checkVersions();
         setResources();
         setDefaultVersion();
@@ -115,6 +126,9 @@ public class Bible
     }
 
     public boolean setVersion(String version) {
+        if (version == null) {
+            return false;
+        }
         if (databasePath == null) {
             return false;
         }
@@ -158,8 +172,21 @@ public class Bible
                 String osis = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_OSIS));
                 String human = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN));
                 String chapter = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CHAPTERS));
+                // fix for ccb
+                if ("出埃及".equals(human)) {
+                    human = "出埃及记";
+                }
                 osiss.add(osis);
-                books.add(human.length() > 7 ? osis : human);
+                if (scale > 1.0f) {
+                    books.add(human);
+                } else {
+                    String zhcn = map.get(osis);
+                    if (zhcn != null && !zhcn.equals("") && human.indexOf(zhcn.substring(0, 1)) != -1) {
+                        books.add(zhcn);
+                    } else {
+                        books.add(osis);
+                    }
+                }
                 chapters.add(chapter);
                 humans.add(human);
             }
@@ -284,7 +311,129 @@ public class Bible
         if (version == null && getCount(TYPE.VERSION) > 0) {
             version = get(TYPE.VERSION, 0);
         }
-        setVersion(version);
+        if (version != null) {
+            setVersion(version);
+        } else {
+            int demoVersion = PreferenceManager.getDefaultSharedPreferences(mContext).getInt("demoVersion", 0);
+            int versionCode = 0;
+            try {
+                versionCode = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionCode;
+            } catch (NameNotFoundException e) {
+            }
+            boolean newVersion = (demoVersion != versionCode);
+            boolean unpack = unpackRaw(newVersion, R.raw.zh, new File(mContext.getFilesDir(), "zh.sqlite3"));
+            if (unpack) {
+                unpack = unpackRaw(newVersion, R.raw.en, new File(mContext.getFilesDir(), "en.sqlite3"));
+            }
+            if (newVersion && unpack) {
+                PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("demoVersion", versionCode).commit();
+            }
+            File file = new File(mContext.getFilesDir(), mContext.getString(R.string.demopath));
+            database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
+                SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+            Log.d(TAG, "open database \"" + database.getPath() + "\"");
+            setMetadata(database);
+            databaseVersion = "demo";
+        }
+    }
+
+    private boolean unpackRaw(boolean newVersion, int resid, File file) {
+        if (file.exists()) {
+            if (!newVersion) {
+                return true;
+            }
+            file.delete();
+        }
+
+        Log.d(TAG, "unpacking " + file.getAbsolutePath());
+
+        try {
+            int length;
+            byte [] buffer = new byte[8192];
+            OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+            InputStream is = mContext.getResources().openRawResource(resid);
+            while((length = is.read(buffer)) >= 0) {
+                os.write(buffer, 0, length);
+            }
+            is.close();
+            os.close();
+        } catch (Exception e) {
+            Log.e(TAG, "unpacked " + file.getAbsolutePath(), e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public final static HashMap<String, String> map = new HashMap<String, String>();
+
+    protected void initMap() {
+        map.put("Gen", "创");
+        map.put("Exod", "出");
+        map.put("Lev", "利");
+        map.put("Num", "民");
+        map.put("Deut", "申");
+        map.put("Josh", "书");
+        map.put("Judg", "士");
+        map.put("Ruth", "得");
+        map.put("1Sam", "撒上");
+        map.put("2Sam", "撒下");
+        map.put("1Kgs", "王上");
+        map.put("2Kgs", "王下");
+        map.put("1Chr", "代上");
+        map.put("2Chr", "代下");
+        map.put("Ezra", "拉");
+        map.put("Neh", "尼");
+        map.put("Esth", "斯");
+        map.put("Job", "伯");
+        map.put("Ps", "诗");
+        map.put("Prov", "箴");
+        map.put("Eccl", "传");
+        map.put("Song", "歌");
+        map.put("Isa", "赛");
+        map.put("Jer", "耶");
+        map.put("Lam", "哀");
+        map.put("Ezek", "结");
+        map.put("Dan", "但");
+        map.put("Hos", "何");
+        map.put("Joel", "珥");
+        map.put("Amos", "摩");
+        map.put("Obad", "俄");
+        map.put("Jonah", "拿");
+        map.put("Mic", "弥");
+        map.put("Nah", "鸿");
+        map.put("Hab", "哈");
+        map.put("Zeph", "番");
+        map.put("Hag", "该");
+        map.put("Zech", "亚");
+        map.put("Mal", "玛");
+        map.put("Matt", "太");
+        map.put("Mark", "可");
+        map.put("Luke", "路");
+        map.put("John", "约");
+        map.put("Acts", "徒");
+        map.put("Rom", "罗");
+        map.put("1Cor", "林前");
+        map.put("2Cor", "林后");
+        map.put("Gal", "加");
+        map.put("Eph", "弗");
+        map.put("Phil", "腓");
+        map.put("Col", "西");
+        map.put("1Thess", "帖前");
+        map.put("2Thess", "帖后");
+        map.put("1Tim", "提前");
+        map.put("2Tim", "提后");
+        map.put("Titus", "多");
+        map.put("Phlm", "门");
+        map.put("Heb", "来");
+        map.put("Jas", "雅");
+        map.put("1Pet", "彼前");
+        map.put("2Pet", "彼后");
+        map.put("1John", "约壹");
+        map.put("2John", "约贰");
+        map.put("3John", "约叁");
+        map.put("Jude", "犹");
+        map.put("Rev", "启");
     }
 
 }

@@ -8,7 +8,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@android:drawable/title_bar"
+        android:gravity="center_vertical"
         >
         <TextView
             style="@style/button"
@@ -25,16 +25,25 @@
             android:layout_toRightOf="@id/book"
             />
         <TextView
+            android:id="@+id/search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/ic_menu_search"
+            android:layout_alignParentRight="true"
+            />
+        <TextView
+            android:id="@+id/share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/ic_menu_share"
+            android:layout_toLeftOf="@id/search"
+            />
+        <TextView
             style="@style/button"
             android:id="@+id/version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            />
-        <TextView
-            android:id="@+id/search"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/share"
             />
     </RelativeLayout>
     <GridView
@@ -46,7 +55,6 @@
         android:stretchMode="columnWidth"
         android:paddingLeft="13dp"
         android:paddingRight="13dp"
-        android:background="@android:drawable/title_bar"
         />
     <WebView
         android:id="@+id/webview"

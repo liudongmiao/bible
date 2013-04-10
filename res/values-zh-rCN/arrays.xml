@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="version">
-        <item>(英文) 新国际版(NIV)2011</item>
+        <item>(中文) 和合本新标点版</item>
         <item>(英文) 新国际版(NIV)1984</item>
-        <item>(中文) 和合本修订版(简体)</item>
+        <item>(英文) 新国际版(NIV)2011</item>
         <item>(中文) 当代译本</item>
+        <item>(中文) 和合本新标点版</item>
         <item>(中文) 和合本新标点版(简体)</item>
+        <item>(中文) 和合本修订版</item>
+        <item>(中文) 和合本修订版(简体)</item>
     </array>
 </resources>
 <!-- vim: set sta sw=4 et: -->

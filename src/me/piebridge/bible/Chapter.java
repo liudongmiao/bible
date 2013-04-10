@@ -17,7 +17,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
 
@@ -31,7 +34,6 @@ import android.widget.GridView;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.util.Locale;
@@ -40,6 +42,7 @@ import android.preference.PreferenceManager;
 import android.content.Context;
 import android.content.SharedPreferences.Editor;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import android.widget.ZoomButtonsController;
@@ -82,16 +85,43 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected float scale = 1.0f;
     protected String background = null;
     protected String copytext = "";
+    protected static final int COPYTEXT = 0;
+
+    static class BibleHandler extends Handler {
+        WeakReference<Chapter> outerClass;
+
+        BibleHandler(Chapter activity) {
+            outerClass = new WeakReference<Chapter>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            Chapter theClass = outerClass.get();
+            if (theClass == null) {
+                return;
+            }
+            if (msg.what == COPYTEXT) {
+                theClass.checkShare();
+            }
+        }
+    }
+
+    private BibleHandler handler = new BibleHandler(this);
 
     @Override
     @SuppressLint("SetJavaScriptEnabled")
     protected void onCreate(Bundle savedInstanceState) {
+        // on MB612, the search and share icon is so dark ...
+        if (Build.MODEL.equals("MB612")) {
+            setTheme(android.R.style.Theme_Light_NoTitleBar);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chapter);
         findViewById(R.id.book).setOnClickListener(this);
         findViewById(R.id.chapter).setOnClickListener(this);
         findViewById(R.id.search).setOnClickListener(this);
         findViewById(R.id.version).setOnClickListener(this);
+        findViewById(R.id.share).setOnClickListener(this);
 
         adapter = new ArrayAdapter<String>(this, R.layout.grid) {
             private LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -133,12 +163,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
             public void setCopyText(String text) {
                 if (!text.equals("")) {
-                    copytext = version.toUpperCase(Locale.US) + " " + bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, book)) + " " + chapter + ":" + text;
+                    copytext = bible.getVersionResource(version) + " ";
+                    copytext += bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, book)) + " " + chapter + ":" + text;
                     ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                     clipboard.setText(copytext);
-                    showToast();
                     Log.d(TAG, "copy from javascript: " + copytext);
+                } else {
+                    copytext = "";
                 }
+                handler.sendEmptyMessage(COPYTEXT);
             }
         }, "android");
         setZoomButtonsController(webview);
@@ -183,15 +216,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private void showUri(Uri uri) {
         version = bible.getVersion();
+        /*
         if (version.equals("")) {
             ((TextView)findViewById(R.id.version)).setText(R.string.refreshversion);
-            findViewById(R.id.book).setVisibility(View.INVISIBLE);
-            findViewById(R.id.chapter).setVisibility(View.INVISIBLE);
-            findViewById(R.id.search).setVisibility(View.INVISIBLE);
+            showView(R.id.book, false);
+            showView(R.id.chapter, false);
+            showView(R.id.search, false);
             showContent("", getString(R.string.noversion, new Object[] {link_market, link_github}));
             return;
         }
-
+        */
         if (uri == null) {
             Log.d(TAG, "show null uri, use default");
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(null).fragment(version).build();
@@ -215,9 +249,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             cursor.close();
 
             setBookChapter(osis);
-            findViewById(R.id.book).setVisibility(View.VISIBLE);
-            findViewById(R.id.chapter).setVisibility(View.VISIBLE);
-            findViewById(R.id.search).setVisibility(View.VISIBLE);
+            showView(R.id.book, true);
+            showView(R.id.chapter, true);
+            showView(R.id.search, true);
             showContent(human + " | " + version, content);
         } else {
             Log.d(TAG, "no such chapter, try first chapter");
@@ -246,7 +280,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         chapter = osis.split("\\.")[1];
         Log.d(TAG, "set book chapter, osis: " + osis);
 
-        ((TextView)findViewById(R.id.version)).setText(String.valueOf(bible.getVersion()).toUpperCase(Locale.US));
+        if (bible.getVersion().equals("demo")) {
+            ((TextView)findViewById(R.id.version)).setText(R.string.demo);
+        } else {
+            ((TextView)findViewById(R.id.version)).setText(String.valueOf(bible.getVersion()).toUpperCase(Locale.US));
+        }
         ((TextView)findViewById(R.id.book)).setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
         ((TextView)findViewById(R.id.chapter)).setText(chapter);
     }
@@ -254,7 +292,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private void storeOsisVersion() {
         final Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString("osis", osis);
-        editor.putString("version", version);
+        if (!version.equals("demo") && !version.equals("")) {
+            editor.putString("version", version);
+        }
         editor.putString("verse", verse);
         editor.putInt("fontsize", fontsize);
         if (!book.equals("") && !chapter.equals("")) {
@@ -273,6 +313,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             versename = "versename";
         }
         copytext = "";
+        showView(R.id.share, !copytext.equals(""));
         String context = content;
         // for biblegateway.com
         context = context.replaceAll("<span class=\"chapternum\">.*?</span>", "<sup class=\"versenum\">1 </sup>");
@@ -302,13 +343,17 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<title>" + title + "</title>\n";
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
-        if (verse.equals("")) {
-            body += "</head>\n<body>\n<div id=\"content\">\n";
+        if (verse.equals("") || verse.equals("1")) {
+            body += "</head>\n<body>\n";
         } else {
             Log.d(TAG, "try jump to verse " + verse);
-            body += "</head>\n<body onload=\"window.location.hash='#" + versename + "-" + verse + "'\">\n<div id=\"content\">\n";
-            verse = "";
+            body += "</head>\n<body onload=\"window.location.hash='#" + versename + "-" + verse + "'\">\n";
         }
+        verse = "";
+        if (bible.getVersion().equals("demo")) {
+            body += "<div id=\"pb-demo\">" + getString(R.string.noversion, new Object[] {link_market, link_github}) + "</div>\n";
+        }
+        body += "<div id=\"content\">\n";
         body += context;
         body += "</div>\n</body>\n</html>\n";
         webview.clearCache(true);
@@ -354,6 +399,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case R.id.search:
                 onSearchRequested();
                 break;
+            case R.id.share:
+                if (!copytext.equals("")) {
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, copytext);
+                    sendIntent.setType("text/plain");
+                    startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.share)));
+                }
         }
     }
 
@@ -374,19 +427,19 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 int matt = getMatt();
                 gridview.setNumColumns(2);
                 Log.d(TAG, "book=" + book);
-                selected = bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book));
+                selected = bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, book));
                 if (matt > 0) {
                     for (int id = 0; id < matt; id++) {
                         int right = matt + id;
-                        adapter.add(bible.get(Bible.TYPE.OSIS, id).equals(book) ? selected : bible.get(Bible.TYPE.BOOK, id));
+                        adapter.add(bible.get(Bible.TYPE.OSIS, id).equals(book) ? selected : bible.get(Bible.TYPE.HUMAN, id));
                         if (right < bible.getCount(Bible.TYPE.OSIS)) {
-                            adapter.add(bible.get(Bible.TYPE.OSIS, right).equals(book) ? selected : bible.get(Bible.TYPE.BOOK, right));
+                            adapter.add(bible.get(Bible.TYPE.OSIS, right).equals(book) ? selected : bible.get(Bible.TYPE.HUMAN, right));
                         } else {
                             adapter.add("");
                         }
                     }
                 } else {
-                    for (String string: bible.get(Bible.TYPE.BOOK)) {
+                    for (String string: bible.get(Bible.TYPE.HUMAN)) {
                         adapter.add(string.equals(book) ? selected : string);
                     }
                 }
@@ -508,9 +561,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public boolean onSearchRequested() {
-        if (bible.getCount(Bible.TYPE.VERSION) > 0) {
-            startActivity(new Intent(Chapter.this, Search.class));
-        }
+        startActivity(new Intent(Chapter.this, Search.class));
         return false;
     }
 
@@ -626,7 +677,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private boolean setZoomButtonsController(WebView webview) {
         boolean hasZoomButtons = false;
-        if (android.os.Build.VERSION.SDK_INT > 10) {
+        if (Build.VERSION.SDK_INT > 10) {
             hasZoomButtons = setButtonsControllerAPI11(webview);
             if (!hasZoomButtons) {
                 hasZoomButtons = setButtonsControllerAPI(webview);
@@ -673,7 +724,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         });
     }
 
-    private void showToast() {
-        Toast.makeText(getApplicationContext(), R.string.copied, Toast.LENGTH_SHORT).show();
+    private void showView(int resId, boolean enable) {
+        findViewById(resId).setVisibility(enable ? View.VISIBLE : View.GONE);
     }
+
+    private void checkShare() {
+        showView(R.id.share, !copytext.equals(""));
+    }
+
 }

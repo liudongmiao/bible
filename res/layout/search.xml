@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:orientation="vertical"
     >
     <RelativeLayout
         android:id="@+id/search"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         >
         <EditText
             android:id="@+id/searchtext"
@@ -22,7 +21,6 @@
             />
         <TextView
             android:id="@id/searchbutton"
-            android:layout_alignBottom="@+id/searchtext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -30,11 +28,10 @@
             />
     </RelativeLayout>
     <ListView
-        android:id="@+id/searchlist"
+        android:id="@android:id/list"
         android:cacheColorHint="@null"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/search"
+        android:layout_height="fill_parent"
         />
-</RelativeLayout>
+</LinearLayout>
 <!-- vim: set sta sw=4 et: -->

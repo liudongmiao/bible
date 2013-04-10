@@ -2,29 +2,30 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.piebridge.bible"
     android:sharedUserId="me.piebridge.bible"
-    android:versionCode="33"
-    android:versionName="0.8.11">
+    android:versionCode="34"
+    android:versionName="0.8.12">
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="10" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application android:label="@string/app_name" android:icon="@drawable/bible"
-        android:theme="@style/PBTheme">
-        <activity android:name="Search" android:theme="@style/PSTheme">
+        android:theme="@style/Theme.Light">
+        <activity android:name="Chapter" android:theme="@style/Theme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="Search" />
+        <activity android:name="Result">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name="Chapter">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <provider android:name="Provider"
+        <provider android:name="Provider" android:exported="false"
             android:authorities="me.piebridge.bible.provider" />
         <meta-data android:name="android.app.default_searchable"
-            android:value=".Search" />
+            android:value=".Result" />
     </application>
 </manifest>
 <!-- vim: set sta sw=4 et: -->

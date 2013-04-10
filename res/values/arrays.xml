@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="abbr">
-        <item>niv2011</item>
+        <item>demo</item>
         <item>niv1984</item>
-        <item>rcuvss</item>
+        <item>niv2011</item>
         <item>ccb</item>
+        <item>cunp</item>
         <item>cunpss</item>
+        <item>rcuv</item>
+        <item>rcuvss</item>
     </array>
     <array name="version">
-        <item>(en) New International Version 2011</item>
         <item>(en) New International Version 1984</item>
-        <item>(zh) Revised Chinese Union Version (Simplified Script)</item>
+        <item>(en) New International Version 1984</item>
+        <item>(en) New International Version 2011</item>
         <item>(zh) Chinese Contemporary Bible</item>
+        <item>(zh) Chinese Union Version (New Punctuation)</item>
         <item>(zh) Chinese Union Version (New Punctuation, Simplified Script)</item>
+        <item>(zh) Revised Chinese Union Version</item>
+        <item>(zh) Revised Chinese Union Version (Simplified Script)</item>
     </array>
 </resources>
 <!-- vim: set sta sw=4 et: -->

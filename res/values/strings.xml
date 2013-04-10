@@ -8,7 +8,7 @@
       <item quantity="other">%1$d results for \"%2$s\" from \"%3$s\" to \"%4$s\" in \"%5$s\": </item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
-    <string name="noversion">Sorry, Bible Reader doesn\'t contains any Bible Data for some reasons. Please install one or more Bible Data from Google Play Store %1$s or Project Website %2$s. And, Bible Reader only supports Bible Data on external storage(ie, sdcard).</string>
+    <string name="noversion">Bible Reader contains only few Bible Chapters, Please install one or more Bible Data from Google Play Store %1$s or Project Website %2$s. Note: Bible Reader only supports Bible Data on external storage(ie, sdcard).</string>
     <string name="chooseversion">Choose Version</string>
     <string name="searchall">Search Entire Bible</string>
     <string name="searchold">Search Old Testament</string>
@@ -17,6 +17,8 @@
     <string name="searchfrom">Choose From Book</string>
     <string name="searchto">Choose To Book</string>
     <string name="queryerror">Cannot open database, please try again later.</string>
-    <string name="refreshversion">Refresh Version</string>
-    <string name="copied">Verses are copied, can be pasted directly.</string>
+    <string name="share">Share Bible verses to ..</string>
+    <string name="demo">DEMO</string>
+    <string name="demopath">en.sqlite3</string>
+    <string name="fromto">from %1$s to %2$s</string>
 </resources>
