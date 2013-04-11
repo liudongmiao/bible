@@ -8,7 +8,7 @@
       <item quantity="other">在“%5$s”本中从“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
-    <string name="noversion">圣经阅读器仅带几章演示圣经，请从谷歌电子市场%1$s或者项目网站%2$s下载安装一些圣经数据库。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
+    <string name="noversion">圣经阅读器仅带几章演示圣经，请从谷歌电子市场%1$s，或者其它电子市场搜索“离线圣经”(国内仅支持安卓市场)，或者项目网站%2$s安装一些圣经数据库。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
     <string name="chooseversion">选择版本</string>
     <string name="searchall">搜索整本圣经</string>
     <string name="searchold">搜索旧约圣经</string>
