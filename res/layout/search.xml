@@ -19,12 +19,14 @@
             android:imeOptions="actionSearch"
             android:inputType="text"
             />
-        <TextView
+        <ImageView
             android:id="@id/searchbutton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:scaleType="center"
+            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:background="@android:drawable/ic_menu_search"
+            android:src="@android:drawable/ic_menu_search"
             />
     </RelativeLayout>
     <ListView
