@@ -114,13 +114,12 @@ public class Bible
                 File file = new File(path, name);
                 if (name.endsWith(".sqlite3") && file.exists() && file.isFile()) {
                     Log.d(TAG, "add version " + name);
-                    if (name.equals("niv.sqlite3")) {
-                        versions.add(0, name.replace(".sqlite3", ""));
-                    } else {
-                        versions.add(name.replace(".sqlite3", ""));
-                    }
+                    versions.add(name.replace(".sqlite3", "").replace("niv2011", "niv").replace("niv1984", "niv84"));
                 }
             }
+        }
+        if (versions.size() == 0) {
+            setDemoVersions();
         }
         return true;
     }
@@ -145,7 +144,17 @@ public class Bible
             return false;
         }
         */
-        File file = new File(databasePath, version + ".sqlite3");
+        File file = null;
+        if (version.equals("demo")) {
+            file = new File(mContext.getFilesDir(), mContext.getString(R.string.demopath));
+        } else if (version.equals("niv")) {
+            file = new File(databasePath, "niv2011.sqlite3");
+        } else if (version.equals("niv84")) {
+            file = new File(databasePath, "niv1984.sqlite3");
+        }
+        if (file == null || !file.exists() || !file.isFile()) {
+            file = new File(databasePath, version + ".sqlite3");
+        }
         if (file.exists() && file.isFile()) {
             databaseVersion = version;
             database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
@@ -303,6 +312,24 @@ public class Bible
         version.recycle();
     }
 
+    private void setDemoVersions() {
+        int demoVersion = PreferenceManager.getDefaultSharedPreferences(mContext).getInt("demoVersion", 0);
+        int versionCode = 0;
+        try {
+            versionCode = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionCode;
+        } catch (NameNotFoundException e) {
+        }
+        boolean newVersion = (demoVersion != versionCode);
+        boolean unpack = unpackRaw(newVersion, R.raw.zh, new File(mContext.getFilesDir(), "zh.sqlite3"));
+        if (unpack) {
+            unpack = unpackRaw(newVersion, R.raw.en, new File(mContext.getFilesDir(), "en.sqlite3"));
+        }
+        if (newVersion && unpack) {
+            PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("demoVersion", versionCode).commit();
+        }
+        versions.add("demo");
+    }
+
     private void setDefaultVersion() {
         String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version", null);
         if (version != null && getPosition(TYPE.VERSION, version) < 0) {
@@ -313,27 +340,6 @@ public class Bible
         }
         if (version != null) {
             setVersion(version);
-        } else {
-            int demoVersion = PreferenceManager.getDefaultSharedPreferences(mContext).getInt("demoVersion", 0);
-            int versionCode = 0;
-            try {
-                versionCode = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionCode;
-            } catch (NameNotFoundException e) {
-            }
-            boolean newVersion = (demoVersion != versionCode);
-            boolean unpack = unpackRaw(newVersion, R.raw.zh, new File(mContext.getFilesDir(), "zh.sqlite3"));
-            if (unpack) {
-                unpack = unpackRaw(newVersion, R.raw.en, new File(mContext.getFilesDir(), "en.sqlite3"));
-            }
-            if (newVersion && unpack) {
-                PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("demoVersion", versionCode).commit();
-            }
-            File file = new File(mContext.getFilesDir(), mContext.getString(R.string.demopath));
-            database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
-                SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-            Log.d(TAG, "open database \"" + database.getPath() + "\"");
-            setMetadata(database);
-            databaseVersion = "demo";
         }
     }
 

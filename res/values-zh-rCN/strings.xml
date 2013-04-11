@@ -21,4 +21,6 @@
     <string name="demo">演示</string>
     <string name="demopath">zh.sqlite3</string>
     <string name="fromto">从%1$s到%2$s</string>
+    <string name="bibledatalink">%E5%9C%A3%E7%BB%8F%E6%95%B0%E6%8D%AE</string>
+    <string name="bibledatahuman">圣经数据</string>
 </resources>

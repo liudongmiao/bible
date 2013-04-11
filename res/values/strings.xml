@@ -21,4 +21,6 @@
     <string name="demo">DEMO</string>
     <string name="demopath">en.sqlite3</string>
     <string name="fromto">from %1$s to %2$s</string>
+    <string name="bibledatalink">%22Bible%20Data%22</string>
+    <string name="bibledatahuman">"Bible Data"</string>
 </resources>

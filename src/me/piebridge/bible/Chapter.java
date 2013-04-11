@@ -66,7 +66,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private String osis_prev;
 
     private int fontsize = 16;
-    private final String link_market = "<a href=\"market://search?q=pub:Liu+DongMiao\">market://search?q=pub:Liu DongMiao</a>";
     private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/downloads\">https://github.com/liudongmiao/bible/downloads</a>";
 
     private ZoomButtonsController mZoomButtonsController = null;
@@ -216,16 +215,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private void showUri(Uri uri) {
         version = bible.getVersion();
-        /*
-        if (version.equals("")) {
-            ((TextView)findViewById(R.id.version)).setText(R.string.refreshversion);
-            showView(R.id.book, false);
-            showView(R.id.chapter, false);
-            showView(R.id.search, false);
-            showContent("", getString(R.string.noversion, new Object[] {link_market, link_github}));
-            return;
-        }
-        */
         if (uri == null) {
             Log.d(TAG, "show null uri, use default");
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(null).fragment(version).build();
@@ -351,6 +340,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         verse = "";
         if (bible.getVersion().equals("demo")) {
+            String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">market://search?q=" + getString(R.string.bibledatahuman) + "&c=apps</a>";
             body += "<div id=\"pb-demo\">" + getString(R.string.noversion, new Object[] {link_market, link_github}) + "</div>\n";
         }
         body += "<div id=\"content\">\n";
@@ -463,7 +453,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 break;
         }
 
-        if (adapter.getCount() > 1) {
+        if (adapter.getCount() > 0) {
             gridview.setVisibility(View.VISIBLE);
             gridview.setSelection(adapter.getPosition(selected));
         } else {
