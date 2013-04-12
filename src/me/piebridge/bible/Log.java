@@ -12,30 +12,31 @@ public class Log {
     private static boolean debug = false;
     private static boolean error = false;
     private static boolean warning = false;
+    private static boolean emulator = android.os.Build.PRODUCT.contains("sdk");
 
     public static int d(String tag, String msg) {
-        if (debug) {
+        if (debug || emulator) {
             return android.util.Log.d(tag, msg);
         }
         return 0;
     }
 
     public static int e(String tag, String msg) {
-        if (error) {
+        if (error || emulator) {
             return android.util.Log.e(tag, msg);
         }
         return 0;
     }
 
     public static int w(String tag, String msg) {
-        if (warning) {
+        if (warning || emulator) {
             return android.util.Log.w(tag, msg);
         }
         return 0;
     }
 
     public static int e(String tag, String msg, Throwable tr) {
-        if (error) {
+        if (error || emulator) {
             return android.util.Log.e(tag, msg, tr);
         }
         return 0;
