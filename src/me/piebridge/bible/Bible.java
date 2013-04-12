@@ -66,7 +66,7 @@ public class Bible
         mContext = context;
         scale = context.getResources().getDisplayMetrics().density;
         if (scale <= 1.0) {
-            initMap();
+            zhOsisMap(osisMap);
         }
         checkVersions();
         setResources();
@@ -189,7 +189,7 @@ public class Bible
                 if (scale > 1.0f) {
                     books.add(human);
                 } else {
-                    String zhcn = map.get(osis);
+                    String zhcn = osisMap.get(osis);
                     if (zhcn != null && !zhcn.equals("") && human.indexOf(zhcn.substring(0, 1)) != -1) {
                         books.add(zhcn);
                     } else {
@@ -371,9 +371,9 @@ public class Bible
         return true;
     }
 
-    public final static HashMap<String, String> map = new HashMap<String, String>();
+    public final static HashMap<String, String> osisMap = new HashMap<String, String>();
 
-    protected void initMap() {
+    protected void zhOsisMap(HashMap<String, String> map) {
         map.put("Gen", "创");
         map.put("Exod", "出");
         map.put("Lev", "利");
