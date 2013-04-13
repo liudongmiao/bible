@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Bible</string>
-    <string name="search_hint">Search Bible</string>
+    <string name="search_hint">passage(e.g,John 3:16-17) or keyword</string>
+    <string name="search_description">Search Bible passage, or keyword</string>
     <string name="search_no_results">No Results for \"%1$s\" from \"%2$s\" to \"%3$s\" in \"%4$s\".</string>
     <plurals name="search_results">
       <item quantity="one">%1$d result for \"%2$s\" from \"%3$s\" to \"%4$s\" in \"%5$s\": </item>
@@ -18,9 +19,11 @@
     <string name="searchto">Choose To Book</string>
     <string name="queryerror">Cannot open database, please try again later.</string>
     <string name="share">Share Bible verses to ..</string>
-    <string name="demo">DEMO</string>
     <string name="demopath">en.sqlite3</string>
     <string name="fromto">from %1$s to %2$s</string>
     <string name="bibledatalink">%22Bible%20Data%22</string>
     <string name="bibledatahuman">"Bible Data"</string>
+    <string name="otherbook">Choose Other Book</string>
+    <string name="genesis">Genesis</string>
+    <string name="search">Search %1$s in Bible</string>
 </resources>

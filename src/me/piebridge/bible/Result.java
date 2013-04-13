@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.database.Cursor;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class Result extends Activity
@@ -169,15 +170,14 @@ public class Result extends Activity
         String book = verseCursor.getString(verseCursor.getColumnIndexOrThrow(Provider.COLUMN_BOOK));
         String verse = verseCursor.getString(verseCursor.getColumnIndexOrThrow(Provider.COLUMN_VERSE));
         int[] chapterVerse = bible.getChapterVerse(verse);
-        String osis = book + "." + chapterVerse[0];
-        Log.d(TAG, "show osis: " + osis + ", version: " + version);
         verseCursor.close();
 
-        Intent chapterIntent = new Intent(getApplicationContext(), Chapter.class);
-        Uri data = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
-        chapterIntent.setData(data);
-        chapterIntent.putExtra("verse", chapterVerse[1]);
-        startActivity(chapterIntent);
+        Intent intent = new Intent(getApplicationContext(), Chapter.class);
+        ArrayList<OsisItem> items = new ArrayList<OsisItem>();
+        Log.d(TAG, String.format("book: %s, chapter: %d, verse: %d", book, chapterVerse[0], chapterVerse[1]));
+        items.add(new OsisItem(book, chapterVerse[0], chapterVerse[1]));
+        intent.putParcelableArrayListExtra("osiss", items);
+        startActivity(intent);
 
         return true;
     }

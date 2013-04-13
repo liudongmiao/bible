@@ -12,7 +12,7 @@ public class Log {
     private static boolean debug = false;
     private static boolean error = false;
     private static boolean warning = false;
-    private static boolean emulator = android.os.Build.PRODUCT.contains("sdk");
+    private static boolean emulator = android.os.Build.PRODUCT.contains("sdk") || android.os.Build.PRODUCT.contains("mb612");
 
     public static int d(String tag, String msg) {
         if (debug || emulator) {

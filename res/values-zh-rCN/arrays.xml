@@ -9,6 +9,22 @@
         <item>(中文) 和合本新标点版(简体)</item>
         <item>(中文) 和合本修订版</item>
         <item>(中文) 和合本修订版(简体)</item>
+        <item>(英文) New Living Translation</item>
+        <item>(英文) 钦定版(KJV)</item>
+        <item>(英文) 新钦定版(NKJV)</item>
+    </array>
+    <array name="name">
+        <item>演示</item>
+        <item>niv84</item>
+        <item>niv</item>
+        <item>当代译本</item>
+        <item>和合本</item>
+        <item>和合本</item>
+        <item>和合本修</item>
+        <item>和合本修</item>
+        <item>nlt</item>
+        <item>kjv</item>
+        <item>nkjv</item>
     </array>
 </resources>
 <!-- vim: set sta sw=4 et: -->

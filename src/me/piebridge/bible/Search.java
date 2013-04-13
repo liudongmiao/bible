@@ -187,7 +187,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         searchto.setEntries(humans);
         searchto.setEntryValues(osiss);
 
-        version.setSummary(bible.getVersion().toUpperCase(Locale.US));
+        version.setSummary(bible.getVersionName(bible.getVersion()).toUpperCase(Locale.US));
         searchall.setSummary(getString(R.string.fromto, new Object[] {bible.get(Bible.TYPE.HUMAN, 0), bible.get(Bible.TYPE.HUMAN, max)}));
         if (gen != -1 && mal != -1) {
             searchold.setEnabled(true);
@@ -318,8 +318,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
                 query = ((EditText) findViewById(R.id.searchtext)).getText().toString();
                 // isEmpty since api-9 ?
                 if (query.length() > 0) {
-                    Intent intent = new Intent(getApplicationContext(), Result.class);
-                    intent.setAction(Intent.ACTION_SEARCH);
+                    Intent intent = new Intent(getApplicationContext(), Passage.class);
                     intent.putExtra(SearchManager.QUERY, query);
                     intent.putExtra("osisfrom", osisfrom);
                     intent.putExtra("osisto", osisto);
