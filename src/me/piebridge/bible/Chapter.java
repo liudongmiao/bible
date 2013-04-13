@@ -190,6 +190,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             Log.d(TAG, "version: " + version);
             bible.checkVersions();
             bible.setVersion(version);
+        } else {
+            version = "";
         }
         items = intent.getParcelableArrayListExtra("osiss");
     }
