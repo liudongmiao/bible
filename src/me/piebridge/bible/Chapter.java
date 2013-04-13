@@ -227,6 +227,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         } catch (SQLiteException e) {
             showContent("", getString(R.string.queryerror));
             return;
+        } catch (Exception e) {
         }
         if (cursor != null) {
             cursor.moveToFirst();
