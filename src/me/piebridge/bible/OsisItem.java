@@ -101,7 +101,7 @@ public class OsisItem implements Parcelable {
                     items.add(new OsisItem(osis, i));
                 }
                 if (end > start) {
-                    items.add(new OsisItem(osis, end_chapter, "1", end_verse));
+                    items.add(new OsisItem(osis, end_chapter, end_verse.equals("") ? "" : "1", end_verse));
                 }
             }
         }
