@@ -80,7 +80,11 @@ public class Result extends Activity
         Log.d(TAG, "search \"" + query + "\" in version \"" + version + "\"");
 
         Uri uri = Provider.CONTENT_URI_SEARCH.buildUpon().appendQueryParameter("books", books).appendEncodedPath(query).fragment(version).build();
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor = null;
+        try {
+            cursor = getContentResolver().query(uri, null, null, null, null);
+        } catch (Exception e) {
+        }
 
         if (cursor == null) {
             textView.setText(getString(R.string.search_no_results, new Object[] {
@@ -155,7 +159,10 @@ public class Result extends Activity
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showVerse(String.valueOf(id));
+                try {
+                    showVerse(String.valueOf(id));
+                } catch (Exception e) {
+                }
             }
         });
     }

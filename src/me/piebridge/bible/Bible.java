@@ -161,11 +161,20 @@ public class Bible
         }
         if (file.exists() && file.isFile()) {
             databaseVersion = version;
-            database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
-                SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-            Log.d(TAG, "open database \"" + database.getPath() + "\"");
-            setMetadata(database);
-            return true;
+            try {
+                database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
+                        SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+                Log.d(TAG, "open database \"" + database.getPath() + "\"");
+                setMetadata(database);
+                return true;
+            } catch (Exception e) {
+                try {
+                    file.delete();
+                } catch (Exception f) {
+                }
+                checkVersions();
+                return setDefaultVersion();
+            }
         } else {
             Log.e(TAG, "cannot get database \"" + file.getAbsolutePath() + "\"");
             databaseVersion = "";
@@ -351,7 +360,7 @@ public class Bible
         versions.add("demo");
     }
 
-    private void setDefaultVersion() {
+    private boolean setDefaultVersion() {
         String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version", null);
         if (version != null && getPosition(TYPE.VERSION, version) < 0) {
             version = null;
@@ -360,8 +369,9 @@ public class Bible
             version = get(TYPE.VERSION, 0);
         }
         if (version != null) {
-            setVersion(version);
+            return setVersion(version);
         }
+        return false;
     }
 
     private boolean unpackRaw(boolean newVersion, int resid, File file) {
