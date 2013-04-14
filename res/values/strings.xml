@@ -10,6 +10,8 @@
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
     <string name="noversion">This version is only for demo. Please install the Bible Data from Google Play Store %1$s or Project Website %2$s. Note: Bible Reader only supports Bible Data on external storage(ie, sdcard).</string>
+    <string name="moreversion">Please search Bible Data from Google Play Store %1$s or visit Project Website %2$s. If you want any more version, please email me at %3$s.</string>
+    <string name="more">More Versions..</string>
     <string name="chooseversion">Choose Version</string>
     <string name="searchall">Search Entire Bible</string>
     <string name="searchold">Search Old Testament</string>

@@ -68,7 +68,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private String osis_prev;
 
     private int fontsize = 16;
-    private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/downloads\">https://github.com/liudongmiao/bible/downloads</a>";
+    private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/tree/master/apk\">https://github.com/liudongmiao/bible/tree/master/apk</a>";
 
     private ZoomButtonsController mZoomButtonsController = null;
 
@@ -456,6 +456,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     Log.d(TAG, "add version " + string);
                     adapter.add(bible.getVersionFullname(string));
                 }
+                adapter.add(getString(R.string.more));
                 break;
             case R.id.items:
                 gridview.setNumColumns(1);
@@ -509,6 +510,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 break;
             case R.id.version:
                 storeOsisVersion();
+                if (pos >= bible.getCount(Bible.TYPE.VERSION)) {
+                    String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">market://search?q=" + getString(R.string.bibledatahuman) + "&c=apps</a>";
+                    String body = "<div id=\"pb-demo\">" + getString(R.string.moreversion, new Object[] {link_market, link_github, "<a href=\"mailto:liudongmiao@gmail.com\">Liu DongMiao</a>"}) + "</div>\n";
+                    showContent("", body);
+                    return;
+                }
                 version = bible.get(Bible.TYPE.VERSION, pos);
                 Log.d(TAG, "version: " + version);
                 bible.setVersion(version);
