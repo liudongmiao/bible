@@ -661,6 +661,49 @@ public class Bible
             }
         }
 
+        String osis = "";
+        String chapter = "";
+        if (osiss.size() == 0) {
+            ArrayList<OsisItem> items = OsisItem.parseSearch(book, mContext);
+            if (items.size() == 1) {
+                OsisItem item = items.get(0);
+                osis = item.book;
+                chapter = item.chapter;
+            }
+        } else if (osiss.size() == 1) {
+            for (Entry<String, String> entry: osiss.entrySet()) {
+                osis = entry.getKey();
+                chapter = "0";
+            }
+        }
+
+        String bookname = human.get(osis);
+        if (bookname == null) {
+            bookname = osis;
+        }
+        int chapternum = 0;
+        int maxchapter = 0;
+        try {
+            chapternum = Integer.parseInt(chapter);
+        } catch (Exception e) {
+        }
+        try {
+            maxchapter = Integer.parseInt(get(TYPE.CHAPTER, getPosition(TYPE.OSIS, osis)));
+        } catch (Exception e) {
+            return osiss;
+        }
+        if (bookname == null || "".equals(bookname)) {
+            return osiss;
+        }
+        if (chapternum != 0) {
+            osiss.put(bookname + " " + chapternum, osis + chapternum);
+        }
+        for (int i = 0 + chapternum * 10; i <= maxchapter && i < 10 * chapternum + 10; i++) {
+            if (i != 0) {
+                osiss.put(bookname + " " + i, osis + i);
+            }
+        }
+
         return osiss;
     }
 
