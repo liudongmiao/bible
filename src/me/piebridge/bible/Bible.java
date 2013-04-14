@@ -245,6 +245,8 @@ public class Bible
                         books.add(getResourceValue(this.osis, osis));
                     } else if (databaseVersion.endsWith("ss") || databaseVersion.equals("ccb")) {
                         books.add(getResourceValue(this.osis, osis));
+                    } else {
+                        books.add(osis);
                     }
                 }
                 chapters.add(chapter);
@@ -357,7 +359,7 @@ public class Bible
 
     public String getVersionName(String version) {
         version = version.toLowerCase(Locale.US);
-        return getResourceValue(versionNames, version.replace("demo", ""));
+        return getResourceValue(versionNames, version.replace("demo", "")).toUpperCase(Locale.US);
     }
 
     private String getResourceValue(HashMap<String, String> map, String key) {
