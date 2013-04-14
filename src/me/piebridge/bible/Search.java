@@ -29,10 +29,14 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map.Entry;
 
 public class Search extends PreferenceActivity implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, TextView.OnEditorActionListener, View.OnClickListener
 {
@@ -66,6 +70,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
     CheckBoxPreference searchold;
     CheckBoxPreference searchnew;
     CheckBoxPreference searchgospel;
+    BibleAutoCompleteTextView edittext;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -85,11 +90,64 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         updateSearch();
         updateVersion();
 
-        final EditText edittext = (EditText) findViewById(R.id.searchtext);
-        edittext.setText(query);
-        edittext.selectAll();
+        edittext = (BibleAutoCompleteTextView) findViewById(R.id.searchtext);
+        edittext.setThreshold(1);
         edittext.setOnEditorActionListener(this);
-        edittext.requestFocus();
+        edittext.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line) {
+            private ArrayList<String> mStrings = new ArrayList<String>();
+            private BibleFilter mFilter;
+            private Bible bible = Bible.getBible(getBaseContext());
+
+            @Override
+            public Filter getFilter() {
+                if (mFilter == null) {
+                    mFilter = new BibleFilter();
+                }
+                return mFilter;
+            }
+
+            public int getCount() {
+                return mStrings.size();
+            }
+
+            public String getItem(int position) {
+                return mStrings.get(position);
+            }
+
+            class BibleFilter extends Filter {
+                @Override
+                protected FilterResults performFiltering(CharSequence prefix) {
+                    FilterResults results = new FilterResults();
+                    if (prefix == null) {
+                        prefix = "";
+                    }
+
+                    LinkedHashMap<String, String> suggestions = bible.getOsiss(prefix.toString(), 66);
+                    final ArrayList<String> values = new ArrayList<String>();
+                    if (!"".equals(query)) {
+                        values.add(query);
+                    }
+                    for (Entry<String, String> entry: suggestions.entrySet()) {
+                        values.add(entry.getKey());
+                    }
+                    results.values = values;
+                    results.count = values.size();
+                    return results;
+                }
+
+                @SuppressWarnings("unchecked")
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    mStrings = (ArrayList<String>) results.values;
+                    if (results.count > 0) {
+                        notifyDataSetChanged();
+                    } else {
+                        notifyDataSetInvalidated();
+                    }
+                }
+            }
+        });
+        edittext.setOnClickListener(this);
 
         findViewById(R.id.searchbutton).setOnClickListener(this);
     }
@@ -114,7 +172,6 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
                 break;
         }
         return checkbox;
-
     }
 
     private ListPreference addList(String key, int title, CharSequence summary, CharSequence[] entries, CharSequence[] entryValues) {
@@ -211,6 +268,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
             searchgospel.setSummary("");
         }
     }
+
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         String key = preference.getKey();
@@ -314,8 +372,11 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         }
         switch (v.getId()) {
+            case R.id.searchtext:
+                edittext.showDropDown();
+                break;
             case R.id.searchbutton:
-                query = ((EditText) findViewById(R.id.searchtext)).getText().toString();
+                query = edittext.getText().toString();
                 // isEmpty since api-9 ?
                 if (query.length() > 0) {
                     Intent intent = new Intent(getApplicationContext(), Passage.class);
