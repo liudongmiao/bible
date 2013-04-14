@@ -312,8 +312,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         context = context.replaceAll("<span class=\"chapternum mid-paragraph\">.*?</span>", "");
         context = context.replaceAll("(<strong>\\D*?(\\d+).*?</strong>)", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup>$1</sup></span>");
         context = context.replaceAll("<sup(.*?>\\D*?(\\d+).*?)</sup>", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup><strong$1</strong></sup></span>");
-        context = context.replaceAll("「", "“").replaceAll("」", "”");
-        context = context.replaceAll("『", "‘").replaceAll("』", "’");
+        if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE)) {
+            context = context.replaceAll("「", "“").replaceAll("」", "”");
+            context = context.replaceAll("『", "‘").replaceAll("』", "’");
+        }
 
         fontsize = (int)(fontsize * scale);
         if (fontsize > 32) {
