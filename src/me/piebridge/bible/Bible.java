@@ -64,7 +64,9 @@ public class Bible
     private HashMap<String, String> versionNames = new HashMap<String, String>();
     private HashMap<String, String> versionFullnames = new HashMap<String, String>();
 
-    private LinkedHashMap<String, String> osis = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> osis;
+    private LinkedHashMap<String, String> osisZHCN = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> osisZHTW = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> humanEN = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> humanZHCN = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> humanZHTW = new LinkedHashMap<String, String>();
@@ -242,9 +244,9 @@ public class Bible
                     books.add(human);
                 } else {
                     if (databaseVersion.endsWith("ts")) {
-                        books.add(getResourceValue(this.osis, osis));
+                        books.add(getResourceValue(osisZHTW, osis));
                     } else if (databaseVersion.endsWith("ss") || databaseVersion.equals("ccb")) {
-                        books.add(getResourceValue(this.osis, osis));
+                        books.add(getResourceValue(osisZHCN, osis));
                     } else {
                         books.add(osis);
                     }
@@ -377,7 +379,8 @@ public class Bible
         Log.d(TAG, "setResources");
         setResourceValues(versionNames, R.array.versionname);
         setResourceValues(versionFullnames, R.array.versionfullname);
-        setResourceValues(osis, R.array.osis);
+        setResourceValues(osisZHCN, R.array.osiszhcn);
+        setResourceValues(osisZHTW, R.array.osiszhtw);
         setResourceValues(searchfull, R.array.searchfull);
         setResourceValues(searchshort, R.array.searchshort);
     }
@@ -499,16 +502,26 @@ public class Bible
     private ArrayList<LinkedHashMap<String, String>> getMaps() {
         checkLocale();
         ArrayList<LinkedHashMap<String, String>> maps = new ArrayList<LinkedHashMap<String, String>>();
+        osis = null;
         for (int order: orders) {
             switch (order) {
                 case ZHCN:
                     maps.add(humanZHCN);
+                    if (osis == null && osisZHCN.size() > 0) {
+                        osis = osisZHCN;
+                    }
                     break;
                 case ZHTW:
                     maps.add(humanZHTW);
+                    if (osis == null && osisZHCN.size() > 0) {
+                        osis = osisZHTW;
+                    }
                     break;
                 case EN:
                     maps.add(humanEN);
+                    if (osis == null && osisZHCN.size() > 0) {
+                        osis = new LinkedHashMap<String, String>();
+                    }
                     break;
             }
         }
@@ -539,8 +552,10 @@ public class Bible
             human = true;
         }
 
+        ArrayList<LinkedHashMap<String, String>> humanMaps = new ArrayList<LinkedHashMap<String, String>>();
+
         if (human) {
-            osis = getOsis(book, getMaps());
+            osis = getOsis(book, humanMaps);
             if (osis != null) {
                 return osis;
             }
@@ -554,7 +569,7 @@ public class Bible
             }
             maps = null;
 
-            osis = getOsis(book, getMaps());
+            osis = getOsis(book, humanMaps);
             if (osis != null) {
                 return osis;
             }
