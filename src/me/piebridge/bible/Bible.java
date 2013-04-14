@@ -710,12 +710,12 @@ public class Bible
     private void setOrders() {
         if (lastLocale.equals(Locale.SIMPLIFIED_CHINESE)) {
             orders[0] = ZHCN;
-            orders[1] = EN;
-            orders[2] = ZHTW;
+            orders[1] = ZHTW;
+            orders[2] = EN;
         } else if (lastLocale.equals(Locale.TRADITIONAL_CHINESE)) {
             orders[0] = ZHTW;
-            orders[1] = EN;
-            orders[2] = ZHCN;
+            orders[1] = ZHCN;
+            orders[2] = EN;
         } else {
             orders[0] = EN;
             orders[1] = ZHCN;
