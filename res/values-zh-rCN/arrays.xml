@@ -1,30 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <array name="version">
-        <item>(中文) 和合本新标点版</item>
-        <item>(英文) 新国际版(NIV)1984</item>
-        <item>(英文) 新国际版(NIV)2011</item>
-        <item>(中文) 当代译本</item>
-        <item>(中文) 和合本新标点版</item>
-        <item>(中文) 和合本新标点版(简体)</item>
-        <item>(中文) 和合本修订版</item>
-        <item>(中文) 和合本修订版(简体)</item>
-        <item>(英文) New Living Translation</item>
-        <item>(英文) 钦定版(KJV)</item>
-        <item>(英文) 新钦定版(NKJV)</item>
-    </array>
-    <array name="name">
-        <item>演示</item>
-        <item>niv84</item>
-        <item>niv</item>
-        <item>当代译本</item>
-        <item>和合本</item>
-        <item>和合本</item>
-        <item>和合本修</item>
-        <item>和合本修</item>
-        <item>nlt</item>
-        <item>kjv</item>
-        <item>nkjv</item>
-    </array>
+    <string-array name="versionname">
+        <item>ccb|当代译本</item>
+        <item>cunpss|和合本</item>
+        <item>cunpts|和合本繁</item>
+        <item>rcuvss|和合本修</item>
+        <item>rcuvts|和合本繁修</item>
+    </string-array>
+    <string-array name="versionfullname">
+        <item>ccb|当代译本</item>
+        <item>cunpss|和合本新标点版</item>
+        <item>cunpts|和合本新标点版(繁体)</item>
+        <item>rcuvss|和合本修订版</item>
+        <item>rcuvts|和合本修订版(繁体)</item>
+        <item>niv|英文新国际版(NIV)2011</item>
+        <item>niv84|英文新国际版(NIV)1984</item>
+        <item>kjv|英文钦定版(KJV)</item>
+        <item>nkjv|英文新钦定版(NKJV)</item>
+        <item>nlt|英文New Living Translation(NLT)</item>
+    </string-array>
+    <string-array name="searchfull">
+        <item>Gen|chuangshiji</item>
+        <item>Exod|chuaijiji</item>
+        <item>Lev|liweiji</item>
+        <item>Num|minshuji</item>
+        <item>Deut|shenmingji</item>
+        <item>Josh|yueshuyaji</item>
+        <item>Judg|shishiji</item>
+        <item>Ruth|ludeji</item>
+        <item>1Sam|samuerjishang</item>
+        <item>2Sam|samuerjixia</item>
+        <item>1Kgs|liewangjishang</item>
+        <item>1Kgs|liewangjixia</item>
+        <item>1Chr|lidaizhishang</item>
+        <item>2Chr|lidaizhixia</item>
+        <item>Ezra|yisilaji</item>
+        <item>Neh|niximiji</item>
+        <item>Esth|yisitieji</item>
+        <item>Job|yueboji</item>
+        <item>Ps|shipian</item>
+        <item>Prov|zhenyan</item>
+        <item>Eccl|chuandaoshu</item>
+        <item>Song|yage</item>
+        <item>Isa|yisaiyashu</item>
+        <item>Jer|yelimishu</item>
+        <item>Lam|yelimiaige</item>
+        <item>Ezek|yixijieshu</item>
+        <item>Dan|danyilishu</item>
+        <item>Hos|hexiashu</item>
+        <item>Joel|yueershu</item>
+        <item>Amos|amosishu</item>
+        <item>Obad|ebadiyashu</item>
+        <item>Jonah|yuenashu</item>
+        <item>Mic|mijiashu</item>
+        <item>Nah|nahongshu</item>
+        <item>Hab|habagushu</item>
+        <item>Zeph|xifanyashu</item>
+        <item>Hag|hagaishu</item>
+        <item>Zech|sajialiyashu</item>
+        <item>Mal|malajishu</item>
+        <item>Matt|mataifuyin</item>
+        <item>Mark|makefuyin</item>
+        <item>Luke|lujiafuyin</item>
+        <item>John|yuehanfuyin</item>
+        <item>Acts|shituxingzhuan</item>
+        <item>Rom|luomashu</item>
+        <item>1Cor|gelinduoqianshu</item>
+        <item>2Cor|gelinduohoushu</item>
+        <item>Gal|jialataishu</item>
+        <item>Eph|yifusuoshu</item>
+        <item>Phil|feilibishu</item>
+        <item>Col|geluoxishu</item>
+        <item>1Thess|tiesaluonijiaqianshu</item>
+        <item>2Thess|tiesaluonijiahoushu</item>
+        <item>1Tim|timotaiqianshu</item>
+        <item>1Tim|timotaithoushu</item>
+        <item>Titus|tiduoshu</item>
+        <item>Phlm|feilimenshu</item>
+        <item>Heb|xibolaishu</item>
+        <item>Jas|yageshu</item>
+        <item>1Pet|bideqianshu</item>
+        <item>2Pet|bidehoushu</item>
+        <item>1John|yuehanyishu</item>
+        <item>2John|yuehanershu</item>
+        <item>3John|yuehansanshu</item>
+        <item>Jude|youdashu</item>
+        <item>Rev|qishilu</item>
+    </string-array>
+    <string-array name="searchshort">
+        <!-- short -->
+        <item>Gen|chuang</item>
+        <item>Exod|chu</item>
+        <item>Lev|li</item>
+        <item>Num|min</item>
+        <item>Deut|shen</item>
+        <item>Josh|shu</item>
+        <item>Judg|shi</item>
+        <item>Ruth|de</item>
+        <item>1Sam|sashang</item>
+        <item>2Sam|saxia</item>
+        <item>1Kgs|wangshang</item>
+        <item>2Kgs|wangxia</item>
+        <item>1Chr|daishang</item>
+        <item>2Chr|daixia</item>
+        <item>Ezra|la</item>
+        <item>Neh|ni</item>
+        <item>Esth|si</item>
+        <item>Job|bo</item>
+        <item>Ps|shi</item>
+        <item>Prov|zhen</item>
+        <item>Eccl|chuan</item>
+        <item>Song|ge</item>
+        <item>Isa|sai</item>
+        <item>Jer|ye</item>
+        <item>Lam|ai</item>
+        <item>Ezek|jie</item>
+        <item>Dan|dan</item>
+        <item>Hos|he</item>
+        <item>Joel|er</item>
+        <item>Amos|mo</item>
+        <item>Obad|e</item>
+        <item>Jonah|na</item>
+        <item>Mic|mi</item>
+        <item>Nah|hong</item>
+        <item>Hab|ha</item>
+        <item>Zeph|fan</item>
+        <item>Hag|gai</item>
+        <item>Zech|ya</item>
+        <item>Mal|ma</item>
+        <item>Matt|tai</item>
+        <item>Mark|ke</item>
+        <item>Luke|lu</item>
+        <item>John|yue</item>
+        <item>Acts|tu</item>
+        <item>Rom|luo</item>
+        <item>1Cor|linqian</item>
+        <item>2Cor|linhou</item>
+        <item>Gal|jia</item>
+        <item>Eph|fu</item>
+        <item>Phil|fei</item>
+        <item>Col|xi</item>
+        <item>1Thess|tieqian</item>
+        <item>2Thess|tiehou</item>
+        <item>1Tim|tiqian</item>
+        <item>2Tim|tihou</item>
+        <item>Titus|duo</item>
+        <item>Phlm|men</item>
+        <item>Heb|lai</item>
+        <item>Jas|ya</item>
+        <item>1Pet|biqian</item>
+        <item>2Pet|bihou</item>
+        <item>1John|yueyi</item>
+        <item>2John|yueer</item>
+        <item>3John|yuesan</item>
+        <item>Jude|you</item>
+        <item>Rev|qi</item>
+    </string-array>
+    <string-array name="osis">
+        <item>Gen|创</item>
+        <item>Exod|出</item>
+        <item>Lev|利</item>
+        <item>Num|民</item>
+        <item>Deut|申</item>
+        <item>Josh|书</item>
+        <item>Judg|士</item>
+        <item>Ruth|得</item>
+        <item>1Sam|撒上</item>
+        <item>2Sam|撒下</item>
+        <item>1Kgs|王上</item>
+        <item>2Kgs|王下</item>
+        <item>1Chr|代上</item>
+        <item>2Chr|代下</item>
+        <item>Ezra|拉</item>
+        <item>Neh|尼</item>
+        <item>Esth|斯</item>
+        <item>Job|伯</item>
+        <item>Ps|诗</item>
+        <item>Prov|箴</item>
+        <item>Eccl|传</item>
+        <item>Song|歌</item>
+        <item>Isa|赛</item>
+        <item>Jer|耶</item>
+        <item>Lam|哀</item>
+        <item>Ezek|结</item>
+        <item>Dan|但</item>
+        <item>Hos|何</item>
+        <item>Joel|珥</item>
+        <item>Amos|摩</item>
+        <item>Obad|俄</item>
+        <item>Jonah|拿</item>
+        <item>Mic|弥</item>
+        <item>Nah|鸿</item>
+        <item>Hab|哈</item>
+        <item>Zeph|番</item>
+        <item>Hag|该</item>
+        <item>Zech|亚</item>
+        <item>Mal|玛</item>
+        <item>Matt|太</item>
+        <item>Mark|可</item>
+        <item>Luke|路</item>
+        <item>John|约</item>
+        <item>Acts|徒</item>
+        <item>Rom|罗</item>
+        <item>1Cor|林前</item>
+        <item>2Cor|林后</item>
+        <item>Gal|加</item>
+        <item>Eph|弗</item>
+        <item>Phil|腓</item>
+        <item>Col|西</item>
+        <item>1Thess|帖前</item>
+        <item>2Thess|帖后</item>
+        <item>1Tim|提前</item>
+        <item>2Tim|提后</item>
+        <item>Titus|多</item>
+        <item>Phlm|门</item>
+        <item>Heb|来</item>
+        <item>Jas|雅</item>
+        <item>1Pet|彼前</item>
+        <item>2Pet|彼后</item>
+        <item>1John|约壹</item>
+        <item>2John|约贰</item>
+        <item>3John|约叁</item>
+        <item>Jude|犹</item>
+        <item>Rev|启</item>
+    </string-array>
 </resources>
 <!-- vim: set sta sw=4 et: -->

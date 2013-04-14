@@ -67,6 +67,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
     CheckBoxPreference searchnew;
     CheckBoxPreference searchgospel;
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,9 +77,10 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         query = sp.getString("query", "");
         searchtype = sp.getInt("searchtype", SEARCH_ALL);
         osisfrom = sp.getString("osisfrom", bible.get(Bible.TYPE.OSIS, 0));
-        osisto = sp.getString("osisto", bible.get(Bible.TYPE.OSIS, bible.getCount(Bible.TYPE.OSIS) - 1));
+        osisto = sp.getString("osisto", bible.get(Bible.TYPE.OSIS, -1));
 
-        setPreferenceScreen(createPreferenceHierarchy());
+        PreferenceScreen root = getPreferenceManager().createPreferenceScreen(this);
+        setPreferenceScreen(createPreferenceHierarchy(root));
         setContentView(R.layout.search);
         updateSearch();
         updateVersion();
@@ -126,13 +128,11 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         return list;
     }
 
-    private PreferenceScreen createPreferenceHierarchy() {
-        PreferenceScreen root = getPreferenceManager().createPreferenceScreen(this);
-
+    private PreferenceScreen createPreferenceHierarchy(PreferenceScreen root) {
         String[] versions = (String []) bible.get(Bible.TYPE.VERSION).toArray(new String[0]);
         String[] humanversions = new String[versions.length];
         for (int i = 0; i < versions.length; i++) {
-            humanversions[i] = bible.getVersionResource(versions[i]);
+            humanversions[i] = bible.getVersionFullname(versions[i]);
         }
         String[] osiss = (String []) bible.get(Bible.TYPE.OSIS).toArray(new String[0]);
         String[] humans = (String []) bible.get(Bible.TYPE.HUMAN).toArray(new String[0]);
@@ -165,7 +165,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
             String[] versions = (String []) bible.get(Bible.TYPE.VERSION).toArray(new String[0]);
             String[] humanversions = new String[versions.length];
             for (int i = 0; i < versions.length; i++) {
-                humanversions[i] = bible.getVersionResource(versions[i]);
+                humanversions[i] = bible.getVersionFullname(versions[i]);
             }
             version.setEntries(humanversions);
             version.setEntryValues(versions);

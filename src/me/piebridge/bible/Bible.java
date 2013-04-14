@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map.Entry;
@@ -27,8 +28,6 @@ import java.util.Map.Entry;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
@@ -37,7 +36,7 @@ import android.preference.PreferenceManager;
 public class Bible
 {
 
-    private final String TAG = "me.piebridge.bible$Bible";
+    private final static String TAG = "me.piebridge.bible$Bible";
 
     public enum TYPE {
         VERSION,
@@ -59,17 +58,44 @@ public class Bible
     private ArrayList<String> versions = new ArrayList<String>();
     private ArrayList<String> humans = new ArrayList<String>();
 
-    private static ArrayList<String> abbrs = new ArrayList<String>();
-    private static ArrayList<String> names = new ArrayList<String>();
-    private static ArrayList<String> resources = new ArrayList<String>();
-
     private static Bible bible = null;
     private static float scale;
 
+    private HashMap<String, String> versionNames = new HashMap<String, String>();
+    private HashMap<String, String> versionFullnames = new HashMap<String, String>();
+
+    private LinkedHashMap<String, String> osis = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> humanEN = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> humanZHCN = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> humanZHTW = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> searchfull = new LinkedHashMap<String, String>();;
+    private LinkedHashMap<String, String> searchshort = new LinkedHashMap<String, String>();;
+    private LinkedHashMap<String, String> human;
+
+    private final int EN = 0;
+    private final int ZHCN = 1;
+    private final int ZHTW = 2;
+    private int[] orders = new int[3];
+    private Locale lastLocale;
+
     private Bible(Context context) {
+        Log.d(TAG, "init bible");
         mContext = context;
         checkVersions();
         setDefaultVersion();
+    }
+
+    public Locale getLocale() {
+        return lastLocale;
+    }
+
+    public void checkLocale() {
+        Locale locale = Locale.getDefault();
+        if (!locale.equals(lastLocale)) {
+            lastLocale = locale;
+            setOrders();
+            setResources();
+        }
     }
 
     public synchronized static Bible getBible(Context context) {
@@ -79,7 +105,7 @@ public class Bible
         }
         if (context != null) {
             mContext = context;
-            setResources();
+            bible.checkLocale();
         }
         return bible;
     }
@@ -118,10 +144,12 @@ public class Bible
                 File file = new File(path, name);
                 if (name.endsWith(".sqlite3") && file.exists() && file.isFile()) {
                     Log.d(TAG, "add version " + name);
-                    versions.add(name.replace(".sqlite3", "").replace("niv2011", "niv").replace("niv1984", "niv84"));
+                    String version = name.toLowerCase(Locale.US).replace(".sqlite3", "").replace("niv2011", "niv").replace("niv1984", "niv84");
+                    versions.add(version);
                 }
             }
         }
+
         if (versions.size() == 0) {
             setDemoVersions();
         }
@@ -149,8 +177,9 @@ public class Bible
         }
         */
         File file = null;
-        if (version.equals("demo")) {
-            file = new File(mContext.getFilesDir(), mContext.getString(R.string.demopath));
+        version = version.toLowerCase(Locale.US);
+        if (version.endsWith("demo")) {
+            file = new File(mContext.getFilesDir(), version + ".sqlite3");
         } else if (version.equals("niv")) {
             file = new File(databasePath, "niv2011.sqlite3");
         } else if (version.equals("niv84")) {
@@ -194,22 +223,28 @@ public class Bible
                 String osis = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_OSIS));
                 String human = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN));
                 String chapter = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CHAPTERS));
+
                 // fix for ccb
                 if ("出埃及".equals(human)) {
                     human = "出埃及记";
                 }
+
+                if (!isCJK(human)) {
+                    humanEN.put(osis, human);
+                } else if (isVersionZHCN(databaseVersion)) {
+                    humanZHCN.put(osis, human);
+                } else if (isVersionZHTW(databaseVersion)) {
+                    humanZHTW.put(osis, human);
+                }
+
                 osiss.add(osis);
                 if (scale > 1.0f) {
                     books.add(human);
                 } else {
-                    if (osisMap.size() == 0) {
-                        zhOsisMap(osisMap);
-                    }
-                    String zhcn = osisMap.get(osis);
-                    if (zhcn != null && !zhcn.equals("") && human.indexOf(zhcn.substring(0, 1)) != -1) {
-                        books.add(zhcn);
-                    } else {
-                        books.add(osis);
+                    if (databaseVersion.endsWith("ts")) {
+                        books.add(getResourceValue(this.osis, osis));
+                    } else if (databaseVersion.endsWith("ss") || databaseVersion.equals("ccb")) {
+                        books.add(getResourceValue(this.osis, osis));
                     }
                 }
                 chapters.add(chapter);
@@ -218,6 +253,7 @@ public class Bible
         } finally {
             cursor.close();
         }
+
     }
 
     private File getExternalFilesDir() {
@@ -252,7 +288,6 @@ public class Bible
                 file = getExternalFilesDir();
             }
             if (file == null) {
-                Log.e(TAG, "file: " + file);
                 return false;
             }
             databasePath = file.getAbsolutePath();
@@ -286,6 +321,9 @@ public class Bible
 
     public String get(TYPE type, int pos) {
         ArrayList<String> arrayList = get(type);
+        if (pos == -1) {
+            pos = arrayList.size() - 1;
+        }
         if (pos > -1 && pos < arrayList.size()) {
             return arrayList.get(pos);
         } else {
@@ -308,38 +346,38 @@ public class Bible
         return databaseVersion;
     }
 
-    public String getVersionResource(String string) {
-        int index = abbrs.indexOf(string);
-        if (index == -1) {
-            return string.toUpperCase(Locale.US);
+    public String getVersionFullname(String version) {
+        version = version.toLowerCase(Locale.US);
+        String fullname = getResourceValue(versionFullnames, version.replace("demo", ""));
+        if (version.endsWith("demo")) {
+            fullname += "(" + mContext.getString(R.string.demo) + ")";
         }
-        return resources.get(index);
+        return fullname;
     }
 
-    public String getVersionName(String string) {
-        int index = abbrs.indexOf(string);
-        if (index == -1) {
-            return string.toUpperCase(Locale.US);
-        }
-        return names.get(index);
+    public String getVersionName(String version) {
+        version = version.toLowerCase(Locale.US);
+        return getResourceValue(versionNames, version.replace("demo", ""));
     }
 
-    private static void setResources() {
-        Resources resource = mContext.getResources();
-        TypedArray abbr = resource.obtainTypedArray(R.array.abbr);
-        TypedArray name = resource.obtainTypedArray(R.array.name);
-        TypedArray version = resource.obtainTypedArray(R.array.version);
-        abbrs.clear();
-        names.clear();
-        resources.clear();
-        for (int i = 0; i < abbr.length(); i++) {
-            abbrs.add(abbr.getString(i));
-            names.add(name.getString(i));
-            resources.add(version.getString(i));
+    private String getResourceValue(HashMap<String, String> map, String key) {
+        return map.containsKey(key) ? map.get(key) : key;
+    }
+
+    private void setResourceValues(HashMap<String, String> map, int resId) {
+        for (String entry: mContext.getResources().getStringArray(resId)) {
+            String[] strings = entry.split("\\|", 2);
+            map.put(strings[0], strings[1]);
         }
-        abbr.recycle();
-        name.recycle();
-        version.recycle();
+    }
+
+    private void setResources() {
+        Log.d(TAG, "setResources");
+        setResourceValues(versionNames, R.array.versionname);
+        setResourceValues(versionFullnames, R.array.versionfullname);
+        setResourceValues(osis, R.array.osis);
+        setResourceValues(searchfull, R.array.searchfull);
+        setResourceValues(searchshort, R.array.searchshort);
     }
 
     private void setDemoVersions() {
@@ -350,17 +388,28 @@ public class Bible
         } catch (NameNotFoundException e) {
         }
         boolean newVersion = (demoVersion != versionCode);
-        boolean unpack = unpackRaw(newVersion, R.raw.zh, new File(mContext.getFilesDir(), "zh.sqlite3"));
+        boolean unpack = unpackRaw(newVersion, R.raw.niv84demo, new File(mContext.getFilesDir(), "niv84demo.sqlite3"));
         if (unpack) {
-            unpack = unpackRaw(newVersion, R.raw.en, new File(mContext.getFilesDir(), "en.sqlite3"));
+            unpack = unpackRaw(newVersion, R.raw.cunpssdemo, new File(mContext.getFilesDir(), "cunpssdemo.sqlite3"));
         }
         if (newVersion && unpack) {
             PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("demoVersion", versionCode).commit();
         }
-        versions.add("demo");
+        if (!versions.contains("cunpss")) {
+            versions.add("cunpssdemo");
+        }
+        if (!versions.contains("niv84")) {
+            versions.add("niv84demo");
+        }
     }
 
     private boolean setDefaultVersion() {
+        if (setVersion("niv") || setVersion("niv84") || setVersion("nivdemo")) {
+        }
+        if (setVersion("ccb") || setVersion("cunpss") || setVersion("rcuvss") || setVersion("cunpssdemo")) {
+        }
+        if (setVersion("cunpts") || setVersion("rcuvts")) {
+        }
         String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version", null);
         if (version != null && getPosition(TYPE.VERSION, version) < 0) {
             version = null;
@@ -374,7 +423,7 @@ public class Bible
         return false;
     }
 
-    private boolean unpackRaw(boolean newVersion, int resid, File file) {
+    private boolean unpackRaw(boolean newVersion, int resId, File file) {
         if (file.exists()) {
             if (!newVersion) {
                 return true;
@@ -388,7 +437,7 @@ public class Bible
             int length;
             byte [] buffer = new byte[8192];
             OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
-            InputStream is = mContext.getResources().openRawResource(resid);
+            InputStream is = mContext.getResources().openRawResource(resId);
             while((length = is.read(buffer)) >= 0) {
                 os.write(buffer, 0, length);
             }
@@ -402,400 +451,234 @@ public class Bible
         return true;
     }
 
-    public final LinkedHashMap<String, String> osisMap = new LinkedHashMap<String, String>();
+    private String getOsis(String book, ArrayList<LinkedHashMap<String, String>> maps) {
 
-    protected void zhOsisMap(LinkedHashMap<String, String> map) {
-        map.put("Gen", "创");
-        map.put("Exod", "出");
-        map.put("Lev", "利");
-        map.put("Num", "民");
-        map.put("Deut", "申");
-        map.put("Josh", "书");
-        map.put("Judg", "士");
-        map.put("Ruth", "得");
-        map.put("1Sam", "撒上");
-        map.put("2Sam", "撒下");
-        map.put("1Kgs", "王上");
-        map.put("2Kgs", "王下");
-        map.put("1Chr", "代上");
-        map.put("2Chr", "代下");
-        map.put("Ezra", "拉");
-        map.put("Neh", "尼");
-        map.put("Esth", "斯");
-        map.put("Job", "伯");
-        map.put("Ps", "诗");
-        map.put("Prov", "箴");
-        map.put("Eccl", "传");
-        map.put("Song", "歌");
-        map.put("Isa", "赛");
-        map.put("Jer", "耶");
-        map.put("Lam", "哀");
-        map.put("Ezek", "结");
-        map.put("Dan", "但");
-        map.put("Hos", "何");
-        map.put("Joel", "珥");
-        map.put("Amos", "摩");
-        map.put("Obad", "俄");
-        map.put("Jonah", "拿");
-        map.put("Mic", "弥");
-        map.put("Nah", "鸿");
-        map.put("Hab", "哈");
-        map.put("Zeph", "番");
-        map.put("Hag", "该");
-        map.put("Zech", "亚");
-        map.put("Mal", "玛");
-        map.put("Matt", "太");
-        map.put("Mark", "可");
-        map.put("Luke", "路");
-        map.put("John", "约");
-        map.put("Acts", "徒");
-        map.put("Rom", "罗");
-        map.put("1Cor", "林前");
-        map.put("2Cor", "林后");
-        map.put("Gal", "加");
-        map.put("Eph", "弗");
-        map.put("Phil", "腓");
-        map.put("Col", "西");
-        map.put("1Thess", "帖前");
-        map.put("2Thess", "帖后");
-        map.put("1Tim", "提前");
-        map.put("2Tim", "提后");
-        map.put("Titus", "多");
-        map.put("Phlm", "门");
-        map.put("Heb", "来");
-        map.put("Jas", "雅");
-        map.put("1Pet", "彼前");
-        map.put("2Pet", "彼后");
-        map.put("1John", "约壹");
-        map.put("2John", "约贰");
-        map.put("3John", "约叁");
-        map.put("Jude", "犹");
-        map.put("Rev", "启");
-    }
-
-    public final LinkedHashMap<String, String> humanMap = new LinkedHashMap<String, String>();
-
-    protected void enHumanMap(LinkedHashMap<String, String> map) {
-        map.put("Genesis", "Gen");
-        map.put("Exodus", "Exod");
-        map.put("Leviticus", "Lev");
-        map.put("Numbers", "Num");
-        map.put("Deuteronomy", "Deut");
-        map.put("Joshua", "Josh");
-        map.put("Judges", "Judg");
-        map.put("Ruth", "Ruth");
-        map.put("1 Samuel", "1Sam");
-        map.put("2 Samuel", "2Sam");
-        map.put("1 Kings", "1Kgs");
-        map.put("2 Kings", "2Kgs");
-        map.put("1 Chronicles", "1Chr");
-        map.put("2 Chronicles", "2Chr");
-        map.put("Ezra", "Ezra");
-        map.put("Nehemiah", "Neh");
-        map.put("Esther", "Esth");
-        map.put("Job", "Job");
-        map.put("Psalm", "Ps");
-        map.put("Proverbs", "Prov");
-        map.put("Ecclesiastes", "Eccl");
-        map.put("Song of Songs", "Song");
-        map.put("Isaiah", "Isa");
-        map.put("Jeremiah", "Jer");
-        map.put("Lamentations", "Lam");
-        map.put("Ezekiel", "Ezek");
-        map.put("Daniel", "Dan");
-        map.put("Hosea", "Hos");
-        map.put("Joel", "Joel");
-        map.put("Amos", "Amos");
-        map.put("Obadiah", "Obad");
-        map.put("Jonah", "Jonah");
-        map.put("Micah", "Mic");
-        map.put("Nahum", "Nah");
-        map.put("Habakkuk", "Hab");
-        map.put("Zephaniah", "Zeph");
-        map.put("Haggai", "Hag");
-        map.put("Zechariah", "Zech");
-        map.put("Malachi", "Mal");
-        map.put("Matthew", "Matt");
-        map.put("Mark", "Mark");
-        map.put("Luke", "Luke");
-        map.put("John", "John");
-        map.put("Acts", "Acts");
-        map.put("Romans", "Rom");
-        map.put("1 Corinthians", "1Cor");
-        map.put("2 Corinthians", "2Cor");
-        map.put("Galatians", "Gal");
-        map.put("Ephesians", "Eph");
-        map.put("Philippians", "Phil");
-        map.put("Colossians", "Col");
-        map.put("1 Thessalonians", "1Thess");
-        map.put("2 Thessalonians", "2Thess");
-        map.put("1 Timothy", "1Tim");
-        map.put("2 Timothy", "2Tim");
-        map.put("Titus", "Titus");
-        map.put("Philemon", "Phlm");
-        map.put("Hebrews", "Heb");
-        map.put("James", "Jas");
-        map.put("1 Peter", "1Pet");
-        map.put("2 Peter", "2Pet");
-        map.put("1 John", "1John");
-        map.put("2 John", "2John");
-        map.put("3 John", "3John");
-        map.put("Jude", "Jude");
-        map.put("Revelation", "Rev");
-    }
-
-    protected void enHumanOsisMap(LinkedHashMap<String, String> map) {
-        map.put("Gen", "Gen");
-        map.put("Exod", "Exod");
-        map.put("Lev", "Lev");
-        map.put("Num", "Num");
-        map.put("Deut", "Deut");
-        map.put("Josh", "Josh");
-        map.put("Judg", "Judg");
-        map.put("Ruth", "Ruth");
-        map.put("1Sam", "1Sam");
-        map.put("2Sam", "2Sam");
-        map.put("1Kgs", "1Kgs");
-        map.put("2Kgs", "2Kgs");
-        map.put("1Chr", "1Chr");
-        map.put("2Chr", "2Chr");
-        map.put("Ezra", "Ezra");
-        map.put("Neh", "Neh");
-        map.put("Esth", "Esth");
-        map.put("Job", "Job");
-        map.put("Ps", "Ps");
-        map.put("Prov", "Prov");
-        map.put("Eccl", "Eccl");
-        map.put("Song", "Song");
-        map.put("Isa", "Isa");
-        map.put("Jer", "Jer");
-        map.put("Lam", "Lam");
-        map.put("Ezek", "Ezek");
-        map.put("Dan", "Dan");
-        map.put("Hos", "Hos");
-        map.put("Joel", "Joel");
-        map.put("Amos", "Amos");
-        map.put("Obad", "Obad");
-        map.put("Jonah", "Jonah");
-        map.put("Mic", "Mic");
-        map.put("Nah", "Nah");
-        map.put("Hab", "Hab");
-        map.put("Zeph", "Zeph");
-        map.put("Hag", "Hag");
-        map.put("Zech", "Zech");
-        map.put("Mal", "Mal");
-        map.put("Matt", "Matt");
-        map.put("Mark", "Mark");
-        map.put("Luke", "Luke");
-        map.put("John", "John");
-        map.put("Acts", "Acts");
-        map.put("Rom", "Rom");
-        map.put("1Cor", "1Cor");
-        map.put("2Cor", "2Cor");
-        map.put("Gal", "Gal");
-        map.put("Eph", "Eph");
-        map.put("Phil", "Phil");
-        map.put("Col", "Col");
-        map.put("1Thess", "1Thess");
-        map.put("2Thess", "2Thess");
-        map.put("1Tim", "1Tim");
-        map.put("2Tim", "2Tim");
-        map.put("Titus", "Titus");
-        map.put("Phlm", "Phlm");
-        map.put("Heb", "Heb");
-        map.put("Jas", "Jas");
-        map.put("1Pet", "1Pet");
-        map.put("2Pet", "2Pet");
-        map.put("1John", "1John");
-        map.put("2John", "2John");
-        map.put("3John", "3John");
-        map.put("Jude", "Jude");
-        map.put("Rev", "Rev");
-
-    }
-
-    protected void zhHumanMap(LinkedHashMap<String, String> map) {
-        map.put("创世记", "Gen");
-        map.put("出埃及记", "Exod");
-        map.put("利未记", "Lev");
-        map.put("民数记", "Num");
-        map.put("申命记", "Deut");
-        map.put("约书亚记", "Josh");
-        map.put("士师记", "Judg");
-        map.put("路得记", "Ruth");
-        map.put("撒母耳记上", "1Sam");
-        map.put("撒母耳记下", "2Sam");
-        map.put("列王纪上", "1Kgs");
-        map.put("列王纪下", "2Kgs");
-        map.put("历代志上", "1Chr");
-        map.put("历代志下", "2Chr");
-        map.put("以斯拉记", "Ezra");
-        map.put("尼希米记", "Neh");
-        map.put("以斯帖记", "Esth");
-        map.put("约伯记", "Job");
-        map.put("诗篇", "Ps");
-        map.put("箴言", "Prov");
-        map.put("传道书", "Eccl");
-        map.put("雅歌", "Song");
-        map.put("以赛亚书", "Isa");
-        map.put("耶利米书", "Jer");
-        map.put("耶利米哀歌", "Lam");
-        map.put("以西结书", "Ezek");
-        map.put("但以理书", "Dan");
-        map.put("何西阿书", "Hos");
-        map.put("约珥书", "Joel");
-        map.put("阿摩司书", "Amos");
-        map.put("俄巴底亚书", "Obad");
-        map.put("约拿书", "Jonah");
-        map.put("弥迦书", "Mic");
-        map.put("那鸿书", "Nah");
-        map.put("哈巴谷书", "Hab");
-        map.put("西番雅书", "Zeph");
-        map.put("哈该书", "Hag");
-        map.put("撒迦利亚书", "Zech");
-        map.put("玛拉基书", "Mal");
-        map.put("马太福音", "Matt");
-        map.put("马可福音", "Mark");
-        map.put("路加福音", "Luke");
-        map.put("约翰福音", "John");
-        map.put("使徒行传", "Acts");
-        map.put("罗马书", "Rom");
-        map.put("哥林多前书", "1Cor");
-        map.put("哥林多后书", "2Cor");
-        map.put("加拉太书", "Gal");
-        map.put("以弗所书", "Eph");
-        map.put("腓立比书", "Phil");
-        map.put("歌罗西书", "Col");
-        map.put("帖撒罗尼迦前书", "1Thess");
-        map.put("帖撒罗尼迦后书", "2Thess");
-        map.put("提摩太前书", "1Tim");
-        map.put("提摩太后书", "2Tim");
-        map.put("提多书", "Titus");
-        map.put("腓利门书", "Phlm");
-        map.put("希伯来书", "Heb");
-        map.put("雅各书", "Jas");
-        map.put("彼得前书", "1Pet");
-        map.put("彼得后书", "2Pet");
-        map.put("约翰一书", "1John");
-        map.put("约翰二书", "2John");
-        map.put("约翰三书", "3John");
-        map.put("犹大书", "Jude");
-        map.put("启示录", "Rev");
-    }
-
-    protected void zhHumanOsisMap(LinkedHashMap<String, String> map) {
-        map.put("创", "Gen");
-        map.put("出", "Exod");
-        map.put("利", "Lev");
-        map.put("民", "Num");
-        map.put("申", "Deut");
-        map.put("书", "Josh");
-        map.put("士", "Judg");
-        map.put("得", "Ruth");
-        map.put("撒上", "1Sam");
-        map.put("撒下", "2Sam");
-        map.put("王上", "1Kgs");
-        map.put("王下", "2Kgs");
-        map.put("代上", "1Chr");
-        map.put("代下", "2Chr");
-        map.put("拉", "Ezra");
-        map.put("尼", "Neh");
-        map.put("斯", "Esth");
-        map.put("伯", "Job");
-        map.put("诗", "Ps");
-        map.put("箴", "Prov");
-        map.put("传", "Eccl");
-        map.put("歌", "Song");
-        map.put("赛", "Isa");
-        map.put("耶", "Jer");
-        map.put("哀", "Lam");
-        map.put("结", "Ezek");
-        map.put("但", "Dan");
-        map.put("何", "Hos");
-        map.put("珥", "Joel");
-        map.put("摩", "Amos");
-        map.put("俄", "Obad");
-        map.put("拿", "Jonah");
-        map.put("弥", "Mic");
-        map.put("鸿", "Nah");
-        map.put("哈", "Hab");
-        map.put("番", "Zeph");
-        map.put("该", "Hag");
-        map.put("亚", "Zech");
-        map.put("玛", "Mal");
-        map.put("太", "Matt");
-        map.put("可", "Mark");
-        map.put("路", "Luke");
-        map.put("约", "John");
-        map.put("徒", "Acts");
-        map.put("罗", "Rom");
-        map.put("林前", "1Cor");
-        map.put("林后", "2Cor");
-        map.put("加", "Gal");
-        map.put("弗", "Eph");
-        map.put("腓", "Phil");
-        map.put("西", "Col");
-        map.put("帖前", "1Thess");
-        map.put("帖后", "2Thess");
-        map.put("提前", "1Tim");
-        map.put("提后", "2Tim");
-        map.put("多", "Titus");
-        map.put("门", "Phlm");
-        map.put("来", "Heb");
-        map.put("雅", "Jas");
-        map.put("彼前", "1Pet");
-        map.put("彼后", "2Pet");
-        map.put("约壹", "1John");
-        map.put("约贰", "2John");
-        map.put("约叁", "3John");
-        map.put("犹", "Jude");
-        map.put("启", "Rev");
-    }
-
-    public String getOsis(String book) {
-        if (humanMap.size() == 0) {
-            enHumanMap(humanMap);
-            zhHumanMap(humanMap);
-            enHumanOsisMap(humanMap);
-            zhHumanOsisMap(humanMap);
+        // test osis
+        for (LinkedHashMap<String, String> map: maps) {
+            for (Entry<String, String> entry: map.entrySet()) {
+                if (entry.getKey().equalsIgnoreCase(book)) {
+                    return entry.getKey();
+                }
+            }
+            break;
         }
 
-        book = book.replace("约一", "约壹");
-        book = book.replace("约二", "约贰");
-        book = book.replace("约三", "约叁");
-        String osis = humanMap.get(book);
-        if (osis != null) {
-            return osis;
-        }
-
-        book = book.replace(" ", "");
-        book = book.toLowerCase(Locale.US);
-        for (Entry<String, String> entry: humanMap.entrySet()) {
-            String key = entry.getKey().toLowerCase(Locale.US);
-            if (key.replace(" ", "").equals(book)) {
-                return entry.getValue();
+        book = book.toLowerCase(Locale.US).replace(" ", "");
+        // prefer fullname
+        for (LinkedHashMap<String, String> map: maps) {
+            for (Entry<String, String> entry: map.entrySet()) {
+                if (entry.getValue().toLowerCase(Locale.US).replace(" ", "").equals(book)) {
+                    return entry.getKey();
+                }
             }
         }
 
-        for (Entry<String, String> entry: humanMap.entrySet()) {
-            String key = entry.getKey().toLowerCase(Locale.US);
-            if (key.startsWith(book)) {
-                return entry.getValue();
+        // prefer startswith
+        for (LinkedHashMap<String, String> map: maps) {
+            for (Entry<String, String> entry: map.entrySet()) {
+                if (entry.getValue().toLowerCase(Locale.US).replace(" ", "").startsWith(book)) {
+                    return entry.getKey();
+                }
             }
         }
 
-        for (Entry<String, String> entry: humanMap.entrySet()) {
-            String key = entry.getKey().toLowerCase(Locale.US);
-            if (key.contains(book)) {
-                return entry.getValue();
+        // prefer contains
+        for (LinkedHashMap<String, String> map: maps) {
+            for (Entry<String, String> entry: map.entrySet()) {
+                if (entry.getValue().toLowerCase(Locale.US).replace(" ", "").contains(book)) {
+                    return entry.getKey();
+                }
             }
         }
 
         return null;
     }
 
+    private ArrayList<LinkedHashMap<String, String>> getMaps() {
+        checkLocale();
+        ArrayList<LinkedHashMap<String, String>> maps = new ArrayList<LinkedHashMap<String, String>>();
+        for (int order: orders) {
+            switch (order) {
+                case ZHCN:
+                    maps.add(humanZHCN);
+                    break;
+                case ZHTW:
+                    maps.add(humanZHTW);
+                    break;
+                case EN:
+                    maps.add(humanEN);
+                    break;
+            }
+        }
+        maps.add(searchfull);
+        maps.add(searchshort);
+        return maps;
+    }
     /*
-    public boolean isCJK(String s) {
+     * 根据book获取osis，用于查询
+     *
+     */
+    public String getOsis(String book) {
+        String osis;
+
+        if (book == null) {
+            return null;
+        }
+
+        book = book.replace("约一", "约壹");
+        book = book.replace("约二", "约贰");
+        book = book.replace("约三", "约叁");
+        book = book.toLowerCase(Locale.US);
+
+        boolean human = false;
+        if (isCJK(book.substring(0, 1)) && book.length() > 2) {
+            human = true;
+        } else if (book.length() > 7) {
+            human = true;
+        }
+
+        if (human) {
+            osis = getOsis(book, getMaps());
+            if (osis != null) {
+                return osis;
+            }
+
+        } else {
+            ArrayList<LinkedHashMap<String, String>> maps = new ArrayList<LinkedHashMap<String, String>>();
+            maps.add(this.osis);
+            osis = getOsis(book, maps);
+            if (osis != null) {
+                return osis;
+            }
+            maps = null;
+
+            osis = getOsis(book, getMaps());
+            if (osis != null) {
+                return osis;
+            }
+
+        }
+        return null;
+    }
+
+    private boolean checkStartSuggest(LinkedHashMap<String, String> osiss, String value, String key, String book, int limit) {
+        if ("".equals(book) || value.replace(" ", "").toLowerCase(Locale.US).startsWith(book)) {
+            if (addSuggest(osiss, value, key, limit)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkContainSuggest(LinkedHashMap<String, String> osiss, String value, String key, String book, int limit) {
+        if (value.replace(" ", "").toLowerCase(Locale.US).contains(book)) {
+            if (addSuggest(osiss, value, key, limit)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean addSuggest(LinkedHashMap<String, String> osiss, String value, String osis, int limit) {
+        if (!osiss.values().contains(osis)) {
+            String text = human.get(osis);
+            if (text == null) {
+                text = value;
+            }
+            Log.d(TAG, "add suggest, text=" + text + ", data=" + osis);
+            osiss.put(text, osis);
+        }
+        if (limit != -1 && osiss.size() >= limit) {
+            Log.d(TAG, "arrive limit " + limit);
+            return true;
+        }
+        return false;
+    }
+    /*
+     * 根据book获取多个osiss，可能用于查询
+     *
+     */
+    public LinkedHashMap<String, String> getOsiss(String book, int limit) {
+        LinkedHashMap<String, String> osiss = new LinkedHashMap<String, String>();
+
+        if (book != null) {
+            // fix for zhcn
+            book = book.replace("约一", "约壹");
+            book = book.replace("约二", "约贰");
+            book = book.replace("约三", "约叁");
+        }
+
+        Log.d(TAG, "book: " + book);
+
+        human = null;
+        ArrayList<Entry<String, String>> maps = new ArrayList<Entry<String, String>>();
+
+        for (Entry<String, String> entry: searchshort.entrySet()) {
+            maps.add(entry);
+        }
+
+        for (Entry<String, String> entry: searchfull.entrySet()) {
+            maps.add(entry);
+        }
+
+        for (LinkedHashMap<String, String> map: getMaps()) {
+            if (human == null && map.size() > 0) {
+                human = map;
+            }
+            for (Entry<String, String> entry: map.entrySet()) {
+                maps.add(entry);
+            }
+        }
+
+        for (Entry<String, String> entry: this.osis.entrySet()) {
+            maps.add(entry);
+        }
+
+        book = book.replace(SearchManager.SUGGEST_URI_PATH_QUERY, "").replace(" ", "").toLowerCase(Locale.US);
+        for (Entry<String, String> entry: maps) {
+            if (checkStartSuggest(osiss, entry.getKey(), entry.getKey(), book, limit)) {
+                return osiss;
+            }
+        }
+
+        for (Entry<String, String> entry: maps) {
+            if (checkStartSuggest(osiss, entry.getKey(), entry.getKey(), book, limit)) {
+                return osiss;
+            }
+        }
+
+        for (Entry<String, String> entry: maps) {
+            if (checkContainSuggest(osiss, entry.getValue(), entry.getKey(), book, limit)) {
+                return osiss;
+            }
+        }
+
+        for (Entry<String, String> entry: maps) {
+            if (checkContainSuggest(osiss, entry.getValue(), entry.getKey(), book, limit)) {
+                return osiss;
+            }
+        }
+
+        return osiss;
+    }
+
+    private void setOrders() {
+        if (lastLocale.equals(Locale.SIMPLIFIED_CHINESE)) {
+            orders[0] = ZHCN;
+            orders[1] = EN;
+            orders[2] = ZHTW;
+        } else if (lastLocale.equals(Locale.TRADITIONAL_CHINESE)) {
+            orders[0] = ZHTW;
+            orders[1] = EN;
+            orders[2] = ZHCN;
+        } else {
+            orders[0] = EN;
+            orders[1] = ZHCN;
+            orders[2] = ZHTW;
+        }
+    }
+
+    public static boolean isCJK(String s) {
         for (char c : s.toCharArray()) {
             if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS) {
                 return true;
@@ -803,45 +686,19 @@ public class Bible
         }
         return false;
     }
-    */
 
-    public LinkedHashMap<String, String> getOsiss(String book) {
-        LinkedHashMap<String, String> osiss = new LinkedHashMap<String, String>();
-        if (humanMap.size() == 0) {
-            enHumanMap(humanMap);
-            zhHumanMap(humanMap);
-            enHumanOsisMap(humanMap);
-            zhHumanOsisMap(humanMap);
+    public static boolean isVersionZHCN(String s) {
+        if (s.endsWith("ss") || s.equals("ccb")) {
+            return true;
         }
-        if (book != null) {
-            book = book.replace("约一", "约壹");
-            book = book.replace("约二", "约贰");
-            book = book.replace("约三", "约叁");
-            book = book.toLowerCase(Locale.US);
+        return false;
+    }
+
+    public static boolean isVersionZHTW(String s) {
+        if (s.endsWith("ts")) {
+            return true;
         }
-        Log.d(TAG, "book: " + book);
-        boolean start = false;
-        for (Entry<String, String> entry: humanMap.entrySet()) {
-            String key = entry.getKey().toLowerCase(Locale.US);
-            if (book == null || book.equals(SearchManager.SUGGEST_URI_PATH_QUERY)) {
-                if (entry.getKey().equalsIgnoreCase(mContext.getString(R.string.genesis))) {
-                    start = true;
-                }
-                if (!start) {
-                    continue;
-                }
-                if (!osiss.values().contains(entry.getValue())) {
-                    Log.d(TAG, "key: " + entry.getKey() + ", value: " + entry.getValue());
-                    osiss.put(entry.getKey(), entry.getValue());
-                }
-            } else if (key.replace(" ", "").contains(book.replace(" ", ""))) {
-                if (!osiss.values().contains(entry.getValue())) {
-                    Log.d(TAG, "key: " + entry.getKey() + ", value: " + entry.getValue());
-                    osiss.put(entry.getKey(), entry.getValue());
-                }
-            }
-        }
-        return osiss;
+        return false;
     }
 
 }

@@ -117,6 +117,7 @@ public class Result extends Activity
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void showResults(Cursor cursor) {
 
         String[] from = new String[] {

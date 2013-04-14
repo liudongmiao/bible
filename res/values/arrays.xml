@@ -1,43 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <array name="abbr">
-        <item>demo</item>
-        <item>niv84</item>
-        <item>niv</item>
-        <item>ccb</item>
-        <item>cunp</item>
-        <item>cunpss</item>
-        <item>rcuv</item>
-        <item>rcuvss</item>
-        <item>nlt</item>
-        <item>kjv</item>
-        <item>nkjv</item>
-    </array>
-    <array name="version">
-        <item>(en) New International Version 1984</item>
-        <item>(en) New International Version 1984</item>
-        <item>(en) New International Version 2011</item>
-        <item>(zh) Chinese Contemporary Bible</item>
-        <item>(zh) Chinese Union Version (New Punctuation)</item>
-        <item>(zh) Chinese Union Version (New Punctuation, Simplified Script)</item>
-        <item>(zh) Revised Chinese Union Version</item>
-        <item>(zh) Revised Chinese Union Version (Simplified Script)</item>
-        <item>(en) New Living Translation</item>
-        <item>(en) King James Version</item>
-        <item>(en) New King James Version</item>
-    </array>
-    <array name="name">
-        <item>demo</item>
-        <item>niv84</item>
-        <item>niv</item>
-        <item>ccb</item>
-        <item>cunp</item>
-        <item>cunpss</item>
-        <item>rcuv</item>
-        <item>rcuvss</item>
-        <item>nlt</item>
-        <item>kjv</item>
-        <item>nkjv</item>
-    </array>
+    <string-array name="versionname">
+    </string-array>
+    <string-array name="versionfullname">
+        <item>ccb|Chinese Contemporary Bible</item>
+        <item>cunpss|Chinese Union Version (New Punctuation, Simplified Script)</item>
+        <item>cunpts|Chinese Union Version (New Punctuation, Traditional Script)</item>
+        <item>rcuvss|Revised Chinese Union Version (Simplified Script)</item>
+        <item>rcuvts|Revised Chinese Union Version (Traditional Script)</item>
+        <item>niv|New International Version 2011</item>
+        <item>niv84|New International Version 1984</item>
+        <item>kjv|King James Version</item>
+        <item>nkjv|New King James Version</item>
+        <item>nlt|New Living Translation</item>
+    </string-array>
+    <string-array name="searchfull">
+        <!-- no mapping -->
+    </string-array>
+    <string-array name="searchshort">
+        <!-- no mapping -->
+    </string-array>
+    <string-array name="osis">
+        <!-- no mapping -->
+    </string-array>
 </resources>
 <!-- vim: set sta sw=4 et: -->

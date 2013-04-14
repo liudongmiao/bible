@@ -24,7 +24,6 @@ import android.os.Message;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
 
-import android.text.ClipboardManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -156,6 +155,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         webview.getSettings().setBuiltInZoomControls(true);
         webview.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webview.addJavascriptInterface(new Object() {
+            @SuppressWarnings("unused")
             public void setVerse(String string) {
                 synchronized(verseLock) {
                     verse = string;
@@ -164,12 +164,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 }
             }
 
+            @SuppressWarnings({ "unused", "deprecation" })
             public void setCopyText(String text) {
                 if (!text.equals("")) {
-                    copytext = bible.getVersionResource(version) + " ";
+                    copytext = bible.getVersionFullname(version).replace("(" + getString(R.string.demo) + ")", "") + " ";
                     copytext += bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, book)) + " " + chapter + ":" + text;
-                    ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                    clipboard.setText(copytext);
+                    ((android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setText(copytext);
                     Log.d(TAG, "copy from javascript: " + copytext);
                 } else {
                     copytext = "";
@@ -217,6 +217,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private void showUri(Uri uri) {
         version = bible.getVersion();
+        Log.d(TAG, "showuri: " + uri);
         if (uri == null) {
             Log.d(TAG, "show null uri, use default");
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(null).fragment(version).build();
@@ -275,7 +276,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         Log.d(TAG, "set book chapter, osis: " + osis);
 
         setItemText();
-        ((TextView)findViewById(R.id.version)).setText(bible.getVersionName(bible.getVersion()).toUpperCase(Locale.US));
+        ((TextView)findViewById(R.id.version)).setText(bible.getVersionName(bible.getVersion()));
         ((TextView)findViewById(R.id.book)).setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
         ((TextView)findViewById(R.id.chapter)).setText(chapter);
     }
@@ -283,7 +284,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private void storeOsisVersion() {
         final Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString("osis", osis);
-        if (!version.equals("demo") && !version.equals("")) {
+        if (!version.endsWith("demo") && !version.equals("")) {
             editor.putString("version", version);
         }
         editor.putString("verse", verse);
@@ -334,13 +335,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<title>" + title + "</title>\n";
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
+        body += "<script type=\"text/javascript\">\n" + String.format("var verse_start=%s, verse_end=%s;", verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse) + "\n</script>\n";
         if (verse.equals("") || verse.equals("1")) {
             body += "</head>\n<body>\n";
         } else {
             Log.d(TAG, "try jump to verse " + verse);
             body += "</head>\n<body onload=\"window.location.hash='#" + versename + "-" + verse + "'\">\n";
         }
-        if (bible.getVersion().equals("demo")) {
+        if (bible.getVersion().endsWith("demo")) {
             String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">market://search?q=" + getString(R.string.bibledatahuman) + "&c=apps</a>";
             body += "<div id=\"pb-demo\">" + getString(R.string.noversion, new Object[] {link_market, link_github}) + "</div>\n";
         }
@@ -412,7 +414,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void showSpinner(View v) {
-        int pos = 0;
         adapter.clear();
         gridviewid = v.getId();
         switch (v.getId()) {
@@ -448,10 +449,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 gridview.setNumColumns(1);
                 bible.checkVersions();
                 Log.d(TAG, "version=" + version);
-                selected = bible.getVersionResource(version);
+                selected = bible.getVersionFullname(version);
                 for (String string: bible.get(Bible.TYPE.VERSION)) {
                     Log.d(TAG, "add version " + string);
-                    adapter.add(bible.getVersionResource(string));
+                    adapter.add(bible.getVersionFullname(string));
                 }
                 break;
             case R.id.items:
@@ -565,10 +566,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     }
 
+    @SuppressWarnings("deprecation")
+    private float getScale(WebView webview) {
+        return webview.getScale();
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent e){
         int scrollY = webview.getScrollY();
-        if (scrollY == 0 || (float) scrollY >= webview.getContentHeight() * webview.getScale() - webview.getHeight()) {
+        if (scrollY == 0 || (float) scrollY >= webview.getContentHeight() * getScale(webview) - webview.getHeight()) {
             setDisplayZoomControls(true);
         } else {
             setDisplayZoomControls(false);
@@ -580,7 +586,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         switch (e.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                scale = webview.getScale();
+                scale = getScale(webview);
                 break;
         }
 

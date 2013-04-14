@@ -44,14 +44,17 @@ public class Suggestion extends ContentProvider {
             String[] columnNames = { BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_INTENT_DATA };
             MatrixCursor cursor = new MatrixCursor(columnNames);
             Bible bible = Bible.getBible(getContext());
-            LinkedHashMap<String, String> suggestions = bible.getOsiss(query);
+            long time = System.currentTimeMillis();
+            LinkedHashMap<String, String> suggestions = bible.getOsiss(query, 10);
+            time = System.currentTimeMillis() - time;
+            Log.d(TAG, "suggestions cost: " + time + "ms");
             int i = 0;
             for (Entry<String, String> entry: suggestions.entrySet()) {
                 String[] row = { String.valueOf(i), entry.getKey(), "bible://passage?search=" + entry.getValue() };
                 cursor.addRow(row);
                 i++;
             }
-            if (query != null && !query.equals(SearchManager.SUGGEST_URI_PATH_QUERY)) {
+            if (!SearchManager.SUGGEST_URI_PATH_QUERY.equals(query)) {
                 String[] row = {String.valueOf(i), getContext().getString(R.string.search, new Object[] {query}), "bible://passage?search=" + query };
                 cursor.addRow(row);
             }

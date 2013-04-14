@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">圣经</string>
-    <string name="search_hint">经句(如约3:16-17) 或关键字</string>
+    <string name="search_hint">经句(如约3:16-17)或关键字</string>
     <string name="search_description">搜索圣经章节，或者关键字</string>
     <string name="search_no_results">在“%4$s”本中从“%2$s”至“%3$s”无法找到“%1$s”。</string>
     <plurals name="search_results">
@@ -9,21 +9,20 @@
       <item quantity="other">在“%5$s”本中从“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
-    <string name="noversion">圣经阅读器仅带几章演示圣经，请从谷歌电子市场%1$s，或者其它电子市场搜索“离线圣经”(国内仅支持安卓市场)，或者项目网站%2$s安装一些圣经数据库。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
+    <string name="noversion">此版本仅供演示。您可从谷歌电子市场%1$s，或者其它电子市场搜索“离线圣经”，或者项目网站%2$s下载安装圣经数据库。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
     <string name="chooseversion">选择版本</string>
     <string name="searchall">搜索整本圣经</string>
     <string name="searchold">搜索旧约圣经</string>
     <string name="searchnew">搜索新约圣经</string>
     <string name="searchgospel">搜索四福音书</string>
-    <string name="searchfrom">选择开始书目</string>
-    <string name="searchto">选择结束书目</string>
+    <string name="searchfrom">选择开始书卷</string>
+    <string name="searchto">选择结束书卷</string>
     <string name="queryerror">无法打开数据库，请稍候再试。</string>
     <string name="share">分享圣经经句至..</string>
-    <string name="demopath">zh.sqlite3</string>
     <string name="fromto">从%1$s到%2$s</string>
     <string name="bibledatalink">%E5%9C%A3%E7%BB%8F%E6%95%B0%E6%8D%AE</string>
     <string name="bibledatahuman">圣经数据</string>
     <string name="otherbook">选择其他书卷</string>
-    <string name="genesis">创世记</string>
     <string name="search">在圣经中搜索“%1$s”</string>
+    <string name="demo">演示</string>
 </resources>

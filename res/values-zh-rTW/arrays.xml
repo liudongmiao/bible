@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="versionname">
+        <item>ccb|當代譯本</item>
+        <item>cunpss|和合本简</item>
+        <item>cunpts|和合本</item>
+        <item>rcuvss|和合本简修</item>
+        <item>rcuvts|和合本修</item>
+    </string-array>
+    <string-array name="versionfullname">
+        <item>ccb|當代譯本</item>
+        <item>cunpss|和合本新標點版(簡體)</item>
+        <item>cunpts|和合本新標點版</item>
+        <item>rcuvss|和合本修訂版(簡體)</item>
+        <item>rcuvts|和合本修訂版</item>
+        <item>niv|英文新國際版(NIV)2011</item>
+        <item>niv84|英文新國際版(NIV)1984</item>
+        <item>kjv|英文欽定版(KJV)</item>
+        <item>nkjv|英文新欽定版(NKJV)</item>
+        <item>nlt|英文New Living Translation(NLT)</item>
+    </string-array>
+</resources>
+<!-- vim: set sta sw=4 et: -->
