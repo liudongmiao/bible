@@ -64,7 +64,6 @@ public class Bible
     private HashMap<String, String> versionNames = new HashMap<String, String>();
     private HashMap<String, String> versionFullnames = new HashMap<String, String>();
 
-    private LinkedHashMap<String, String> osis;
     private LinkedHashMap<String, String> osisZHCN = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> osisZHTW = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> humanEN = new LinkedHashMap<String, String>();
@@ -499,34 +498,28 @@ public class Bible
         return null;
     }
 
-    private ArrayList<LinkedHashMap<String, String>> getMaps() {
+    private ArrayList<LinkedHashMap<String, String>> getMaps(TYPE type) {
         checkLocale();
         ArrayList<LinkedHashMap<String, String>> maps = new ArrayList<LinkedHashMap<String, String>>();
-        osis = null;
         for (int order: orders) {
             switch (order) {
                 case ZHCN:
-                    maps.add(humanZHCN);
-                    if (osis == null && osisZHCN.size() > 0) {
-                        osis = osisZHCN;
-                    }
+                    maps.add(type == TYPE.HUMAN ? humanZHCN : osisZHCN);
                     break;
                 case ZHTW:
-                    maps.add(humanZHTW);
-                    if (osis == null && osisZHCN.size() > 0) {
-                        osis = osisZHTW;
-                    }
+                    maps.add(type == TYPE.HUMAN ? humanZHTW: osisZHTW);
                     break;
                 case EN:
-                    maps.add(humanEN);
-                    if (osis == null && osisZHCN.size() > 0) {
-                        osis = new LinkedHashMap<String, String>();
+                    if (type == TYPE.HUMAN) {
+                        maps.add(humanEN);
                     }
                     break;
             }
         }
-        maps.add(searchfull);
-        maps.add(searchshort);
+        if (type == TYPE.HUMAN) {
+            maps.add(searchfull);
+            maps.add(searchshort);
+        }
         return maps;
     }
     /*
@@ -552,24 +545,21 @@ public class Bible
             human = true;
         }
 
-        ArrayList<LinkedHashMap<String, String>> humanMaps = new ArrayList<LinkedHashMap<String, String>>();
+        Log.d(TAG, "getOsis, book: " + book);
 
         if (human) {
-            osis = getOsis(book, humanMaps);
+            osis = getOsis(book, getMaps(TYPE.HUMAN));
             if (osis != null) {
                 return osis;
             }
 
         } else {
-            ArrayList<LinkedHashMap<String, String>> maps = new ArrayList<LinkedHashMap<String, String>>();
-            maps.add(this.osis);
-            osis = getOsis(book, maps);
+            osis = getOsis(book, getMaps(TYPE.OSIS));
             if (osis != null) {
                 return osis;
             }
-            maps = null;
 
-            osis = getOsis(book, humanMaps);
+            osis = getOsis(book, getMaps(TYPE.HUMAN));
             if (osis != null) {
                 return osis;
             }
@@ -638,7 +628,7 @@ public class Bible
             maps.add(entry);
         }
 
-        for (LinkedHashMap<String, String> map: getMaps()) {
+        for (LinkedHashMap<String, String> map: getMaps(TYPE.HUMAN)) {
             if (human == null && map.size() > 0) {
                 human = map;
             }
@@ -647,8 +637,10 @@ public class Bible
             }
         }
 
-        for (Entry<String, String> entry: this.osis.entrySet()) {
-            maps.add(entry);
+        for (LinkedHashMap<String, String> map: getMaps(TYPE.OSIS)) {
+            for (Entry<String, String> entry: map.entrySet()) {
+                maps.add(entry);
+            }
         }
 
         book = book.replace(SearchManager.SUGGEST_URI_PATH_QUERY, "").replace(" ", "").toLowerCase(Locale.US);
