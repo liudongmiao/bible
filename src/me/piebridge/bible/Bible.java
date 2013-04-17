@@ -389,7 +389,7 @@ public class Bible
         int versionCode = 0;
         try {
             versionCode = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionCode;
-        } catch (NameNotFoundException e) {
+        } catch (Exception e) {
         }
         boolean newVersion = (demoVersion != versionCode);
         boolean unpack = unpackRaw(newVersion, R.raw.niv84demo, new File(mContext.getFilesDir(), "niv84demo.sqlite3"));
@@ -408,11 +408,11 @@ public class Bible
     }
 
     private boolean setDefaultVersion() {
-        if (setVersion("niv") || setVersion("niv84") || setVersion("nivdemo")) {
+        if (setVersionMetaData("niv") || setVersionMetaData("niv84") || setVersionMetaData("nivdemo")) {
         }
-        if (setVersion("ccb") || setVersion("cunpss") || setVersion("rcuvss") || setVersion("cunpssdemo")) {
+        if (setVersionMetaData("ccb") || setVersionMetaData("cunpss") || setVersionMetaData("rcuvss") || setVersionMetaData("cunpssdemo")) {
         }
-        if (setVersion("cunpts") || setVersion("rcuvts")) {
+        if (setVersionMetaData("cunpts") || setVersionMetaData("rcuvts")) {
         }
         String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version", null);
         if (version != null && getPosition(TYPE.VERSION, version) < 0) {
@@ -751,6 +751,11 @@ public class Bible
             return true;
         }
         return false;
+    }
+
+    private boolean setVersionMetaData(String version) {
+        Log.d(TAG, "setVersionMetaData: " + version);
+        return (versions.contains(version) && setVersion(version));
     }
 
 }
