@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import android.preference.PreferenceManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 import java.lang.ref.WeakReference;
@@ -54,7 +55,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final String TAG = "me.piebridge.bible$Chapter";
 
     private int index = 0;
-    private ArrayList<OsisItem> items;
+    private ArrayList<OsisItem> items = null;
+    private String search = null;
     private Uri uri = null;
     private String osis = "";
     private String book = "";
@@ -184,16 +186,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         verse = PreferenceManager.getDefaultSharedPreferences(this).getString("verse", "");
         uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
 
-        Intent intent = getIntent();
-        version = intent.getStringExtra("version");
-        if (version != null) {
-            Log.d(TAG, "version: " + version);
-            bible.checkVersions();
-            bible.setVersion(version);
-        } else {
-            version = "";
-        }
-        items = intent.getParcelableArrayListExtra("osiss");
+        Log.d(TAG, "onCreate");
     }
 
     private void getVerse() {
@@ -289,6 +282,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         editor.putString("verse", verse);
         editor.putInt("fontsize", fontsize);
+        if (items != null && items.size() > 0 && search != null && !search.equals("")) {
+            editor.putString("search", search);
+            editor.putInt("index", index);
+        } else {
+            editor.remove("search");
+            editor.remove("index");
+        }
         if (!book.equals("") && !chapter.equals("")) {
             editor.putString(book, chapter);
         }
@@ -540,10 +540,36 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume");
-        fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize-" + bible.getVersion(), 0);
+        Log.d(TAG, "onResume, items: " + items);
+        Intent intent = getIntent();
+        version = intent.getStringExtra("version");
+        if (version != null) {
+            Log.d(TAG, "version: " + version);
+            bible.checkVersions();
+            bible.setVersion(version);
+        } else {
+            version = bible.getVersion();
+        }
+        if (items == null) {
+            search = intent.getStringExtra("search");
+            items = intent.getParcelableArrayListExtra("osiss");
+        }
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        if (items == null && search == null) {
+            search = sp.getString("search", "");
+            if (!"".equals(search)) {
+                Log.d(TAG, "start Passage");
+                Intent passageIntent = new Intent(getApplicationContext(), Passage.class);
+                passageIntent.setAction(Intent.ACTION_VIEW);
+                passageIntent.setData(Uri.parse("bible://search?q=" + search));
+                startActivity(passageIntent);
+                finish();
+            }
+        }
+        index = sp.getInt("index", 0);
+        fontsize = sp.getInt("fontsize-" + bible.getVersion(), 0);
         if (fontsize == 0) {
-            fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize", 16);
+            fontsize = sp.getInt("fontsize", 16);
         }
         if (fontsize > 32) {
             fontsize = 32;
@@ -571,7 +597,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             showView(R.id.items, true);
             showView(R.id.book, false);
             showView(R.id.chapter, false);
-            showItem(0);
+            if (this.index > -1 && this.index < items.size()) {
+                showItem(this.index);
+            } else {
+                showItem(0);
+            }
         }
     }
 
@@ -810,18 +840,31 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public void onSaveInstanceState(Bundle bundle) {
-      super.onSaveInstanceState(bundle);
-      if (items != null && items.size() > 0) {
-        bundle.putParcelableArrayList("osiss", items);
-      }
+        super.onSaveInstanceState(bundle);
+        getVerse();
+        if (items != null && items.size() > 0) {
+            bundle.putInt("index", index);
+            bundle.putParcelableArrayList("osiss", items);
+        }
+        bundle.putString("verse", verse);
+        Log.d(TAG, "save index: " + index + ", verse: " + verse);
     }
 
     @Override
     public void onRestoreInstanceState(Bundle bundle) {
-      super.onRestoreInstanceState(bundle);
-      if (items == null || items.size() == 0) {
-        items = bundle.getParcelableArrayList("osiss");
-      }
+        super.onRestoreInstanceState(bundle);
+        if (items == null || items.size() == 0) {
+            items = bundle.getParcelableArrayList("osiss");
+            index = bundle.getInt("index");
+        }
+        verse = bundle.getString("verse");
+        Log.d(TAG, "restore index: " + index + ", verse: " + verse);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
 }

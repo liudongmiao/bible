@@ -34,6 +34,9 @@ public class Passage extends Activity {
         String osisto;
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri uri = intent.getData();
+            if (uri == null) {
+                finish();
+            }
             search = uri.getQueryParameter("search");
             if (search == null || search.equals("")) {
                 search = uri.getQueryParameter("q");
@@ -65,6 +68,7 @@ public class Passage extends Activity {
             startActivity(intent);
         } else {
             intent = new Intent(getApplicationContext(), Chapter.class);
+            intent.putExtra("search", search);
             intent.putParcelableArrayListExtra("osiss", items);
             startActivity(intent);
         }
