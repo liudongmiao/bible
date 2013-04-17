@@ -823,7 +823,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 Log.d(TAG, "item.book: " + item.book + ", item.chapter: " + item.chapter);
                 openOsis(item.book + "." + item.chapter, item.verse, item.end);
             }
-            openOsis(this.index > index ? osis_prev : osis_next);
         } else if (index >= 0 && index < items.size()) {
             showView(R.id.items, true);
             showView(R.id.book, false);
