@@ -13,6 +13,9 @@
         <item>kjv|King James Version</item>
         <item>nkjv|New King James Version</item>
         <item>nlt|New Living Translation</item>
+        <item>amp|Amplified Bible</item>
+        <item>msg|The Message</item>
+        <item>nasb|New American Standard Bible</item>
     </string-array>
     <string-array name="searchfull">
         <!-- no mapping -->
