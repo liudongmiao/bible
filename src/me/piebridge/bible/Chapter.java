@@ -186,6 +186,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         verse = PreferenceManager.getDefaultSharedPreferences(this).getString("verse", "");
         uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
 
+        setIntentData();
         Log.d(TAG, "onCreate");
     }
 
@@ -268,7 +269,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         chapter = osis.split("\\.")[1];
         Log.d(TAG, "set book chapter, osis: " + osis);
 
-        setItemText();
+        setItemText(this.index);
         ((TextView)findViewById(R.id.version)).setText(bible.getVersionName(bible.getVersion()));
         ((TextView)findViewById(R.id.book)).setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
         ((TextView)findViewById(R.id.chapter)).setText(chapter);
@@ -286,6 +287,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             editor.putString("search", search);
             editor.putInt("index", index);
         } else {
+            search = null;
             editor.remove("search");
             editor.remove("index");
         }
@@ -381,6 +383,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public void onClick(View v) {
+        gridview.setVisibility(View.GONE);
         if (bible.getCount(Bible.TYPE.VERSION) == 0 && bible.getDatabase() == null && v.getId() != R.id.version) {
             return;
         }
@@ -541,32 +544,18 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume, items: " + items);
-        Intent intent = getIntent();
-        version = intent.getStringExtra("version");
-        if (version != null) {
-            Log.d(TAG, "version: " + version);
-            bible.checkVersions();
-            bible.setVersion(version);
-        } else {
-            version = bible.getVersion();
-        }
-        if (items == null) {
-            search = intent.getStringExtra("search");
-            items = intent.getParcelableArrayListExtra("osiss");
-        }
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         if (items == null && search == null) {
-            search = sp.getString("search", "");
-            if (!"".equals(search)) {
+            if (!"".equals(sp.getString("search", ""))) {
+                index = sp.getInt("index", 0);
                 Log.d(TAG, "start Passage");
                 Intent passageIntent = new Intent(getApplicationContext(), Passage.class);
                 passageIntent.setAction(Intent.ACTION_VIEW);
-                passageIntent.setData(Uri.parse("bible://search?q=" + search));
+                passageIntent.setData(Uri.parse("bible://search?q=" + sp.getString("search", "")));
                 startActivity(passageIntent);
                 finish();
             }
         }
-        index = sp.getInt("index", 0);
         fontsize = sp.getInt("fontsize-" + bible.getVersion(), 0);
         if (fontsize == 0) {
             fontsize = sp.getInt("fontsize", 16);
@@ -805,10 +794,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         showView(R.id.share, !copytext.equals(""));
     }
 
-    public void setItemText() {
+    public void setItemText(int index) {
         if (items != null && index >= 0 && index < items.size()) {
             OsisItem item = items.get(index);
-            String book = bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, item.book)) + " " + item.chapter;
+            String book = bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, item.book)) + item.chapter;
             if (!verse.equals("") || !end.equals("")) {
                 book += ":" + verse + "-" + end;
             }
@@ -818,17 +807,29 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     public void showItem(int index) {
         osis = "";
-        if (items == null) {
+        if (items == null || items.size() < 2) {
             showView(R.id.items, false);
             showView(R.id.book, true);
             showView(R.id.chapter, true);
+            if (items == null || items.size() == 0) {
+                openOsis(this.index > index ? osis_prev : osis_next);
+            } else {
+                setItemText(0);
+                OsisItem item = items.get(0);
+                if (item.chapter.equals("")) {
+                    item.chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(item.book, "1");
+                }
+                items.clear();
+                Log.d(TAG, "item.book: " + item.book + ", item.chapter: " + item.chapter);
+                openOsis(item.book + "." + item.chapter, item.verse, item.end);
+            }
             openOsis(this.index > index ? osis_prev : osis_next);
         } else if (index >= 0 && index < items.size()) {
             showView(R.id.items, true);
             showView(R.id.book, false);
             showView(R.id.chapter, false);
             this.index = index;
-            setItemText();
+            setItemText(index);
             OsisItem item = items.get(index);
             Log.d(TAG, String.format("book: %s, chapter: %s, verse: %s, end: %s", item.book, item.chapter, item.verse, item.end));
             if (item.chapter.equals("")) {
@@ -865,6 +866,22 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        setIntentData();
+    }
+
+    private void setIntentData() {
+        Intent intent = getIntent();
+        version = intent.getStringExtra("version");
+        if (version != null) {
+            Log.d(TAG, "version: " + version);
+            bible.checkVersions();
+            bible.setVersion(version);
+        } else {
+            version = bible.getVersion();
+        }
+        index = 0;
+        search = intent.getStringExtra("search");
+        items = intent.getParcelableArrayListExtra("osiss");
     }
 
 }
