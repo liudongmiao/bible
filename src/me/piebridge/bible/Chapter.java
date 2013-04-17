@@ -779,27 +779,20 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (items != null && index >= 0 && index < items.size()) {
             OsisItem item = items.get(index);
             String book = bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, item.book)) + " " + item.chapter;
+            if (!verse.equals("") || !end.equals("")) {
+                book += ":" + verse + "-" + end;
+            }
             ((TextView)findViewById(R.id.items)).setText(book);
         }
     }
 
     public void showItem(int index) {
         osis = "";
-        if (items == null || items.size() < 2) {
+        if (items == null) {
             showView(R.id.items, false);
             showView(R.id.book, true);
             showView(R.id.chapter, true);
-            if (items == null || items.size() == 0) {
-                openOsis(this.index > index ? osis_prev : osis_next);
-            } else {
-                OsisItem item = items.get(0);
-                if (item.chapter.equals("")) {
-                    item.chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(item.book, "1");
-                }
-                items.clear();
-                Log.d(TAG, "item.book: " + item.book + ", item.chapter: " + item.chapter);
-                openOsis(item.book + "." + item.chapter, item.verse, item.end);
-            }
+            openOsis(this.index > index ? osis_prev : osis_next);
         } else if (index >= 0 && index < items.size()) {
             showView(R.id.items, true);
             showView(R.id.book, false);
