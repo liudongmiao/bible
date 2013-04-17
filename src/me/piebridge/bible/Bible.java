@@ -82,6 +82,7 @@ public class Bible
     private Bible(Context context) {
         Log.d(TAG, "init bible");
         mContext = context;
+        checkLocale();
         checkVersions();
         setDefaultVersion();
     }
