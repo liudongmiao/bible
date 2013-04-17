@@ -20,6 +20,8 @@ import android.widget.AutoCompleteTextView;
 
 public class BibleAutoCompleteTextView extends AutoCompleteTextView {
 
+    private boolean show = false;
+
     public BibleAutoCompleteTextView(Context context) {
         super(context);
     }
@@ -38,10 +40,21 @@ public class BibleAutoCompleteTextView extends AutoCompleteTextView {
     }
 
     @Override
+    public void showDropDown() {
+        super.showDropDown();
+        if (!show) {
+            show = true;
+            performFiltering(getText(), 0);
+        }
+    }
+
+    @Override
     protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
-        if (focused) {
+        if (focused && show) {
             performFiltering(getText(), 0);
+        } else if (!focused) {
+            show = false;
         }
     }
 

@@ -148,6 +148,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
             }
         });
         edittext.setOnClickListener(this);
+        edittext.requestFocus();
 
         findViewById(R.id.searchbutton).setOnClickListener(this);
     }
