@@ -588,9 +588,11 @@ public class Bible
 
     private boolean addSuggest(LinkedHashMap<String, String> osiss, String value, String osis, int limit) {
         if (!osiss.values().contains(osis)) {
-            String text = human.get(osis);
-            if (text == null) {
+            String text;
+            if (human == null || human.get(osis) == null) {
                 text = value;
+            } else {
+                text = human.get(osis);
             }
             Log.d(TAG, "add suggest, text=" + text + ", data=" + osis);
             osiss.put(text, osis);
