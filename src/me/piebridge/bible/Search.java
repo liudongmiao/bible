@@ -124,7 +124,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
 
                     LinkedHashMap<String, String> suggestions = bible.getOsiss(prefix.toString(), 66);
                     final ArrayList<String> values = new ArrayList<String>();
-                    if (!"".equals(query)) {
+                    if (!"".equals(query) && "".equals(prefix.toString())) {
                         values.add(query);
                     }
                     for (Entry<String, String> entry: suggestions.entrySet()) {
