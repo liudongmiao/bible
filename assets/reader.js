@@ -93,14 +93,12 @@ function hasClass(element, name, strict) {
 }
 
 function load() {
-    var spans = document.getElementsByTagName("span");
-    for (var i = 0; i < spans.length; i++) {
-        if (hasClass(spans[i], "text", true) || hasClass(spans[i], "v", false)) {
-            spans[i].addEventListener("click", function() {
-                selectVerse(this);
-            });
+    document.getElementById("content").addEventListener("click", function(e) {
+        var element = e.target;
+        if (element.nodeName == "SPAN" && (hasClass(element, "text", true) || hasClass(element, "v", false))) {
+            selectVerse(element);
         }
-    }
+    });
 }
 
 var alarm = {
