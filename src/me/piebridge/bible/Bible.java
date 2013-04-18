@@ -409,7 +409,7 @@ public class Bible
     }
 
     private boolean setDefaultVersion() {
-        if (setVersionMetaData("niv") || setVersionMetaData("niv84") || setVersionMetaData("nivdemo")) {
+        if (setVersionMetaData("niv") || setVersionMetaData("niv84") || setVersionMetaData("nivdemo") || setVersionMetaData("kjv") || setVersionMetaData("nkjv") || setVersionMetaData("nlt") || setVersionMetaData("msg") ||  setVersionMetaData("nasb")) {
         }
         if (setVersionMetaData("ccb") || setVersionMetaData("cunpss") || setVersionMetaData("rcuvss") || setVersionMetaData("cunpssdemo")) {
         }
@@ -539,33 +539,27 @@ public class Bible
         book = book.replace("约三", "约叁");
         book = book.toLowerCase(Locale.US);
 
-        boolean human = false;
+        boolean checkOsis = true;
         if (isCJK(book.substring(0, 1)) && book.length() > 2) {
-            human = true;
-        } else if (book.length() > 7) {
-            human = true;
+            checkOsis = false;
+        } else if (book.length() > 6) { // max 1Thess, 2Thess
+            checkOsis = false;
         }
 
         Log.d(TAG, "getOsis, book: " + book);
 
-        if (human) {
-            osis = getOsis(book, getMaps(TYPE.HUMAN));
-            if (osis != null) {
-                return osis;
-            }
-
-        } else {
+        if (checkOsis) {
             osis = getOsis(book, getMaps(TYPE.OSIS));
             if (osis != null) {
                 return osis;
             }
-
-            osis = getOsis(book, getMaps(TYPE.HUMAN));
-            if (osis != null) {
-                return osis;
-            }
-
         }
+
+        osis = getOsis(book, getMaps(TYPE.HUMAN));
+        if (osis != null) {
+            return osis;
+        }
+
         return null;
     }
 
