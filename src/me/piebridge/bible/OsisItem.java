@@ -91,6 +91,7 @@ public class OsisItem implements Parcelable {
             String end_chapter = m.group(4);
             String end_verse = m.group(5);
 
+            Log.d("OsisItem", String.format("book:%s, osis:%s, %s:%s-%s%s", book, osis, start_chapter, start_verse, end_chapter, end_verse));
             if (osis == null) {
                 continue;
             }

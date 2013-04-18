@@ -288,8 +288,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             editor.putInt("index", index);
         } else {
             search = null;
-            editor.remove("search");
-            editor.remove("index");
         }
         if (!book.equals("") && !chapter.equals("")) {
             editor.putString(book, chapter);
@@ -880,6 +878,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         index = 0;
         search = intent.getStringExtra("search");
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        if (search == null) {
+            search = sp.getString("search", "");
+        }
+        if (!sp.getString("search", "").equals(search)) {
+            index = sp.getInt("index", 0);
+        }
+        Log.d(TAG, "read index: " + index + ", search: " + search);
         items = intent.getParcelableArrayListExtra("osiss");
     }
 

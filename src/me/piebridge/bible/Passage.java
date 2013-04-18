@@ -29,9 +29,9 @@ public class Passage extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        String search;
-        String osisfrom;
-        String osisto;
+        String search = null;
+        String osisfrom = null;
+        String osisto = null;
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri uri = intent.getData();
             if (uri == null) {
@@ -53,13 +53,18 @@ public class Passage extends Activity {
                 Bible.getBible(this).setVersion(version);
             }
             Log.d(TAG, "uri: " + uri);
-        } else {
+        } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             search = intent.getStringExtra(SearchManager.QUERY);
             osisfrom = intent.getStringExtra("osisfrom");
             osisto = intent.getStringExtra("osisto");
         }
         ArrayList<OsisItem> items = OsisItem.parseSearch(search, getBaseContext());
-        if (items.size() == 0) {
+        if (items.size() > 0 && !"".equals(items.get(0).chapter)) {
+            intent = new Intent(getApplicationContext(), Chapter.class);
+            intent.putExtra("search", search);
+            intent.putParcelableArrayListExtra("osiss", items);
+            startActivity(intent);
+        } else if (search != null) {
             intent = new Intent(getApplicationContext(), Result.class);
             intent.setAction(Intent.ACTION_SEARCH);
             intent.putExtra(SearchManager.QUERY, search);
@@ -68,8 +73,6 @@ public class Passage extends Activity {
             startActivity(intent);
         } else {
             intent = new Intent(getApplicationContext(), Chapter.class);
-            intent.putExtra("search", search);
-            intent.putParcelableArrayListExtra("osiss", items);
             startActivity(intent);
         }
         finish();

@@ -381,6 +381,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
                 // isEmpty since api-9 ?
                 if (query.length() > 0) {
                     Intent intent = new Intent(getApplicationContext(), Passage.class);
+                    intent.setAction(Intent.ACTION_SEARCH);
                     intent.putExtra(SearchManager.QUERY, query);
                     intent.putExtra("osisfrom", osisfrom);
                     intent.putExtra("osisto", osisto);
