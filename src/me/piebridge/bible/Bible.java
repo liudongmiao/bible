@@ -78,6 +78,7 @@ public class Bible
     private final int ZHTW = 2;
     private int[] orders = new int[3];
     private Locale lastLocale;
+    private boolean unpacked = false;
 
     private Bible(Context context) {
         Log.d(TAG, "init bible");
@@ -154,6 +155,7 @@ public class Bible
 
         if (versions.size() == 0) {
             setDemoVersions();
+            unpacked = true;
         }
         return true;
     }
@@ -386,11 +388,14 @@ public class Bible
     }
 
     private void setDemoVersions() {
+        if (unpacked) {
+            return;
+        }
         int demoVersion = PreferenceManager.getDefaultSharedPreferences(mContext).getInt("demoVersion", 0);
         int versionCode = 0;
         try {
             versionCode = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionCode;
-        } catch (Exception e) {
+        } catch (Throwable t) {
         }
         boolean newVersion = (demoVersion != versionCode);
         boolean unpack = unpackRaw(newVersion, R.raw.niv84demo, new File(mContext.getFilesDir(), "niv84demo.sqlite3"));
@@ -409,6 +414,9 @@ public class Bible
     }
 
     private boolean setDefaultVersion() {
+        if (versions.size() == 0) {
+            return false;
+        }
         if (setVersionMetaData("niv") || setVersionMetaData("niv84") || setVersionMetaData("nivdemo") || setVersionMetaData("kjv") || setVersionMetaData("nkjv") || setVersionMetaData("nlt") || setVersionMetaData("msg") ||  setVersionMetaData("nasb")) {
         }
         if (setVersionMetaData("ccb") || setVersionMetaData("cunpss") || setVersionMetaData("rcuvss") || setVersionMetaData("cunpssdemo")) {
