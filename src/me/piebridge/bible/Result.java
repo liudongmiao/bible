@@ -99,7 +99,7 @@ public class Result extends Activity
                 query,
                 humanfrom,
                 humanto,
-                String.valueOf(version).toUpperCase(Locale.US)
+                bible.getVersionName(version)
             }));
             return false;
         } else {
@@ -109,7 +109,7 @@ public class Result extends Activity
                 query,
                 humanfrom,
                 humanto,
-                String.valueOf(version).toUpperCase(Locale.US)
+                bible.getVersionName(version)
             });
             textView.setText(countString);
         }
