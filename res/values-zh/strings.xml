@@ -27,4 +27,5 @@
     <string name="otherbook">选择其他书卷</string>
     <string name="search">在圣经中搜索“%1$s”</string>
     <string name="demo">演示</string>
+    <string name="chapters">%1$s，共%2$s章。</string>
 </resources>

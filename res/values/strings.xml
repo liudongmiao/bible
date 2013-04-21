@@ -27,4 +27,5 @@
     <string name="otherbook">Choose Other Book</string>
     <string name="search">Search %1$s in Bible</string>
     <string name="demo">DEMO</string>
+    <string name="chapters">%1$s, %2$s chapters.</string>
 </resources>
