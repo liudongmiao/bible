@@ -156,6 +156,8 @@ public class Bible
         if (versions.size() == 0) {
             setDemoVersions();
             unpacked = true;
+            versions.add("cunpssdemo");
+            versions.add("niv84demo");
         }
         return true;
     }
@@ -404,12 +406,6 @@ public class Bible
         }
         if (newVersion && unpack) {
             PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("demoVersion", versionCode).commit();
-        }
-        if (!versions.contains("cunpss")) {
-            versions.add("cunpssdemo");
-        }
-        if (!versions.contains("niv84")) {
-            versions.add("niv84demo");
         }
     }
 
