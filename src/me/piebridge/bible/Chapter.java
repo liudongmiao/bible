@@ -361,7 +361,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "\n</script>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
         body += "</head>\n<body>\n";
-        if (bible.getVersion().endsWith("demo")) {
+        if (!"".equals(title) && bible.getVersion().endsWith("demo")) {
             String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">market://search?q=" + getString(R.string.bibledatahuman) + "&c=apps</a>";
             body += "<div id=\"pb-demo\">" + getString(R.string.noversion, new Object[] {link_market, link_github}) + "</div>\n";
         }
