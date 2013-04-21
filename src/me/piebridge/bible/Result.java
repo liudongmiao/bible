@@ -174,9 +174,11 @@ public class Result extends Activity
                     }
                     ((TextView)view).setText(context, TextView.BufferType.SPANNABLE);
                     Spannable span = (Spannable) ((TextView) view).getText();
+                    String lowercontext = context.toLowerCase(Locale.US);
+                    String lowerquery = query.toLowerCase(Locale.US);
                     int index = -1;
                     while (true) {
-                        index = context.indexOf(query, index + 1);
+                        index = lowercontext.indexOf(lowerquery, index + 1);
                         if (index == -1) {
                             break;
                         }
