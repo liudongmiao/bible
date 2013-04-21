@@ -57,6 +57,10 @@ public class Passage extends Activity {
             search = intent.getStringExtra(SearchManager.QUERY);
             osisfrom = intent.getStringExtra("osisfrom");
             osisto = intent.getStringExtra("osisto");
+        } else if ("text/plain".equals(intent.getType()) && Intent.ACTION_SEND.equals(intent.getAction())) {
+            search = intent.getStringExtra(Intent.EXTRA_TEXT);
+        } else {
+            finish();
         }
         ArrayList<OsisItem> items = OsisItem.parseSearch(search, getBaseContext());
         if (items.size() > 0 && !"".equals(items.get(0).chapter)) {
