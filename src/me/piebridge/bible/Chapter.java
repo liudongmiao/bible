@@ -298,7 +298,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         editor.putString("verse", verse);
         editor.putInt("fontsize", fontsize);
-        if (items != null && items.size() > 0 && search != null && !search.equals("")) {
+        if (items != null && search != null) {
             editor.putString("search", search);
             editor.putInt("index", index);
         } else {
@@ -351,18 +351,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += ".wordsofchrist {color: red;}\n";
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
-        body += background;
+        body += ".selected {" + background + "}\n";
+        body += ".highlight {" + background + "}\n";
         body += "</style>\n";
         body += "<title>" + title + "</title>\n";
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
+        body += "<script type=\"text/javascript\">\n";
+        body += String.format("var verse_start=%s, verse_end=%s, versename=\"%s\", search=\"%s\";", verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, versename, items != null ? search : "");
+        body += "\n</script>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
-        body += "<script type=\"text/javascript\">\n" + String.format("var verse_start=%s, verse_end=%s;", verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse) + "\n</script>\n";
-        if (verse.equals("") || verse.equals("1")) {
-            body += "</head>\n<body>\n";
-        } else {
-            Log.d(TAG, "try jump to verse " + verse);
-            body += "</head>\n<body onload=\"window.location.hash='#" + versename + "-" + verse + "'\">\n";
-        }
+        body += "</head>\n<body>\n";
         if (bible.getVersion().endsWith("demo")) {
             String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">market://search?q=" + getString(R.string.bibledatahuman) + "&c=apps</a>";
             body += "<div id=\"pb-demo\">" + getString(R.string.noversion, new Object[] {link_market, link_github}) + "</div>\n";
@@ -382,7 +380,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 java.io.OutputStream os = new java.io.BufferedOutputStream(new java.io.FileOutputStream(new java.io.File(path)));
                 os.write(body.getBytes());
                 os.close();
-                return true;
             } catch (Exception e) {
                 Log.e("write", path, e);
             }
@@ -589,7 +586,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             if (mHighlightColor != null) {
                 color = mHighlightColor.intValue();
             }
-            background = String.format(".selected { background: rgba(%d, %d, %d, %.2f); }\n",
+            background = String.format("background: rgba(%d, %d, %d, %.2f);",
                     (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >>> 24) / 255.0);
             Log.d(TAG, String.format("color: 0x%08x, background: %s", color, background));
         }
@@ -817,7 +814,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             showView(R.id.items, false);
             showView(R.id.book, true);
             showView(R.id.chapter, true);
-            if (items == null || items.size() == 0) {
+            if (items == null || index < 0 || index >= items.size()) {
+                search = "";
                 openOsis(this.index > index ? osis_prev : osis_next);
             } else {
                 setItemText(0);

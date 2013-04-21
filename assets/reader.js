@@ -92,10 +92,55 @@ function hasClass(element, name, strict) {
     return (" " + element.className + " ").replace(/[\t\r\n]/g, " ").indexOf(className) >= 0;
 }
 
+function highlight(search) {
+    var newbody = "", body, lowerbody, lowersearch;
+    if (!search) {
+        return false;
+    }
+    body = document.body.innerHTML;
+    lowerbody = body.toLowerCase();
+    lowersearch = search.toLowerCase();
+
+    while (body.length > 0) {
+        var i = lowerbody.indexOf(lowersearch);
+        if (i < 0) {
+            break;
+        }
+        if (body.lastIndexOf(">", i) >= body.lastIndexOf("<", i)) {
+            newbody += body.substring(0, i) + "<span class=\"highlight\">" + search + "</span>";
+            body = body.substr(i + search.length);
+            lowerbody = lowerbody.substr(i + search.length);
+        }
+    }
+
+    newbody += body;
+    document.body.innerHTML = newbody;
+    return true;
+}
+
 function load() {
+    if (verse_start > 1) {
+        window.location.hash = "#" + versename + "-" + verse_start;
+    }
+    highlight(search);
+    addListener();
+}
+
+function unhighlight() {
+    while (true) {
+        var results = document.getElementsByClassName("highlight");
+        if (results.length == 0) {
+            break;
+        }
+        results[0].className = "";
+    }
+}
+
+function addListener() {
     document.getElementById("content").addEventListener("click", function(e) {
         var element = e.target;
         if (element.nodeName == "SPAN" && (hasClass(element, "text", true) || hasClass(element, "v", false))) {
+            unhighlight();
             selectVerse(element);
         }
     });

@@ -17,6 +17,8 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.os.Bundle;
 
+import android.text.Spannable;
+import android.text.style.BackgroundColorSpan;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.ListView;
@@ -45,6 +47,7 @@ public class Result extends Activity
     private SimpleCursorAdapter adapter = null;
 
     protected int color;
+    BackgroundColorSpan background;
 
     /** Called when the activity is first created. */
     @Override
@@ -65,6 +68,7 @@ public class Result extends Activity
             } else {
                 color = 0x6633B5E5;
             }
+            background = new BackgroundColorSpan(color);
         } else {
             finish();
         }
@@ -161,7 +165,17 @@ public class Result extends Activity
                         context = context.replaceAll("「", "“").replaceAll("」", "”");
                         context = context.replaceAll("『", "‘").replaceAll("』", "’");
                     }
-                    ((TextView)view).setText(context);
+                    ((TextView)view).setText(context, TextView.BufferType.SPANNABLE);
+                    Spannable span = (Spannable) ((TextView) view).getText();
+                    int index = -1;
+                    while (true) {
+                        index = context.indexOf(query, index + 1);
+                        if (index == -1) {
+                            break;
+                        }
+                        span.setSpan(background, index, index + query.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                    ((TextView)view).setText(span);
                     return true;
                 }
                 return false;
@@ -195,6 +209,7 @@ public class Result extends Activity
         Log.d(TAG, String.format("book: %s, chapter: %d, verse: %d", book, chapterVerse[0], chapterVerse[1]));
         items.add(new OsisItem(book, chapterVerse[0], chapterVerse[1]));
         intent.putParcelableArrayListExtra("osiss", items);
+        intent.putExtra("search", query);
         startActivity(intent);
 
         return true;
