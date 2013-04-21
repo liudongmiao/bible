@@ -44,6 +44,8 @@ public class Result extends Activity
     private Bible bible;
     private SimpleCursorAdapter adapter = null;
 
+    protected int color;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,12 @@ public class Result extends Activity
             String osisto = intent.getStringExtra("osisto");
             Log.d(TAG, "query: " + query + ", osisfrom: " + osisfrom + ", osisto: " + osisto);
             doSearch(query, getQueryBooks(osisfrom, osisto));
+            Integer mHighlightColor = (Integer) Bible.getField(findViewById(R.id.text), TextView.class, "mHighlightColor");
+            if (mHighlightColor != null) {
+                color = mHighlightColor.intValue();
+            } else {
+                color = 0x6633B5E5;
+            }
         } else {
             finish();
         }

@@ -585,7 +585,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         if (background == null) {
             int color = 0x6633B5E5;
-            Integer mHighlightColor = (Integer) getField(findViewById(R.id.version), TextView.class, "mHighlightColor");
+            Integer mHighlightColor = (Integer) Bible.getField(findViewById(R.id.version), TextView.class, "mHighlightColor");
             if (mHighlightColor != null) {
                 color = mHighlightColor.intValue();
             }
@@ -644,27 +644,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         return false;
     }
 
-    private Object getField(Object object, final Class<?> clazz, final String fieldName) {
-        try {
-            Field field = clazz.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(object);
-        } catch (Exception e) {
-            Log.e(TAG, "no such filed " + object.getClass().getName() + "." + fieldName);
-        }
-        return null;
-    }
-
     private boolean setButtonsControllerAPI11(WebView webview) {
         Object mZoomManager = null;
 
         // android 4.1,  webview.mProvider.mZoomManager.getCurrentZoomControl().getControls()
-        Object mProvider = getField(webview, WebView.class, "mProvider");
+        Object mProvider = Bible.getField(webview, WebView.class, "mProvider");
         if (mProvider != null) {
-            mZoomManager = getField(mProvider, mProvider.getClass(), "mZoomManager");
+            mZoomManager = Bible.getField(mProvider, mProvider.getClass(), "mZoomManager");
         } else {
             // android 4.0, webview.mZoomManager.getCurrentZoomControl().getControls()
-            mZoomManager = getField(webview, WebView.class, "mZoomManager");
+            mZoomManager = Bible.getField(webview, WebView.class, "mZoomManager");
         }
 
         if (mZoomManager == null) {

@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -757,6 +758,17 @@ public class Bible
     private boolean setVersionMetaData(String version) {
         Log.d(TAG, "setVersionMetaData: " + version);
         return (versions.contains(version) && setVersion(version));
+    }
+
+    public static Object getField(Object object, final Class<?> clazz, final String fieldName) {
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(object);
+        } catch (Exception e) {
+            Log.e(TAG, "no such filed " + object.getClass().getName() + "." + fieldName);
+        }
+        return null;
     }
 
 }
