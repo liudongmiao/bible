@@ -79,10 +79,17 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         bible = Bible.getBible(getBaseContext());
 
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        query = sp.getString("query", "");
-        searchtype = sp.getInt("searchtype", SEARCH_ALL);
-        osisfrom = sp.getString("osisfrom", bible.get(Bible.TYPE.OSIS, 0));
-        osisto = sp.getString("osisto", bible.get(Bible.TYPE.OSIS, -1));
+
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEND.equals(intent.getAction())) {
+            query = intent.getStringExtra(SearchManager.QUERY);
+            searchtype = SEARCH_ALL;
+        } else {
+            query = sp.getString("query", "");
+            searchtype = sp.getInt("searchtype", SEARCH_ALL);
+            osisfrom = sp.getString("osisfrom", bible.get(Bible.TYPE.OSIS, 0));
+            osisto = sp.getString("osisto", bible.get(Bible.TYPE.OSIS, -1));
+        }
 
         PreferenceScreen root = getPreferenceManager().createPreferenceScreen(this);
         setPreferenceScreen(createPreferenceHierarchy(root));
@@ -149,6 +156,9 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         });
         edittext.setOnClickListener(this);
         edittext.requestFocus();
+        if (Intent.ACTION_SEND.equals(intent.getAction())) {
+            edittext.setText(query);
+        }
 
         findViewById(R.id.searchbutton).setOnClickListener(this);
     }

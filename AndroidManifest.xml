@@ -16,7 +16,7 @@
         </activity>
         <activity android:name=".Search" />
         <activity android:name=".Result" />
-        <activity android:name=".Passage" android:launchMode="singleTask">
+        <activity android:name=".Passage" android:launchMode="singleTask" android:label="@string/sharefrom">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

@@ -59,6 +59,10 @@ public class Passage extends Activity {
             osisto = intent.getStringExtra("osisto");
         } else if ("text/plain".equals(intent.getType()) && Intent.ACTION_SEND.equals(intent.getAction())) {
             search = intent.getStringExtra(Intent.EXTRA_TEXT);
+            intent = new Intent(getApplicationContext(), Search.class);
+            intent.setAction(Intent.ACTION_SEND);
+            intent.putExtra(SearchManager.QUERY, search);
+            startActivity(intent);
         } else {
             finish();
         }
