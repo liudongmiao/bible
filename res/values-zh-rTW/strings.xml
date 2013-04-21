@@ -5,8 +5,8 @@
     <string name="search_description">搜尋聖經章節，或者關鍵詞</string>
     <string name="search_no_results">在“%4$s”本中從“%2$s”至“%3$s”無法找到“%1$s”。</string>
     <plurals name="search_results">
-      <item quantity="one">在“%5$s”中從“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
-      <item quantity="other">在“%5$s”中從“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
+      <item quantity="one">在“%5$s”從“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
+      <item quantity="other">在“%5$s”從“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
     <string name="noversion">此版本僅供演示。請從電子市場%1$s，或者項目網站%2$s安裝聖經數據庫。提示：聖經閱讀器僅支持外部存儲(如SDCARD)。</string>
