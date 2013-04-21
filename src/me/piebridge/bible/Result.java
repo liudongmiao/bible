@@ -157,8 +157,10 @@ public class Result extends Activity
 
                 if (columnIndex == cursor.getColumnIndexOrThrow(Provider.COLUMN_UNFORMATTED)) {
                     String context = cursor.getString(columnIndex);
-                    context = context.replaceAll("「", "“").replaceAll("」", "”");
-                    context = context.replaceAll("『", "‘").replaceAll("』", "’");
+                    if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE)) {
+                        context = context.replaceAll("「", "“").replaceAll("」", "”");
+                        context = context.replaceAll("『", "‘").replaceAll("』", "’");
+                    }
                     ((TextView)view).setText(context);
                     return true;
                 }
