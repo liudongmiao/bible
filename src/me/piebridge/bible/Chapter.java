@@ -89,6 +89,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected String background = null;
     protected String copytext = "";
     protected static final int COPYTEXT = 0;
+    protected static final int SHOWCONTENT = 1;
 
     static class BibleHandler extends Handler {
         WeakReference<Chapter> outerClass;
@@ -105,6 +106,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             }
             if (msg.what == COPYTEXT) {
                 theClass.checkShare();
+            } else if (msg.what == SHOWCONTENT) {
+                String[] message = (String[]) msg.obj;
+                if (!"".equals(message[0])) {
+                    theClass.setBookChapter();
+                }
+                theClass._showContent(message[0], message[1]);
             }
         }
     }
@@ -209,7 +216,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     }
 
-    private void showUri(Uri uri) {
+    private void showUri() {
+        new Thread(new Runnable() {
+            public void run() {
+                _showUri();
+            }
+        }).start();
+    }
+
+    private void _showUri() {
         version = bible.getVersion();
         Log.d(TAG, "showuri: " + uri);
         if (uri == null) {
@@ -234,13 +249,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             final String content = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CONTENT));
             cursor.close();
 
-            setBookChapter(osis);
             showContent(human + " | " + version, content);
         } else {
             Log.d(TAG, "no such chapter, try first chapter");
             Uri nulluri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(null).fragment(version).build();
             if (!nulluri.equals(uri)) {
-                showUri(nulluri);
+                uri = nulluri;
+                showUri();
             } else {
                 showContent("", getString(R.string.queryerror));
             }
@@ -259,12 +274,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(newOsis).build();
             this.verse = verse;
             this.end = end;
-            showUri(uri);
+            showUri();
         }
         return true;
     }
 
-    private void setBookChapter(String osis) {
+    private void setBookChapter() {
         book = osis.split("\\.")[0];
         chapter = osis.split("\\.")[1];
         Log.d(TAG, "set book chapter, osis: " + osis);
@@ -299,6 +314,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void showContent(String title, String content) {
+        handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[] {title, content }));
+    }
+
+    private void _showContent(String title, String content) {
         if (!title.equals("")) {
             versename = "pb-" + version + "-" + book.toLowerCase(Locale.US) + "-" + chapter;
         } else {
@@ -475,7 +494,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             gridview.setSelection(adapter.getPosition(selected));
         } else {
             gridview.setVisibility(View.GONE);
-            showUri(uri);
+            showUri();
         }
     }
 
@@ -522,7 +541,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 bible.setVersion(version);
                 fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize-" + version, fontsize);
                 uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
-                showUri(uri);
+                showUri();
                 break;
             case R.id.items:
                 if (items != null && pos < items.size()) {
@@ -579,7 +598,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             showView(R.id.items, false);
             showView(R.id.book, true);
             showView(R.id.chapter, true);
-            showUri(uri);
+            showUri();
         } else {
             showView(R.id.items, true);
             showView(R.id.book, false);
@@ -726,7 +745,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             fontsize += (zoomIn ? 1 : -1);
             Log.d(TAG, "update fontsize to " + fontsize);
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
-            showUri(uri);
+            showUri();
             setZoomButtonsController(webview);
             if (mZoomButtonsController != null) {
                 mZoomButtonsController.setZoomOutEnabled(fontsize > 1);
