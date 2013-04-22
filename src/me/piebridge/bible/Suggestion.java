@@ -31,6 +31,7 @@ public class Suggestion extends ContentProvider {
     private static final String TAG = "me.piebridge.bible$Suggestion";
 
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+    Bible bible = null;
 
     @Override
     public String getType(Uri uri) {
@@ -39,17 +40,26 @@ public class Suggestion extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        new Thread(new Runnable() {
+            public void run() {
+                if (bible == null) {
+                    bible = Bible.getBible(getContext());
+                }
+            }
+        }).start();
         return true;
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        if (bible == null) {
+            return null;
+        }
         Log.d(TAG , "uri: " + uri);
         String query = uri.getLastPathSegment();
         try {
             String[] columnNames = { BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_INTENT_DATA };
             MatrixCursor cursor = new MatrixCursor(columnNames);
-            Bible bible = Bible.getBible(getContext());
             long time = System.currentTimeMillis();
             LinkedHashMap<String, String> suggestions = bible.getOsiss(query, 10);
             time = System.currentTimeMillis() - time;

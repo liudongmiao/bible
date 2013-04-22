@@ -114,6 +114,22 @@ public class Bible
         return bible;
     }
 
+    public static Bible getBibleAsync(final Context context) {
+        if (bible == null) {
+            new Thread(new Runnable() {
+                public void run() {
+                    getBible(context);
+                }
+            }).start();
+            return null;
+        }
+        if (context != null) {
+            mContext = context;
+            bible.checkLocale();
+        }
+        return bible;
+    }
+
     public int[] getChapterVerse(String string) {
         Integer value = Integer.parseInt(string);
         Integer chapter = value / 1000;
@@ -201,7 +217,13 @@ public class Bible
                 database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
                         SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
                 Log.d(TAG, "open database \"" + database.getPath() + "\"");
-                setMetadata(database);
+                final String datapath = file.getAbsolutePath();
+                final String dataversion = databaseVersion;
+                new Thread(new Runnable() {
+                    public void run() {
+                        setMetadata(datapath, dataversion);
+                    }
+                }).start();
                 return true;
             } catch (Exception e) {
                 try {
@@ -219,12 +241,14 @@ public class Bible
         }
     }
 
-    private void setMetadata(SQLiteDatabase database) {
+    private void setMetadata(String datapath, String dataversion) {
+        SQLiteDatabase metadata = SQLiteDatabase.openDatabase(datapath, null,
+                SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+        Cursor cursor = metadata.query(Provider.TABLE_BOOKS, Provider.COLUMNS_BOOKS, null, null, null, null, null);
         osiss.clear();
         books.clear();
         chapters.clear();
         humans.clear();
-        Cursor cursor = database.query(Provider.TABLE_BOOKS, Provider.COLUMNS_BOOKS, null, null, null, null, null);
         try {
             while (cursor.moveToNext()) {
                 String osis = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_OSIS));
@@ -238,9 +262,9 @@ public class Bible
 
                 if (!isCJK(human)) {
                     humanEN.put(osis, human);
-                } else if (isVersionZHCN(databaseVersion)) {
+                } else if (isVersionZHCN(dataversion)) {
                     humanZHCN.put(osis, human);
-                } else if (isVersionZHTW(databaseVersion)) {
+                } else if (isVersionZHTW(dataversion)) {
                     humanZHTW.put(osis, human);
                 }
 
@@ -248,9 +272,9 @@ public class Bible
                 if (scale > 1.0f) {
                     books.add(human);
                 } else {
-                    if (databaseVersion.endsWith("ts")) {
+                    if (dataversion.endsWith("ts")) {
                         books.add(getResourceValue(osisZHTW, osis));
-                    } else if (databaseVersion.endsWith("ss") || databaseVersion.equals("ccb")) {
+                    } else if (dataversion.endsWith("ss") || dataversion.equals("ccb")) {
                         books.add(getResourceValue(osisZHCN, osis));
                     } else {
                         books.add(osis);
@@ -262,7 +286,7 @@ public class Bible
         } finally {
             cursor.close();
         }
-
+        metadata.close();
     }
 
     private File getExternalFilesDir() {

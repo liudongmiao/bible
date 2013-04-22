@@ -81,7 +81,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final int DISTANCE = 100;
     private GestureDetector mGestureDetector = null;
 
-    private Bible bible;
+    private Bible bible = null;
     private String selected = "";
     private String versename = "";
     private int gridviewid = 0;
@@ -90,6 +90,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected String copytext = "";
     protected static final int COPYTEXT = 0;
     protected static final int SHOWCONTENT = 1;
+    protected static final int SHOWDATA = 2;
 
     static class BibleHandler extends Handler {
         WeakReference<Chapter> outerClass;
@@ -104,14 +105,20 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             if (theClass == null) {
                 return;
             }
-            if (msg.what == COPYTEXT) {
-                theClass.checkShare();
-            } else if (msg.what == SHOWCONTENT) {
-                String[] message = (String[]) msg.obj;
-                if (!"".equals(message[0])) {
-                    theClass.setBookChapter();
-                }
-                theClass._showContent(message[0], message[1]);
+            switch (msg.what) {
+                case COPYTEXT:
+                    theClass.checkShare();
+                    break;
+                case SHOWCONTENT:
+                    String[] message = (String[]) msg.obj;
+                    if (!"".equals(message[0])) {
+                        theClass.setBookChapter();
+                    }
+                    theClass._showContent(message[0], message[1]);
+                    break;
+                case SHOWDATA:
+                    theClass._showData();
+                    break;
             }
         }
     }
@@ -188,12 +195,18 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }, "android");
         setZoomButtonsController(webview);
 
-        bible = Bible.getBible(getBaseContext());
         osis = PreferenceManager.getDefaultSharedPreferences(this).getString("osis", "null");
         verse = PreferenceManager.getDefaultSharedPreferences(this).getString("verse", "");
         uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
 
         setIntentData();
+        int color = 0x6633B5E5;
+        Integer mHighlightColor = (Integer) Bible.getField(findViewById(R.id.version), TextView.class, "mHighlightColor");
+        if (mHighlightColor != null) {
+            color = mHighlightColor.intValue();
+        }
+        background = String.format("background: rgba(%d, %d, %d, %.2f);",
+                (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >>> 24) / 255.0);
         Log.d(TAG, "onCreate");
     }
 
@@ -570,25 +583,37 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 finish();
             }
         }
-        fontsize = sp.getInt("fontsize-" + bible.getVersion(), 0);
+        showData();
+    }
+
+    private void showData() {
+        final String newversion = version;
+        new Thread(new Runnable() {
+            public void run() {
+                if (bible == null) {
+                    bible = Bible.getBible(getBaseContext());
+                }
+                if (newversion != null) {
+                    bible.checkVersions();
+                    bible.setVersion(newversion);
+                }
+                handler.sendEmptyMessage(SHOWDATA);
+            }
+        }).start();
+    }
+
+    private void _showData() {
+        version = bible.getVersion();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        fontsize = sp.getInt("fontsize-" + version, 0);
         if (fontsize == 0) {
             fontsize = sp.getInt("fontsize", 16);
         }
         if (fontsize > 32) {
             fontsize = 32;
         }
-        if (!version.equals(bible.getVersion()) && !osis.equals("")) {
+        if (!osis.equals("")) {
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
-        }
-        if (background == null) {
-            int color = 0x6633B5E5;
-            Integer mHighlightColor = (Integer) Bible.getField(findViewById(R.id.version), TextView.class, "mHighlightColor");
-            if (mHighlightColor != null) {
-                color = mHighlightColor.intValue();
-            }
-            background = String.format("background: rgba(%d, %d, %d, %.2f);",
-                    (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >>> 24) / 255.0);
-            Log.d(TAG, String.format("color: 0x%08x, background: %s", color, background));
         }
         showView(R.id.search, true);
         if (items == null || items.size() == 0) {
@@ -875,13 +900,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private void setIntentData() {
         Intent intent = getIntent();
         version = intent.getStringExtra("version");
-        if (version != null) {
-            Log.d(TAG, "version: " + version);
-            bible.checkVersions();
-            bible.setVersion(version);
-        } else {
-            version = bible.getVersion();
-        }
         index = 0;
         search = intent.getStringExtra("search");
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);

@@ -49,8 +49,9 @@ public class Passage extends Activity {
             osisfrom = uri.getQueryParameter("from");
             osisto = uri.getQueryParameter("to");
             String version = uri.getQueryParameter("version");
-            if (version != null) {
-                Bible.getBible(this).setVersion(version);
+            Bible bible = Bible.getBibleAsync(this);
+            if (version != null && bible != null) {
+                bible.setVersion(version);
             }
             Log.d(TAG, "uri: " + uri);
         } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {

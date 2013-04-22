@@ -16,6 +16,8 @@ package me.piebridge.bible;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 
 import android.text.Spannable;
 import android.text.style.BackgroundColorSpan;
@@ -31,6 +33,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -50,11 +53,36 @@ public class Result extends Activity
 
     protected int color;
     BackgroundColorSpan background;
+    protected final static int SHOWRESULT = 1;
+
+    static class BibleHandler extends Handler {
+        WeakReference<Result> outerClass;
+
+        BibleHandler(Result activity) {
+            outerClass = new WeakReference<Result>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            Result theClass = outerClass.get();
+            if (theClass == null) {
+                return;
+            }
+            switch (msg.what) {
+                case SHOWRESULT:
+                    theClass.showResults((Cursor) msg.obj);
+                    break;
+            }
+        }
+    }
+
+    private BibleHandler handler = new BibleHandler(this);
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.result);
         Intent intent = getIntent();
         bible = Bible.getBible(getBaseContext());
         version = bible.getVersion();
@@ -63,7 +91,6 @@ public class Result extends Activity
             String osisfrom = intent.getStringExtra("osisfrom");
             String osisto = intent.getStringExtra("osisto");
             Log.d(TAG, "query: " + query + ", osisfrom: " + osisfrom + ", osisto: " + osisto);
-            doSearch(query, getQueryBooks(osisfrom, osisto));
             Integer mHighlightColor = (Integer) Bible.getField(findViewById(R.id.text), TextView.class, "mHighlightColor");
             if (mHighlightColor != null) {
                 color = mHighlightColor.intValue();
@@ -71,6 +98,18 @@ public class Result extends Activity
                 color = 0x6633B5E5;
             }
             background = new BackgroundColorSpan(color);
+            textView = (TextView) findViewById(R.id.text);
+            listView = (ListView) findViewById(R.id.list);
+            if (version == null) {
+                textView.setText(R.string.noversion);
+            } else {
+                final String books = getQueryBooks(osisfrom, osisto);
+                new Thread(new Runnable() {
+                    public void run() {
+                        doSearch(query, books);
+                    }
+                }).start();
+            }
         } else {
             finish();
         }
@@ -82,14 +121,7 @@ public class Result extends Activity
         super.onResume();
     }
 
-    private boolean doSearch(String query, String books) {
-        setContentView(R.layout.result);
-        textView = (TextView) findViewById(R.id.text);
-        listView = (ListView) findViewById(R.id.list);
-        if (version == null) {
-            textView.setText(R.string.noversion);
-            return false;
-        }
+    private void doSearch(String query, String books) {
 
         Log.d(TAG, "search \"" + query + "\" in version \"" + version + "\"");
 
@@ -110,7 +142,10 @@ public class Result extends Activity
             Cursor[] cursors = { extras, cursor };
             cursor = new MergeCursor(cursors);
         }
+        handler.sendMessage(handler.obtainMessage(SHOWRESULT, cursor));
+    }
 
+    public void showResults(Cursor cursor) {
         if (cursor == null) {
             textView.setText(getString(R.string.search_no_results, new Object[] {
                 query,
@@ -118,7 +153,7 @@ public class Result extends Activity
                 humanto,
                 bible.getVersionName(version)
             }));
-            return false;
+            return;
         } else {
             int count = cursor.getCount();
             String countString = getResources().getQuantityString(R.plurals.search_results, count, new Object[] {
@@ -130,12 +165,6 @@ public class Result extends Activity
             });
             textView.setText(countString);
         }
-        showResults(cursor);
-        return true;
-    }
-
-    @SuppressWarnings("deprecation")
-    private void showResults(Cursor cursor) {
 
         String[] from = new String[] {
             Provider.COLUMN_HUMAN,
