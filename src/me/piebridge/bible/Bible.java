@@ -137,9 +137,14 @@ public class Bible
     }
 
     public int[] getChapterVerse(String string) {
-        Integer value = Integer.parseInt(string);
-        Integer chapter = value / 1000;
-        Integer verse = value - chapter * 1000;
+        int value;
+        try {
+            value = Integer.parseInt(string);
+        } catch (Exception e) {
+            value = 0;
+        }
+        int chapter = value / 1000;
+        int verse = value - chapter * 1000;
         return new int[] {chapter, verse};
     }
 

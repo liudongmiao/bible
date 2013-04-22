@@ -489,7 +489,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case R.id.chapter:
                 gridview.setNumColumns(5);
                 selected = chapter;
-                for (int i = 1; i <= Integer.parseInt(bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, book))); i++) {
+                String chapters = bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, book));
+                int maxchapter = 1;
+                try {
+                    maxchapter = Integer.parseInt(chapters);
+                } catch (Exception e) {
+                }
+                for (int i = 1; i <= maxchapter; i++) {
                     adapter.add(String.valueOf(i));
                 }
                 break;
