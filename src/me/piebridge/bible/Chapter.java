@@ -15,6 +15,8 @@ package me.piebridge.bible;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -91,6 +93,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int COPYTEXT = 0;
     protected static final int SHOWCONTENT = 1;
     protected static final int SHOWDATA = 2;
+    protected static final int DIALOG = 1;
+    ProgressDialog dialog = null;
 
     private boolean hasIntentData = false;
 
@@ -136,6 +140,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chapter);
+        showDialog(DIALOG);
         findViewById(R.id.book).setOnClickListener(this);
         findViewById(R.id.chapter).setOnClickListener(this);
         findViewById(R.id.search).setOnClickListener(this);
@@ -232,6 +237,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void showUri() {
+        showDialog(DIALOG);
         new Thread(new Runnable() {
             public void run() {
                 _showUri();
@@ -390,6 +396,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         webview.setInitialScale(100);
         scale = 1.0f;
         webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
+        try {
+            dismissDialog(DIALOG);
+        } catch (Throwable t) {
+        }
         /*
         {
             String path = "/sdcard/" + versename + ".html";
@@ -592,6 +602,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 finish();
             }
         }
+        showDialog(DIALOG);
         showData();
     }
 
@@ -921,6 +932,21 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         Log.d(TAG, "read index: " + index + ", search: " + search);
         items = intent.getParcelableArrayListExtra("osiss");
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DIALOG:
+                if (dialog == null) {
+                    dialog = new ProgressDialog(this);
+                }
+                dialog.setMessage(getString(R.string.opening));
+                dialog.setIndeterminate(true);
+                dialog.setCancelable(true);
+                return dialog;
+        }
+        return null;
     }
 
 }

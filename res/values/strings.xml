@@ -29,4 +29,6 @@
     <string name="demo">DEMO</string>
     <string name="chapters">%1$s, %2$s chapters.</string>
     <string name="sharefrom">Search in Bible</string>
+    <string name="searching">Please wait while searching..</string>
+    <string name="opening">Please wait while opening..</string>
 </resources>
