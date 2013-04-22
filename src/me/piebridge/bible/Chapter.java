@@ -572,6 +572,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         super.onResume();
         Log.d(TAG, "onResume, items: " + items);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        verse = sp.getString("verse", "");
         if (items == null && search == null) {
             if (!"".equals(sp.getString("search", ""))) {
                 index = sp.getInt("index", 0);
