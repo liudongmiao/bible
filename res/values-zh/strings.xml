@@ -10,7 +10,7 @@
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
     <string name="noversion">此版本仅供演示。您可从谷歌电子市场%1$s，或者其它电子市场搜索“离线圣经”，或者项目网站%2$s下载安装圣经数据库。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
-    <string name="moreversion">请在电子市场%1$s搜索“离线圣经”，或者项目网站%2$s获取其它版本。如果还有疑问，请写邮件告诉我：%3$s。</string>
+    <string name="moreversion">请在电子市场%1$s搜索“圣经数据”，或者项目网站%2$s获取其它版本。如果还有疑问，请写邮件告诉我：%3$s。</string>
     <string name="more">更多版本..</string>
     <string name="chooseversion">选择版本</string>
     <string name="searchall">搜索整本圣经</string>
