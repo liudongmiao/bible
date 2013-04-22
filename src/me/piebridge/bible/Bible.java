@@ -559,7 +559,7 @@ public class Bible
     public String getOsis(String book) {
         String osis;
 
-        if (book == null) {
+        if (book == null || "".equals(book)) {
             return null;
         }
 

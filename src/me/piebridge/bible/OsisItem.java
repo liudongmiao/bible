@@ -80,11 +80,21 @@ public class OsisItem implements Parcelable {
         s = s.replace("\u2014", "-");
         s = s.replace("\u2015", "-");
         s = s.replace("\ufe63", "-");
+        s = s.replace("\u3002", ":");
+        s = s.replace("\ufe12", ":");
+        s = s.replace("\uff61", ":");
+        s = s.replace("\u002e", ":");
+        s = s.replace("\uff0e", ":");
+        s = s.replace("\ufe52", ":");
 
         Pattern p = Pattern.compile("\\s*(\\d*?\\s*?[^\\d\\s;]+)\\s*(\\d*):?(\\d*)\\s*?-?\\s*?(\\d*):?(\\d*);?");
         Matcher m = p.matcher(s);
         while (m.find()) {
             String book = m.group(1);
+            // FIXME: dont support Gen 1-3,5,7
+            if (book.startsWith(",")) {
+                book = "";
+            }
             String osis = Bible.getBible(context).getOsis(book);
             String start_chapter = m.group(2);
             String start_verse = m.group(3);
