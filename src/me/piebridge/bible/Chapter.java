@@ -92,6 +92,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int SHOWCONTENT = 1;
     protected static final int SHOWDATA = 2;
 
+    private boolean hasIntentData = false;
+
     static class BibleHandler extends Handler {
         WeakReference<Chapter> outerClass;
 
@@ -196,7 +198,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         setZoomButtonsController(webview);
 
         osis = PreferenceManager.getDefaultSharedPreferences(this).getString("osis", "null");
-        verse = PreferenceManager.getDefaultSharedPreferences(this).getString("verse", "");
         uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
 
         setIntentData();
@@ -208,6 +209,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         background = String.format("background: rgba(%d, %d, %d, %.2f);",
                 (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >>> 24) / 255.0);
         Log.d(TAG, "onCreate");
+        hasIntentData = true;
     }
 
     private void getVerse() {
@@ -285,7 +287,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         if (!osis.equals(newOsis)) {
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(newOsis).build();
-            this.verse = verse;
+            if ("".equals(this.verse)) {
+                this.verse = verse;
+            }
             this.end = end;
             showUri();
         }
@@ -371,6 +375,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
         body += "<script type=\"text/javascript\">\n";
         body += String.format("var verse_start=%s, verse_end=%s, versename=\"%s\", search=\"%s\";", verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, versename, items != null ? search : "");
+        verse = "";
         body += "\n</script>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
         body += "</head>\n<body>\n";
@@ -405,6 +410,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         getVerse();
         Log.d(TAG, "onPause");
         storeOsisVersion();
+        hasIntentData = false;
         super.onPause();
     }
 
@@ -572,7 +578,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         super.onResume();
         Log.d(TAG, "onResume, items: " + items);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        verse = sp.getString("verse", "");
+        if (!hasIntentData) {
+            verse = sp.getString("verse", "");
+        }
         if (items == null && search == null) {
             if (!"".equals(sp.getString("search", ""))) {
                 index = sp.getInt("index", 0);
@@ -827,8 +835,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (items != null && index >= 0 && index < items.size()) {
             OsisItem item = items.get(index);
             String book = bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, item.book)) + item.chapter;
-            if (!verse.equals("") || !end.equals("")) {
-                book += ":" + verse + "-" + end;
+            if (!item.verse.equals("") || !item.end.equals("")) {
+                book += ":" + item.verse + "-" + item.end;
             }
             ((TextView)findViewById(R.id.items)).setText(book);
         }
@@ -896,6 +904,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         super.onNewIntent(intent);
         setIntent(intent);
         setIntentData();
+        hasIntentData = true;
     }
 
     private void setIntentData() {

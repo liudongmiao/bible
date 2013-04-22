@@ -86,6 +86,19 @@ public class OsisItem implements Parcelable {
         s = s.replace("\u002e", ":");
         s = s.replace("\uff0e", ":");
         s = s.replace("\ufe52", ":");
+        s = s.replace("\uff1b", ";");
+        s = s.replace("\ufe14", ";");
+        s = s.replace("\ufe54", ";");
+        s = s.replace("\uff0c", ",");
+        s = s.replace("\ufe50", ",");
+        s = s.replace("(", "");
+        s = s.replace(")", "");
+        s = s.replace("（", "");
+        s = s.replace("）", "");
+        s = s.replace("【", "");
+        s = s.replace("】", "");
+        s = s.replace("〖", "");
+        s = s.replace("〗", "");
 
         Pattern p = Pattern.compile("\\s*(\\d*?\\s*?[^\\d\\s;]+)\\s*(\\d*):?(\\d*)\\s*?-?\\s*?(\\d*):?(\\d*);?");
         Matcher m = p.matcher(s);

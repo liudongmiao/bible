@@ -86,6 +86,12 @@ public class Bible
         mContext = context;
         checkLocale();
         checkVersions();
+        if (setVersionMetaData("niv") || setVersionMetaData("niv84") || setVersionMetaData("nivdemo") || setVersionMetaData("kjv") || setVersionMetaData("nkjv") || setVersionMetaData("nlt") || setVersionMetaData("msg") ||  setVersionMetaData("nasb")) {
+        }
+        if (setVersionMetaData("ccb") || setVersionMetaData("cunpss") || setVersionMetaData("rcuvss") || setVersionMetaData("cunpssdemo")) {
+        }
+        if (setVersionMetaData("cunpts") || setVersionMetaData("rcuvts")) {
+        }
         setDefaultVersion();
     }
 
@@ -217,13 +223,7 @@ public class Bible
                 database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
                         SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
                 Log.d(TAG, "open database \"" + database.getPath() + "\"");
-                final String datapath = file.getAbsolutePath();
-                final String dataversion = databaseVersion;
-                new Thread(new Runnable() {
-                    public void run() {
-                        setMetadata(datapath, dataversion);
-                    }
-                }).start();
+                setMetadata(database, databaseVersion);
                 return true;
             } catch (Exception e) {
                 try {
@@ -241,9 +241,7 @@ public class Bible
         }
     }
 
-    private void setMetadata(String datapath, String dataversion) {
-        SQLiteDatabase metadata = SQLiteDatabase.openDatabase(datapath, null,
-                SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+    private void setMetadata(SQLiteDatabase  metadata, String dataversion) {
         Cursor cursor = metadata.query(Provider.TABLE_BOOKS, Provider.COLUMNS_BOOKS, null, null, null, null, null);
         osiss.clear();
         books.clear();
@@ -286,7 +284,6 @@ public class Bible
         } finally {
             cursor.close();
         }
-        metadata.close();
     }
 
     private File getExternalFilesDir() {
@@ -437,12 +434,6 @@ public class Bible
     private boolean setDefaultVersion() {
         if (versions.size() == 0) {
             return false;
-        }
-        if (setVersionMetaData("niv") || setVersionMetaData("niv84") || setVersionMetaData("nivdemo") || setVersionMetaData("kjv") || setVersionMetaData("nkjv") || setVersionMetaData("nlt") || setVersionMetaData("msg") ||  setVersionMetaData("nasb")) {
-        }
-        if (setVersionMetaData("ccb") || setVersionMetaData("cunpss") || setVersionMetaData("rcuvss") || setVersionMetaData("cunpssdemo")) {
-        }
-        if (setVersionMetaData("cunpts") || setVersionMetaData("rcuvts")) {
         }
         String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version", null);
         if (version != null && getPosition(TYPE.VERSION, version) < 0) {
