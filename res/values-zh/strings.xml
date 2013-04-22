@@ -5,8 +5,8 @@
     <string name="search_description">搜索圣经章节，或者关键字</string>
     <string name="search_no_results">在“%4$s”本中从“%2$s”至“%3$s”无法找到“%1$s”。</string>
     <plurals name="search_results">
-      <item quantity="one">在“%5$s”从“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
-      <item quantity="other">在“%5$s”从“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
+      <item quantity="one">在“%5$s”中从“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
+      <item quantity="other">在“%5$s”中从“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
     <string name="noversion">此版本仅供演示。您可从谷歌电子市场%1$s，或者其它电子市场搜索“离线圣经”，或者项目网站%2$s下载安装圣经数据库。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
