@@ -54,7 +54,6 @@ public class Result extends Activity
     private SimpleCursorAdapter adapter = null;
 
     protected int color;
-    BackgroundColorSpan background;
     protected final static int SHOWRESULT = 1;
     protected final static int DIALOG = 1;
     ProgressDialog dialog = null;
@@ -102,7 +101,6 @@ public class Result extends Activity
             } else {
                 color = 0x6633B5E5;
             }
-            background = new BackgroundColorSpan(color);
             textView = (TextView) findViewById(R.id.text);
             listView = (ListView) findViewById(R.id.list);
             if (version == null) {
@@ -220,9 +218,8 @@ public class Result extends Activity
                         if (index == -1) {
                             break;
                         }
-                        span.setSpan(background, index, index + query.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        span.setSpan(new BackgroundColorSpan(color), index, index + query.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
-                    ((TextView)view).setText(span);
                     return true;
                 }
                 return false;
