@@ -40,20 +40,14 @@ public class Suggestion extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        new Thread(new Runnable() {
-            public void run() {
-                if (bible == null) {
-                    bible = Bible.getBible(getContext());
-                }
-            }
-        }).start();
+        Log.d(TAG, "oncreate");
         return true;
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         if (bible == null) {
-            return null;
+            bible = Bible.getBible(getContext());
         }
         Log.d(TAG , "uri: " + uri);
         String query = uri.getLastPathSegment();
