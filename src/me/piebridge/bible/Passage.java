@@ -16,6 +16,8 @@ package me.piebridge.bible;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
 
@@ -23,20 +25,26 @@ import java.util.ArrayList;
 
 public class Passage extends Activity {
 
+    private static final int DIALOG = 0;
+
     private final String TAG = "me.piebridge.bible$Passage";
+
+    String search = null;
+    String osisfrom = null;
+    String osisto = null;
+    String version = null;
+    ProgressDialog dialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        String search = null;
-        String osisfrom = null;
-        String osisto = null;
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri uri = intent.getData();
             if (uri == null) {
                 finish();
             }
+            version = uri.getQueryParameter("version");
             search = uri.getQueryParameter("search");
             if (search == null || search.equals("")) {
                 search = uri.getQueryParameter("q");
@@ -48,11 +56,6 @@ public class Passage extends Activity {
             }
             osisfrom = uri.getQueryParameter("from");
             osisto = uri.getQueryParameter("to");
-            String version = uri.getQueryParameter("version");
-            Bible bible = Bible.getBibleAsync(this);
-            if (version != null && bible != null) {
-                bible.setVersion(version);
-            }
             Log.d(TAG, "uri: " + uri);
         } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             search = intent.getStringExtra(SearchManager.QUERY);
@@ -64,9 +67,33 @@ public class Passage extends Activity {
             intent.setAction(Intent.ACTION_SEND);
             intent.putExtra(SearchManager.QUERY, search);
             startActivity(intent);
-        } else {
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (search == null) {
             finish();
         }
+        showDialog(DIALOG);
+        new Thread(new Runnable() {
+            public void run() {
+                Bible bible = Bible.getBible(getBaseContext());
+                if (version != null && bible != null) {
+                    bible.setVersion(version);
+                }
+                route();
+            }
+        }).start();
+    }
+
+    private void route() {
+        try {
+            dismissDialog(DIALOG);
+        } catch (Exception e) {
+        }
+        Intent intent;
         ArrayList<OsisItem> items = OsisItem.parseSearch(search, getBaseContext());
         if (items.size() > 0 && !"".equals(items.get(0).chapter)) {
             intent = new Intent(getApplicationContext(), Chapter.class);
@@ -85,6 +112,21 @@ public class Passage extends Activity {
             startActivity(intent);
         }
         finish();
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DIALOG:
+                if (dialog == null) {
+                    dialog = new ProgressDialog(this);
+                }
+                dialog.setMessage(getString(R.string.opening));
+                dialog.setIndeterminate(true);
+                dialog.setCancelable(true);
+                return dialog;
+        }
+        return null;
     }
 
 }
