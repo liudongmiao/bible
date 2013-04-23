@@ -50,7 +50,10 @@ public class Result extends Activity
     private String humanto;
     private String version = null;
     private String query = null;
-    private Bible bible;
+    private String books = null;
+    private Bible bible = null;
+    private String osisfrom = null;
+    private String osisto = null;
     private SimpleCursorAdapter adapter = null;
 
     protected int color;
@@ -88,12 +91,10 @@ public class Result extends Activity
         setContentView(R.layout.result);
         showDialog(DIALOG);
         Intent intent = getIntent();
-        bible = Bible.getBible(getBaseContext());
-        version = bible.getVersion();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             query = intent.getStringExtra(SearchManager.QUERY);
-            String osisfrom = intent.getStringExtra("osisfrom");
-            String osisto = intent.getStringExtra("osisto");
+            osisfrom = intent.getStringExtra("osisfrom");
+            osisto = intent.getStringExtra("osisto");
             Log.d(TAG, "query: " + query + ", osisfrom: " + osisfrom + ", osisto: " + osisto);
             Integer mHighlightColor = (Integer) Bible.getField(findViewById(R.id.text), TextView.class, "mHighlightColor");
             if (mHighlightColor != null) {
@@ -103,16 +104,6 @@ public class Result extends Activity
             }
             textView = (TextView) findViewById(R.id.text);
             listView = (ListView) findViewById(R.id.list);
-            if (version == null) {
-                textView.setText(R.string.noversion);
-            } else {
-                final String books = getQueryBooks(osisfrom, osisto);
-                new Thread(new Runnable() {
-                    public void run() {
-                        doSearch(query, books);
-                    }
-                }).start();
-            }
         } else {
             finish();
         }
@@ -120,8 +111,17 @@ public class Result extends Activity
 
     @Override
     public void onResume() {
-        version = bible.getVersion();
         super.onResume();
+        new Thread(new Runnable() {
+            public void run() {
+                if (bible == null) {
+                    bible = Bible.getBible(getBaseContext());
+                }
+                version = bible.getVersion();
+                books = getQueryBooks(osisfrom, osisto);
+                doSearch(query, books);
+            }
+        }).start();
     }
 
     private void doSearch(String query, String books) {
