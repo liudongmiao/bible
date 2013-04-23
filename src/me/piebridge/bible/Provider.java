@@ -177,12 +177,15 @@ public class Provider extends ContentProvider
 
     @Override
     public boolean onCreate() {
-        bible = Bible.getBible(getContext());
+        Log.d(TAG, "onCreate");
         return true;
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        if (bible == null) {
+            bible = Bible.getBible(getContext());
+        }
         if (uri == null) {
             return null;
         }
