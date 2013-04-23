@@ -120,22 +120,6 @@ public class Bible
         return bible;
     }
 
-    public static Bible getBibleAsync(final Context context) {
-        if (bible == null) {
-            new Thread(new Runnable() {
-                public void run() {
-                    getBible(context);
-                }
-            }).start();
-            return null;
-        }
-        if (context != null) {
-            mContext = context;
-            bible.checkLocale();
-        }
-        return bible;
-    }
-
     public int[] getChapterVerse(String string) {
         int value;
         try {
