@@ -221,15 +221,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (webview.getScrollY() != 0) {
             verse = "";
             webview.loadUrl("javascript:getFirstVisibleVerse();");
-            while(true)  {
-                synchronized(verseLock) {
-                    if (!verse.equals("")) {
-                        break;
-                    }
+            synchronized(verseLock) {
+                if (verse.equals("")) {
                     try {
                         verseLock.wait(3000);
                     } catch (InterruptedException e) {
-                        break;
                     }
                 }
             }
