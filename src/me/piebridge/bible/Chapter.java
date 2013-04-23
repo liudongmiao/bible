@@ -600,6 +600,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 Intent passageIntent = new Intent(getApplicationContext(), Passage.class);
                 passageIntent.setAction(Intent.ACTION_VIEW);
                 passageIntent.setData(Uri.parse("bible://search?q=" + sp.getString("search", "")));
+                try {
+                    dismissDialog(DIALOG);
+                } catch (Throwable t) {
+                }
                 startActivity(passageIntent);
                 finish();
             }
