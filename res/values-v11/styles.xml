@@ -12,5 +12,7 @@
     <style name="grid" parent="@android:style/Widget.Holo.Button.Toggle">
         <item name="android:textSize">15sp</item>
     </style>
+    <style name="progress" parent="@android:style/Widget.Holo.ProgressBar">
+    </style>
 </resources>
 <!-- vim: set sta sw=4 et: -->

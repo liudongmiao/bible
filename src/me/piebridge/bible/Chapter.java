@@ -15,8 +15,6 @@ package me.piebridge.bible;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -93,8 +91,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int COPYTEXT = 0;
     protected static final int SHOWCONTENT = 1;
     protected static final int SHOWDATA = 2;
-    protected static final int DIALOG = 1;
-    ProgressDialog dialog = null;
 
     private boolean hasIntentData = false;
 
@@ -140,7 +136,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chapter);
-        showDialog(DIALOG);
         findViewById(R.id.book).setOnClickListener(this);
         findViewById(R.id.chapter).setOnClickListener(this);
         findViewById(R.id.search).setOnClickListener(this);
@@ -201,6 +196,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             }
         }, "android");
         setZoomButtonsController(webview);
+        show();
 
         osis = PreferenceManager.getDefaultSharedPreferences(this).getString("osis", "null");
         uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
@@ -233,7 +229,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void showUri() {
-        showDialog(DIALOG);
+        show();
         new Thread(new Runnable() {
             public void run() {
                 _showUri();
@@ -392,10 +388,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         webview.setInitialScale(100);
         scale = 1.0f;
         webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
-        try {
-            dismissDialog(DIALOG);
-        } catch (Throwable t) {
-        }
+        dismiss();
         /*
         {
             String path = "/sdcard/" + versename + ".html";
@@ -600,15 +593,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 Intent passageIntent = new Intent(getApplicationContext(), Passage.class);
                 passageIntent.setAction(Intent.ACTION_VIEW);
                 passageIntent.setData(Uri.parse("bible://search?q=" + sp.getString("search", "")));
-                try {
-                    dismissDialog(DIALOG);
-                } catch (Throwable t) {
-                }
+                dismiss();
                 startActivity(passageIntent);
                 finish();
             }
         }
-        showDialog(DIALOG);
+        show();
         showData();
     }
 
@@ -927,6 +917,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private void setIntentData() {
         Intent intent = getIntent();
         version = intent.getStringExtra("version");
+        if (version == null) {
+            version = "";
+        }
         index = 0;
         search = intent.getStringExtra("search");
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
@@ -941,18 +934,22 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DIALOG:
-                if (dialog == null) {
-                    dialog = new ProgressDialog(this);
-                }
-                dialog.setMessage(getString(R.string.opening));
-                dialog.setIndeterminate(true);
-                dialog.setCancelable(true);
-                return dialog;
+    public void onBackPressed() {
+        if (gridview.getVisibility() != View.GONE) {
+            gridview.setVisibility(View.GONE);
+        } else {
+            super.onBackPressed();
         }
-        return null;
+    }
+
+    private void show() {
+        showView(R.id.progress, true);
+        showView(R.id.webview, false);
+    }
+
+    private void dismiss() {
+        showView(R.id.progress, false);
+        showView(R.id.webview, true);
     }
 
 }

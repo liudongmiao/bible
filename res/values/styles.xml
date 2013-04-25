@@ -11,5 +11,7 @@
     <style name="grid" parent="@android:style/Widget.Button.Toggle">
         <item name="android:textSize">15sp</item>
     </style>
+    <style name="progress" parent="@android:style/Widget.ProgressBar">
+    </style>
 </resources>
 <!-- vim: set sta sw=4 et: -->

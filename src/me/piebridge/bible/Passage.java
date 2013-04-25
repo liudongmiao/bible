@@ -76,7 +76,6 @@ public class Passage extends Activity {
         if (search == null) {
             finish();
         }
-        showDialog(DIALOG);
         new Thread(new Runnable() {
             public void run() {
                 Bible bible = Bible.getBible(getBaseContext());
@@ -89,10 +88,6 @@ public class Passage extends Activity {
     }
 
     private void route() {
-        try {
-            dismissDialog(DIALOG);
-        } catch (Exception e) {
-        }
         Intent intent;
         ArrayList<OsisItem> items = OsisItem.parseSearch(search, getBaseContext());
         if (items.size() > 0 && !"".equals(items.get(0).chapter)) {
@@ -112,21 +107,6 @@ public class Passage extends Activity {
             startActivity(intent);
         }
         finish();
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DIALOG:
-                if (dialog == null) {
-                    dialog = new ProgressDialog(this);
-                }
-                dialog.setMessage(getString(R.string.opening));
-                dialog.setIndeterminate(true);
-                dialog.setCancelable(true);
-                return dialog;
-        }
-        return null;
     }
 
 }

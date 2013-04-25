@@ -14,8 +14,6 @@
 package me.piebridge.bible;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -58,8 +56,6 @@ public class Result extends Activity
 
     protected int color;
     protected final static int SHOWRESULT = 1;
-    protected final static int DIALOG = 1;
-    ProgressDialog dialog = null;
 
     static class BibleHandler extends Handler {
         WeakReference<Result> outerClass;
@@ -89,7 +85,6 @@ public class Result extends Activity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.result);
-        showDialog(DIALOG);
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             query = intent.getStringExtra(SearchManager.QUERY);
@@ -104,6 +99,7 @@ public class Result extends Activity
             }
             textView = (TextView) findViewById(R.id.text);
             listView = (ListView) findViewById(R.id.list);
+            show();
         } else {
             finish();
         }
@@ -149,10 +145,7 @@ public class Result extends Activity
     }
 
     public void showResults(Cursor cursor) {
-        try {
-            dismissDialog(DIALOG);
-        } catch (Throwable t) {
-        }
+        dismiss();
         if (cursor == null) {
             textView.setText(getString(R.string.search_no_results, new Object[] {
                 query,
@@ -293,19 +286,16 @@ public class Result extends Activity
         return queryBooks;
     }
 
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DIALOG:
-                if (dialog == null) {
-                    dialog = new ProgressDialog(this);
-                }
-                dialog.setMessage(getString(R.string.searching));
-                dialog.setIndeterminate(true);
-                dialog.setCancelable(true);
-                return dialog;
-        }
-        return null;
+    private void show() {
+        findViewById(R.id.progress).setVisibility(View.VISIBLE);
+        textView.setVisibility(View.GONE);
+        listView.setVisibility(View.GONE);
+    }
+
+    private void dismiss() {
+        findViewById(R.id.progress).setVisibility(View.GONE);
+        textView.setVisibility(View.VISIBLE);
+        listView.setVisibility(View.VISIBLE);
     }
 
 }

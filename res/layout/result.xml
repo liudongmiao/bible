@@ -9,6 +9,20 @@
         android:textColor="?android:textColorPrimary"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
+    <LinearLayout
+        android:id="@+id/progress"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        >
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            style="@style/progress"
+            />
+    </LinearLayout>
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"

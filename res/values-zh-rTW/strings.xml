@@ -29,6 +29,4 @@
     <string name="demo">演示</string>
     <string name="chapters">%1$s，共%2$s章。</string>
     <string name="sharefrom">在聖經中搜尋</string>
-    <string name="searching">正在搜尋，請稍候..</string>
-    <string name="opening">正在打開，請稍候..</string>
 </resources>
