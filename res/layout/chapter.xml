@@ -5,10 +5,12 @@
     android:orientation="vertical"
     >
     <RelativeLayout
+        android:id="@+id/header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:visibility="gone"
         >
         <TextView
             style="@style/button"
