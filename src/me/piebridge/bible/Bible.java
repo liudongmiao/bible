@@ -599,7 +599,11 @@ public class Bible
                 text = human.get(osis);
             }
             Log.d(TAG, "add suggest, text=" + text + ", data=" + osis);
-            osiss.put(text, osis);
+            if (text.indexOf(osis) == -1) {
+                osiss.put(text, text);
+            } else {
+                osiss.put(text, osis);
+            }
         }
         if (limit != -1 && osiss.size() >= limit) {
             Log.d(TAG, "arrive limit " + limit);
