@@ -102,15 +102,17 @@ function highlight(search) {
     lowersearch = search.toLowerCase();
 
     while (body.length > 0) {
+        var replace = search;
         var i = lowerbody.indexOf(lowersearch);
         if (i < 0) {
             break;
         }
         if (body.lastIndexOf(">", i) >= body.lastIndexOf("<", i)) {
-            newbody += body.substring(0, i) + "<span class=\"highlight\">" + search + "</span>";
-            body = body.substr(i + search.length);
-            lowerbody = lowerbody.substr(i + search.length);
+            replace = "<span class=\"highlight\">" + search + "</span>";
         }
+        newbody += body.substring(0, i) + replace;
+        body = body.substr(i + search.length);
+        lowerbody = lowerbody.substr(i + search.length);
     }
 
     newbody += body;
