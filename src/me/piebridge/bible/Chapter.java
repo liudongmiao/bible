@@ -322,8 +322,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         editor.commit();
     }
 
+    private boolean showed = false;
     private void showContent(String title, String content) {
         handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[] {title, content }));
+        showed = true;
     }
 
     private void _showContent(String title, String content) {
@@ -401,6 +403,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public void onPause() {
+        showed = false;
         getVerse();
         Log.d(TAG, "onPause");
         storeOsisVersion();
@@ -923,7 +926,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void show() {
-        showView(R.id.header, false);
+        showView(R.id.header, showed);
         showView(R.id.progress, true);
         showView(R.id.webview, false);
     }
