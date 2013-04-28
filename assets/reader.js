@@ -141,9 +141,13 @@ function unhighlight() {
 function addListener() {
     document.getElementById("content").addEventListener("click", function(e) {
         var element = e.target;
-        if (element.nodeName == "SPAN" && (hasClass(element, "text", true) || hasClass(element, "v", false))) {
-            unhighlight();
-            selectVerse(element);
+        while (element && element.nodeName != "BODY") {
+            if (element.nodeName == "SPAN" && (hasClass(element, "text", true) || hasClass(element, "v", false))) {
+                unhighlight();
+                selectVerse(element);
+                break;
+            }
+            element = element.parentNode;
         }
     });
 }
