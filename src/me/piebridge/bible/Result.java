@@ -242,7 +242,7 @@ public class Result extends Activity
         ArrayList<OsisItem> items = new ArrayList<OsisItem>();
         Log.d(TAG, String.format("book: %s, chapter: %d, verse: %d", book, chapter, verse));
         if (chapter == 0) {
-            items.add(new OsisItem(book, 1, 1));
+            items.add(new OsisItem(book, 1));
         } else {
             items.add(new OsisItem(book, chapter, verse));
         }
