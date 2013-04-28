@@ -168,8 +168,13 @@ public class Bible
         if (versions.size() == 0) {
             setDemoVersions();
             unpacked = true;
-            versions.add("cunpssdemo");
-            versions.add("niv84demo");
+            if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE)) {
+                versions.add("cunpssdemo");
+                versions.add("niv84demo");
+            } else {
+                versions.add("niv84demo");
+                versions.add("cunpssdemo");
+            }
         }
         return true;
     }
