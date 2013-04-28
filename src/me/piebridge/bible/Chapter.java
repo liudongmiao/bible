@@ -91,6 +91,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int COPYTEXT = 0;
     protected static final int SHOWCONTENT = 1;
     protected static final int SHOWDATA = 2;
+    protected static final int SHOWBAR = 3;
+    protected static final int DISMISSBAR = 4;
 
     private boolean hasIntentData = false;
 
@@ -120,6 +122,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     break;
                 case SHOWDATA:
                     theClass._showData();
+                    break;
+                case SHOWBAR:
+                    theClass._show();
+                    break;
+                case DISMISSBAR:
+                    theClass._dismiss();
                     break;
             }
         }
@@ -196,7 +204,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             }
         }, "android");
         setZoomButtonsController(webview);
-        show();
 
         osis = PreferenceManager.getDefaultSharedPreferences(this).getString("osis", "null");
         uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
@@ -928,13 +935,33 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     }
 
+    private volatile boolean progress = true;
+
     private void show() {
-        showView(R.id.header, showed);
-        showView(R.id.progress, true);
-        showView(R.id.webview, false);
+        progress = true;
+        /*
+         * http://en.wikipedia.org/wiki/Frame_rate
+         *
+         * while single-millisecond visual stimulus may have a perceived duration
+         * between 100ms and 400ms due to persistence of vision in the visual cortex.
+         */
+        handler.sendEmptyMessageDelayed(SHOWBAR, showed ? 250 : 0);
+    }
+
+    private void _show() {
+        if (progress) {
+            showView(R.id.header, showed);
+            showView(R.id.progress, true);
+            showView(R.id.webview, false);
+        }
     }
 
     private void dismiss() {
+        handler.sendEmptyMessage(DISMISSBAR);
+        progress = false;
+    }
+
+    private void _dismiss() {
         showView(R.id.header, true);
         showView(R.id.progress, false);
         showView(R.id.webview, true);
