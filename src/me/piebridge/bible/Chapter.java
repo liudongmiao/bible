@@ -302,7 +302,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         setItemText(this.index);
         ((TextView)findViewById(R.id.version)).setText(bible.getVersionName(bible.getVersion()));
         ((TextView)findViewById(R.id.book)).setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
-        ((TextView)findViewById(R.id.chapter)).setText(chapter);
+        if (!"".equals(verse) && !"".equals(end)) {
+            ((TextView)findViewById(R.id.chapter)).setText(chapter + ":" + verse + "-" + end);
+        } else if (!"".equals(verse) || !"".equals(end)) {
+            ((TextView)findViewById(R.id.chapter)).setText(chapter + ":" + verse + end);
+        } else {
+            ((TextView)findViewById(R.id.chapter)).setText(chapter);
+        }
     }
 
     private void storeOsisVersion() {
@@ -840,15 +846,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public void showItem(int index) {
         osis = "";
         if (items == null || items.size() < 2) {
+            showView(R.id.items, false);
+            showView(R.id.book, true);
+            showView(R.id.chapter, true);
             if (items == null || index < 0 || index >= items.size()) {
-                showView(R.id.items, false);
-                showView(R.id.book, true);
-                showView(R.id.chapter, true);
                 openOsis(this.index > index ? osis_prev : osis_next);
             } else {
-                showView(R.id.items, true);
-                showView(R.id.book, false);
-                showView(R.id.chapter, false);
                 OsisItem item = items.get(0);
                 if (item.chapter.equals("")) {
                     item.chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(item.book, "1");
