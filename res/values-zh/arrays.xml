@@ -18,6 +18,7 @@
         <item>kjv|英文钦定版(KJV)</item>
         <item>nkjv|英文新钦定版(NKJV)</item>
         <item>nlt|英文New Living Translation(NLT)</item>
+        <item>esv|英文标准译本(ESV)</item>
     </string-array>
     <string-array name="searchfull">
         <item>Gen|chuangshiji</item>

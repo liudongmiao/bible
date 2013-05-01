@@ -18,6 +18,7 @@
         <item>kjv|英文欽定版(KJV)</item>
         <item>nkjv|英文新欽定版(NKJV)</item>
         <item>nlt|英文New Living Translation(NLT)</item>
+        <item>esv|英文標準譯本(ESV)</item>
     </string-array>
 </resources>
 <!-- vim: set sta sw=4 et: -->
