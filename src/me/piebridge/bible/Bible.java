@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
@@ -160,6 +159,10 @@ public class Bible
                 if (name.endsWith(".sqlite3") && file.exists() && file.isFile()) {
                     Log.d(TAG, "add version " + name);
                     String version = name.toLowerCase(Locale.US).replace(".sqlite3", "").replace("niv2011", "niv").replace("niv1984", "niv84");
+                    if (!versionFullnames.containsKey(version)) {
+                        versionFullnames.put(version, getVersionMetadata("fullname", version));
+                        versionNames.put(version, getVersionMetadata("name", version));
+                    }
                     versions.add(version);
                 }
             }
@@ -370,6 +373,26 @@ public class Bible
         return databaseVersion;
     }
 
+    private String getVersionMetadata(String name, String version) {
+        String value = version.replace("demo", "");
+        File file = new File(databasePath, version + ".sqlite3");
+        if (file.exists() && file.isFile()) {
+            SQLiteDatabase metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
+                    SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+            Cursor cursor = metadata.query("metadata", new String[] {"value"}, "name = ? or name = ?",
+                    new String[] {name, name + "_" + Locale.getDefault().toString()},
+                    null, null, "name desc", "1");
+            while (cursor != null && cursor.moveToNext()) {
+                value = cursor.getString(cursor.getColumnIndexOrThrow("value"));
+                cursor.close();
+                break;
+            }
+            metadata.close();
+        }
+
+        return value;
+    }
+
     public String getVersionFullname(String version) {
         version = version.toLowerCase(Locale.US);
         String fullname = getResourceValue(versionFullnames, version.replace("demo", ""));
@@ -389,6 +412,7 @@ public class Bible
     }
 
     private void setResourceValues(HashMap<String, String> map, int resId) {
+        map.clear();
         for (String entry: mContext.getResources().getStringArray(resId)) {
             String[] strings = entry.split("\\|", 2);
             map.put(strings[0], strings[1]);

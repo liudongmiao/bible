@@ -502,7 +502,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 break;
             case R.id.version:
                 gridview.setNumColumns(1);
-                bible.checkVersions();
                 Log.d(TAG, "version=" + version);
                 selected = bible.getVersionFullname(version);
                 for (String string: bible.get(Bible.TYPE.VERSION)) {
@@ -608,6 +607,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 if (bible == null) {
                     bible = Bible.getBible(getBaseContext());
                 }
+                bible.checkVersions();
                 Log.d(TAG, "will set version: " + version);
                 if (!"".equals(version)) {
                     bible.setVersion(version);

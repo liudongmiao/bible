@@ -77,6 +77,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bible = Bible.getBible(getBaseContext());
+        bible.checkVersions();
 
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -229,7 +230,6 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         String key = preference.getKey();
         Log.d(TAG, "click key: " + key);
         if (key.equals(VERSION)) {
-            bible.checkVersions();
             String[] versions = (String []) bible.get(Bible.TYPE.VERSION).toArray(new String[0]);
             String[] humanversions = new String[versions.length];
             for (int i = 0; i < versions.length; i++) {

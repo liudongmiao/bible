@@ -144,6 +144,7 @@ public class Result extends Activity
         handler.sendMessage(handler.obtainMessage(SHOWRESULT, cursor));
     }
 
+    @SuppressWarnings("deprecation")
     public void showResults(Cursor cursor) {
         dismiss();
         if (cursor == null) {

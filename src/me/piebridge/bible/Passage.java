@@ -16,7 +16,6 @@ package me.piebridge.bible;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -24,8 +23,6 @@ import android.content.Intent;
 import java.util.ArrayList;
 
 public class Passage extends Activity {
-
-    private static final int DIALOG = 0;
 
     private final String TAG = "me.piebridge.bible$Passage";
 
