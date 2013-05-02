@@ -26,6 +26,7 @@ public class Passage extends Activity {
 
     private final String TAG = "me.piebridge.bible$Passage";
 
+    String action = null;
     String search = null;
     String osisfrom = null;
     String osisto = null;
@@ -35,7 +36,9 @@ public class Passage extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.passage);
         Intent intent = getIntent();
+        action = intent.getAction();
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri uri = intent.getData();
             if (uri == null) {
@@ -60,10 +63,6 @@ public class Passage extends Activity {
             osisto = intent.getStringExtra("osisto");
         } else if ("text/plain".equals(intent.getType()) && Intent.ACTION_SEND.equals(intent.getAction())) {
             search = intent.getStringExtra(Intent.EXTRA_TEXT);
-            intent = new Intent(getApplicationContext(), Search.class);
-            intent.setAction(Intent.ACTION_SEND);
-            intent.putExtra(SearchManager.QUERY, search);
-            startActivity(intent);
         }
     }
 
@@ -91,6 +90,11 @@ public class Passage extends Activity {
             intent = new Intent(getApplicationContext(), Chapter.class);
             intent.putExtra("search", search);
             intent.putParcelableArrayListExtra("osiss", items);
+            startActivity(intent);
+        } else if (search != null && Intent.ACTION_SEND.equals(action)) {
+            intent = new Intent(getApplicationContext(), Search.class);
+            intent.setAction(Intent.ACTION_SEND);
+            intent.putExtra(SearchManager.QUERY, search);
             startActivity(intent);
         } else if (search != null) {
             intent = new Intent(getApplicationContext(), Result.class);
