@@ -93,27 +93,41 @@ public class OsisItem implements Parcelable {
         s = s.replace("\ufe50", ",");
         s = s.replace("(", "");
         s = s.replace(")", "");
-        s = s.replace("（", "");
-        s = s.replace("）", "");
-        s = s.replace("【", "");
-        s = s.replace("】", "");
-        s = s.replace("〖", "");
-        s = s.replace("〗", "");
+        s = s.replace("\uff08", "");
+        s = s.replace("\uff09", "");
+        s = s.replace("\u3010", "");
+        s = s.replace("\u3011", "");
+        s = s.replace("\u3016", "");
+        s = s.replace("\u3017", "");
 
         Pattern p = Pattern.compile("\\s*(\\d*?\\s*?[^\\d\\s;]+)\\s*(\\d*):?(\\d*)\\s*?-?\\s*?(\\d*):?(\\d*);?");
         Matcher m = p.matcher(s);
+        String prevbook = "";
+        String prevchap = "";
         while (m.find()) {
             String book = m.group(1);
-            // FIXME: dont support Gen 1-3,5,7
-            if (book.startsWith(",")) {
-                book = "";
-            }
-            String osis = Bible.getBible(context).getOsis(book);
             String start_chapter = m.group(2);
             String start_verse = m.group(3);
             String end_chapter = m.group(4);
             String end_verse = m.group(5);
 
+            book = book.replace(":", "");
+            if (book.startsWith(",")) {
+                book = prevbook;
+                if ("".equals(start_verse) && !"".equals(prevchap)) {
+                    start_verse = start_chapter;
+                    start_chapter = prevchap;
+                }
+            }
+
+            prevbook = book;
+            if (!"".equals(start_verse)) {
+                prevchap = start_chapter;
+            } else {
+                prevchap = "";
+            }
+
+            String osis = Bible.getBible(context).getOsis(book);
             Log.d("OsisItem", String.format("book:%s, osis:%s, %s:%s-%s%s", book, osis, start_chapter, start_verse, end_chapter, end_verse));
             if (osis == null) {
                 continue;
