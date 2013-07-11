@@ -14,6 +14,7 @@
 package me.piebridge.bible;
 
 import android.app.SearchManager;
+import android.content.res.Configuration;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -385,6 +386,9 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         switch (v.getId()) {
             case R.id.searchtext:
                 edittext.showDropDown();
+                if (imm != null && getResources().getConfiguration().keyboard != Configuration.KEYBOARD_QWERTY) {
+                    imm.showSoftInput(edittext, 0);
+                }
                 break;
             case R.id.searchbutton:
                 query = edittext.getText().toString();

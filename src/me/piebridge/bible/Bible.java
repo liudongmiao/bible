@@ -576,6 +576,7 @@ public class Bible
         book = book.replace("约二", "约贰");
         book = book.replace("约三", "约叁");
         book = book.toLowerCase(Locale.US);
+        book = book.replace("psalms", "psalm");
 
         boolean checkOsis = true;
         if (isCJK(book.substring(0, 1)) && book.length() > 2) {

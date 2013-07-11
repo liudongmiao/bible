@@ -303,7 +303,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private void setBookChapter() {
         book = osis.split("\\.")[0];
-        chapter = osis.split("\\.")[1];
+        if (osis.split("\\.").length > 1) {
+            chapter = osis.split("\\.")[1];
+        } else {
+            chapter = "0";
+        }
         Log.d(TAG, "set book chapter, osis: " + osis);
 
         setItemText(this.index);
