@@ -50,6 +50,9 @@ import android.widget.ZoomButtonsController;
 import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 
+import java.io.File;
+import android.os.Environment;
+
 public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private final String TAG = "me.piebridge.bible$Chapter";
@@ -84,6 +87,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private Bible bible = null;
     private String selected = "";
     private String versename = "";
+    private File font;
     private int gridviewid = 0;
     protected float scale = 1.0f;
     protected String background = null;
@@ -218,6 +222,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >>> 24) / 255.0);
         Log.d(TAG, "onCreate");
         hasIntentData = true;
+        font = new File(new File(new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName()), "files"), "custom.ttf");
     }
 
     private void getVerse() {
@@ -374,7 +379,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
         body += "<meta name=\"viewport\" content=\"target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=2\" />\n";
         body += "<style type=\"text/css\">\n";
-        body += "body {font-family: serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
+        if (font.exists()) {
+            body += "@font-face { font-family: 'custom'; src: url('" + font.getAbsolutePath() + "'); }\n";
+            body += "body {font-family: 'custom', serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
+        } else {
+            body += "body {font-family: serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
+        }
         body += ".trans {display: none;}\n";
         body += ".wordsofchrist {color: red;}\n";
         body += "h1 {font-size: 2em;}\n";
