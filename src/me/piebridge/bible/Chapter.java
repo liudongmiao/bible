@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
 
@@ -42,11 +43,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import android.widget.ZoomButtonsController;
 
+import android.widget.ZoomButtonsController;
 import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 
@@ -100,47 +100,36 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private boolean hasIntentData = false;
 
-    static class BibleHandler extends Handler {
-        WeakReference<Chapter> outerClass;
-
-        BibleHandler(Chapter activity) {
-            outerClass = new WeakReference<Chapter>(activity);
-        }
-
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            Chapter theClass = outerClass.get();
-            if (theClass == null) {
-                return;
-            }
             switch (msg.what) {
                 case COPYTEXT:
-                    theClass.checkShare();
+                    checkShare();
                     break;
                 case SHOWCONTENT:
                     String[] message = (String[]) msg.obj;
                     if (!"".equals(message[0])) {
-                        theClass.setBookChapter();
+                        setBookChapter();
                     }
-                    theClass._showContent(message[0], message[1]);
+                    _showContent(message[0], message[1]);
                     break;
                 case SHOWDATA:
-                    theClass._showData();
+                    _showData();
                     break;
                 case SHOWBAR:
-                    theClass._show();
+                    _show();
                     break;
                 case DISMISSBAR:
-                    theClass._dismiss();
+                    _dismiss();
                     break;
             }
         }
-    }
+    };
 
-    private BibleHandler handler = new BibleHandler(this);
-
-    @Override
     @SuppressLint("SetJavaScriptEnabled")
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         // on MB612, the search and share icon is so dark ...
         if (Build.MODEL.equals("MB612")) {
@@ -185,7 +174,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         webview.getSettings().setBuiltInZoomControls(true);
         webview.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webview.addJavascriptInterface(new Object() {
-            @SuppressWarnings("unused")
+            @JavascriptInterface
             public void setVerse(String string) {
                 synchronized(verseLock) {
                     verse = string;
@@ -194,7 +183,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 }
             }
 
-            @SuppressWarnings({ "unused", "deprecation" })
+            @SuppressWarnings("deprecation")
+            @JavascriptInterface
             public void setCopyText(String text) {
                 if (!text.equals("")) {
                     copytext = bible.getVersionFullname(version).replace("(" + getString(R.string.demo) + ")", "") + " ";
@@ -223,6 +213,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         Log.d(TAG, "onCreate");
         hasIntentData = true;
         font = new File(new File(new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName()), "files"), "custom.ttf");
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!hasIntentData) {
+            verse = sp.getString("verse", "");
+        }
+        show();
+        showData();
     }
 
     private void getVerse() {
@@ -415,7 +412,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         dismiss();
         /*
         {
-            String path = "/sdcard/" + versename + ".html";
+            String path = Environment.getExternalStorageDirectory().getPath() + versename + ".html";
             try {
                 Log.d("write", path);
                 java.io.OutputStream os = new java.io.BufferedOutputStream(new java.io.FileOutputStream(new java.io.File(path)));
@@ -607,12 +604,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume, items: " + items);
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!hasIntentData) {
-            verse = sp.getString("verse", "");
-        }
-        show();
-        showData();
     }
 
     private void showData() {

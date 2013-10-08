@@ -13,12 +13,12 @@
 
 package me.piebridge.bible;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-
 import android.text.Spannable;
 import android.text.style.BackgroundColorSpan;
 import android.view.View;
@@ -26,14 +26,11 @@ import android.widget.TextView;
 import android.widget.ListView;
 import android.widget.AdapterView;
 import android.widget.SimpleCursorAdapter;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
-
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -57,28 +54,17 @@ public class Result extends Activity
     protected int color;
     protected final static int SHOWRESULT = 1;
 
-    static class BibleHandler extends Handler {
-        WeakReference<Result> outerClass;
-
-        BibleHandler(Result activity) {
-            outerClass = new WeakReference<Result>(activity);
-        }
-
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            Result theClass = outerClass.get();
-            if (theClass == null) {
-                return;
-            }
             switch (msg.what) {
-                case SHOWRESULT:
-                    theClass.showResults((Cursor) msg.obj);
-                    break;
+            case SHOWRESULT:
+                showResults((Cursor) msg.obj);
+                break;
             }
         }
-    }
-
-    private BibleHandler handler = new BibleHandler(this);
+    };
 
     /** Called when the activity is first created. */
     @Override
