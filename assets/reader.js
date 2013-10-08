@@ -68,6 +68,7 @@ function getCopyText() {
     span.innerHTML = content;
     text = span.textContent.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
 
+    alarm.share();
     if (text) {
         android.setCopyText(verse + "\n" + text);
     } else {
@@ -153,15 +154,24 @@ function addListener() {
 }
 
 var alarm = {
+    shared: false,
+
+    share: function() {
+        this.shared = true;
+    },
+
     setup: function(callback, timeout) {
         this.cancel();
+        if (this.shared) {
+            timeout = 10;
+        }
         this.timeoutID = window.setTimeout(function(func) {
             func();
         }, timeout, callback);
     },
 
     cancel: function() {
-        if(typeof this.timeoutID == "number") {
+        if (typeof this.timeoutID == "number") {
             window.clearTimeout(this.timeoutID);
             delete this.timeoutID;
         }
