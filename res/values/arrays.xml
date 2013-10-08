@@ -24,7 +24,7 @@
     <string-array name="searchshort">
         <!-- no mapping -->
     </string-array>
-    <string-array name="osiszhcn">
+    <string-array translatable="false" name="osiszhcn">
         <item>Gen|创</item>
         <item>Exod|出</item>
         <item>Lev|利</item>
@@ -92,7 +92,7 @@
         <item>Jude|犹</item>
         <item>Rev|启</item>
     </string-array>
-    <string-array name="osiszhtw">
+    <string-array translatable="false" name="osiszhtw">
         <item>Gen|創</item>
         <item>Exod|出</item>
         <item>Lev|利</item>
