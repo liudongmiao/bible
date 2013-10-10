@@ -79,6 +79,7 @@ public class Bible
     private int[] orders = new int[3];
     private Locale lastLocale;
     private boolean unpacked = false;
+    private long mtime = 0;
 
     private Bible(Context context) {
         Log.d(TAG, "init bible");
@@ -132,12 +133,16 @@ public class Bible
     }
 
     public boolean checkVersions() {
-        versions.clear();
         if (!setDatabasePath()) {
             return false;
         }
         File path = new File(databasePath);
         File oldpath = new File(Environment.getExternalStorageDirectory(), ".piebridge");
+        if (versions.size() != 0 && path.lastModified() <= mtime && (
+            !oldpath.exists() || !oldpath.isDirectory() || oldpath.lastModified() <= mtime)) {
+            return true;
+        }
+        versions.clear();
         Log.d(TAG, "path=" + path + ", oldpath=" + oldpath);
         if (oldpath.exists() && oldpath.isDirectory()) {
             String[] names = oldpath.list();
@@ -179,6 +184,7 @@ public class Bible
                 versions.add("cunpssdemo");
             }
         }
+        mtime = path.lastModified();
         return true;
     }
 

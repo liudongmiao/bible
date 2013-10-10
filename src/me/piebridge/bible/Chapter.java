@@ -449,6 +449,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         switch (v.getId()) {
             case R.id.version:
                 getVerse();
+                bible.checkVersions();
             case R.id.book:
             case R.id.chapter:
             case R.id.items:
