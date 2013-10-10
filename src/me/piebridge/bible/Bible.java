@@ -182,6 +182,11 @@ public class Bible
         return true;
     }
 
+    public boolean isDemoVersion(String version) {
+        File file = getFile(version);
+        return file.getParentFile().equals(mContext.getFilesDir());
+    }
+
     public boolean setVersion(String version) {
         if (version == null) {
             return false;
@@ -202,18 +207,7 @@ public class Bible
             return false;
         }
         */
-        File file = null;
-        version = version.toLowerCase(Locale.US);
-        if (version.endsWith("demo")) {
-            file = new File(mContext.getFilesDir(), version + ".sqlite3");
-        } else if (version.equals("niv")) {
-            file = new File(databasePath, "niv2011.sqlite3");
-        } else if (version.equals("niv84")) {
-            file = new File(databasePath, "niv1984.sqlite3");
-        }
-        if (file == null || !file.exists() || !file.isFile()) {
-            file = new File(databasePath, version + ".sqlite3");
-        }
+        File file = getFile(version);
         if (file.exists() && file.isFile()) {
             databaseVersion = version;
             try {
@@ -236,6 +230,22 @@ public class Bible
             database = null;
             return false;
         }
+    }
+
+    private File getFile(String version) {
+        File file = null;
+        version = version.toLowerCase(Locale.US);
+        if (version.endsWith("demo")) {
+            file = new File(mContext.getFilesDir(), version + ".sqlite3");
+        } else if (version.equals("niv")) {
+            file = new File(databasePath, "niv2011.sqlite3");
+        } else if (version.equals("niv84")) {
+            file = new File(databasePath, "niv1984.sqlite3");
+        }
+        if (file == null || !file.exists() || !file.isFile()) {
+            file = new File(databasePath, version + ".sqlite3");
+        }
+        return file;
     }
 
     private void setMetadata(SQLiteDatabase  metadata, String dataversion) {
@@ -809,4 +819,8 @@ public class Bible
         return null;
     }
 
+    public boolean deleteVersion(String version) {
+        File file = getFile(version);
+        return file.delete();
+    }
 }

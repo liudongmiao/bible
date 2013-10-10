@@ -15,6 +15,7 @@ package me.piebridge.bible;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -24,7 +25,6 @@ import android.os.Message;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +38,10 @@ import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.Locale;
+
 import android.preference.PreferenceManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
@@ -51,9 +53,10 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 
 import java.io.File;
+
 import android.os.Environment;
 
-public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private final String TAG = "me.piebridge.bible$Chapter";
 
@@ -166,6 +169,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         gridview.setAdapter(adapter);
         gridview.setVisibility(View.GONE);
         gridview.setOnItemClickListener(this);
+        gridview.setOnItemLongClickListener(this);
 
         setGestureDetector();
         webview = (WebView) findViewById(R.id.webview);
@@ -598,6 +602,47 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 }
                 break;
         }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int pos, long id) {
+        gridview.setVisibility(View.GONE);
+        switch (gridviewid) {
+        case R.id.version:
+            if (bible.getCount(Bible.TYPE.VERSION) == 1) {
+                return false;
+            }
+            if (bible.isDemoVersion(version)) {
+                return false;
+            }
+            if (pos >= bible.getCount(Bible.TYPE.VERSION)) {
+                return false;
+            }
+            if (bible.get(Bible.TYPE.VERSION, pos).equals(bible.getVersion())) {
+                return false;
+            }
+            final String delete = bible.get(Bible.TYPE.VERSION, pos);
+            areYouSure(
+                    getString(R.string.deleteversion, bible.getVersionName(delete)),
+                    getString(R.string.deleteversiondetail, bible.getVersionFullname(delete)),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            bible.deleteVersion(delete);
+                            bible.checkVersions();
+                            findViewById(R.id.version).performClick();
+                        }
+                    });
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    private void areYouSure(String title, String message, DialogInterface.OnClickListener handler) {
+        new AlertDialog.Builder(this).setTitle(title).setMessage(message)
+                .setPositiveButton(android.R.string.yes, handler)
+                .setNegativeButton(android.R.string.no, null).create().show();
     }
 
     @Override

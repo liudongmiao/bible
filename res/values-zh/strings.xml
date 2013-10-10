@@ -29,4 +29,6 @@
     <string name="demo">演示</string>
     <string name="chapters">%1$s，共%2$s章。</string>
     <string name="sharefrom">在圣经中搜索</string>
+    <string name="deleteversion">删除版本%s?</string>
+    <string name="deleteversiondetail">您将不能阅读和搜索%s!</string>
 </resources>
