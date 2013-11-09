@@ -76,6 +76,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private String osis_prev;
 
     private int fontsize = 16;
+    private int FONTSIZE_MIN = 1;
+    private int FONTSIZE_MED = 32;
+    private int FONTSIZE_MAX = 80;
     private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/tree/master/apk\">https://github.com/liudongmiao/bible/tree/master/apk</a>";
 
     private ZoomButtonsController mZoomButtonsController = null;
@@ -371,8 +374,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
 
         fontsize = (int)(fontsize * scale);
-        if (fontsize > 32) {
-            fontsize = 24;
+        if (fontsize > FONTSIZE_MAX) {
+            fontsize = FONTSIZE_MED;
         }
 
         String body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
@@ -675,8 +678,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (fontsize == 0) {
             fontsize = sp.getInt("fontsize", 16);
         }
-        if (fontsize > 32) {
-            fontsize = 32;
+        if (fontsize > FONTSIZE_MAX) {
+            fontsize = FONTSIZE_MAX;
         }
         if (!osis.equals("")) {
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
@@ -807,16 +810,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         public void onVisibilityChanged(boolean visible) {
             setZoomButtonsController(webview);
             if (visible && mZoomButtonsController != null) {
-                mZoomButtonsController.setZoomOutEnabled(fontsize > 1);
-                mZoomButtonsController.setZoomInEnabled(fontsize < 32);
+                mZoomButtonsController.setZoomOutEnabled(fontsize > FONTSIZE_MIN);
+                mZoomButtonsController.setZoomInEnabled(fontsize < FONTSIZE_MAX);
             }
         }
 
         public void onZoom(boolean zoomIn) {
-            if (fontsize == 1 && !zoomIn) {
+            if (fontsize == FONTSIZE_MIN && !zoomIn) {
                 return;
             }
-            if (fontsize == 32 && zoomIn) {
+            if (fontsize == FONTSIZE_MAX && zoomIn) {
                 return;
             }
             fontsize += (zoomIn ? 1 : -1);
@@ -825,8 +828,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             showUri();
             setZoomButtonsController(webview);
             if (mZoomButtonsController != null) {
-                mZoomButtonsController.setZoomOutEnabled(fontsize > 1);
-                mZoomButtonsController.setZoomInEnabled(fontsize < 32);
+                mZoomButtonsController.setZoomOutEnabled(fontsize > FONTSIZE_MIN);
+                mZoomButtonsController.setZoomInEnabled(fontsize < FONTSIZE_MAX);
             }
         }
     }
