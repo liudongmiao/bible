@@ -31,7 +31,7 @@ function getCopyText() {
     spans = document.getElementsByTagName("span");
     for (var i = 0; i < spans.length; i++) {
         if (hasClass(spans[i], "selected", true)) {
-            html += " " + spans[i].innerHTML;
+            html += spans[i].innerHTML;
         }
     }
     content = html.replace(new RegExp('<span class="pb-verse.*?</span>', 'gi'), "");
@@ -129,13 +129,12 @@ function load() {
 }
 
 function unhighlight() {
-    while (true) {
-        var results = document.getElementsByClassName("highlight");
-        if (results.length == 0) {
-            break;
-        }
-        results[0].className = "";
+    var results = document.getElementsByClassName("highlight");
+    for (var i = 0, l = results.length; i < l; ++i) {
+        var result = results.item(0);
+        result.parentNode.replaceChild(result.firstChild, result);
     }
+    document.normalize();
 }
 
 function addListener() {
