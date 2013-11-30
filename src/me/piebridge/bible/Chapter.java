@@ -76,6 +76,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private String osis_prev;
 
     private int fontsize = 16;
+    private boolean onzoom = false;
+    private boolean setListener = false;
     private int FONTSIZE_MIN = 1;
     private int FONTSIZE_MED = 32;
     private int FONTSIZE_MAX = 80;
@@ -103,6 +105,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int SHOWDATA = 2;
     protected static final int SHOWBAR = 3;
     protected static final int DISMISSBAR = 4;
+    protected static final int SHOWZOOM = 5;
 
     private boolean hasIntentData = false;
 
@@ -129,6 +132,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     break;
                 case DISMISSBAR:
                     _dismiss();
+                    break;
+                case SHOWZOOM:
+                    if (mZoomButtonsController != null) {
+                        mZoomButtonsController.setZoomOutEnabled(fontsize > FONTSIZE_MIN);
+                        mZoomButtonsController.setZoomInEnabled(fontsize < FONTSIZE_MAX);
+                    }
                     break;
             }
         }
@@ -178,7 +187,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setSupportZoom(true);
-        webview.getSettings().setBuiltInZoomControls(true);
         webview.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webview.addJavascriptInterface(new Object() {
             @JavascriptInterface
@@ -204,7 +212,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 handler.sendEmptyMessage(COPYTEXT);
             }
         }, "android");
-        setZoomButtonsController(webview);
+        webview.getSettings().setBuiltInZoomControls(true);
+        if (!setZoomButtonsController(webview)) {
+            webview.getSettings().setBuiltInZoomControls(false);
+        }
 
         osis = PreferenceManager.getDefaultSharedPreferences(this).getString("osis", "null");
         uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
@@ -373,7 +384,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             context = context.replaceAll("『", "‘").replaceAll("』", "’");
         }
 
-        fontsize = (int)(fontsize * scale);
+        Log.d(TAG, "will update fontsize " + fontsize + ", scale: " + scale + ", onzoom: " + onzoom);
+        if (onzoom) {
+            onzoom = false;
+        } else {
+            fontsize = (int)(fontsize * scale);
+        }
         if (fontsize > FONTSIZE_MAX) {
             fontsize = FONTSIZE_MED;
         }
@@ -381,7 +397,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         String body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
         body += "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">\n";
         body += "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
-        body += "<meta name=\"viewport\" content=\"target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=2\" />\n";
+        body += "<meta name=\"viewport\" content=\"target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0\" />\n";
         body += "<style type=\"text/css\">\n";
         if (font.exists()) {
             body += "@font-face { font-family: 'custom'; src: url('" + font.getAbsolutePath() + "'); }\n";
@@ -419,14 +435,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         dismiss();
         /*
         {
-            String path = Environment.getExternalStorageDirectory().getPath() + versename + ".html";
+            File path = new File(Environment.getExternalStorageDirectory(), versename + ".html");
             try {
-                Log.d("write", path);
-                java.io.OutputStream os = new java.io.BufferedOutputStream(new java.io.FileOutputStream(new java.io.File(path)));
+                Log.d("write", path.getAbsolutePath());
+                java.io.OutputStream os = new java.io.BufferedOutputStream(new java.io.FileOutputStream(path));
                 os.write(body.getBytes());
                 os.close();
             } catch (Exception e) {
-                Log.e("write", path, e);
+                Log.e("write", path.getAbsolutePath(), e);
             }
         }
         */
@@ -735,44 +751,32 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         return false;
     }
 
-    private boolean setButtonsControllerAPI11(WebView webview) {
-        Object mZoomManager = null;
-
-        // android 4.1,  webview.mProvider.mZoomManager.getCurrentZoomControl().getControls()
-        Object mProvider = Bible.getField(webview, WebView.class, "mProvider");
+   ZoomButtonsController getZoomButtonsController(WebView webview) {
+        Object mZoomManager;
+        Object mProvider = Bible.getField(webview, "mProvider");
+        // since api-16
         if (mProvider != null) {
-            mZoomManager = Bible.getField(mProvider, mProvider.getClass(), "mZoomManager");
-        } else {
-            // android 4.0, webview.mZoomManager.getCurrentZoomControl().getControls()
-            mZoomManager = Bible.getField(webview, WebView.class, "mZoomManager");
+            mZoomManager = Bible.getField(mProvider, "mZoomManager");
+        } else if ((mZoomManager = Bible.getField(webview, "mZoomManager")) == null) {
+            try {
+                Method method = webview.getClass().getMethod("getZoomButtonsController");
+                return (ZoomButtonsController) method.invoke(webview);
+            } catch (Exception e) {
+                return null;
+            }
         }
 
-        if (mZoomManager == null) {
-            return false;
-        }
-
-        try {
-            // let canZoomOut always be true, part1
-            Field MINIMUM_SCALE_INCREMENT = mZoomManager.getClass().getDeclaredField("MINIMUM_SCALE_INCREMENT");
-            MINIMUM_SCALE_INCREMENT.setAccessible(true);
-            MINIMUM_SCALE_INCREMENT.set(mZoomManager, -128.0f);
-        } catch (Exception e) {
-            Log.e(TAG, "cannot set " + mZoomManager.getClass().getName() + ".MINIMUM_SCALE_INCREMENT to -128.0f", e);
-            return false;
-        }
-
-        try {
-            // let canZoomOut always be true, part2
-            Field mInZoomOverview = mZoomManager.getClass().getDeclaredField("mInZoomOverview");
-            mInZoomOverview.setAccessible(true);
-            mInZoomOverview.set(mZoomManager, false);
-        } catch (Exception e) {
-            Log.e(TAG, "cannot set " + mZoomManager.getClass().getName() + ".mInZoomOverview to false", e);
-            return false;
-        }
-
-        if (mZoomButtonsController != null) {
-            return true;
+        // since api-19
+        if (mProvider != null && mZoomManager == null) {
+            Object mAwContents = Bible.getField(mProvider, "mAwContents");
+            Object mZoomControls = Bible.getField(mAwContents, "mZoomControls");
+            try {
+                Method getControls = mZoomControls.getClass().getDeclaredMethod("getZoomController");
+                getControls.setAccessible(true);
+                return (ZoomButtonsController) getControls.invoke(mZoomControls);
+            } catch (Exception e) {
+                return null;
+            }
         }
 
         try {
@@ -781,40 +785,24 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             Object mEmbeddedZoomControl = getCurrentZoomControl.invoke(mZoomManager);
             Method getControls = mEmbeddedZoomControl.getClass().getDeclaredMethod("getControls");
             getControls.setAccessible(true);
-            mZoomButtonsController = (ZoomButtonsController) getControls.invoke(mEmbeddedZoomControl);
+            return (ZoomButtonsController) getControls.invoke(mEmbeddedZoomControl);
         } catch (Exception e) {
             Log.e(TAG, "cannot call " + mZoomManager.getClass().getName() + ".getCurrentZoomControl().getControls()", e);
-            return false;
         }
 
-        return true;
-    }
-
-    private boolean setButtonsControllerAPI(WebView webview) {
-        if (mZoomButtonsController != null) {
-            return true;
-        }
-
-        try {
-            Method method = WebView.class.getMethod("getZoomButtonsController");
-            mZoomButtonsController = (ZoomButtonsController) method.invoke(webview);
-            mZoomButtonsController.setOnZoomListener(new ZoomListener());
-        } catch (Exception e) {
-            Log.e(TAG, "cannot call " + WebView.class.getName() + ".getZoomButtonsController()", e);
-            return false;
-        }
-        return true;
+        return null;
     }
 
     private class ZoomListener implements ZoomButtonsController.OnZoomListener {
+
+        @Override
         public void onVisibilityChanged(boolean visible) {
-            setZoomButtonsController(webview);
-            if (visible && mZoomButtonsController != null) {
-                mZoomButtonsController.setZoomOutEnabled(fontsize > FONTSIZE_MIN);
-                mZoomButtonsController.setZoomInEnabled(fontsize < FONTSIZE_MAX);
+            if (visible) {
+                handler.sendEmptyMessageDelayed(SHOWZOOM, 0);
             }
         }
 
+        @Override
         public void onZoom(boolean zoomIn) {
             if (fontsize == FONTSIZE_MIN && !zoomIn) {
                 return;
@@ -823,33 +811,28 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 return;
             }
             fontsize += (zoomIn ? 1 : -1);
-            Log.d(TAG, "update fontsize to " + fontsize);
+            Log.d(TAG, "update fontsize to " + fontsize + ", zoomIn: " + zoomIn);
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
             showUri();
-            setZoomButtonsController(webview);
-            if (mZoomButtonsController != null) {
-                mZoomButtonsController.setZoomOutEnabled(fontsize > FONTSIZE_MIN);
-                mZoomButtonsController.setZoomInEnabled(fontsize < FONTSIZE_MAX);
-            }
+            handler.sendEmptyMessageDelayed(SHOWZOOM, 250);
+            onzoom = true;
         }
     }
 
     private boolean setZoomButtonsController(WebView webview) {
-        boolean hasZoomButtons = false;
-        if (Build.VERSION.SDK_INT > 10) {
-            hasZoomButtons = setButtonsControllerAPI11(webview);
-            if (!hasZoomButtons) {
-                hasZoomButtons = setButtonsControllerAPI(webview);
-            }
-        } else {
-            hasZoomButtons = setButtonsControllerAPI(webview);
-            if (!hasZoomButtons) {
-                hasZoomButtons = setButtonsControllerAPI11(webview);
-            }
+        if (mZoomButtonsController == null) {
+            setListener = false;
+            mZoomButtonsController = getZoomButtonsController(webview);
+            Log.d(TAG, "mZoomButtonsController: " + mZoomButtonsController);
         }
 
-        if (hasZoomButtons) {
-            mZoomButtonsController.setOnZoomListener(new ZoomListener());
+        if (mZoomButtonsController != null) {
+            if (!setListener) {
+                mZoomButtonsController.setOnZoomListener(new ZoomListener());
+                setListener = true;
+            }
+            mZoomButtonsController.setZoomOutEnabled(fontsize > FONTSIZE_MIN);
+            mZoomButtonsController.setZoomInEnabled(fontsize < FONTSIZE_MAX);
             return true;
         }
 
@@ -859,6 +842,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private void setDisplayZoomControls(boolean enable) {
         if (mZoomButtonsController != null) {
             mZoomButtonsController.getContainer().setVisibility(enable ? View.VISIBLE : View.GONE);
+            if (enable) {
+                handler.sendEmptyMessageDelayed(SHOWZOOM, 250);
+            }
         }
     }
 

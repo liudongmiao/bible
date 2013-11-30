@@ -825,6 +825,13 @@ public class Bible
         return null;
     }
 
+    public static Object getField(Object object, final String fieldName) {
+        if (object == null) {
+            return null;
+        }
+        return getField(object, object.getClass(), fieldName);
+    }
+
     public boolean deleteVersion(String version) {
         File file = getFile(version);
         return file.delete();
