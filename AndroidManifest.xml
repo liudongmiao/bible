@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Search" />
-        <activity android:name=".Settings" />
+        <activity android:name=".Settings" android:configChanges="orientation|keyboardHidden" />
         <activity android:name=".Result"
             android:configChanges="orientation|keyboardHidden"
             />

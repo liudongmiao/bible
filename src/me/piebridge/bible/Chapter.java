@@ -80,7 +80,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private boolean setListener = false;
     public static int FONTSIZE_MIN = 1;
     public static int FONTSIZE_MED = 16;
-    public static int FONTSIZE_MAX = 80;
+    public static int FONTSIZE_MAX = 72;
     private int fontsize = FONTSIZE_MED;
     private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/tree/master/apk\">bible/apk · liudongmiao/bible · GitHub</a>";
 
@@ -393,8 +393,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         } else {
             fontsize = (int)(fontsize * scale);
         }
+        if (fontsize < FONTSIZE_MIN) {
+            fontsize = FONTSIZE_MIN;
+        }
         if (fontsize > FONTSIZE_MAX) {
-            fontsize = FONTSIZE_MED;
+            fontsize = FONTSIZE_MAX;
         }
 
         body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
@@ -436,8 +439,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<div id=\"content\">\n";
         body += context;
         body += "</div>\n</body>\n</html>\n";
-        webview.clearCache(true);
-        webview.setInitialScale(100);
+        // webview.clearCache(true);
+        // webview.setInitialScale(100);
         scale = 1.0f;
         webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
         dismiss();
@@ -736,7 +739,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @SuppressWarnings("deprecation")
     private float getScale(WebView webview) {
-        return webview.getScale();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return 1.0f;
+        } else {
+            return webview.getScale();
+        }
     }
 
     @Override
