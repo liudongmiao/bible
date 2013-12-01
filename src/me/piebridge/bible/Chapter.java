@@ -82,7 +82,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public static int FONTSIZE_MED = 16;
     public static int FONTSIZE_MAX = 80;
     private int fontsize = FONTSIZE_MED;
-    private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/tree/master/apk\">https://github.com/liudongmiao/bible/tree/master/apk</a>";
+    private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/tree/master/apk\">bible/apk · liudongmiao/bible · GitHub</a>";
 
     private ZoomButtonsController mZoomButtonsController = null;
 
@@ -111,6 +111,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private boolean red = true;
     private boolean nightmode = false;
     private boolean hasIntentData = false;
+    private String body;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -396,10 +397,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             fontsize = FONTSIZE_MED;
         }
 
-        String body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
+        body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
         body += "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">\n";
         body += "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
-        body += "<meta name=\"viewport\" content=\"target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0\" />\n";
+        body += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0\" />\n";
         body += "<style type=\"text/css\">\n";
         if (font.exists()) {
             body += "@font-face { font-family: 'custom'; src: url('" + font.getAbsolutePath() + "'); }\n";
@@ -429,7 +430,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
         body += "</head>\n<body>\n";
         if (!"".equals(title) && bible.getVersion().endsWith("demo")) {
-            String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">market://search?q=" + getString(R.string.bibledatahuman) + "&c=apps</a>";
+            String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">" + getString(R.string.bibledatahuman) + "</a>";
             body += "<div id=\"pb-demo\">" + getString(R.string.noversion, new Object[] {link_market, link_github}) + "</div>\n";
         }
         body += "<div id=\"content\">\n";
@@ -1037,6 +1038,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public boolean onOptionsItemSelected(MenuItem item) {
         storeOsisVersion();
         Intent intent = new Intent(this, Settings.class);
+        intent.putExtra("body", body);
         startActivityIfNeeded(intent, -1);
         return false;
     }

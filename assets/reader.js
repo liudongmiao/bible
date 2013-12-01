@@ -126,6 +126,10 @@ function load() {
     }
     highlight(search);
     addListener();
+    var demo = document.getElementById("pb-demo");
+    if (demo) {
+        demo.style.display = "block";
+    }
 }
 
 function unhighlight() {

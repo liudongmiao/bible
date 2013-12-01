@@ -9,8 +9,8 @@
        <item quantity="other">在“%5$s”中從“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
-    <string name="noversion">此版本僅供演示。請從電子市場%1$s搜尋「Bible Data」，或者項目網站%2$s安裝聖經數據庫。提示：聖經閱讀器僅支持外部存儲(如SDCARD)。</string>
-    <string name="moreversion">請通過電子市場%1$s搜尋「Bible Data」，或訪問項目網站%2$s。如果還有疑問，請電郵我：%3$s。</string>
+    <string name="noversion">此版本僅供演示。請從電子市場搜尋「%1$s」，或者項目網站%2$s安裝聖經數據庫。提示：聖經閱讀器僅支持外部存儲(如SDCARD)。</string>
+    <string name="moreversion">請通過電子市場搜尋「%1$s」，或訪問項目網站%2$s。如果還有疑問，請電郵我：%3$s。</string>
     <string name="more">更多版本..</string>
     <string name="chooseversion">選擇版本</string>
     <string name="searchall">搜尋整本聖經</string>
@@ -22,8 +22,7 @@
     <string name="queryerror">無法打開數據庫，請稍候再試。</string>
     <string name="share">分享聖經經句至..</string>
     <string name="fromto">從%1$s到%2$s</string>
-    <string name="bibledatalink">%22Bible%20Data%22</string>
-    <string name="bibledatahuman">聖經数据</string>
+    <string name="bibledatahuman">\"聖經数据\"</string>
     <string name="otherbook">選擇其他書卷</string>
     <string name="search">在聖經中搜尋“%1$s”</string>
     <string name="demo">演示</string>

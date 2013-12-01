@@ -9,8 +9,8 @@
         <item quantity="other">%1$d resultados para \"%2$s\" from \"%3$s\" to \"%4$s\" in \"%5$s\": </item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
-    <string name="noversion">Esta version solo es para demostrar. Por favor busca y instala \"Bible Data\" (Datos Biblicos) de la Tienda Google Play %1$s o Project Website %2$s. Nota: Bible Reader solo suporta Bible Data (Datos Biblicos) en almacenamiento externo(ie, sdcard).</string>
-    <string name="moreversion">Por favor busca y instala \"Bible Data\" (Datos Biblicos) de la Tienda Google Play %1$s o visita Project Website %2$s. Si gustan mas versiones, por favor de mandar un email a %3$s.</string>
+    <string name="noversion">Esta version solo es para demostrar. Por favor busca y instala %1$s de la Tienda Google Play Store o Project Website %2$s. Nota: Bible Reader solo suporta Bible Data (Datos Biblicos) en almacenamiento externo(ie, sdcard).</string>
+    <string name="moreversion">Por favor busca y instala %1$s de la Tienda Google Play Store o visita Project Website %2$s. Si gustan mas versiones, por favor de mandar un email a %3$s.</string>
     <string name="more">Mas Versiones..</string>
     <string name="chooseversion">Escoja Version</string>
     <string name="searchall">Busqueda en la Biblia Entera</string>
@@ -22,7 +22,6 @@
     <string name="queryerror">No se puede abrir los datos, por favor intentanlo mas después.</string>
     <string name="share">Compartan versiculos Biblicos a ..</string>
     <string name="fromto">de %1$s a %2$s</string>
-    <string name="bibledatalink">%22Bible%20Data%22</string>
     <string name="bibledatahuman">\"Bible Data\"</string>
     <string name="otherbook">Escojan Otro Libro</string>
     <string name="search">Busqueda %1$s en la Biblia</string>
