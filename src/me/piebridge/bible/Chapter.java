@@ -416,8 +416,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
         body += "<script type=\"text/javascript\">\n";
         body += String.format("var verse_start=%s, verse_end=%s, versename=\"%s\", search=\"%s\";", verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, versename, items != null ? search : "");
-        verse = "";
-        search = "";
         body += "\n</script>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
         body += "</head>\n<body>\n";
@@ -433,6 +431,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         scale = 1.0f;
         webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
         dismiss();
+        if ("".equals(verse)) {
+            setDisplayZoomControls(true);
+        }
+        verse = "";
+        search = "";
         /*
         {
             File path = new File(Environment.getExternalStorageDirectory(), versename + ".html");
@@ -726,7 +729,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     @Override
     public boolean dispatchTouchEvent(MotionEvent e){
         int scrollY = webview.getScrollY();
-        if (scrollY == 0 || (float) scrollY >= webview.getContentHeight() * getScale(webview) - webview.getHeight()) {
+        if (scrollY <= 0) {
             setDisplayZoomControls(true);
         } else {
             setDisplayZoomControls(false);
