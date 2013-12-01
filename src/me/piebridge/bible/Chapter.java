@@ -26,6 +26,8 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.GestureDetector;
@@ -74,12 +76,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private String osis_next;
     private String osis_prev;
 
-    private int fontsize = 16;
     private boolean onzoom = false;
     private boolean setListener = false;
-    private int FONTSIZE_MIN = 1;
-    private int FONTSIZE_MED = 32;
-    private int FONTSIZE_MAX = 80;
+    public static int FONTSIZE_MIN = 1;
+    public static int FONTSIZE_MED = 16;
+    public static int FONTSIZE_MAX = 80;
+    private int fontsize = FONTSIZE_MED;
     private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/tree/master/apk\">https://github.com/liudongmiao/bible/tree/master/apk</a>";
 
     private ZoomButtonsController mZoomButtonsController = null;
@@ -106,6 +108,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int DISMISSBAR = 4;
     protected static final int SHOWZOOM = 5;
 
+    private boolean red = true;
+    private boolean nightmode = false;
     private boolean hasIntentData = false;
 
     @SuppressLint("HandlerLeak")
@@ -236,7 +240,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             verse = sp.getString("verse", "");
         }
         show();
-        showData();
     }
 
     private void getVerse() {
@@ -348,7 +351,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             editor.putString("version", version);
         }
         editor.putString("verse", verse);
-        editor.putInt("fontsize", fontsize);
+        editor.putInt(Settings.FONTSIZE, fontsize);
         if (!book.equals("") && !chapter.equals("")) {
             editor.putString(book, chapter);
         }
@@ -404,8 +407,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         } else {
             body += "body {font-family: serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
         }
+        if (nightmode) {
+            body += "body { background-color: black; color: white; }\n";
+        } else {
+            body += "body { background-color: white; color: black; }\n";
+        }
         body += ".trans {display: none;}\n";
-        body += ".wordsofchrist {color: red;}\n";
+        if (red) {
+            body += ".wordsofchrist, .woj, .wj {color: red;}\n";
+        }
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
         body += ".selected {" + background + "}\n";
@@ -671,6 +681,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume, items: " + items);
+        showData();
     }
 
     private void showData() {
@@ -692,9 +703,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private void _showData() {
         version = bible.getVersion();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        fontsize = sp.getInt("fontsize-" + version, 0);
+        red = sp.getBoolean(Settings.RED, true);
+        nightmode = sp.getBoolean(Settings.NIGHTMODE, false);
+        fontsize = sp.getInt(Settings.FONTSIZE + "-" + version, 0);
         if (fontsize == 0) {
-            fontsize = sp.getInt("fontsize", 16);
+            fontsize = sp.getInt(Settings.FONTSIZE, FONTSIZE_MED);
         }
         if (fontsize > FONTSIZE_MAX) {
             fontsize = FONTSIZE_MAX;
@@ -1007,6 +1020,25 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         showView(R.id.header, true);
         showView(R.id.progress, false);
         showView(R.id.webview, true);
+    }
+
+    private void createMenu(Menu menu) {
+        menu.clear();
+        menu.add(R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        createMenu(menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        storeOsisVersion();
+        Intent intent = new Intent(this, Settings.class);
+        startActivityIfNeeded(intent, -1);
+        return false;
     }
 
 }

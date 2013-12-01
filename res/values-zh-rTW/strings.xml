@@ -31,4 +31,11 @@
     <string name="sharefrom">在聖經中搜尋</string>
     <string name="deleteversion">移除版本%s?</string>
     <string name="deleteversiondetail">您將不能閱讀和搜尋%s!</string>
+    <string name="red">紅字</string>
+    <string name="wojinred">基督的話以紅字顯示</string>
+    <string name="font">字體</string>
+    <string name="fontsize">字體大小</string>
+    <string name="fontsummary">%2$s: %1$spt</string>
+    <string name="nightmode">夜間模式</string>
+    <string name="settings">設定</string>
 </resources>
