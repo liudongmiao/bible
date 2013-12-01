@@ -45,7 +45,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import android.widget.ZoomButtonsController;
