@@ -110,6 +110,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private boolean red = true;
     private boolean nightmode = false;
+    private boolean justify = false;
     private boolean hasIntentData = false;
     private String body;
 
@@ -416,6 +417,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         } else {
             body += "body { background-color: white; color: black; }\n";
         }
+        if (justify) {
+            body += "body { text-align: justify; }\n";
+            body += "body { text-justify: distribute }\n";
+        }
         body += ".trans {display: none;}\n";
         if (red) {
             body += ".wordsofchrist, .woj, .wj {color: red;}\n";
@@ -709,6 +714,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         red = sp.getBoolean(Settings.RED, true);
         nightmode = sp.getBoolean(Settings.NIGHTMODE, false);
+        justify = sp.getBoolean(Settings.JUSTIFY, true);
         fontsize = sp.getInt(Settings.FONTSIZE + "-" + version, 0);
         if (fontsize == 0) {
             fontsize = sp.getInt(Settings.FONTSIZE, FONTSIZE_MED);

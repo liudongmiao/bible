@@ -37,4 +37,5 @@
     <string name="fontsummary">%2$s: %1$spt</string>
     <string name="nightmode">夜间模式</string>
     <string name="settings">设置</string>
+    <string name="justify">文字分散对齐</string>
 </resources>

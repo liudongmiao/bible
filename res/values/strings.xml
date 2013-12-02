@@ -38,4 +38,5 @@
     <string name="fontsummary">%1$spt for %2$s</string>
     <string name="nightmode">Night Mode</string>
     <string name="settings">Settings</string>
+    <string name="justify">Text Justified</string>
 </resources>
