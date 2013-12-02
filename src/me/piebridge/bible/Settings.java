@@ -78,10 +78,10 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         preference.setOnPreferenceChangeListener(this);
         switch (title) {
         case R.string.red:
-        case R.string.nightmode:
+        case R.string.justify:
             preference.setDefaultValue(getBoolean(key, true));
             break;
-        case R.string.justify:
+        case R.string.nightmode:
             preference.setDefaultValue(getBoolean(key, false));
             break;
         }
