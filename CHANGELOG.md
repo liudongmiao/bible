@@ -1,7 +1,10 @@
 Changelog
 =========
 
+**v0.9.16**
+
 - Add Text Justified option
+- Disable pinche zoom on android 3.0+
 
 **v0.9.15**
 
