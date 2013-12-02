@@ -745,7 +745,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @SuppressWarnings("deprecation")
     private float getScale(WebView webview) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
             return 1.0f;
         } else {
             return webview.getScale();
