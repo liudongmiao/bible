@@ -1,6 +1,11 @@
 Changelog
 =========
 
+**v0.9.17**
+
+- Show legacy overflow button on android 3.0+
+- Fix default settings for justify and nightmode
+
 **v0.9.16**
 
 - Add Text Justified option
