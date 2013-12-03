@@ -13,9 +13,14 @@
 
 package me.piebridge.bible;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
@@ -25,6 +30,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -83,13 +90,13 @@ public class Bible
     private int[] orders = new int[3];
     private Locale lastLocale;
     private boolean unpacked = false;
-    private long mtime = 0;
+    private HashMap<String, Long> mtime = new HashMap<String, Long>();
     private String css;
 
     private Bible(Context context) {
         Log.d(TAG, "init bible");
         mContext = context;
-        _checkApkData();
+        _checkApkData(false);
         checkLocale();
         checkVersions();
         setDefaultVersion();
@@ -138,8 +145,12 @@ public class Bible
         }
         File path = new File(databasePath);
         File oldpath = new File(Environment.getExternalStorageDirectory(), ".piebridge");
-        if (versions.size() != 0 && path.lastModified() <= mtime && (
-            !oldpath.exists() || !oldpath.isDirectory() || oldpath.lastModified() <= mtime)) {
+        Long oldmtime = mtime.get(path.getAbsolutePath());
+        if (oldmtime == null) {
+            oldmtime = 0L;
+        }
+        if (versions.size() != 0 && path.lastModified() <= oldmtime && (
+            !oldpath.exists() || !oldpath.isDirectory() || oldpath.lastModified() <= oldmtime)) {
             return true;
         }
         versions.clear();
@@ -185,7 +196,7 @@ public class Bible
                 versions.add("cunpssdemo");
             }
         }
-        mtime = path.lastModified();
+        mtime.put(path.getAbsolutePath(),  path.lastModified());
         return true;
     }
 
@@ -300,8 +311,8 @@ public class Bible
         }
 
         css = "";
-        cursor = metadata.query("metadata", new String[] {"value"}, "name = css",
-                null, null, null, "name desc", "1");
+        cursor = metadata.query("metadata", new String[] {"value"}, "name = ?",
+                new String[] { "css" }, null, null, null, "1");
         while (cursor != null && cursor.moveToNext()) {
             css = cursor.getString(cursor.getColumnIndexOrThrow("value"));
             cursor.close();
@@ -857,12 +868,78 @@ public class Bible
     public void checkApkData() {
         new Thread(new Runnable() {
             public void run() {
-                _checkApkData();
+                _checkApkData(true);
             }
         }).start();
     }
 
-    private void _checkApkData() {
+    private boolean _checkRawData(File path, boolean all) {
+        Long oldmtime = mtime.get(path.getAbsolutePath());
+        if (oldmtime == null) {
+            oldmtime = 0L;
+        }
+        if (path.lastModified() <= oldmtime) {
+            return false;
+        }
+        for (String name : path.list()) {
+            if (name.startsWith("bibledata-") && name.endsWith("zip")) {
+                try {
+                    boolean unpack = unpackZip(new File(path, name));
+                    if (unpack && !all) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "unpackZip", e);
+                    e.printStackTrace();
+                }
+            }
+        }
+        if (all) {
+            mtime.put(path.getAbsolutePath(), path.lastModified());
+        }
+        return false;
+    }
+
+    private boolean unpackZip(File path) throws IOException {
+        if (path == null || !path.isFile()) {
+            return false;
+        }
+        File dirpath = getExternalFilesDirWrapper();
+        InputStream is = new FileInputStream(path);
+        ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is));
+        try {
+            ZipEntry ze;
+            while ((ze = zis.getNextEntry()) != null) {
+                String filename = ze.getName();
+                int sep = filename.lastIndexOf(File.separator);
+                if (sep != -1) {
+                    filename = filename.substring(sep);
+                }
+                if (!filename.endsWith((".sqlite3"))) {
+                    continue;
+                }
+                File file = new File(dirpath, filename);
+                if (file.exists() && file.lastModified() > ze.getTime()) {
+                    continue;
+                }
+                int length;
+                File tmpfile = new File(dirpath, filename + ".tmp");
+                OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpfile));
+                byte[] buffer = new byte[8192];
+                while ((length = zis.read(buffer)) != -1) {
+                    os.write(buffer, 0, length);
+                }
+                os.close();
+                tmpfile.renameTo(file);
+                return true;
+            }
+        } finally {
+            zis.close();
+        }
+        return false;
+    }
+
+    private void _checkApkData(boolean all) {
         try {
             String packageName = mContext.getPackageName();
             PackageManager pm = mContext.getPackageManager();
@@ -903,9 +980,21 @@ public class Bible
                 if (newVersion && unpack) {
                     preference.edit().putInt(version, versionCode).commit();
                 }
+
+                if (!all) {
+                    return;
+                }
             }
         } catch (Exception e) {
             Log.e(TAG, "", e);
+        }
+
+        if (_checkRawData(Environment.getExternalStorageDirectory(), all)) {
+            return;
+        }
+
+        if (_checkRawData(new File(Environment.getExternalStorageDirectory(), "Download"), all)) {
+            return;
         }
     }
 
@@ -926,7 +1015,8 @@ public class Bible
         try {
             int length;
             byte [] buffer = new byte[8192];
-            OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+            File tmpfile = new File(file.getAbsolutePath() + ".tmp");
+            OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpfile));
             for (int i=0; i<20; i++) {
                 InputStream is = resources.openRawResource(resid + i);
                 while((length = is.read(buffer)) >= 0) {
@@ -935,6 +1025,7 @@ public class Bible
                 is.close();
             }
             os.close();
+            tmpfile.renameTo(file);
         } catch (Exception e) {
             Log.e(TAG, "unpacked " + file.getAbsolutePath(), e);
             return false;
