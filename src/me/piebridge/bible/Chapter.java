@@ -82,7 +82,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public static int FONTSIZE_MED = 16;
     public static int FONTSIZE_MAX = 72;
     private int fontsize = FONTSIZE_MED;
-    private final String link_github = "<a href=\"https://github.com/liudongmiao/bible/tree/master/apk\">bible/apk · liudongmiao/bible · GitHub</a>";
+    private final String link_github = "<a href=\"https://github.com/liudongmiao/bibledata?mobile=0\">liudongmiao/bibledata</a>@<a href=\"https://github.com\">GitHub</a>";
 
     private ZoomButtonsController mZoomButtonsController = null;
 
@@ -621,7 +621,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 storeOsisVersion();
                 if (pos >= bible.getCount(Bible.TYPE.VERSION)) {
                     String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">market://search?q=" + getString(R.string.bibledatahuman) + "&c=apps</a>";
-                    String body = "<div id=\"pb-demo\">" + getString(R.string.moreversion, new Object[] {link_market, link_github, "<a href=\"mailto:liudongmiao@gmail.com\">Liu DongMiao</a>"}) + "</div>\n";
+                    String body = "<div id=\"pb-demo\">" + getString(R.string.moreversion, new Object[] {link_market, link_github}) + "</div>\n";
                     showContent("", body);
                     return;
                 }

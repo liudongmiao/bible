@@ -9,8 +9,8 @@
         <item quantity="other">在“%5$s”中从“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
-    <string name="noversion">此版本仅供演示。您可从电子市场搜索“%1$s”，或者项目网站%2$s下载安装圣经数据库。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
-    <string name="moreversion">请在电子市场搜索“%1$s”，或者项目网站%2$s获取其它版本。如果还有疑问，请写邮件告诉我：%3$s。</string>
+    <string name="noversion">此版本仅供演示。请从电子市场搜索并安装%1$s，或者圣经数据项目网站%2$s下载圣经数据库。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
+    <string name="moreversion">请从电子市场搜索并安装%1$s，或者圣经数据项目网站%2$s下载安装圣经数据库。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
     <string name="more">更多版本..</string>
     <string name="chooseversion">选择版本</string>
     <string name="searchall">搜索整本圣经</string>
