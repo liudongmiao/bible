@@ -1,6 +1,11 @@
 Changelog
 =========
 
+**v0.9.18**
+
+- Support css from bible data
+- Make install bible data easy
+
 **v0.9.17**
 
 - Show legacy overflow button on android 3.0+
