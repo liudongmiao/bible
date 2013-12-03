@@ -33,6 +33,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
+import android.content.res.Resources;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ApplicationInfo;
+
 public class Bible
 {
 
@@ -84,6 +89,7 @@ public class Bible
     private Bible(Context context) {
         Log.d(TAG, "init bible");
         mContext = context;
+        _checkApkData();
         checkLocale();
         checkVersions();
         if (setVersionMetaData("niv") || setVersionMetaData("niv84") || setVersionMetaData("nivdemo") || setVersionMetaData("kjv") || setVersionMetaData("nkjv") || setVersionMetaData("nlt") || setVersionMetaData("msg") ||  setVersionMetaData("nasb")) {
@@ -316,20 +322,23 @@ public class Bible
         return file;
     }
 
+    private File getExternalFilesDirWrapper() {
+        try {
+            Method method = Context.class.getMethod("getExternalFilesDir", new Class[] {String.class});
+            return (File) method.invoke(mContext, new Object[] {null});
+        } catch (Exception e) {
+            Log.d(TAG, "internal getExternalFilesDir");
+            return getExternalFilesDir();
+        }
+    }
+
     private boolean setDatabasePath() {
-        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             if (mContext == null) {
                 Log.e(TAG, "mContext is null");
                 return false;
             }
-            File file = null;
-            try {
-                Method method = Context.class.getMethod("getExternalFilesDir", new Class[] {String.class});
-                file = (File) method.invoke(mContext, new Object[] {null});
-            } catch (Exception e) {
-                Log.d(TAG, "internal getExternalFilesDir");
-                file = getExternalFilesDir();
-            }
+            File file = getExternalFilesDirWrapper();
             if (file == null) {
                 return false;
             }
@@ -835,5 +844,94 @@ public class Bible
     public boolean deleteVersion(String version) {
         File file = getFile(version);
         return file.delete();
+    }
+
+    public void checkApkData() {
+        new Thread(new Runnable() {
+            public void run() {
+                _checkApkData();
+            }
+        }).start();
+    }
+
+    private void _checkApkData() {
+        try {
+            String packageName = mContext.getPackageName();
+            PackageManager pm = mContext.getPackageManager();
+            SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(mContext);
+            ApplicationInfo ai = pm.getApplicationInfo(packageName, 0);
+            for (String applicationName : pm.getPackagesForUid(ai.uid)) {
+                if (packageName.equals(applicationName)) {
+                    continue;
+                }
+
+                // version
+                String version = applicationName.replace(packageName + ".", "");
+
+                // resources
+                Resources resources = mContext.createPackageContext(applicationName, Context.CONTEXT_IGNORE_SECURITY).getResources();
+
+                // newVersion
+                int versionCode = pm.getPackageInfo(applicationName, 0).versionCode;
+                boolean newVersion = (preference.getInt(version, 0) != versionCode);
+
+                // resid
+                int resid = resources.getIdentifier("a", "raw", applicationName);
+                if (resid == 0) {
+                    resid = resources.getIdentifier("xa", "raw", applicationName);
+                }
+                if (resid == 0) {
+                    Log.d(TAG, "package " + applicationName + " has no R.raw.a nor R.raw.xa");
+                    continue;
+                }
+
+                // file
+                File file = new File(getExternalFilesDirWrapper(), version + ".sqlite3");
+                if (file.exists() && !file.isFile()) {
+                    file.delete();
+                }
+
+                boolean unpack = unpackRaw(resources, newVersion, resid, file);
+                if (newVersion && unpack) {
+                    preference.edit().putInt(version, versionCode).commit();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "", e);
+        }
+    }
+
+    private boolean unpackRaw(Resources resources, boolean newVersion, int resid, File file) {
+        if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            return false;
+        }
+
+        if (file.exists()) {
+            if (!newVersion) {
+                return true;
+            }
+            file.delete();
+        }
+
+        Log.d(TAG, "unpacking " + file.getAbsolutePath());
+
+        try {
+            int length;
+            byte [] buffer = new byte[8192];
+            OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+            for (int i=0; i<20; i++) {
+                InputStream is = resources.openRawResource(resid + i);
+                while((length = is.read(buffer)) >= 0) {
+                    os.write(buffer, 0, length);
+                }
+                is.close();
+            }
+            os.close();
+        } catch (Exception e) {
+            Log.e(TAG, "unpacked " + file.getAbsolutePath(), e);
+            return false;
+        }
+
+        return true;
     }
 }

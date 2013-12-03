@@ -691,6 +691,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         super.onResume();
         Log.d(TAG, "onResume, items: " + items);
         showData();
+        if (bible != null) {
+            bible.checkApkData();
+        }
     }
 
     private void showData() {
