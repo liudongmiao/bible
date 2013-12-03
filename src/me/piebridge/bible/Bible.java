@@ -15,10 +15,8 @@ package me.piebridge.bible;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -922,6 +920,7 @@ public class Bible
                 if (file.exists() && file.lastModified() > ze.getTime()) {
                     continue;
                 }
+                Log.d(TAG, "unpacking " + file.getAbsoluteFile());
                 int length;
                 File tmpfile = new File(dirpath, filename + ".tmp");
                 OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpfile));
@@ -939,7 +938,8 @@ public class Bible
         return false;
     }
 
-    private void _checkApkData(boolean all) {
+    private synchronized void _checkApkData(boolean all) {
+        Log.d(TAG, "checkApkData: " + all);
         try {
             String packageName = mContext.getPackageName();
             PackageManager pm = mContext.getPackageManager();
