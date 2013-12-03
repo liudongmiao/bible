@@ -92,12 +92,6 @@ public class Bible
         _checkApkData();
         checkLocale();
         checkVersions();
-        if (setVersionMetaData("niv") || setVersionMetaData("niv84") || setVersionMetaData("nivdemo") || setVersionMetaData("kjv") || setVersionMetaData("nkjv") || setVersionMetaData("nlt") || setVersionMetaData("msg") ||  setVersionMetaData("nasb")) {
-        }
-        if (setVersionMetaData("ccb") || setVersionMetaData("cunpss") || setVersionMetaData("rcuvss") || setVersionMetaData("cunpssdemo")) {
-        }
-        if (setVersionMetaData("cunpts") || setVersionMetaData("rcuvts")) {
-        }
         setDefaultVersion();
     }
 
@@ -171,6 +165,7 @@ public class Bible
                     Log.d(TAG, "add version " + name);
                     String version = name.toLowerCase(Locale.US).replace(".sqlite3", "").replace("niv2011", "niv").replace("niv1984", "niv84");
                     if (!versionFullnames.containsKey(version)) {
+                        setVersionMetaData(version);
                         versionFullnames.put(version, getVersionMetadata("fullname", version));
                         versionNames.put(version, getVersionMetadata("name", version));
                     }
