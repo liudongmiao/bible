@@ -429,6 +429,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "h2 {font-size: 1.5em;}\n";
         body += ".selected {" + background + "}\n";
         body += ".highlight {" + background + "}\n";
+        body += bible.getCSS();
         body += "</style>\n";
         body += "<title>" + title + "</title>\n";
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";

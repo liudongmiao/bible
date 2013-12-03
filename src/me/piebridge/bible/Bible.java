@@ -32,7 +32,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-
 import android.content.res.Resources;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -85,6 +84,7 @@ public class Bible
     private Locale lastLocale;
     private boolean unpacked = false;
     private long mtime = 0;
+    private String css;
 
     private Bible(Context context) {
         Log.d(TAG, "init bible");
@@ -303,6 +303,19 @@ public class Bible
         } finally {
             cursor.close();
         }
+
+        css = "";
+        cursor = metadata.query("metadata", new String[] {"value"}, "name = css",
+                null, null, null, "name desc", "1");
+        while (cursor != null && cursor.moveToNext()) {
+            css = cursor.getString(cursor.getColumnIndexOrThrow("value"));
+            cursor.close();
+            break;
+        }
+    }
+
+    public String getCSS() {
+        return css;
     }
 
     private File getExternalFilesDir() {
