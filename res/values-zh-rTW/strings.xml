@@ -39,4 +39,5 @@
     <string name="settings">設定</string>
     <string name="justify">文字分散對齊</string>
     <string name="bibledata">正在檢查聖經數據...</string>
+    <string name="log">調試日誌</string>
 </resources>

@@ -29,6 +29,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     public static String FONTSIZE = "fontsize";
     public static String NIGHTMODE = "nightmode";
     public static String JUSTIFY = "justify";
+    public static String LOG = "log";
 
     private String body;
 
@@ -46,6 +47,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         root.addPreference(addBooleanPreference(RED, R.string.red, R.string.wojinred));
         root.addPreference(addBooleanPreference(NIGHTMODE, R.string.nightmode, 0));
         root.addPreference(addBooleanPreference(JUSTIFY, R.string.justify, 0));
+        root.addPreference(addBooleanPreference(LOG, R.string.log, 0));
         return root;
     }
 
@@ -77,6 +79,9 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         }
         preference.setOnPreferenceChangeListener(this);
         switch (title) {
+        case R.string.log:
+            preference.setDefaultValue(Log.on);
+            break;
         case R.string.red:
         case R.string.justify:
             preference.setDefaultValue(getBoolean(key, true));
@@ -100,7 +105,9 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         String key = preference.getKey();
-        if (newValue instanceof Boolean) {
+        if (LOG.equals(key)) {
+            Log.on = (Boolean) newValue;
+        } else if (newValue instanceof Boolean) {
             setBoolean(key, (Boolean) newValue);
         }
         return true;
