@@ -68,6 +68,12 @@
         <provider android:name=".Suggestion"
             android:authorities="me.piebridge.bible"
             android:permission="android.permission.GLOBAL_SEARCH" />
+        <receiver android:name=".Receiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
 <!-- vim: set sta sw=4 et: -->

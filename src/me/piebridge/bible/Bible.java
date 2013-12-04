@@ -94,7 +94,6 @@ public class Bible
     private Bible(Context context) {
         Log.d(TAG, "init bible");
         mContext = context;
-        _checkApkData(false);
         checkLocale();
         checkVersions();
         setDefaultVersion();
@@ -491,7 +490,7 @@ public class Bible
         }
     }
 
-    private boolean setDefaultVersion() {
+    public boolean setDefaultVersion() {
         if (versions.size() == 0) {
             return false;
         }
@@ -863,74 +862,111 @@ public class Bible
         return file.delete();
     }
 
-    public void checkApkData() {
-        new Thread(new Runnable() {
-            public void run() {
-                _checkApkData(true);
-            }
-        }).start();
+    public void checkBibleData(boolean block) {
+        if (block) {
+            checkApkData();
+            checkZipData(Environment.getExternalStorageDirectory());
+            checkZipData(new File(Environment.getExternalStorageDirectory(), "Download"));
+        } else {
+            new Thread(new Runnable() {
+                public void run() {
+                    checkApkData();
+                    checkZipData(Environment.getExternalStorageDirectory());
+                    checkZipData(new File(Environment.getExternalStorageDirectory(), "Download"));
+                }
+            }).start();
+        }
     }
 
-    private boolean _checkRawData(File path, boolean all) {
+    private boolean checkZipData(File path) {
+        Log.d(TAG, "checking zipdata " + path.getAbsolutePath());
+        SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(mContext);
         Long oldmtime = mtime.get(path.getAbsolutePath());
         if (oldmtime == null) {
-            oldmtime = 0L;
+            oldmtime = preference.getLong(path.getAbsolutePath(), 0);
         }
-        if (path.lastModified() <= oldmtime) {
-            return false;
-        }
+        boolean newer = (path.lastModified() > oldmtime);
         for (String name : path.list()) {
             if (name.startsWith("bibledata-") && name.endsWith("zip")) {
                 try {
-                    boolean unpack = unpackZip(new File(path, name));
-                    if (unpack && !all) {
-                        return true;
-                    }
+                    unpackZip(new File(path, name), newer);
+                } catch (IOException e) {
                 } catch (Exception e) {
                     Log.e(TAG, "unpackZip", e);
-                    e.printStackTrace();
                 }
             }
         }
-        if (all) {
-            mtime.put(path.getAbsolutePath(), path.lastModified());
-        }
+        mtime.put(path.getAbsolutePath(), path.lastModified());
+        preference.edit().putLong(path.getAbsolutePath(), path.lastModified()).commit();
         return false;
     }
 
-    private boolean unpackZip(File path) throws IOException {
+    private boolean unpackZip(File path, boolean newer) throws IOException {
         if (path == null || !path.isFile()) {
             return false;
         }
+
         File dirpath = getExternalFilesDirWrapper();
+
+        // bibledata-zh-cn-version.zip
+        String filename = path.getAbsolutePath();
+        int sep = filename.lastIndexOf("-");
+        if (sep != -1) {
+            filename = filename.substring(sep + 1, filename.length() - 4);
+        }
+        filename += ".sqlite3";
+
+        if (!newer && new File(dirpath, filename).isFile()) {
+            return true;
+        }
+
         InputStream is = new FileInputStream(path);
         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is));
         try {
             ZipEntry ze;
             while ((ze = zis.getNextEntry()) != null) {
-                String filename = ze.getName();
-                int sep = filename.lastIndexOf(File.separator);
-                if (sep != -1) {
-                    filename = filename.substring(sep);
-                }
-                if (!filename.endsWith((".sqlite3"))) {
+                String zename = ze.getName();
+                if (zename != null && !zename.endsWith((".sqlite3"))) {
                     continue;
                 }
-                File file = new File(dirpath, filename);
+                sep = zename.lastIndexOf(File.separator);
+                if (sep != -1) {
+                    zename = zename.substring(sep + 1);
+                }
+                File file = new File(dirpath, zename);
                 if (file.exists() && file.lastModified() > ze.getTime()) {
                     continue;
                 }
                 Log.d(TAG, "unpacking " + file.getAbsoluteFile());
                 int length;
-                File tmpfile = new File(dirpath, filename + ".tmp");
+                File tmpfile = new File(dirpath, zename + ".tmp");
                 OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpfile));
                 byte[] buffer = new byte[8192];
+                int zero = 0;
                 while ((length = zis.read(buffer)) != -1) {
+                    if (length == 0) {
+                        ++zero;
+                        if (zero > 3) {
+                            break;
+                        }
+                    } else {
+                        zero = 0;
+                    }
+                    Log.d(TAG, "length: " + length);
                     os.write(buffer, 0, length);
                 }
                 os.close();
-                tmpfile.renameTo(file);
-                return true;
+                if (zero > 3) {
+                    // must do this, otherwise block forever
+                    is.close();
+                    return false;
+                } else {
+                    tmpfile.renameTo(file);
+                    if (!zename.equals(filename)) {
+                        path.delete();
+                    }
+                    return true;
+                }
             }
         } finally {
             zis.close();
@@ -938,8 +974,8 @@ public class Bible
         return false;
     }
 
-    private synchronized void _checkApkData(boolean all) {
-        Log.d(TAG, "checkApkData: " + all);
+    private synchronized void checkApkData() {
+        Log.d(TAG, "checking apkdata");
         try {
             String packageName = mContext.getPackageName();
             PackageManager pm = mContext.getPackageManager();
@@ -980,21 +1016,9 @@ public class Bible
                 if (newVersion && unpack) {
                     preference.edit().putInt(version, versionCode).commit();
                 }
-
-                if (!all) {
-                    return;
-                }
             }
         } catch (Exception e) {
             Log.e(TAG, "", e);
-        }
-
-        if (_checkRawData(Environment.getExternalStorageDirectory(), all)) {
-            return;
-        }
-
-        if (_checkRawData(new File(Environment.getExternalStorageDirectory(), "Download"), all)) {
-            return;
         }
     }
 

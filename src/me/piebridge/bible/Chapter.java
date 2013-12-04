@@ -107,6 +107,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int SHOWBAR = 3;
     protected static final int DISMISSBAR = 4;
     protected static final int SHOWZOOM = 5;
+    protected static final int CHECKBIBLEDATA = 6;
+    protected static final int BIBLEDATA = 7;
 
     private boolean red = true;
     private boolean nightmode = false;
@@ -143,6 +145,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                         mZoomButtonsController.setZoomOutEnabled(fontsize > FONTSIZE_MIN);
                         mZoomButtonsController.setZoomInEnabled(fontsize < FONTSIZE_MAX);
                     }
+                    break;
+                case CHECKBIBLEDATA:
+                    showView(R.id.bibledata, true);
+                    break;
+                case BIBLEDATA:
+                    showView(R.id.bibledata, false);
                     break;
             }
         }
@@ -383,7 +391,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         context = context.replaceAll("<span class=\"chapternum mid-paragraph\">.*?</span>", "");
         context = context.replaceAll("(<strong>\\D*?(\\d+).*?</strong>)", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup>$1</sup></span>");
         context = context.replaceAll("<sup(.*?>\\D*?(\\d+).*?)</sup>", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup><strong$1</strong></sup></span>");
-        if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE)) {
+        if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE) || "CCB".equalsIgnoreCase(bible.getVersion()) || bible.getVersion().endsWith("SS")) {
             context = context.replaceAll("「", "“").replaceAll("」", "”");
             context = context.replaceAll("『", "‘").replaceAll("』", "’");
         }
@@ -700,10 +708,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 if (bible == null) {
                     bible = Bible.getBible(getBaseContext());
                 }
-                bible.checkApkData();
+                handler.sendEmptyMessageDelayed(CHECKBIBLEDATA, 400);
+                bible.checkBibleData(true);
+                handler.sendEmptyMessage(BIBLEDATA);
                 bible.checkVersions();
                 Log.d(TAG, "will set version: " + version);
-                if (!"".equals(version)) {
+                if (version == null || version.length() == 0 || version.endsWith("demo")) {
+                    bible.setDefaultVersion();
+                } else {
                     bible.setVersion(version);
                 }
                 handler.sendEmptyMessage(SHOWDATA);
@@ -1056,6 +1068,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         intent.putExtra("body", body);
         startActivityIfNeeded(intent, -1);
         return false;
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        Log.d(TAG, "onWindowFocusChanged: " + hasFocus);
+        if (hasFocus && showed && bible != null) {
+            bible.checkBibleData(false);
+        }
+        super.onWindowFocusChanged(hasFocus);
     }
 
 }
