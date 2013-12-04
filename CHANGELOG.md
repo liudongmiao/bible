@@ -1,6 +1,11 @@
 Changelog
 =========
 
+**v0.9.19**
+
+- Make known when install bible data
+- Add options for debug log
+
 **v0.9.18**
 
 - Support css from bible data
