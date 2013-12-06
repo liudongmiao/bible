@@ -879,6 +879,9 @@ public class Bible
     }
 
     private boolean checkZipData(File path) {
+        if (path == null || !path.isDirectory()) {
+            return false;
+        }
         Log.d(TAG, "checking zipdata " + path.getAbsolutePath());
         SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(mContext);
         Long oldmtime = mtime.get(path.getAbsolutePath());
@@ -898,7 +901,7 @@ public class Bible
         }
         mtime.put(path.getAbsolutePath(), path.lastModified());
         preference.edit().putLong(path.getAbsolutePath(), path.lastModified()).commit();
-        return false;
+        return true;
     }
 
     private boolean unpackZip(File path, boolean newer) throws IOException {
