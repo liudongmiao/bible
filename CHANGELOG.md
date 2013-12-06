@@ -1,6 +1,11 @@
 Changelog
 =========
 
+**v0.9.20**
+
+- Fix bug for no Download directory
+- Add version and feedback in Settings
+
 **v0.9.19**
 
 - Make known when install bible data
