@@ -1,6 +1,9 @@
 Changelog
 =========
 
+**v0.9.21**
+- Fix feedback email
+
 **v0.9.20**
 
 - Fix bug for no Download directory

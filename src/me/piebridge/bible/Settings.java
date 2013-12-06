@@ -146,8 +146,10 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
             subject.append("(Android ");
             subject.append(Build.VERSION.RELEASE);
             subject.append(")");
-            Uri uri = Uri.parse("mailto:liudongmiao@gmail.com")
-                .buildUpon().appendQueryParameter("subject", subject.toString()).build();
+            // http://stackoverflow.com/questions/8534899
+            Uri uri = Uri.parse("mailto:liudongmiao@gmail.com" + new Uri.Builder()
+                .appendQueryParameter("subject", subject.toString())
+                .build().toString());
             startActivity(new Intent(Intent.ACTION_SENDTO, uri));
         }
         return true;
