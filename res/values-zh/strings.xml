@@ -32,7 +32,6 @@
     <string name="deleteversiondetail">您将不能阅读和搜索%s!</string>
     <string name="red">红字</string>
     <string name="wojinred">基督的话以红字显示</string>
-    <string name="font">字体</string>
     <string name="fontsize">字体大小</string>
     <string name="fontsummary">%2$s: %1$spt</string>
     <string name="nightmode">夜间模式</string>
