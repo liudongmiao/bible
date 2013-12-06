@@ -43,6 +43,7 @@ public class Passage extends Activity {
             Uri uri = intent.getData();
             if (uri == null) {
                 finish();
+                return;
             }
             version = uri.getQueryParameter("version");
             search = uri.getQueryParameter("search");
@@ -71,6 +72,7 @@ public class Passage extends Activity {
         super.onResume();
         if (search == null) {
             finish();
+            return;
         }
         new Thread(new Runnable() {
             public void run() {

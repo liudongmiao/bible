@@ -694,6 +694,7 @@ public class Bible
             book = book.replace("约一", "约壹");
             book = book.replace("约二", "约贰");
             book = book.replace("约三", "约叁");
+            book = book.replace(SearchManager.SUGGEST_URI_PATH_QUERY, "").replace(" ", "").toLowerCase(Locale.US);
         }
 
         Log.d(TAG, "book: " + book);
@@ -724,7 +725,6 @@ public class Bible
             }
         }
 
-        book = book.replace(SearchManager.SUGGEST_URI_PATH_QUERY, "").replace(" ", "").toLowerCase(Locale.US);
         for (Entry<String, String> entry: maps) {
             if (checkStartSuggest(osiss, entry.getKey(), entry.getKey(), book, limit)) {
                 return osiss;
@@ -929,7 +929,7 @@ public class Bible
             ZipEntry ze;
             while ((ze = zis.getNextEntry()) != null) {
                 String zename = ze.getName();
-                if (zename != null && !zename.endsWith((".sqlite3"))) {
+                if (zename == null || !zename.endsWith((".sqlite3"))) {
                     continue;
                 }
                 sep = zename.lastIndexOf(File.separator);

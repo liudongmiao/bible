@@ -17,9 +17,9 @@ public class Receiver extends BroadcastReceiver {
         if (Intent.ACTION_PACKAGE_ADDED.equals(action)) {
             Uri uri = intent.getData();
             String applicationName = (uri != null) ? uri.getSchemeSpecificPart() : null;
-            Log.d(TAG,  "action: " + action + ", packageName: " + context.getPackageName() + ", applicationName: " + applicationName);
-            if (applicationName.startsWith(context.getPackageName())) {
-                 bible.checkBibleData(false);
+            if (applicationName != null && applicationName.startsWith(context.getPackageName())) {
+                Log.d(TAG,  "action: " + action + ", packageName: " + context.getPackageName() + ", applicationName: " + applicationName);
+                bible.checkBibleData(false);
             }
         } else {
             bible.checkBibleData(false);
