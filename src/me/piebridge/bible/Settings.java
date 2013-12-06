@@ -80,14 +80,14 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         preference.setOnPreferenceChangeListener(this);
         switch (title) {
         case R.string.log:
-            preference.setDefaultValue(Log.on);
+            preference.setDefaultValue(false);
             break;
         case R.string.red:
         case R.string.justify:
-            preference.setDefaultValue(getBoolean(key, true));
+            preference.setDefaultValue(true);
             break;
         case R.string.nightmode:
-            preference.setDefaultValue(getBoolean(key, false));
+            preference.setDefaultValue(false);
             break;
         }
         return preference;
@@ -107,8 +107,6 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         String key = preference.getKey();
         if (LOG.equals(key)) {
             Log.on = (Boolean) newValue;
-        } else if (newValue instanceof Boolean) {
-            setBoolean(key, (Boolean) newValue);
         }
         return true;
     }
@@ -188,11 +186,6 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         return sp.getInt(key, defValue);
     }
 
-    private boolean getBoolean(String key, boolean defValue) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        return sp.getBoolean(key, defValue);
-    }
-
     private void setInt(String key, int value) {
         final Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putInt(key, value);
@@ -202,14 +195,8 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
             }
             String version = bible.getVersion();
             editor.putInt(key + "-" + version, value);
-            editor.putInt(key, value);
         }
         editor.commit();
     }
 
-    private void setBoolean(String key, boolean defValue) {
-        final Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putBoolean(key, defValue);
-        editor.commit();
-    }
 }

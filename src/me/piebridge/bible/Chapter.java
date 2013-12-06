@@ -368,6 +368,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (!version.equals("")) {
             editor.putInt("fontsize-" + version, fontsize);
         }
+	if (!Log.on) {
+            editor.remove("log");
+	}
         editor.commit();
     }
 
