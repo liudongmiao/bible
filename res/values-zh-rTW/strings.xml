@@ -39,4 +39,6 @@
     <string name="justify">文字分散對齊</string>
     <string name="bibledata">正在檢查聖經數據...</string>
     <string name="log">調試日誌</string>
+    <string name="version">版本</string>
+    <string name="feedback">反饋</string>
 </resources>

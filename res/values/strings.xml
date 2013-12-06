@@ -40,4 +40,6 @@
     <string name="justify">Text Justified</string>
     <string name="bibledata">Checking Bible Data ...</string>
     <string name="log">Debug Log</string>
+    <string name="version">Version</string>
+    <string name="feedback">Feedback</string>
 </resources>

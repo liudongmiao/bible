@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -30,12 +32,20 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     public static String NIGHTMODE = "nightmode";
     public static String JUSTIFY = "justify";
     public static String LOG = "log";
+    public static String VERSION = "version";
+    public static String FEEDBACK = "feedback";
+
+    private String versionName = null;
 
     private String body;
 
     @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (NameNotFoundException e) {
+        }
         PreferenceScreen root = getPreferenceManager().createPreferenceScreen(this);
         setPreferenceScreen(createPreferenceHierarchy(root));
         Intent intent = getIntent();
@@ -48,6 +58,10 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         root.addPreference(addBooleanPreference(NIGHTMODE, R.string.nightmode, 0));
         root.addPreference(addBooleanPreference(JUSTIFY, R.string.justify, 0));
         root.addPreference(addBooleanPreference(LOG, R.string.log, 0));
+        if (versionName != null) {
+            root.addPreference(addPreference(VERSION, R.string.version));
+        }
+        root.addPreference(addPreference(FEEDBACK, R.string.feedback));
         return root;
     }
 
@@ -55,12 +69,17 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         Preference preference = new Preference(this);
         preference.setKey(key);
         preference.setTitle(title);
-        if (FONTSIZE.equals(key)) {
-            if (bible == null) {
-                bible = Bible.getBible(getBaseContext());
-            }
-            preference.setSummary(getString(R.string.fontsummary, getInt(FONTSIZE, Chapter.FONTSIZE_MED),
-                    bible.getVersionName(bible.getVersion())));
+        switch (title) {
+            case R.string.fontsize:
+                if (bible == null) {
+                    bible = Bible.getBible(getBaseContext());
+                }
+                preference.setSummary(getString(R.string.fontsummary, getInt(FONTSIZE, Chapter.FONTSIZE_MED),
+                            bible.getVersionName(bible.getVersion())));
+                break;
+            case R.string.version:
+                preference.setSummary(versionName);
+                break;
         }
         return preference;
     }
@@ -117,6 +136,19 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         final String key = preference.getKey();
         if (FONTSIZE.equals(key)) {
             setupFontDialog(preference);
+        } else if (FEEDBACK.equals(key)) {
+            StringBuffer subject = new StringBuffer();
+            subject.append(getString(R.string.app_name));
+            if (versionName != null) {
+                subject.append(" ");
+                subject.append(versionName);
+            }
+            subject.append("(Android ");
+            subject.append(Build.VERSION.RELEASE);
+            subject.append(")");
+            Uri uri = Uri.parse("mailto:liudongmiao@gmail.com")
+                .buildUpon().appendQueryParameter("subject", subject.toString()).build();
+            startActivity(new Intent(Intent.ACTION_SENDTO, uri));
         }
         return true;
     }
