@@ -112,6 +112,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, final Preference preference) {
         final String key = preference.getKey();
         if (FONTSIZE.equals(key)) {
