@@ -31,7 +31,7 @@
     <string name="deleteversion">移除版本%s?</string>
     <string name="deleteversiondetail">您將不能閱讀和搜尋%s!</string>
     <string name="red">紅字</string>
-    <string name="wojinred">基督的話以紅字顯示</string>
+    <string name="wojinred">可用時適用耶穌的話</string>
     <string name="fontsize">字體大小</string>
     <string name="fontsummary">適用版本%1$s</string>
     <string name="nightmode">夜間模式</string>
