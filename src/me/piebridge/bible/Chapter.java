@@ -216,6 +216,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             @JavascriptInterface
             public void setCopyText(String text) {
                 if (!text.equals("")) {
+                    try {
+                        if (Bible.isCJK(text.split("\n")[1].trim().substring(0, 4))) {
+                            text = text.replace(" ", "");
+                        } else {
+                            text = text.replaceAll(" +", " ");
+                        }
+                    } catch (Exception e) {
+                    }
                     copytext = bible.getVersionFullname(version).replace("(" + getString(R.string.demo) + ")", "") + " ";
                     copytext += bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, book)) + " " + chapter + ":" + text;
                     ((android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setText(copytext);

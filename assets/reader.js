@@ -31,7 +31,7 @@ function getCopyText() {
     spans = document.getElementsByTagName("span");
     for (var i = 0; i < spans.length; i++) {
         if (hasClass(spans[i], "selected", true)) {
-            html += spans[i].innerHTML;
+            html += " " + spans[i].innerHTML;
         }
     }
     content = html.replace(new RegExp('<span class="pb-verse.*?</span>', 'gi'), "");
