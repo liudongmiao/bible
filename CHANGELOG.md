@@ -1,6 +1,10 @@
 Changelog
 =========
 
+**v0.9.23**
+
+- Fix possible null pointer
+
 **v0.9.22**
 
 - Pinch to Zoom is back and have an option
