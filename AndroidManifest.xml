@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.piebridge.bible"
     android:sharedUserId="me.piebridge.bible"
-    android:versionCode="57"
-    android:versionName="0.9.21">
+    android:versionCode="58"
+    android:versionName="0.9.22">
     <!--
     http://android-developers.blogspot.com/2012/01/say-goodbye-to-menu-button.html
 
@@ -30,7 +30,7 @@
         <activity android:name=".Result"
             android:configChanges="orientation|keyboardHidden"
             />
-        <activity android:name=".Passage" android:label="@string/sharefrom"
+        <activity android:name=".Passage" android:label="@string/searchinbible"
             android:launchMode="singleTask"
             >
             <intent-filter>

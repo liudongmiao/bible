@@ -1,6 +1,12 @@
 Changelog
 =========
 
+**v0.9.22**
+
+- Pinch to Zoom is back and have an option
+- Doesn't show font's size in settings
+- Add default locale for feedback
+
 **v0.9.21**
 - Fix feedback email
 

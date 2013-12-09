@@ -28,13 +28,13 @@
     <string name="search">Search %1$s in Bible</string>
     <string name="demo">DEMO</string>
     <string name="chapters">%1$s, %2$s chapters.</string>
-    <string name="sharefrom">Search in Bible</string>
+    <string name="searchinbible">Search in Bible</string>
     <string name="deleteversion">Delete Version %s?</string>
     <string name="deleteversiondetail">You\'ll not read, search bible %s!</string>
     <string name="red">Red Letter</string>
     <string name="wojinred">Words of Christ in Red</string>
     <string name="fontsize">Font Size</string>
-    <string name="fontsummary">%1$spt for %2$s</string>
+    <string name="fontsummary">For version %1$s</string>
     <string name="nightmode">Night Mode</string>
     <string name="settings">Settings</string>
     <string name="justify">Text Justified</string>
@@ -42,4 +42,6 @@
     <string name="log">Debug Log</string>
     <string name="version">Version</string>
     <string name="feedback">Feedback</string>
+    <string name="pinch">Pinch to Zoom</string>
+    <string name="pinch_not_work">May not work properly</string>
 </resources>

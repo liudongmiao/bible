@@ -23,6 +23,8 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.SeekBar;
 
+import java.util.Locale;
+
 public class Settings extends PreferenceActivity implements OnPreferenceChangeListener {
 
     private static Bible bible = null;
@@ -34,6 +36,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     public static String LOG = "log";
     public static String VERSION = "version";
     public static String FEEDBACK = "feedback";
+    public static String PINCH = "pinch";
 
     private String versionName = null;
 
@@ -57,6 +60,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         root.addPreference(addBooleanPreference(RED, R.string.red, R.string.wojinred));
         root.addPreference(addBooleanPreference(NIGHTMODE, R.string.nightmode, 0));
         root.addPreference(addBooleanPreference(JUSTIFY, R.string.justify, 0));
+        root.addPreference(addBooleanPreference(PINCH, R.string.pinch, R.string.pinch_not_work));
         root.addPreference(addBooleanPreference(LOG, R.string.log, 0));
         if (versionName != null) {
             root.addPreference(addPreference(VERSION, R.string.version));
@@ -74,8 +78,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
                 if (bible == null) {
                     bible = Bible.getBible(getBaseContext());
                 }
-                preference.setSummary(getString(R.string.fontsummary, getInt(FONTSIZE, Chapter.FONTSIZE_MED),
-                            bible.getVersionName(bible.getVersion())));
+                preference.setSummary(getString(R.string.fontsummary, bible.getVersionName(bible.getVersion())));
                 break;
             case R.string.version:
                 preference.setSummary(versionName);
@@ -99,14 +102,13 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         preference.setOnPreferenceChangeListener(this);
         switch (title) {
         case R.string.log:
+        case R.string.nightmode:
             preference.setDefaultValue(false);
             break;
         case R.string.red:
         case R.string.justify:
+        case R.string.pinch:
             preference.setDefaultValue(true);
-            break;
-        case R.string.nightmode:
-            preference.setDefaultValue(false);
             break;
         }
         return preference;
@@ -144,6 +146,8 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
                 subject.append(versionName);
             }
             subject.append("(Android ");
+            subject.append(Locale.getDefault().toString());
+            subject.append("-");
             subject.append(Build.VERSION.RELEASE);
             subject.append(")");
             // http://stackoverflow.com/questions/8534899
@@ -197,8 +201,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
                             fontsize = Chapter.FONTSIZE_MIN;
                         }
                         setInt(FONTSIZE, fontsize);
-                        preference.setSummary(getString(R.string.fontsummary, fontsize,
-                                bible.getVersionName(bible.getVersion())));
+                        preference.setSummary(getString(R.string.fontsummary, bible.getVersionName(bible.getVersion())));
                     }
 
                 })

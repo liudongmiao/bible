@@ -27,13 +27,13 @@
     <string name="search">在聖經中搜尋“%1$s”</string>
     <string name="demo">演示</string>
     <string name="chapters">%1$s，共%2$s章。</string>
-    <string name="sharefrom">在聖經中搜尋</string>
+    <string name="searchinbible">在聖經中搜尋</string>
     <string name="deleteversion">移除版本%s?</string>
     <string name="deleteversiondetail">您將不能閱讀和搜尋%s!</string>
     <string name="red">紅字</string>
     <string name="wojinred">基督的話以紅字顯示</string>
     <string name="fontsize">字體大小</string>
-    <string name="fontsummary">%2$s: %1$spt</string>
+    <string name="fontsummary">適用版本%1$s</string>
     <string name="nightmode">夜間模式</string>
     <string name="settings">設定</string>
     <string name="justify">文字分散對齊</string>
@@ -41,4 +41,6 @@
     <string name="log">調試日誌</string>
     <string name="version">版本</string>
     <string name="feedback">反饋</string>
+    <string name="pinch">雙指縮放</string>
+    <string name="pinch_not_work">可能無法正常使用</string>
 </resources>

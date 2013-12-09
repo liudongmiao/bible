@@ -76,7 +76,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private String osis_next;
     private String osis_prev;
 
-    private boolean onzoom = false;
     private boolean setListener = false;
     public static int FONTSIZE_MIN = 1;
     public static int FONTSIZE_MED = 16;
@@ -98,7 +97,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private String versename = "";
     private File font;
     private int gridviewid = 0;
-    protected float scale = 1.0f;
+    private float scale;
+    private float defaultScale;
     protected String background = null;
     protected String copytext = "";
     protected static final int COPYTEXT = 0;
@@ -113,6 +113,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private boolean red = true;
     private boolean nightmode = false;
     private boolean justify = false;
+    private boolean pinch = false;
     private boolean hasIntentData = false;
     private String body;
 
@@ -399,11 +400,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             context = context.replaceAll("『", "‘").replaceAll("』", "’");
         }
 
-        Log.d(TAG, "will update fontsize " + fontsize + ", scale: " + scale + ", onzoom: " + onzoom);
-        if (onzoom) {
-            onzoom = false;
-        } else {
-            fontsize = (int)(fontsize * scale);
+        Log.d(TAG, "will update fontsize " + fontsize + ", scale: " + scale + ", defaultScale: " + defaultScale);
+        if (pinch && defaultScale != 0.0f) {
+            fontsize = (int)(fontsize * scale / defaultScale);
         }
         if (fontsize < FONTSIZE_MIN) {
             fontsize = FONTSIZE_MIN;
@@ -415,7 +414,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
         body += "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">\n";
         body += "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
-        body += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0\" />\n";
+        body += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=5.0\" />\n";
         body += "<style type=\"text/css\">\n";
         if (font.exists()) {
             body += "@font-face { font-family: 'custom'; src: url('" + font.getAbsolutePath() + "'); }\n";
@@ -458,7 +457,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "</div>\n</body>\n</html>\n";
         // webview.clearCache(true);
         // webview.setInitialScale(100);
-        scale = 1.0f;
+        if (defaultScale == 0.0f) {
+            defaultScale = getScale(webview);
+        }
+        scale = defaultScale;
         webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
         dismiss();
         if ("".equals(verse)) {
@@ -732,6 +734,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         red = sp.getBoolean(Settings.RED, true);
         nightmode = sp.getBoolean(Settings.NIGHTMODE, false);
         justify = sp.getBoolean(Settings.JUSTIFY, true);
+        pinch = sp.getBoolean(Settings.PINCH, true);
         fontsize = sp.getInt(Settings.FONTSIZE + "-" + version, 0);
         if (fontsize == 0) {
             fontsize = sp.getInt(Settings.FONTSIZE, FONTSIZE_MED);
@@ -762,11 +765,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @SuppressWarnings("deprecation")
     private float getScale(WebView webview) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            return 1.0f;
-        } else {
-            return webview.getScale();
-        }
+        return webview.getScale();
     }
 
     @Override
@@ -861,7 +860,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
             showUri();
             handler.sendEmptyMessageDelayed(SHOWZOOM, 250);
-            onzoom = true;
         }
     }
 
