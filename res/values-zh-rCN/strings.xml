@@ -10,8 +10,8 @@
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
     <string name="noversion">此版本仅供演示。请从电子市场搜索并安装%1$s，或者圣经数据项目网站%2$s下载圣经数据库。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
-    <string name="moreversion">请从电子市场搜索并安装%1$s，或者圣经数据项目网站%2$s下载安装圣经数据库。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
-    <string name="more">更多版本..</string>
+    <string name="moreversion">请从电子市场搜索并安装%1$s，或者圣经数据项目网站%2$s下载安装圣经数据库。</string>
+    <string name="more">更多版本</string>
     <string name="chooseversion">选择版本</string>
     <string name="searchall">搜索整本圣经</string>
     <string name="searchold">搜索旧约圣经</string>

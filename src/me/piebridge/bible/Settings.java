@@ -1,5 +1,7 @@
 package me.piebridge.bible;
 
+import java.util.Locale;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -18,12 +20,13 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.SeekBar;
-
-import java.util.Locale;
+import android.widget.TextView;
 
 public class Settings extends PreferenceActivity implements OnPreferenceChangeListener {
 
@@ -36,6 +39,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     public static String LOG = "log";
     public static String FEEDBACK = "feedback";
     public static String PINCH = "pinch";
+    public static String MORE = "more";
 
     private String versionName = null;
 
@@ -61,6 +65,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         root.addPreference(addBooleanPreference(JUSTIFY, R.string.justify, 0));
         root.addPreference(addBooleanPreference(PINCH, R.string.pinch, R.string.pinch_not_work));
         root.addPreference(addBooleanPreference(LOG, R.string.log, 0));
+        root.addPreference(addPreference(MORE, R.string.more));
         root.addPreference(addPreference(FEEDBACK, R.string.feedback));
         return root;
     }
@@ -134,6 +139,15 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         final String key = preference.getKey();
         if (FONTSIZE.equals(key)) {
             setupFontDialog(preference);
+        } else if (MORE.equals(key)) {
+            String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">" + getString(R.string.bibledatahuman) + "</a>";
+            String text = getString(R.string.moreversion, new Object[] {link_market, Chapter.link_github}) + "</div>\n";
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.more)
+                .setMessage(Html.fromHtml(text))
+                .setPositiveButton(android.R.string.ok, null).show();
+            TextView message = (TextView) dialog.findViewById(android.R.id.message);
+            message.setMovementMethod(LinkMovementMethod.getInstance());
         } else if (FEEDBACK.equals(key)) {
             StringBuffer subject = new StringBuffer();
             subject.append(getString(R.string.app_name));
@@ -189,19 +203,17 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         new AlertDialog.Builder(this)
             .setTitle(R.string.fontsize)
             .setView(view)
-            .setPositiveButton(getText(android.R.string.ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        int fontsize = seekbar.getProgress();
-                        if (fontsize < Chapter.FONTSIZE_MIN) {
-                            fontsize = Chapter.FONTSIZE_MIN;
-                        }
-                        setInt(FONTSIZE, fontsize);
-                        preference.setSummary(getString(R.string.fontsummary, bible.getVersionName(bible.getVersion())));
+            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    int fontsize = seekbar.getProgress();
+                    if (fontsize < Chapter.FONTSIZE_MIN) {
+                        fontsize = Chapter.FONTSIZE_MIN;
                     }
-
-                })
-                .setNegativeButton(getText(android.R.string.no), null).show();
+                    setInt(FONTSIZE, fontsize);
+                    preference.setSummary(getString(R.string.fontsummary, bible.getVersionName(bible.getVersion())));
+                }
+            }).setNegativeButton(android.R.string.no, null).show();
     }
 
     private int getInt(String key, int defValue) {

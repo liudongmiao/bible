@@ -9,9 +9,9 @@
         <item quantity="other">%1$d results for \"%2$s\" from \"%3$s\" to \"%4$s\" in \"%5$s\": </item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
-    <string name="noversion">This version is only for demo. Please search and install %1$s from Google Play Store or Bible Data project website %2$s. Note: Bible Reader only supports Bible Data on external storage(ie, sdcard).</string>
-    <string name="moreversion">Please search and install %1$s from Google Play Store or Bible Data project website %2$s.</string>
-    <string name="more">More Versions..</string>
+    <string name="noversion">This version is only for demo. Please search and install %1$s from Google Play Store or Bible Data Project Website %2$s. Note: Bible Reader only supports Bible Data on external storage(ie, sdcard).</string>
+    <string name="moreversion">Please search and install %1$s from Google Play Store or Bible Data Project Website %2$s.</string>
+    <string name="more">More Versions</string>
     <string name="chooseversion">Choose Version</string>
     <string name="searchall">Search Entire Bible</string>
     <string name="searchold">Search Old Testament</string>

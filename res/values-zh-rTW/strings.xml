@@ -11,7 +11,7 @@
     <string name="search_result_verse">%1$d:%2$d</string>
     <string name="noversion">此版本僅供演示。請通過電子市場搜尋並安裝%1$s，或者聖經數據項目網站%2$s下載並安裝聖經數據庫。提示：聖經閱讀器僅支持外部存儲(如SDCARD)。</string>
     <string name="moreversion">請通過電子市場搜尋並安裝%1$s，或者聖經數據項目網站%2$s下載並安裝聖經數據庫。</string>
-    <string name="more">更多版本..</string>
+    <string name="more">更多版本</string>
     <string name="chooseversion">選擇版本</string>
     <string name="searchall">搜尋整本聖經</string>
     <string name="searchold">搜尋舊約聖經</string>
