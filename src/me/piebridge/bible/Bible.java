@@ -879,7 +879,7 @@ public class Bible
     }
 
     private boolean checkZipData(File path) {
-        if (path == null || !path.isDirectory()) {
+        if (path == null || !path.isDirectory() || path.list() == null) {
             return false;
         }
         Log.d(TAG, "checking zipdata " + path.getAbsolutePath());
