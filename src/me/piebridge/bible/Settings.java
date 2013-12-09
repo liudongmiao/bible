@@ -34,7 +34,6 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     public static String NIGHTMODE = "nightmode";
     public static String JUSTIFY = "justify";
     public static String LOG = "log";
-    public static String VERSION = "version";
     public static String FEEDBACK = "feedback";
     public static String PINCH = "pinch";
 
@@ -62,9 +61,6 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         root.addPreference(addBooleanPreference(JUSTIFY, R.string.justify, 0));
         root.addPreference(addBooleanPreference(PINCH, R.string.pinch, R.string.pinch_not_work));
         root.addPreference(addBooleanPreference(LOG, R.string.log, 0));
-        if (versionName != null) {
-            root.addPreference(addPreference(VERSION, R.string.version));
-        }
         root.addPreference(addPreference(FEEDBACK, R.string.feedback));
         return root;
     }
@@ -80,8 +76,8 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
                 }
                 preference.setSummary(getString(R.string.fontsummary, bible.getVersionName(bible.getVersion())));
                 break;
-            case R.string.version:
-                preference.setSummary(versionName);
+            case R.string.feedback:
+                preference.setSummary(getString(R.string.version) + ": " + versionName);
                 break;
         }
         return preference;
