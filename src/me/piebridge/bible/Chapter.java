@@ -82,7 +82,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public static int FONTSIZE_MAX = 72;
     private int fontsize = FONTSIZE_MED;
     public final static String link_bibledata = "https://github.com/liudongmiao/bibledata?mobile=0";
-    public final static String link_github = "<a href=\"" + link_bibledata + "\">bibledata</a> on <a href=\"https://github.com\">GitHub</a>";
+    public final static String link_github = "<a href=\"" + link_bibledata + "\">bibledata</a> @ <a href=\"https://github.com\">GitHub</a>";
 
     private ZoomButtonsController mZoomButtonsController = null;
 
@@ -727,10 +727,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 handler.sendEmptyMessage(BIBLEDATA);
                 bible.checkVersions();
                 Log.d(TAG, "will set version: " + version);
-                if (version == null || version.length() == 0 || version.endsWith("demo")) {
+                if ("".equals(version)) {
+                    version = bible.getVersion();
+                }
+                if (version.endsWith("demo")) {
                     bible.setDefaultVersion();
-                } else {
-                    bible.setVersion(version);
                 }
                 handler.sendEmptyMessage(SHOWDATA);
             }
