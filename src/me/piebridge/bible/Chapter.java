@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import android.preference.PreferenceManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -523,11 +524,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 break;
             case R.id.share:
                 if (!copytext.equals("")) {
-                    Intent sendIntent = new Intent();
-                    sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, copytext);
-                    sendIntent.setType("text/plain");
-                    startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.share)));
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.putExtra(Intent.EXTRA_TEXT, copytext);
+                    intent.setType("text/plain");
+                    try {
+                        startActivity(Intent.createChooser(intent, getString(R.string.share)));
+                    } catch (ActivityNotFoundException e) {
+                    }
                 }
         }
     }
@@ -802,7 +805,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public boolean onSearchRequested() {
-        startActivity(new Intent(Chapter.this, Search.class));
+        startActivity(new Intent(this, Search.class));
         return false;
     }
 

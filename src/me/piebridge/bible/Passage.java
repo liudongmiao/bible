@@ -89,24 +89,24 @@ public class Passage extends Activity {
         Intent intent;
         ArrayList<OsisItem> items = OsisItem.parseSearch(search, getBaseContext());
         if (items.size() > 0 && !"".equals(items.get(0).chapter)) {
-            intent = new Intent(getApplicationContext(), Chapter.class);
+            intent = new Intent(this, Chapter.class);
             intent.putExtra("search", search);
             intent.putParcelableArrayListExtra("osiss", items);
             startActivity(intent);
         } else if (search != null && Intent.ACTION_SEND.equals(action)) {
-            intent = new Intent(getApplicationContext(), Search.class);
+            intent = new Intent(this, Search.class);
             intent.setAction(Intent.ACTION_SEND);
             intent.putExtra(SearchManager.QUERY, search);
             startActivity(intent);
         } else if (search != null) {
-            intent = new Intent(getApplicationContext(), Result.class);
+            intent = new Intent(this, Result.class);
             intent.setAction(Intent.ACTION_SEARCH);
             intent.putExtra(SearchManager.QUERY, search);
             intent.putExtra("osisfrom", osisfrom);
             intent.putExtra("osisto", osisto);
             startActivity(intent);
         } else {
-            intent = new Intent(getApplicationContext(), Chapter.class);
+            intent = new Intent(this, Chapter.class);
             startActivity(intent);
         }
         finish();

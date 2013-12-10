@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -160,11 +161,12 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
             subject.append("-");
             subject.append(Build.VERSION.RELEASE);
             subject.append(")");
-            // http://stackoverflow.com/questions/8534899
-            Uri uri = Uri.parse("mailto:liudongmiao@gmail.com" + new Uri.Builder()
-                .appendQueryParameter("subject", subject.toString())
-                .build().toString());
-            startActivity(new Intent(Intent.ACTION_SENDTO, uri));
+            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:liudongmiao@gmail.com"));
+            intent.putExtra(Intent.EXTRA_SUBJECT, subject.toString());
+            try {
+                startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+            }
         }
         return true;
     }

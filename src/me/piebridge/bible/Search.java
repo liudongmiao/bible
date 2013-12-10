@@ -394,7 +394,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
                 query = edittext.getText().toString();
                 // isEmpty since api-9 ?
                 if (query.length() > 0) {
-                    Intent intent = new Intent(getApplicationContext(), Passage.class);
+                    Intent intent = new Intent(this, Passage.class);
                     intent.setAction(Intent.ACTION_SEARCH);
                     intent.putExtra(SearchManager.QUERY, query);
                     intent.putExtra("osisfrom", osisfrom);

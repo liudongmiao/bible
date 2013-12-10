@@ -225,7 +225,7 @@ public class Result extends Activity
     }
 
     private void showChapter(String book, int chapter, int verse) {
-        Intent intent = new Intent(getApplicationContext(), Chapter.class);
+        Intent intent = new Intent(this, Chapter.class);
         ArrayList<OsisItem> items = new ArrayList<OsisItem>();
         Log.d(TAG, String.format("book: %s, chapter: %d, verse: %d", book, chapter, verse));
         if (chapter == 0) {
@@ -240,7 +240,7 @@ public class Result extends Activity
 
     @Override
     public boolean onSearchRequested() {
-        startActivity(new Intent(getApplicationContext(), Search.class));
+        startActivity(new Intent(this, Search.class));
         return false;
     }
 
