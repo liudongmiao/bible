@@ -175,16 +175,19 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         findViewById(R.id.share).setOnClickListener(this);
         findViewById(R.id.items).setOnClickListener(this);
 
+        gridview = (GridView) findViewById(R.id.gridview);
+        final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         adapter = new ArrayAdapter<String>(this, R.layout.grid) {
-            private LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                View view = convertView;
-                ToggleButton grid = null;
-                if (view == null) {
-                    view = inflater.inflate(R.layout.grid, null);
+                View view;
+                if (convertView != null && Integer.valueOf(gridview.getNumColumns()).equals(convertView.getTag())) {
+                    view = convertView;
+                } else {
+                    view = inflater.inflate(R.layout.grid, parent, false);
+                    view.setTag(gridview.getNumColumns());
                 }
-                grid = (ToggleButton) view.findViewById(R.id.text1);
+                ToggleButton grid = (ToggleButton) view.findViewById(R.id.text1);
                 grid.setTextOn(getItem(position));
                 grid.setTextOff(getItem(position));
                 grid.setChecked(getItem(position).equals(selected));
@@ -193,7 +196,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             }
         };
 
-        gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(adapter);
         gridview.setVisibility(View.GONE);
         gridview.setOnItemClickListener(this);
