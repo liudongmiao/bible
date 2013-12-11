@@ -1,6 +1,10 @@
 Changelog
 =========
 
+**v0.9.25**
+
+- Fix book/chapter exception before android 3.0
+
 **v0.9.24**
 
 - Fix corrupt in chapter selection
