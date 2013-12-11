@@ -181,11 +181,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view;
-                if (convertView != null && Integer.valueOf(gridview.getNumColumns()).equals(convertView.getTag())) {
+                Integer column = getNumColumns(gridview);
+                if (convertView != null && column != null && column.equals(convertView.getTag())) {
                     view = convertView;
                 } else {
                     view = inflater.inflate(R.layout.grid, parent, false);
-                    view.setTag(gridview.getNumColumns());
+                    view.setTag(column);
                 }
                 ToggleButton grid = (ToggleButton) view.findViewById(R.id.text1);
                 grid.setTextOn(getItem(position));
@@ -193,6 +194,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 grid.setChecked(getItem(position).equals(selected));
                 grid.setVisibility(getItem(position).equals("") ? View.INVISIBLE : View.VISIBLE);
                 return view;
+            }
+
+            private Integer getNumColumns(GridView gridview) {
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+                    return gridview.getNumColumns();
+                } else {
+                    return (Integer) Bible.getField(gridview, "mNumColumns");
+                }
             }
         };
 
