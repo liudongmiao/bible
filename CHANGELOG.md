@@ -1,6 +1,11 @@
 Changelog
 =========
 
+**v0.9.24**
+
+- Fix corrupt in chapter selection
+- Fix spacing problem when copy
+
 **v0.9.23**
 
 - Fix possible null pointer
