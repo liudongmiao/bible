@@ -1,17 +1,13 @@
 package me.piebridge.bible;
 
-import java.util.Locale;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -21,13 +17,10 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 public class Settings extends PreferenceActivity implements OnPreferenceChangeListener {
 
@@ -38,9 +31,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     public static String NIGHTMODE = "nightmode";
     public static String JUSTIFY = "justify";
     public static String LOG = "log";
-    public static String FEEDBACK = "feedback";
     public static String PINCH = "pinch";
-    public static String MORE = "more";
 
     private String versionName = null;
 
@@ -66,8 +57,6 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         root.addPreference(addBooleanPreference(JUSTIFY, R.string.justify, 0));
         root.addPreference(addBooleanPreference(PINCH, R.string.pinch, R.string.pinch_not_work));
         root.addPreference(addBooleanPreference(LOG, R.string.log, 0));
-        root.addPreference(addPreference(MORE, R.string.more));
-        root.addPreference(addPreference(FEEDBACK, R.string.feedback));
         return root;
     }
 
@@ -140,33 +129,6 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         final String key = preference.getKey();
         if (FONTSIZE.equals(key)) {
             setupFontDialog(preference);
-        } else if (MORE.equals(key)) {
-            String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">" + getString(R.string.bibledatahuman) + "</a>";
-            String text = getString(R.string.moreversion, new Object[] {link_market, Chapter.link_github}) + "</div>\n";
-            AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.more)
-                .setMessage(Html.fromHtml(text))
-                .setPositiveButton(android.R.string.ok, null).show();
-            TextView message = (TextView) dialog.findViewById(android.R.id.message);
-            message.setMovementMethod(LinkMovementMethod.getInstance());
-        } else if (FEEDBACK.equals(key)) {
-            StringBuffer subject = new StringBuffer();
-            subject.append(getString(R.string.app_name));
-            if (versionName != null) {
-                subject.append(" ");
-                subject.append(versionName);
-            }
-            subject.append("(Android ");
-            subject.append(Locale.getDefault().toString());
-            subject.append("-");
-            subject.append(Build.VERSION.RELEASE);
-            subject.append(")");
-            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:liudongmiao@gmail.com"));
-            intent.putExtra(Intent.EXTRA_SUBJECT, subject.toString());
-            try {
-                startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-            }
         }
         return true;
     }

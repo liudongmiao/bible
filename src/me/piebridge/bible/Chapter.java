@@ -25,6 +25,8 @@ import android.os.Message;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,6 +49,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager.NameNotFoundException;
 
 import java.lang.reflect.Method;
 
@@ -118,6 +121,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private boolean pinch = false;
     private boolean hasIntentData = false;
     private String body;
+
+    String versionName = null;
+    private final int MENU_SETTINGS = 0;
+    private final int MENU_MORE = 2;
+    private final int MENU_FEEDBACK = 1;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -266,6 +274,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         Log.d(TAG, "onCreate");
         hasIntentData = true;
         font = new File(new File(new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName()), "files"), "custom.ttf");
+
+        try {
+            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (NameNotFoundException e) {
+        }
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         if (!hasIntentData) {
@@ -416,7 +429,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         context = context.replaceAll("<span class=\"chapternum mid-paragraph\">.*?</span>", "");
         context = context.replaceAll("(<strong>\\D*?(\\d+).*?</strong>)", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup>$1</sup></span>");
         context = context.replaceAll("<sup(.*?>\\D*?(\\d+).*?)</sup>", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup><strong$1</strong></sup></span>");
-        if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE) || "CCB".equalsIgnoreCase(bible.getVersion()) || bible.getVersion().endsWith("SS")) {
+        if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE) || "CCB".equalsIgnoreCase(bible.getVersion()) || bible.getVersion().endsWith("ss")) {
             context = context.replaceAll("「", "“").replaceAll("」", "”");
             context = context.replaceAll("『", "‘").replaceAll("』", "’");
         }
@@ -656,17 +669,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case R.id.version:
                 storeOsisVersion();
                 if (pos >= bible.getCount(Bible.TYPE.VERSION)) {
-                    String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">market://search?q=" + getString(R.string.bibledatahuman) + "&c=apps</a>";
-                    String body = "<div id=\"pb-demo\">" + getString(R.string.moreversion, new Object[] {link_market, link_github}) + "</div>\n";
-                    showContent("", body);
-                    return;
+                    showMoreVersion();
+                } else {
+                    version = bible.get(Bible.TYPE.VERSION, pos);
+                    Log.d(TAG, "version: " + version);
+                    bible.setVersion(version);
+                    fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize-" + version, fontsize);
+                    uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
+                    showUri();
                 }
-                version = bible.get(Bible.TYPE.VERSION, pos);
-                Log.d(TAG, "version: " + version);
-                bible.setVersion(version);
-                fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize-" + version, fontsize);
-                uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
-                showUri();
                 break;
             case R.id.items:
                 if (items != null && pos < items.size()) {
@@ -1077,7 +1088,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private void createMenu(Menu menu) {
         menu.clear();
-        menu.add(R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
+        menu.add(Menu.NONE, MENU_SETTINGS, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
+        menu.add(Menu.NONE, MENU_FEEDBACK, MENU_FEEDBACK, R.string.feedback);
+        menu.add(Menu.NONE, MENU_MORE, MENU_MORE, R.string.more);
     }
 
     @Override
@@ -1088,10 +1101,37 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        storeOsisVersion();
-        Intent intent = new Intent(this, Settings.class);
-        intent.putExtra("body", body);
-        startActivityIfNeeded(intent, -1);
+        Intent intent;
+        switch (item.getItemId()) {
+            case MENU_SETTINGS:
+                storeOsisVersion();
+                intent = new Intent(this, Settings.class);
+                intent.putExtra("body", body);
+                startActivityIfNeeded(intent, -1);
+                break;
+            case MENU_MORE:
+                showMoreVersion();
+                break;
+            case MENU_FEEDBACK:
+                StringBuffer subject = new StringBuffer();
+                subject.append(getString(R.string.app_name));
+                if (versionName != null) {
+                    subject.append(" ");
+                    subject.append(versionName);
+                }
+                subject.append("(Android ");
+                subject.append(Locale.getDefault().toString());
+                subject.append("-");
+                subject.append(Build.VERSION.RELEASE);
+                subject.append(")");
+                intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:liudongmiao@gmail.com"));
+                intent.putExtra(Intent.EXTRA_SUBJECT, subject.toString());
+                try {
+                    startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                }
+                break;
+        }
         return false;
     }
 
@@ -1102,6 +1142,17 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             bible.checkBibleData(false);
         }
         super.onWindowFocusChanged(hasFocus);
+    }
+    
+    private void showMoreVersion() {
+        String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">" + getString(R.string.bibledatahuman) + "</a>";
+        String text = getString(R.string.moreversion, new Object[] {link_market, Chapter.link_github}) + "</div>\n";
+        AlertDialog dialog = new AlertDialog.Builder(this)
+            .setTitle(R.string.more)
+            .setMessage(Html.fromHtml(text))
+            .setPositiveButton(android.R.string.ok, null).show();
+        TextView message = (TextView) dialog.findViewById(android.R.id.message);
+        message.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
 }
