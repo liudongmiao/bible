@@ -73,6 +73,10 @@
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <data android:scheme="package" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SECRET_CODE" />
+                <data android:host="24253" android:scheme="android_secret_code" />
+            </intent-filter>
         </receiver>
     </application>
 </manifest>

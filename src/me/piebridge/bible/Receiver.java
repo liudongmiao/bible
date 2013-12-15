@@ -21,6 +21,9 @@ public class Receiver extends BroadcastReceiver {
                 Log.d(TAG,  "action: " + action + ", packageName: " + context.getPackageName() + ", applicationName: " + applicationName);
                 bible.checkBibleData(false);
             }
+        } else if ("android.provider.Telephony.SECRET_CODE".equals(action)) {
+            context.startActivity(new Intent(context, Chapter.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } else {
             bible.checkBibleData(false);
         }
