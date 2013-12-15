@@ -57,7 +57,6 @@ public class Bible
 
     private SQLiteDatabase database = null;
     private String databaseVersion = "";
-    private String databasePath = null;
 
     private static Context mContext = null;
 
@@ -65,6 +64,7 @@ public class Bible
     private ArrayList<String> osiss = new ArrayList<String>();
     private ArrayList<String> chapters = new ArrayList<String>();
     private ArrayList<String> versions = new ArrayList<String>();
+    private HashMap<String, String> versionpaths = new HashMap<String, String>();
     private ArrayList<String> humans = new ArrayList<String>();
 
     private static Bible bible = null;
@@ -75,17 +75,11 @@ public class Bible
 
     private LinkedHashMap<String, String> osisZHCN = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> osisZHTW = new LinkedHashMap<String, String>();
-    private LinkedHashMap<String, String> humanEN = new LinkedHashMap<String, String>();
-    private LinkedHashMap<String, String> humanZHCN = new LinkedHashMap<String, String>();
-    private LinkedHashMap<String, String> humanZHTW = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> allhuman = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> searchfull = new LinkedHashMap<String, String>();;
     private LinkedHashMap<String, String> searchshort = new LinkedHashMap<String, String>();;
     private LinkedHashMap<String, String> human;
 
-    private final int EN = 0;
-    private final int ZHCN = 1;
-    private final int ZHTW = 2;
-    private int[] orders = new int[3];
     private Locale lastLocale;
     private boolean unpacked = false;
     private HashMap<String, Long> mtime = new HashMap<String, Long>();
@@ -107,7 +101,6 @@ public class Bible
         Locale locale = Locale.getDefault();
         if (!locale.equals(lastLocale)) {
             lastLocale = locale;
-            setOrders();
             setResources();
         }
     }
@@ -140,7 +133,7 @@ public class Bible
         if (!setDatabasePath()) {
             return false;
         }
-        File path = new File(databasePath);
+        File path = getExternalFilesDirWrapper();
         File oldpath = new File(Environment.getExternalStorageDirectory(), ".piebridge");
         Long oldmtime = mtime.get(path.getAbsolutePath());
         if (oldmtime == null) {
@@ -151,37 +144,8 @@ public class Bible
             return true;
         }
         versions.clear();
-        Log.d(TAG, "path=" + path + ", oldpath=" + oldpath);
-        if (oldpath.exists() && oldpath.isDirectory()) {
-            String[] names = oldpath.list();
-            for (String name: names) {
-                if (!name.endsWith(".sqlite3")) {
-                    continue;
-                }
-                File oldfile = new File(oldpath, name);
-                File newfile = new File(path, name);
-                if (oldfile.exists() && oldfile.isFile() && !newfile.exists()) {
-                    oldfile.renameTo(newfile);
-                }
-            }
-        }
-        if (path.exists() && path.isDirectory()) {
-            String[] names = path.list();
-            for (String name: names) {
-                File file = new File(path, name);
-                if (name.endsWith(".sqlite3") && file.exists() && file.isFile()) {
-                    Log.d(TAG, "add version " + name);
-                    String version = name.toLowerCase(Locale.US).replace(".sqlite3", "").replace("niv2011", "niv").replace("niv1984", "niv84");
-                    if (!versionFullnames.containsKey(version)) {
-                        setVersionMetaData(version);
-                        versionFullnames.put(version, getVersionMetadata("fullname", version));
-                        versionNames.put(version, getVersionMetadata("name", version));
-                    }
-                    versions.add(version);
-                }
-            }
-        }
-
+        checkVersion(oldpath);
+        checkVersion(path);
         if (versions.size() == 0) {
             setDemoVersions();
             unpacked = true;
@@ -192,6 +156,7 @@ public class Bible
                 versions.add("niv84demo");
                 versions.add("cunpssdemo");
             }
+            checkVersion(mContext.getFilesDir());
         }
         mtime.put(path.getAbsolutePath(),  path.lastModified());
         return true;
@@ -199,15 +164,24 @@ public class Bible
 
     public boolean isDemoVersion(String version) {
         File file = getFile(version);
-        return file.getParentFile().equals(mContext.getFilesDir());
+        if (file == null) {
+            return false;
+        } else {
+            return file.getParentFile().equals(mContext.getFilesDir());
+        }
     }
 
     public boolean setVersion(String version) {
         if (version == null) {
             return false;
         }
-        if (databasePath == null) {
-            return false;
+        File file = getFile(version);
+        if (file == null || !file.exists() || !file.isFile()) {
+            if ("".equals(databaseVersion)) {
+                return setDefaultVersion();
+            } else {
+                return false;
+            }
         }
         if (database != null) {
             if (databaseVersion.equals(version)) {
@@ -222,45 +196,31 @@ public class Bible
             return false;
         }
         */
-        File file = getFile(version);
-        if (file.exists() && file.isFile()) {
-            databaseVersion = version;
+        databaseVersion = version;
+        try {
+            database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
+                    SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+            Log.d(TAG, "open database \"" + database.getPath() + "\"");
+            setMetadata(database, databaseVersion);
+            return true;
+        } catch (Exception e) {
             try {
-                database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
-                        SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-                Log.d(TAG, "open database \"" + database.getPath() + "\"");
-                setMetadata(database, databaseVersion);
-                return true;
-            } catch (Exception e) {
-                try {
-                    file.delete();
-                } catch (Exception f) {
-                }
-                checkVersions();
-                return setDefaultVersion();
+                file.delete();
+            } catch (Exception f) {
             }
-        } else {
-            Log.e(TAG, "cannot get database \"" + file.getAbsolutePath() + "\"");
-            databaseVersion = "";
-            database = null;
-            return false;
+            checkVersions();
+            return setDefaultVersion();
         }
     }
 
     private File getFile(String version) {
-        File file = null;
         version = version.toLowerCase(Locale.US);
-        if (version.endsWith("demo")) {
-            file = new File(mContext.getFilesDir(), version + ".sqlite3");
-        } else if (version.equals("niv")) {
-            file = new File(databasePath, "niv2011.sqlite3");
-        } else if (version.equals("niv84")) {
-            file = new File(databasePath, "niv1984.sqlite3");
+        String path = versionpaths.get(version);
+        if (path != null) {
+            return new File(path);
+        } else {
+            return null;
         }
-        if (file == null || !file.exists() || !file.isFile()) {
-            file = new File(databasePath, version + ".sqlite3");
-        }
-        return file;
     }
 
     private void setMetadata(SQLiteDatabase  metadata, String dataversion) {
@@ -280,14 +240,7 @@ public class Bible
                     human = "出埃及记";
                 }
 
-                if (!isCJK(human)) {
-                    humanEN.put(osis, human);
-                } else if (isVersionZHCN(dataversion)) {
-                    humanZHCN.put(osis, human);
-                } else if (isVersionZHTW(dataversion)) {
-                    humanZHTW.put(osis, human);
-                }
-
+                allhuman.put(osis, human);
                 osiss.add(osis);
                 if (scale > 1.0f) {
                     books.add(human);
@@ -358,8 +311,6 @@ public class Bible
             if (file == null) {
                 return false;
             }
-            databasePath = file.getAbsolutePath();
-            Log.d(TAG, "set database path: " + databasePath);
             return true;
         } else {
             Log.d(TAG, "not mounted");
@@ -416,8 +367,8 @@ public class Bible
 
     private String getVersionMetadata(String name, String version) {
         String value = version.replace("demo", "");
-        File file = new File(databasePath, version + ".sqlite3");
-        if (file.exists() && file.isFile()) {
+        File file = getFile(version);
+        if (file != null && file.exists() && file.isFile()) {
             SQLiteDatabase metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
                     SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
             Cursor cursor = metadata.query("metadata", new String[] {"value"}, "name = ? or name = ?",
@@ -581,24 +532,13 @@ public class Bible
     private ArrayList<LinkedHashMap<String, String>> getMaps(TYPE type) {
         checkLocale();
         ArrayList<LinkedHashMap<String, String>> maps = new ArrayList<LinkedHashMap<String, String>>();
-        for (int order: orders) {
-            switch (order) {
-                case ZHCN:
-                    maps.add(type == TYPE.HUMAN ? humanZHCN : osisZHCN);
-                    break;
-                case ZHTW:
-                    maps.add(type == TYPE.HUMAN ? humanZHTW: osisZHTW);
-                    break;
-                case EN:
-                    if (type == TYPE.HUMAN) {
-                        maps.add(humanEN);
-                    }
-                    break;
-            }
-        }
         if (type == TYPE.HUMAN) {
+            maps.add(allhuman);
             maps.add(searchfull);
             maps.add(searchshort);
+        } else {
+            maps.add(osisZHCN);
+            maps.add(osisZHTW);
         }
         return maps;
     }
@@ -793,22 +733,6 @@ public class Bible
         }
 
         return osiss;
-    }
-
-    private void setOrders() {
-        if (lastLocale.equals(Locale.SIMPLIFIED_CHINESE)) {
-            orders[0] = ZHCN;
-            orders[1] = ZHTW;
-            orders[2] = EN;
-        } else if (lastLocale.equals(Locale.TRADITIONAL_CHINESE)) {
-            orders[0] = ZHTW;
-            orders[1] = ZHCN;
-            orders[2] = EN;
-        } else {
-            orders[0] = EN;
-            orders[1] = ZHCN;
-            orders[2] = ZHTW;
-        }
     }
 
     public static boolean isCJK(String s) {
@@ -1060,4 +984,32 @@ public class Bible
 
         return true;
     }
-}
+
+    void checkVersion(File path) {
+        if (!path.exists() || !path.isDirectory() || path.list() == null) {
+            return;
+        }
+        String[] names = path.list();
+        for (String name : names) {
+            File file = new File(path, name);
+            if (name.endsWith(".sqlite3") && file.exists() && file.isFile()) {
+                Log.d(TAG, "add version " + name);
+                String version = name.toLowerCase(Locale.US).replace(".sqlite3", "")
+                        .replace("niv2011", "niv")
+                        .replace("niv1984", "niv84");
+                if (!versionFullnames.containsKey(version)) {
+                    setVersionMetaData(version);
+                    versionFullnames.put(version, getVersionMetadata("fullname", version));
+                    versionNames.put(version, getVersionMetadata("name", version));
+                }
+                versions.add(version);
+                versionpaths.put(version.toLowerCase(Locale.US), file.getAbsolutePath());
+                if (version.equalsIgnoreCase("niv2011")) {
+                    versionpaths.put("niv", file.getAbsolutePath());
+                } else if (version.equalsIgnoreCase("niv1984")) {
+                    versionpaths.put("niv84", file.getAbsolutePath());
+                }
+            }
+        }
+    }
+ }
