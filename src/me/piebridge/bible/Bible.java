@@ -996,17 +996,7 @@ public class Bible
                         .replace("niv2011", "niv")
                         .replace("niv1984", "niv84");
                 if (!versions.contains(version)) {
-                    SQLiteDatabase metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
-                        SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-                    String dataversion = version.replace("demo", "");
-                    if (!versionFullnames.containsKey(version)) {
-                        versionFullnames.put(version, getVersionMetadata("fullname", metadata, dataversion));
-                    }
-                    if (!versionNames.containsKey(version)) {
-                        versionNames.put(version, getVersionMetadata("name", metadata, dataversion));
-                    }
-                    setMetadata(metadata, dataversion);
-                    metadata.close();
+                    checkVersionMeta(file, version);
                 }
                 versions.add(version);
                 versionpaths.put(version.toLowerCase(Locale.US), file.getAbsolutePath());
@@ -1018,4 +1008,26 @@ public class Bible
             }
         }
     }
+
+    private void checkVersionMeta(File file, String version) {
+        try {
+            SQLiteDatabase metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
+                SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+            String dataversion = version.replace("demo", "");
+            if (!versionFullnames.containsKey(version)) {
+                versionFullnames.put(version, getVersionMetadata("fullname", metadata, dataversion));
+            }
+            if (!versionNames.containsKey(version)) {
+                versionNames.put(version, getVersionMetadata("name", metadata, dataversion));
+            }
+            setMetadata(metadata, dataversion);
+            metadata.close();
+        } catch (Exception e) {
+            try {
+                file.delete();
+            } catch (Exception f) {
+            }
+        }
+    }
+
  }

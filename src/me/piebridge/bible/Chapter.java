@@ -1143,7 +1143,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         super.onWindowFocusChanged(hasFocus);
     }
-    
+
     private void showMoreVersion() {
         String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">" + getString(R.string.bibledatahuman) + "</a>";
         String text = getString(R.string.moreversion, new Object[] {link_market, Chapter.link_github}) + "</div>\n";
