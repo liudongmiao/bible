@@ -657,6 +657,13 @@ public class Bible
             }
         }
 
+        if (book == null || "".equals(book)) {
+            for (int i = 0; i < this.osiss.size() && i < limit; ++i) {
+                osiss.put(humans.get(i), this.osiss.get(i));
+            }
+            return osiss;
+        }
+
         for (Entry<String, String> entry: maps) {
             if (checkStartSuggest(osiss, entry.getValue(), entry.getValue(), book, limit)) {
                 return osiss;
@@ -700,6 +707,7 @@ public class Bible
         if ("".equals(osis)) {
             return osiss;
         }
+
         String bookname = get(TYPE.HUMAN, bible.getPosition(TYPE.OSIS, osis));
         if (bookname == null) {
             bookname = osis;
