@@ -76,9 +76,9 @@ public class Bible
     private LinkedHashMap<String, String> osisZHCN = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> osisZHTW = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> allhuman = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> allosis = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> searchfull = new LinkedHashMap<String, String>();;
     private LinkedHashMap<String, String> searchshort = new LinkedHashMap<String, String>();;
-    private LinkedHashMap<String, String> human;
 
     private Locale lastLocale;
     private boolean unpacked = false;
@@ -158,7 +158,7 @@ public class Bible
             }
             checkVersion(mContext.getFilesDir());
         }
-        mtime.put(path.getAbsolutePath(),  path.lastModified());
+        mtime.put(path.getAbsolutePath(), path.lastModified());
         return true;
     }
 
@@ -223,7 +223,7 @@ public class Bible
         }
     }
 
-    private void setMetadata(SQLiteDatabase  metadata, String dataversion) {
+    private void setMetadata(SQLiteDatabase metadata, String dataversion) {
         Cursor cursor = metadata.query(Provider.TABLE_BOOKS, Provider.COLUMNS_BOOKS, null, null, null, null, null);
         osiss.clear();
         books.clear();
@@ -232,18 +232,21 @@ public class Bible
         try {
             while (cursor.moveToNext()) {
                 String osis = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_OSIS));
-                String human = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN));
+                String book = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN));
                 String chapter = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CHAPTERS));
 
                 // fix for ccb
-                if ("出埃及".equals(human)) {
-                    human = "出埃及记";
+                if ("出埃及".equals(book)) {
+                    book = "出埃及记";
                 }
 
-                allhuman.put(osis, human);
+                if (book.endsWith(" 1")) {
+                    book = book.substring(0, book.length() - 2);
+                }
+                allhuman.put(book, osis);
                 osiss.add(osis);
                 if (scale > 1.0f) {
-                    books.add(human);
+                    books.add(book);
                 } else {
                     if (dataversion.endsWith("ts")) {
                         books.add(getResourceValue(osisZHTW, osis));
@@ -254,7 +257,7 @@ public class Bible
                     }
                 }
                 chapters.add(chapter);
-                humans.add(human);
+                humans.add(book);
             }
         } finally {
             cursor.close();
@@ -365,23 +368,16 @@ public class Bible
         return databaseVersion;
     }
 
-    private String getVersionMetadata(String name, String version) {
-        String value = version.replace("demo", "");
-        File file = getFile(version);
-        if (file != null && file.exists() && file.isFile()) {
-            SQLiteDatabase metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
-                    SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-            Cursor cursor = metadata.query("metadata", new String[] {"value"}, "name = ? or name = ?",
-                    new String[] {name, name + "_" + Locale.getDefault().toString()},
-                    null, null, "name desc", "1");
-            while (cursor != null && cursor.moveToNext()) {
-                value = cursor.getString(cursor.getColumnIndexOrThrow("value"));
-                cursor.close();
-                break;
-            }
-            metadata.close();
+    private String getVersionMetadata(String name, SQLiteDatabase metadata, String defaultValue) {
+        String value = defaultValue;
+        Cursor cursor = metadata.query("metadata", new String[] { "value" },
+                "name = ? or name = ?", new String[] { name, name + "_" + Locale.getDefault().toString() },
+                null, null, "name desc", "1");
+        while (cursor != null && cursor.moveToNext()) {
+            value = cursor.getString(cursor.getColumnIndexOrThrow("value"));
+            cursor.close();
+            break;
         }
-
         return value;
     }
 
@@ -411,14 +407,25 @@ public class Bible
         }
     }
 
+    private void setResourceValuesReverse(HashMap<String, String> map, int resId) {
+        for (String entry: mContext.getResources().getStringArray(resId)) {
+            String[] strings = entry.split("\\|", 2);
+            if (strings.length > 1) {
+                map.put(strings[1], strings[0]);
+            }
+        }
+    }
+
     private void setResources() {
         Log.d(TAG, "setResources");
         setResourceValues(versionNames, R.array.versionname);
         setResourceValues(versionFullnames, R.array.versionfullname);
         setResourceValues(osisZHCN, R.array.osiszhcn);
         setResourceValues(osisZHTW, R.array.osiszhtw);
-        setResourceValues(searchfull, R.array.searchfull);
-        setResourceValues(searchshort, R.array.searchshort);
+        setResourceValuesReverse(allosis, R.array.osiszhcn);
+        setResourceValuesReverse(allosis, R.array.osiszhtw);
+        setResourceValuesReverse(searchfull, R.array.searchfullzhcn);
+        setResourceValuesReverse(searchshort, R.array.searchshortzhcn);
     }
 
     private void setDemoVersions() {
@@ -489,21 +496,20 @@ public class Bible
     private String getOsis(String book, ArrayList<LinkedHashMap<String, String>> maps) {
 
         // test osis
-        for (LinkedHashMap<String, String> map: maps) {
-            for (Entry<String, String> entry: map.entrySet()) {
-                if (entry.getKey().equalsIgnoreCase(book)) {
-                    return entry.getKey();
+        if (maps.size() > 0) {
+            for (String osis : maps.get(0).values()) {
+                if (osis.equalsIgnoreCase(book)) {
+                    return osis;
                 }
             }
-            break;
         }
 
         book = book.toLowerCase(Locale.US).replace(" ", "");
         // prefer fullname
         for (LinkedHashMap<String, String> map: maps) {
             for (Entry<String, String> entry: map.entrySet()) {
-                if (entry.getValue().toLowerCase(Locale.US).replace(" ", "").equals(book)) {
-                    return entry.getKey();
+                if (entry.getKey().toLowerCase(Locale.US).replace(" ", "").equals(book)) {
+                    return entry.getValue();
                 }
             }
         }
@@ -511,8 +517,8 @@ public class Bible
         // prefer startswith
         for (LinkedHashMap<String, String> map: maps) {
             for (Entry<String, String> entry: map.entrySet()) {
-                if (entry.getValue().toLowerCase(Locale.US).replace(" ", "").startsWith(book)) {
-                    return entry.getKey();
+                if (entry.getKey().toLowerCase(Locale.US).replace(" ", "").startsWith(book)) {
+                    return entry.getValue();
                 }
             }
         }
@@ -520,8 +526,8 @@ public class Bible
         // prefer contains
         for (LinkedHashMap<String, String> map: maps) {
             for (Entry<String, String> entry: map.entrySet()) {
-                if (entry.getValue().toLowerCase(Locale.US).replace(" ", "").contains(book)) {
-                    return entry.getKey();
+                if (entry.getKey().toLowerCase(Locale.US).replace(" ", "").contains(book)) {
+                    return entry.getValue();
                 }
             }
         }
@@ -537,8 +543,7 @@ public class Bible
             maps.add(searchfull);
             maps.add(searchshort);
         } else {
-            maps.add(osisZHCN);
-            maps.add(osisZHTW);
+            maps.add(allosis);
         }
         return maps;
     }
@@ -603,18 +608,9 @@ public class Bible
 
     private boolean addSuggest(LinkedHashMap<String, String> osiss, String value, String osis, int limit) {
         if (!osiss.values().contains(osis)) {
-            String text;
-            if (human == null || human.get(osis) == null) {
-                text = value;
-            } else {
-                text = human.get(osis);
-            }
+            String text = get(TYPE.HUMAN, bible.getPosition(TYPE.OSIS, osis));
             Log.d(TAG, "add suggest, text=" + text + ", data=" + osis);
-            if (text.indexOf(osis) == -1) {
-                osiss.put(text, text);
-            } else {
-                osiss.put(text, osis);
-            }
+            osiss.put(text, osis);
         }
         if (limit != -1 && osiss.size() >= limit) {
             Log.d(TAG, "arrive limit " + limit);
@@ -639,7 +635,6 @@ public class Bible
 
         Log.d(TAG, "book: " + book);
 
-        human = null;
         ArrayList<Entry<String, String>> maps = new ArrayList<Entry<String, String>>();
 
         for (Entry<String, String> entry: searchshort.entrySet()) {
@@ -651,9 +646,6 @@ public class Bible
         }
 
         for (LinkedHashMap<String, String> map: getMaps(TYPE.HUMAN)) {
-            if (human == null && map.size() > 0) {
-                human = map;
-            }
             for (Entry<String, String> entry: map.entrySet()) {
                 maps.add(entry);
             }
@@ -666,25 +658,25 @@ public class Bible
         }
 
         for (Entry<String, String> entry: maps) {
-            if (checkStartSuggest(osiss, entry.getKey(), entry.getKey(), book, limit)) {
+            if (checkStartSuggest(osiss, entry.getValue(), entry.getValue(), book, limit)) {
                 return osiss;
             }
         }
 
         for (Entry<String, String> entry: maps) {
-            if (checkStartSuggest(osiss, entry.getKey(), entry.getKey(), book, limit)) {
+            if (checkContainSuggest(osiss, entry.getValue(), entry.getValue(), book, limit)) {
                 return osiss;
             }
         }
 
         for (Entry<String, String> entry: maps) {
-            if (checkContainSuggest(osiss, entry.getValue(), entry.getKey(), book, limit)) {
+            if (checkStartSuggest(osiss, entry.getKey(), entry.getValue(), book, limit)) {
                 return osiss;
             }
         }
 
         for (Entry<String, String> entry: maps) {
-            if (checkContainSuggest(osiss, entry.getValue(), entry.getKey(), book, limit)) {
+            if (checkContainSuggest(osiss, entry.getKey(), entry.getValue(), book, limit)) {
                 return osiss;
             }
         }
@@ -700,12 +692,15 @@ public class Bible
             }
         } else if (osiss.size() == 1) {
             for (Entry<String, String> entry: osiss.entrySet()) {
-                osis = entry.getKey();
+                osis = entry.getValue();
                 chapter = "0";
             }
         }
 
-        String bookname = human.get(osis);
+        if ("".equals(osis)) {
+            return osiss;
+        }
+        String bookname = get(TYPE.HUMAN, bible.getPosition(TYPE.OSIS, osis));
         if (bookname == null) {
             bookname = osis;
         }
@@ -756,11 +751,6 @@ public class Bible
             return true;
         }
         return false;
-    }
-
-    private boolean setVersionMetaData(String version) {
-        Log.d(TAG, "setVersionMetaData: " + version);
-        return (versions.contains(version) && setVersion(version));
     }
 
     public static Object getField(Object object, final Class<?> clazz, final String fieldName) {
@@ -997,10 +987,18 @@ public class Bible
                 String version = name.toLowerCase(Locale.US).replace(".sqlite3", "")
                         .replace("niv2011", "niv")
                         .replace("niv1984", "niv84");
-                if (!versionFullnames.containsKey(version)) {
-                    setVersionMetaData(version);
-                    versionFullnames.put(version, getVersionMetadata("fullname", version));
-                    versionNames.put(version, getVersionMetadata("name", version));
+                if (!versions.contains(version)) {
+                    SQLiteDatabase metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
+                        SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+                    String dataversion = version.replace("demo", "");
+                    if (!versionFullnames.containsKey(version)) {
+                        versionFullnames.put(version, getVersionMetadata("fullname", metadata, dataversion));
+                    }
+                    if (!versionNames.containsKey(version)) {
+                        versionNames.put(version, getVersionMetadata("name", metadata, dataversion));
+                    }
+                    setMetadata(metadata, dataversion);
+                    metadata.close();
                 }
                 versions.add(version);
                 versionpaths.put(version.toLowerCase(Locale.US), file.getAbsolutePath());
