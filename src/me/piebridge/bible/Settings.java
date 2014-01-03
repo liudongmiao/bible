@@ -32,6 +32,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     public static String JUSTIFY = "justify";
     public static String LOG = "log";
     public static String PINCH = "pinch";
+    public static String VERSION = "version";
 
     private String versionName = null;
 
@@ -57,6 +58,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         root.addPreference(addBooleanPreference(JUSTIFY, R.string.justify, 0));
         root.addPreference(addBooleanPreference(PINCH, R.string.pinch, R.string.pinch_not_work));
         root.addPreference(addBooleanPreference(LOG, R.string.log, 0));
+        root.addPreference(addPreference(VERSION, R.string.version));
         return root;
     }
 
@@ -71,8 +73,8 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
                 }
                 preference.setSummary(getString(R.string.fontsummary, bible.getVersionName(bible.getVersion())));
                 break;
-            case R.string.feedback:
-                preference.setSummary(getString(R.string.version) + ": " + versionName);
+            case R.string.version:
+                preference.setSummary(versionName);
                 break;
         }
         return preference;

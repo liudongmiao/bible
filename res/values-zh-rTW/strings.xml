@@ -5,7 +5,6 @@
     <string name="search_description">搜尋聖經章節，或者關鍵詞</string>
     <string name="search_no_results">在“%4$s”本中從“%2$s”至“%3$s”無法找到“%1$s”。</string>
     <plurals name="search_results">
-       <item quantity="one">在“%5$s”中從“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
        <item quantity="other">在“%5$s”中從“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
@@ -40,7 +39,7 @@
     <string name="bibledata">正在檢查聖經數據...</string>
     <string name="log">調試日誌</string>
     <string name="version">版本</string>
-    <string name="feedback">反饋</string>
+    <string name="help">幫助</string>
     <string name="pinch">雙指縮放</string>
     <string name="pinch_not_work">可能無法正常使用</string>
 </resources>

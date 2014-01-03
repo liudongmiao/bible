@@ -1,24 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="versionname">
-    </string-array>
-    <string-array name="versionfullname">
-        <item>ccb|Chinese Contemporary Bible</item>
-        <item>cunpss|Chinese Union Version (New Punctuation, Simplified Script)</item>
-        <item>cunpts|Chinese Union Version (New Punctuation, Traditional Script)</item>
-        <item>rcuvss|Revised Chinese Union Version (Simplified Script)</item>
-        <item>rcuvts|Revised Chinese Union Version (Traditional Script)</item>
-        <item>niv|New International Version 2011</item>
-        <item>niv84|New International Version 1984</item>
-        <item>kjv|King James Version</item>
-        <item>nkjv|New King James Version</item>
-        <item>nlt|New Living Translation</item>
-        <item>amp|Amplified Bible</item>
-        <item>msg|The Message</item>
-        <item>nasb|New American Standard Bible</item>
-        <item>esv|English Standard Version</item>
-    </string-array>
-    <string-array translatable="false" name="searchfullzhcn">
+
+    <string name="bibledatalink">%22Bible%20Data%22</string>
+    <string name="bibledatahuman">\"Bible Data\"</string>
+
+    <string-array name="searchfullzhcn">
         <item>Gen|chuangshiji</item>
         <item>Exod|chuaijiji</item>
         <item>Lev|liweiji</item>
@@ -86,7 +72,7 @@
         <item>Jude|youdashu</item>
         <item>Rev|qishilu</item>
     </string-array>
-    <string-array translatable="false" name="searchshortzhcn">
+    <string-array name="searchshortzhcn">
         <item>Gen|chuang</item>
         <item>Exod|chu</item>
         <item>Lev|li</item>
@@ -154,7 +140,7 @@
         <item>Jude|you</item>
         <item>Rev|qi</item>
     </string-array>
-    <string-array translatable="false" name="osiszhcn">
+    <string-array name="osiszhcn">
         <item>Gen|创</item>
         <item>Exod|出</item>
         <item>Lev|利</item>
@@ -222,7 +208,7 @@
         <item>Jude|犹</item>
         <item>Rev|启</item>
     </string-array>
-    <string-array translatable="false" name="osiszhtw">
+    <string-array name="osiszhtw">
         <item>Gen|創</item>
         <item>Exod|出</item>
         <item>Lev|利</item>
@@ -290,5 +276,28 @@
         <item>Jude|猶</item>
         <item>Rev|啟</item>
     </string-array>
+    <string-array name="versionname">
+        <item>ccb|CCB</item>
+        <item>cunpss|CUNPSS</item>
+        <item>cunpts|CUNPTS</item>
+        <item>rcuvss|RCUVSS</item>
+        <item>rcuvts|RCUVTS</item>
+    </string-array>
+    <string-array name="versionfullname">
+        <item>ccb|Chinese Contemporary Bible</item>
+        <item>cunpss|Chinese Union Version (New Punctuation, Simplified Script)</item>
+        <item>cunpts|Chinese Union Version (New Punctuation, Traditional Script)</item>
+        <item>rcuvss|Revised Chinese Union Version (Simplified Script)</item>
+        <item>rcuvts|Revised Chinese Union Version (Traditional Script)</item>
+        <item>niv|New International Version 2011</item>
+        <item>niv84|New International Version 1984</item>
+        <item>kjv|King James Version</item>
+        <item>nkjv|New King James Version</item>
+        <item>nlt|New Living Translation</item>
+        <item>amp|Amplified Bible</item>
+        <item>msg|The Message</item>
+        <item>nasb|New American Standard Bible</item>
+        <item>esv|English Standard Version</item>
+    </string-array>
+
 </resources>
-<!-- vim: set sta sw=4 et: -->

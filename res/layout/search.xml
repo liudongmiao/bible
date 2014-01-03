@@ -27,6 +27,7 @@
             android:scaleType="center"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
+            android:contentDescription="@string/search"
             android:src="@android:drawable/ic_menu_search"
             />
     </RelativeLayout>

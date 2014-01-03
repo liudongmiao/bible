@@ -82,7 +82,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private boolean setListener = false;
     public static int FONTSIZE_MIN = 1;
-    public static int FONTSIZE_MED = 16;
+    public static int FONTSIZE_MED = 15;
     public static int FONTSIZE_MAX = 72;
     private int fontsize = FONTSIZE_MED;
     public final static String link_bibledata = "https://github.com/liudongmiao/bibledata?mobile=0";
@@ -125,7 +125,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     String versionName = null;
     private final int MENU_SETTINGS = 0;
     private final int MENU_MORE = 2;
-    private final int MENU_FEEDBACK = 1;
+    private final int MENI_HELP = 1;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -204,6 +204,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 return view;
             }
 
+            @SuppressLint("NewApi")
             private Integer getNumColumns(GridView gridview) {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
                     return gridview.getNumColumns();
@@ -1089,8 +1090,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private void createMenu(Menu menu) {
         menu.clear();
         menu.add(Menu.NONE, MENU_SETTINGS, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
-        menu.add(Menu.NONE, MENU_FEEDBACK, MENU_FEEDBACK, R.string.feedback);
-        menu.add(Menu.NONE, MENU_MORE, MENU_MORE, R.string.more);
+        menu.add(Menu.NONE, MENI_HELP, MENI_HELP, R.string.help).setIcon(android.R.drawable.ic_menu_help);
+        menu.add(Menu.NONE, MENU_MORE, MENU_MORE, R.string.more).setIcon(android.R.drawable.ic_menu_more);
     }
 
     @Override
@@ -1112,7 +1113,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case MENU_MORE:
                 showMoreVersion();
                 break;
-            case MENU_FEEDBACK:
+            case MENI_HELP:
                 StringBuffer subject = new StringBuffer();
                 subject.append(getString(R.string.app_name));
                 if (versionName != null) {

@@ -22,8 +22,6 @@
     <string name="queryerror">Cannot open database, please try again later.</string>
     <string name="share">Share Bible verses to ..</string>
     <string name="fromto">from %1$s to %2$s</string>
-    <string name="bibledatalink" translate="false">%22Bible%20Data%22</string>
-    <string name="bibledatahuman" translate="false">\"Bible Data\"</string>
     <string name="otherbook">Choose Other Book</string>
     <string name="search">Search %1$s in Bible</string>
     <string name="demo">DEMO</string>
@@ -41,7 +39,7 @@
     <string name="bibledata">Checking Bible Data ...</string>
     <string name="log">Debug Log</string>
     <string name="version">version</string>
-    <string name="feedback">Feedback</string>
+    <string name="help">Help</string>
     <string name="pinch">Pinch to Zoom</string>
     <string name="pinch_not_work">May not work properly</string>
 </resources>
