@@ -57,7 +57,7 @@ public class Suggestion extends ContentProvider {
             LinkedHashMap<String, String> suggestions = bible.getOsiss(query, 66);
             int i = 0;
             for (Entry<String, String> entry: suggestions.entrySet()) {
-                String[] row = { String.valueOf(i), entry.getKey(), "bible://passage?search=" + entry.getValue() };
+                String[] row = { String.valueOf(i), entry.getKey(), "bible://passage?search=" + entry.getKey() };
                 cursor.addRow(row);
                 i++;
             }
