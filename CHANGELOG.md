@@ -1,6 +1,11 @@
 Changelog
 =========
 
+**v0.9.26**
+
+- Rearrange menu
+- Search more intelligent
+
 **v0.9.25**
 
 - Fix book/chapter exception before android 3.0
