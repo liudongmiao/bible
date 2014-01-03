@@ -23,9 +23,9 @@ The same function like in search screen without book range.
 ### Share with Other Application
 Accept any searchable words, and folliwing link:
 
-* http://bibles.org/search/<keyword>
-* http://biblegateway.com/passage/?search=<keyword>
-* http://biblica.com/bibles/chapter/?q=<keyword>
+* http://bibles.org/search/`keyword`
+* http://biblegateway.com/passage/?search=`keyword`
+* http://biblica.com/bibles/chapter/?q=`keyword`
 
 ### More Versions
 Pleaes visit <http://github.com/liudongmiao/bibledata>

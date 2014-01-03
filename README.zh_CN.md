@@ -21,9 +21,9 @@
 ### 应用间分享
 接受可搜索的字词，并支持以下地址：
 
-* http://bibles.org/search/搜索内容
-* http://biblegateway.com/passage/?search=搜索内容
-* http://biblica.com/bibles/chapter/?q=搜索内容
+* http://bibles.org/search/`搜索内容`
+* http://biblegateway.com/passage/?search=`搜索内容`
+* http://biblica.com/bibles/chapter/?q=`搜索内容`
 
 注意：q或search均可。
 
