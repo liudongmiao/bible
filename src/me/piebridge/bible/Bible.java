@@ -132,6 +132,7 @@ public class Bible
 
     public boolean checkVersions() {
         if (!setDatabasePath()) {
+            checkInternalVersions();
             return false;
         }
         File path = getExternalFilesDirWrapper();
@@ -149,19 +150,25 @@ public class Bible
         checkVersion(path);
         Collections.sort(versions);
         if (versions.size() == 0) {
-            setDemoVersions();
-            unpacked = true;
-            if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE)) {
-                versions.add("cunpssdemo");
-                versions.add("niv84demo");
-            } else {
-                versions.add("niv84demo");
-                versions.add("cunpssdemo");
-            }
-            checkVersion(mContext.getFilesDir());
+            checkInternalVersions();
         }
         mtime.put(path.getAbsolutePath(), path.lastModified());
         return true;
+    }
+
+    private void checkInternalVersions() {
+        if (!unpacked) {
+            setDemoVersions();
+            unpacked = true;
+        }
+        if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE)) {
+            versions.add("cunpssdemo");
+            versions.add("niv84demo");
+        } else {
+            versions.add("niv84demo");
+            versions.add("cunpssdemo");
+        }
+        checkVersion(mContext.getFilesDir());
     }
 
     public boolean isDemoVersion(String version) {
@@ -178,7 +185,7 @@ public class Bible
             return false;
         }
         File file = getFile(version);
-        if (file == null || !file.exists() || !file.isFile()) {
+        if (file == null || !file.isFile()) {
             if ("".equals(databaseVersion)) {
                 return setDefaultVersion();
             } else {
@@ -431,9 +438,6 @@ public class Bible
     }
 
     private void setDemoVersions() {
-        if (unpacked) {
-            return;
-        }
         int demoVersion = PreferenceManager.getDefaultSharedPreferences(mContext).getInt("demoVersion", 0);
         int versionCode = 0;
         try {
@@ -455,8 +459,13 @@ public class Bible
             return false;
         }
         String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version", null);
-        if (version != null && getPosition(TYPE.VERSION, version) < 0) {
-            version = null;
+        if (version != null) {
+            // check actual file
+            File file = getFile(version);
+            if (file == null || !file.isFile()) {
+                checkVersions();
+                version = null;
+            }
         }
         if (version == null && getCount(TYPE.VERSION) > 0) {
             version = get(TYPE.VERSION, 0);
@@ -783,7 +792,11 @@ public class Bible
 
     public boolean deleteVersion(String version) {
         File file = getFile(version);
-        return file.delete();
+        if (file != null && file.isFile()) {
+            return file.delete();
+        } return {
+            return false;
+        }
     }
 
     public void checkBibleData(boolean block) {
