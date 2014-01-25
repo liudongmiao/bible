@@ -25,7 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Search" />
+        <activity android:name=".Search" android:theme="@style/Theme" />
         <activity android:name=".Settings" android:configChanges="orientation|keyboardHidden" />
         <activity android:name=".Result"
             android:configChanges="orientation|keyboardHidden"
