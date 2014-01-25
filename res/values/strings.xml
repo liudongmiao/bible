@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Bible</string>
-    <string name="search_hint">passage(e.g,John 3:16-17) or keyword</string>
+    <string name="search_hint">Passage or Keyword</string>
     <string name="search_description">Search Bible passage, or keyword</string>
     <string name="search_no_results">No Results for \"%1$s\" from \"%2$s\" to \"%3$s\" in \"%4$s\".</string>
     <plurals name="search_results">
