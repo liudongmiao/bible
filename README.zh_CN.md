@@ -1,5 +1,5 @@
 ### 主要特性
-* 离线
+* 离线(需要[圣经数据](http://github.com/liudongmiao/bibledata#%E4%B8%AD%E6%96%87))
 * 快捷
 
 ### 阅读屏幕
@@ -29,5 +29,3 @@
 
 ### 更多版本
 请访问<http://github.com/liudongmiao/bibledata>
-
-关键字：离线，圣经，当代译本, 和合本，和合本修订版，NIV，KJV
