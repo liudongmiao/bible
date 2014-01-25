@@ -30,6 +30,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AutoCompleteTextView;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
@@ -71,7 +72,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
     CheckBoxPreference searchold;
     CheckBoxPreference searchnew;
     CheckBoxPreference searchgospel;
-    BibleAutoCompleteTextView edittext;
+    AutoCompleteTextView edittext;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -99,7 +100,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         updateSearch();
         updateVersion();
 
-        edittext = (BibleAutoCompleteTextView) findViewById(R.id.searchtext);
+        edittext = (AutoCompleteTextView) findViewById(R.id.searchtext);
         edittext.setThreshold(1);
         edittext.setOnEditorActionListener(this);
         edittext.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line) {
