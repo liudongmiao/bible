@@ -90,7 +90,6 @@ public class Bible
         Log.d(TAG, "init bible");
         mContext = context;
         checkLocale();
-        checkVersions();
         setDefaultVersion();
     }
 
@@ -132,6 +131,8 @@ public class Bible
 
     public boolean checkVersions() {
         if (!setDatabasePath()) {
+            mtime.clear();
+            versions.clear();
             checkInternalVersions();
             return false;
         }
@@ -210,12 +211,14 @@ public class Bible
                 file.delete();
             } catch (Exception f) {
             }
-            checkVersions();
             return setDefaultVersion();
         }
     }
 
     private File getFile(String version) {
+        if (version == null) {
+            return null;
+        }
         version = version.toLowerCase(Locale.US);
         String path = versionpaths.get(version);
         if (path != null) {
@@ -448,24 +451,17 @@ public class Bible
     }
 
     public boolean setDefaultVersion() {
+        checkVersions();
         if (versions.size() == 0) {
             return false;
         }
-        String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version", null);
-        if (version != null) {
-            // check actual file
-            File file = getFile(version);
-            if (file == null || !file.isFile()) {
-                checkVersions();
-                version = null;
-            }
-        }
-        if (version == null && getCount(TYPE.VERSION) > 0) {
-            version = get(TYPE.VERSION, 0);
-        }
-        if (version != null) {
+        String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version", get(TYPE.VERSION, 0));
+        // check actual file
+        File file = getFile(version);
+        if (file != null && file.isFile()) {
             return setVersion(version);
         }
+        PreferenceManager.getDefaultSharedPreferences(mContext).edit().remove("version").commit();
         return false;
     }
 
@@ -787,7 +783,7 @@ public class Bible
         File file = getFile(version);
         if (file != null && file.isFile()) {
             return file.delete();
-        } return {
+        } else {
             return false;
         }
     }
