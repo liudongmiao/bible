@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme" parent="@android:style/Theme.NoTitleBar">
+    <style name="theme" parent="@android:style/Theme.NoTitleBar">
     </style>
-    <style name="Theme.Light" parent="@android:style/Theme.Light.NoTitleBar">
+    <style name="theme.light" parent="@android:style/Theme.Light.NoTitleBar">
     </style>
     <!-- spinner in android 2.X is waste screen space -->
     <style name="button" parent="@android:style/Widget.Button">

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme" parent="@android:style/Theme.Holo">
+    <style name="theme" parent="@android:style/Theme.Holo">
         <item name="android:windowNoTitle">true</item>
     </style>
-    <style name="Theme.Light" parent="@android:style/Theme.Holo.Light">
+    <style name="theme.light" parent="@android:style/Theme.Holo.Light">
         <item name="android:windowNoTitle">true</item>
     </style>
     <style name="button" parent="@android:style/Widget.Holo.Spinner">
