@@ -31,11 +31,15 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.content.res.Resources;
@@ -130,13 +134,13 @@ public class Bible
     }
 
     public boolean checkVersions() {
-        if (!setDatabasePath()) {
+        File path = getExternalFilesDirWrapper();
+        if (path == null) {
             mtime.clear();
             versions.clear();
             checkInternalVersions();
             return false;
         }
-        File path = getExternalFilesDirWrapper();
         File oldpath = new File(Environment.getExternalStorageDirectory(), ".piebridge");
         Long oldmtime = mtime.get(path.getAbsolutePath());
         if (oldmtime == null) {
@@ -193,12 +197,6 @@ public class Bible
             Log.d(TAG, "close database \"" + database.getPath() + "\"");
             database.close();
         }
-        /*
-        if (!setDatabasePath()) {
-            Log.e(TAG, "cannot setDatabasePath");
-            return false;
-        }
-        */
         databaseVersion = version;
         try {
             database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
@@ -300,6 +298,10 @@ public class Bible
     }
 
     private File getExternalFilesDirWrapper() {
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) || mContext == null) {
+            Log.d(TAG, "not mounted, mContext = " + mContext);
+            return null;
+        }
         try {
             Method method = Context.class.getMethod("getExternalFilesDir", new Class[] {String.class});
             return (File) method.invoke(mContext, new Object[] {null});
@@ -307,23 +309,6 @@ public class Bible
             Log.d(TAG, "internal getExternalFilesDir");
             return getExternalFilesDir();
         }
-    }
-
-    private boolean setDatabasePath() {
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            if (mContext == null) {
-                Log.e(TAG, "mContext is null");
-                return false;
-            }
-            File file = getExternalFilesDirWrapper();
-            if (file == null) {
-                return false;
-            }
-            return true;
-        } else {
-            Log.d(TAG, "not mounted");
-        }
-        return false;
     }
 
     public ArrayList<String> get(TYPE type) {
@@ -788,17 +773,24 @@ public class Bible
         }
     }
 
+    @SuppressLint("NewApi")
+    void checkBibleData() {
+        checkApkData();
+        checkZipData(Environment.getExternalStorageDirectory());
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR_MR1) {
+            checkZipData(new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS));
+        } else {
+            checkZipData(new File(Environment.getExternalStorageDirectory(), "Download"));
+        }
+    }
+
     public void checkBibleData(boolean block) {
         if (block) {
-            checkApkData();
-            checkZipData(Environment.getExternalStorageDirectory());
-            checkZipData(new File(Environment.getExternalStorageDirectory(), "Download"));
+            checkBibleData();
         } else {
             new Thread(new Runnable() {
                 public void run() {
-                    checkApkData();
-                    checkZipData(Environment.getExternalStorageDirectory());
-                    checkZipData(new File(Environment.getExternalStorageDirectory(), "Download"));
+                    checkBibleData();
                 }
             }).start();
         }
@@ -1034,4 +1026,22 @@ public class Bible
         }
     }
 
- }
+    public static final String BIBLEDATA_PREFIX = "https://github.com/liudongmiao/bibledata/raw/master/";
+
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+    public long download(String filename) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+            return 0;
+        }
+        if (getExternalFilesDirWrapper() == null) {
+            return 0;
+        }
+        String url = BIBLEDATA_PREFIX + filename;
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        request.setTitle(filename);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+        DownloadManager dm = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
+        return dm.enqueue(request);
+    }
+
+}
