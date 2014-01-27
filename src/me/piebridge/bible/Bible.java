@@ -883,9 +883,7 @@ public class Bible
                     return false;
                 } else {
                     tmpfile.renameTo(file);
-                    if (!zename.equals(filename)) {
-                        path.delete();
-                    }
+                    path.delete();
                     return true;
                 }
             }
@@ -1051,6 +1049,10 @@ public class Bible
         }
         DownloadManager dm = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
         dm.remove(id);
+    }
+
+    public Context getContext() {
+        return mContext;
     }
 
 }
