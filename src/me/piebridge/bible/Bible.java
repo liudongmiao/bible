@@ -1026,7 +1026,7 @@ public class Bible
         }
     }
 
-    public static final String BIBLEDATA_PREFIX = "https://github.com/liudongmiao/bibledata/raw/master/";
+    public static final String BIBLEDATA_PREFIX = "http://github.com/liudongmiao/bibledata/raw/master/";
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     public long download(String filename) {
@@ -1042,6 +1042,15 @@ public class Bible
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
         DownloadManager dm = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
         return dm.enqueue(request);
+    }
+
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+    public void cancel(long id) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+            return;
+        }
+        DownloadManager dm = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
+        dm.remove(id);
     }
 
 }
