@@ -1136,15 +1136,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         return false;
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        Log.d(TAG, "onWindowFocusChanged: " + hasFocus);
-        if (hasFocus && showed && bible != null) {
-            bible.checkBibleData(false);
-        }
-        super.onWindowFocusChanged(hasFocus);
-    }
-
     private void showMoreVersion() {
         String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">" + getString(R.string.bibledatahuman) + "</a>";
         String text = getString(R.string.moreversion, new Object[] {link_market, Chapter.link_github}) + "</div>\n";
