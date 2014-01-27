@@ -356,6 +356,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private boolean openOsis(String newOsis, String verse, String end) {
         if (newOsis == null || newOsis.equals("")) {
+            if (bible.isDemoVersion(bible.getVersion())) {
+                showMoreVersion();
+            }
             return false;
         }
         if (!osis.equals(newOsis)) {
@@ -484,8 +487,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
         body += "</head>\n<body>\n";
         if (!"".equals(title) && bible.getVersion().endsWith("demo")) {
-            String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">" + getString(R.string.bibledatahuman) + "</a>";
-            body += "<div id=\"pb-demo\">" + getString(R.string.noversion, new Object[] {link_market, link_github}) + "</div>\n";
+            body += "<div id=\"pb-demo\">" + getString(R.string.noversion) + "</div>\n";
         }
         body += "<div id=\"content\">\n";
         body += context;
@@ -1137,6 +1139,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void showMoreVersion() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            startActivity(new Intent(this, Versions.class));
+            return;
+        }
         String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">" + getString(R.string.bibledatahuman) + "</a>";
         String text = getString(R.string.moreversion, new Object[] {link_market, Chapter.link_github}) + "</div>\n";
         AlertDialog dialog = new AlertDialog.Builder(this)

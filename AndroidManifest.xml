@@ -28,9 +28,8 @@
         </activity>
         <activity android:name=".Search" android:theme="@style/theme" />
         <activity android:name=".Settings" android:configChanges="orientation|keyboardHidden" />
-        <activity android:name=".Result"
-            android:configChanges="orientation|keyboardHidden"
-            />
+        <activity android:name=".Versions" android:configChanges="orientation|keyboardHidden" />
+        <activity android:name=".Result" android:configChanges="orientation|keyboardHidden" />
         <activity android:name=".Passage" android:label="@string/searchinbible"
             android:launchMode="singleTask"
             >

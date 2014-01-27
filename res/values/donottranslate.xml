@@ -289,8 +289,8 @@
         <item>cunpts|Chinese Union Version (New Punctuation, Traditional Script)</item>
         <item>rcuvss|Revised Chinese Union Version (Simplified Script)</item>
         <item>rcuvts|Revised Chinese Union Version (Traditional Script)</item>
-        <item>niv|New International Version 2011</item>
-        <item>niv84|New International Version 1984</item>
+        <item>niv2011|New International Version 2011</item>
+        <item>niv1984|New International Version 1984</item>
         <item>kjv|King James Version</item>
         <item>nkjv|New King James Version</item>
         <item>nlt|New Living Translation</item>

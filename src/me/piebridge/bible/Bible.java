@@ -58,6 +58,7 @@ public class Bible
         BOOK,
         OSIS,
         HUMAN,
+        VERSIONPATH,
     }
 
     private SQLiteDatabase database = null;
@@ -323,6 +324,8 @@ public class Bible
                 return osiss;
             case HUMAN:
                 return humans;
+            case VERSIONPATH:
+                return new ArrayList<String>(versionpaths.keySet());
         }
         return new ArrayList<String>();
     }
@@ -373,7 +376,7 @@ public class Bible
 
     public String getVersionFullname(String version) {
         version = version.toLowerCase(Locale.US);
-        String fullname = getResourceValue(versionFullnames, version.replace("demo", ""));
+        String fullname = getResourceValue(versionFullnames, version.replace("demo", "").replace("niv84", "niv1984"));
         if (version.endsWith("demo")) {
             fullname += "(" + mContext.getString(R.string.demo) + ")";
         }
@@ -382,7 +385,7 @@ public class Bible
 
     public String getVersionName(String version) {
         version = version.toLowerCase(Locale.US);
-        return getResourceValue(versionNames, version.replace("demo", "")).toUpperCase(Locale.US);
+        return getResourceValue(versionNames, version.replace("demo", "").replace("niv84", "niv1984")).toUpperCase(Locale.US);
     }
 
     private String getResourceValue(HashMap<String, String> map, String key) {
@@ -765,9 +768,12 @@ public class Bible
     }
 
     public boolean deleteVersion(String version) {
+        version = version.toLowerCase(Locale.US);
         File file = getFile(version);
-        if (file != null && file.isFile()) {
-            return file.delete();
+        if (file != null && file.isFile() && file.delete()) {
+            checkBibleData(false);
+            versionpaths.remove(version);
+            return true;
         } else {
             return false;
         }
@@ -986,9 +992,7 @@ public class Bible
             File file = new File(path, name);
             if (name.endsWith(".sqlite3") && file.exists() && file.isFile()) {
                 Log.d(TAG, "add version " + name);
-                String version = name.toLowerCase(Locale.US).replace(".sqlite3", "")
-                        .replace("niv2011", "niv")
-                        .replace("niv1984", "niv84");
+                String version = name.toLowerCase(Locale.US).replace(".sqlite3", "");
                 if (!versions.contains(version)) {
                     checkVersionMeta(file, version);
                 }

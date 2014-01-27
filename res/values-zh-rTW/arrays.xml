@@ -13,11 +13,14 @@
         <item>cunpts|和合本新標點版</item>
         <item>rcuvss|和合本修訂版(簡體)</item>
         <item>rcuvts|和合本修訂版</item>
-        <item>niv|英文新國際版(NIV)2011</item>
-        <item>niv84|英文新國際版(NIV)1984</item>
+        <item>niv2011|英文新國際版(NIV)2011</item>
+        <item>niv1984|英文新國際版(NIV)1984</item>
         <item>kjv|英文欽定版(KJV)</item>
         <item>nkjv|英文新欽定版(NKJV)</item>
         <item>nlt|英文新生活版(NLT)</item>
+        <item>amp|Amplified Bible</item>
+        <item>msg|The Message</item>
+        <item>nasb|New American Standard Bible</item>
         <item>esv|英文標準譯本(ESV)</item>
     </string-array>
 </resources>

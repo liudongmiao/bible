@@ -8,8 +8,8 @@
         <item quantity="other">在“%5$s”中从“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
-    <string name="noversion">此版本仅供演示。请从电子市场搜索并安装%1$s，或者圣经数据项目网站%2$s下载圣经数据库。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
-    <string name="moreversion">请从电子市场搜索并安装%1$s，或者圣经数据项目网站%2$s下载安装圣经数据库。</string>
+    <string name="noversion">此版本仅供演示，请转到“更多版本”获取圣经数据。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
+    <string name="moreversion">非常抱歉，您的设备不支持直接下载。请从电子市场搜索并安装%1$s，或者圣经数据项目网站%2$s下载安装圣经数据库。</string>
     <string name="more">更多版本</string>
     <string name="chooseversion">选择版本</string>
     <string name="searchall">搜索整本圣经</string>
@@ -42,4 +42,8 @@
     <string name="help">帮助</string>
     <string name="pinch">双指缩放</string>
     <string name="pinch_not_work">可能无法正常使用</string>
+    <string name="version_hint">版本或描述</string>
+    <string name="install">安装</string>
+    <string name="uninstall">删除</string>
+    <string name="cancel_install">取消</string>
 </resources>

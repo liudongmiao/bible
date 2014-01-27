@@ -23,7 +23,6 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.util.Log;
 
 public class Suggestion extends ContentProvider {
 
