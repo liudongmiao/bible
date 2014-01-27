@@ -13,7 +13,6 @@
 
 package me.piebridge.bible;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.os.Bundle;
@@ -54,17 +53,17 @@ public class Result extends Activity
     protected int color;
     protected final static int SHOWRESULT = 1;
 
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
+    private Handler handler = new Handler(new Handler.Callback() {
         @Override
-        public void handleMessage(Message msg) {
+        public boolean handleMessage(Message msg) {
             switch (msg.what) {
             case SHOWRESULT:
                 showResults((Cursor) msg.obj);
                 break;
             }
+            return false;
         }
-    };
+    });
 
     /** Called when the activity is first created. */
     @Override

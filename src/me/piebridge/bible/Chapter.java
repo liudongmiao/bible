@@ -127,10 +127,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final int MENU_MORE = 2;
     private final int MENI_HELP = 1;
 
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
+    private Handler handler = new Handler(new Handler.Callback() {
         @Override
-        public void handleMessage(Message msg) {
+        public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case COPYTEXT:
                     checkShare();
@@ -164,8 +163,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     showView(R.id.bibledata, false);
                     break;
             }
+            return false;
         }
-    };
+    });
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
