@@ -122,7 +122,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private boolean hasIntentData = false;
     private String body;
 
-    String versionName = null;
     private final int MENU_SETTINGS = 0;
     private final int MENU_MORE = 2;
     private final int MENU_HELP = 1;
@@ -275,11 +274,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         Log.d(TAG, "onCreate");
         hasIntentData = true;
         font = new File(new File(new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName()), "files"), "custom.ttf");
-
-        try {
-            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-        } catch (NameNotFoundException e) {
-        }
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         if (!hasIntentData) {
@@ -1116,23 +1110,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 showMoreVersion();
                 break;
             case MENU_HELP:
-                StringBuffer subject = new StringBuffer();
-                subject.append(getString(R.string.app_name));
-                if (versionName != null) {
-                    subject.append(" ");
-                    subject.append(versionName);
-                }
-                subject.append("(Android ");
-                subject.append(Locale.getDefault().toString());
-                subject.append("-");
-                subject.append(Build.VERSION.RELEASE);
-                subject.append(")");
-                intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:liudongmiao@gmail.com"));
-                intent.putExtra(Intent.EXTRA_SUBJECT, subject.toString());
-                try {
-                    startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                }
+                bible.email(this);
                 break;
         }
         return false;

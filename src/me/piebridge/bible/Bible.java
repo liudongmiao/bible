@@ -45,7 +45,9 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -56,6 +58,7 @@ import android.content.res.Resources;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 
 public class Bible
 {
@@ -100,10 +103,15 @@ public class Bible
     private boolean unpacked = false;
     private HashMap<String, Long> mtime = new HashMap<String, Long>();
     private String css;
+    public String versionName;
 
     private Bible(Context context) {
         Log.d(TAG, "init bible");
         mContext = context;
+        try {
+            versionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+        } catch (NameNotFoundException e) {
+        }
         checkLocale();
         setDefaultVersion();
     }
@@ -1114,5 +1122,25 @@ public class Bible
             bao.write(buffer, 0, length);
         }
         return bao.toString();
+    }
+
+    public void email(Context context) {
+        StringBuffer subject = new StringBuffer();
+        subject.append(context.getString(R.string.app_name));
+        if (versionName != null) {
+            subject.append(" ");
+            subject.append(versionName);
+        }
+        subject.append("(Android ");
+        subject.append(Locale.getDefault().toString());
+        subject.append("-");
+        subject.append(Build.VERSION.RELEASE);
+        subject.append(")");
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:liudongmiao@gmail.com"));
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject.toString());
+        try {
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+        }
     }
 }
