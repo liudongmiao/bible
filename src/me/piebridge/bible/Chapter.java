@@ -125,7 +125,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     String versionName = null;
     private final int MENU_SETTINGS = 0;
     private final int MENU_MORE = 2;
-    private final int MENI_HELP = 1;
+    private final int MENU_HELP = 1;
 
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -1092,7 +1092,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private void createMenu(Menu menu) {
         menu.clear();
         menu.add(Menu.NONE, MENU_SETTINGS, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
-        menu.add(Menu.NONE, MENI_HELP, MENI_HELP, R.string.help).setIcon(android.R.drawable.ic_menu_help);
+        menu.add(Menu.NONE, MENU_HELP, MENU_HELP, R.string.help).setIcon(android.R.drawable.ic_menu_help);
         menu.add(Menu.NONE, MENU_MORE, MENU_MORE, R.string.more).setIcon(android.R.drawable.ic_menu_more);
     }
 
@@ -1115,7 +1115,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case MENU_MORE:
                 showMoreVersion();
                 break;
-            case MENI_HELP:
+            case MENU_HELP:
                 StringBuffer subject = new StringBuffer();
                 subject.append(getString(R.string.app_name));
                 if (versionName != null) {
