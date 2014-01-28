@@ -15,6 +15,7 @@ package me.piebridge.bible;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,6 +32,15 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
@@ -1059,4 +1069,52 @@ public class Bible
         return mContext;
     }
 
+    public static final String JSON = "versions.json";
+
+    String getLocalVersions() throws IOException {
+        InputStream is = null;
+        File file = new File(mContext.getFilesDir(), JSON);
+        if (file.isFile()) {
+            is = new FileInputStream(file);
+        } else {
+            is = mContext.getResources().openRawResource(R.raw.versions);
+        }
+        String json = getStringFromInputStream(is);
+        is.close();
+        return json;
+    }
+
+    String getRemoteVersions() throws ClientProtocolException, IOException {
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response = client.execute(new HttpGet(Bible.BIBLEDATA_PREFIX + JSON));
+        InputStream is = response.getEntity().getContent();
+        String json = getStringFromInputStream(is);
+        is.close();
+        try {
+            new JSONObject(json);
+        } catch (JSONException e) {
+            return null;
+        }
+        try {
+            File tmpfile = new File(mContext.getFilesDir(), JSON + ".tmp");
+            OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpfile));
+            os.write(json.getBytes("UTF-8"));
+            os.close();
+            tmpfile.renameTo(new File(mContext.getFilesDir(), JSON));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        android.util.Log.d("me.piebridge.bible", "json: " + json);
+        return json;
+    }
+
+    String getStringFromInputStream(InputStream is) throws IOException {
+        int length;
+        byte[] buffer = new byte[8192];
+        ByteArrayOutputStream bao = new ByteArrayOutputStream();
+        while ((length = is.read(buffer)) >= 0) {
+            bao.write(buffer, 0, length);
+        }
+        return bao.toString();
+    }
 }

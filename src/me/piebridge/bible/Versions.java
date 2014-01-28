@@ -1,16 +1,13 @@
 package me.piebridge.bible;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,16 +23,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class Versions extends Activity {
 
+    static long mtime = 0;
     static Bible bible;
     static CharSequence filter;
     static SimpleAdapter adapter;
     static boolean resume = false;
+    static List<Map<String, String>> versions;
     static Map<String, String> queue = new HashMap<String, String>();
     static List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 
@@ -44,8 +44,9 @@ public class Versions extends Activity {
         setContentView(R.layout.versions);
         bible = Bible.getBible(this);
 
-        adapter = new SimpleAdapter(this, data, R.layout.version, new String[] { "code", "name", "text", "lang" },
-                new int[] { R.id.code, R.id.name, R.id.action, 0 }) {
+        String[] from = { "code", "name", "text", "lang" };
+        int[] to = {R.id.code, R.id.name, R.id.action, 0 };
+        adapter = new SimpleAdapter(this, data, R.layout.version, from, to) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -63,6 +64,50 @@ public class Versions extends Activity {
                     });
                 }
                 return view;
+            }
+
+            Filter mFilter;
+            public Filter getFilter() {
+                if (mFilter == null) {
+                    mFilter = new SimpleFilter();
+                }
+                return mFilter;
+            }
+
+            class SimpleFilter extends Filter {
+                @Override
+                protected FilterResults performFiltering(CharSequence prefix) {
+                    FilterResults results = new FilterResults();
+                    String filter = null;
+                    if (prefix != null && prefix.length() > 0) {
+                        filter = prefix.toString().toLowerCase(Locale.US);
+                    }
+                    data.clear();
+                    List<Map<String, String>> values = versions;
+                    for (Map<String, String> map : values) {
+                        if (filter == null) {
+                            data.add(map);
+                        } else {
+                            for (String value : map.values()) {
+                                if (value.toLowerCase(Locale.US).contains(filter)) {
+                                    data.add(map);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    results.count = data.size();
+                    return results;
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    if (results.count > 0) {
+                        notifyDataSetChanged();
+                    } else {
+                        notifyDataSetInvalidated();
+                    }
+                }
             }
         };
 
@@ -143,12 +188,34 @@ public class Versions extends Activity {
         resume = true;
         String json;
         try {
-            json = getJsonVersions();
+            json = bible.getLocalVersions();
         } catch (IOException e) {
             json = "{versions:[]}";
         }
+        long now = System.currentTimeMillis() / 1000;
+        if (mtime == 0 || now - mtime > 86400) {
+            mtime = now;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        setVersions(bible.getRemoteVersions());
+                    } catch (Exception e) {
+                    }
+                }
+
+            }).start();
+        }
+        setVersions(json);
+    }
+
+    void setVersions(String json) {
+        if (json == null || json.length() == 0) {
+            return;
+        }
         data.clear();
-        for (Map<String, String> map : parseVersions(json)) {
+        versions = parseVersions(json);
+        for (Map<String, String> map : versions) {
             data.add(map);
         }
         refresh(0);
@@ -162,24 +229,6 @@ public class Versions extends Activity {
         resume = false;
     }
 
-    String getJsonVersions() throws IOException {
-        InputStream is = null;
-        File file = new File(getFilesDir(), "versions.json");
-        if (file.isFile()) {
-            is = new FileInputStream(file);
-        } else {
-            is = getResources().openRawResource(R.raw.versions);
-        }
-        int length;
-        byte[] buffer = new byte[8192];
-        ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        while ((length = is.read(buffer)) >= 0) {
-            bao.write(buffer, 0, length);
-        }
-        is.close();
-        return bao.toString();
-    }
-
     static void refresh(long id) {
         if (resume) {
             boolean changed = false;
@@ -187,18 +236,18 @@ public class Versions extends Activity {
             if (code != null) {
                 queue.remove(String.valueOf(id));
                 queue.remove(code);
-            }
-            for (Map<String, String> map : data) {
-                if (String.valueOf(map.get("code")).equalsIgnoreCase(code)) {
-                    changed = true;
-                    String action = bible.getContext().getString(R.string.uninstall);
-                    map.put("text", action);
-                    map.put("action", action);
+                for (Map<String, String> map : data) {
+                    if (String.valueOf(map.get("code")).equalsIgnoreCase(code)) {
+                        changed = true;
+                        String action = bible.getContext().getString(R.string.uninstall);
+                        map.put("text", action);
+                        map.put("action", action);
+                    }
                 }
-            }
-            if (changed) {
-                adapter.notifyDataSetChanged();
-                adapter.getFilter().filter(filter);
+                if (changed) {
+                    adapter.notifyDataSetChanged();
+                    adapter.getFilter().filter(filter);
+                }
             }
         }
     }
@@ -209,7 +258,6 @@ public class Versions extends Activity {
         final String name = (String) map.get("name");
         final String action = (String) map.get("action");
         final String text = view.getText().toString();
-        android.util.Log.d("me.piebridge.bible", "path: " + path);
         if (text.equals(getString(R.string.install))) {
             long id;
             if (queue.containsKey(code)) {
