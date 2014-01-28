@@ -42,6 +42,7 @@ public class Versions extends Activity {
     static List<Map<String, String>> versions;
     static Map<String, String> queue = new HashMap<String, String>();
     static List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+    Map<String, String> request = new HashMap<String, String>();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +76,13 @@ public class Versions extends Activity {
                             clickVersion((TextView) view, map);
                         }
                     });
+                    @SuppressWarnings("unchecked")
+                    Map<String, String> map = (Map<String, String>) getItem(position);
+                    if (map.get("action") == null) {
+                        action.setVisibility(View.GONE);
+                    } else {
+                        action.setVisibility(View.VISIBLE);
+                    }
                 }
                 return view;
             }
@@ -98,7 +106,7 @@ public class Versions extends Activity {
                     synchronized (data) {
                         data.clear();
                         for (Map<String, String> map : versions) {
-                            if (filter == null) {
+                            if (filter == null || map.get("action") == null) {
                                 data.add(map);
                             } else {
                                 for (String value : map.values()) {
@@ -162,6 +170,11 @@ public class Versions extends Activity {
                 refreshVersions();
             }
         });
+
+        if (request.size() == 0) {
+            request.put("code", getString(R.string.not_found));
+            request.put("name", getString(R.string.request_version));
+        }
     }
 
     static List<Map<String, String>> parseVersions(String string) {
@@ -251,6 +264,7 @@ public class Versions extends Activity {
             return;
         }
         versions = parseVersions(json);
+        versions.add(request);
         synchronized (data) {
             data.clear();
             for (Map<String, String> map : versions) {
@@ -301,7 +315,9 @@ public class Versions extends Activity {
         final String name = (String) map.get("name");
         final String action = (String) map.get("action");
         final String text = view.getText().toString();
-        if (text.equals(getString(R.string.install))) {
+        if (action == null) {
+            bible.email(this);
+        } if (text.equals(getString(R.string.install))) {
             long id;
             if (queue.containsKey(code)) {
                 id = Long.parseLong(queue.get(code));
