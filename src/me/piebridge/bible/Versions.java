@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,8 +82,7 @@ public class Versions extends Activity {
                         filter = prefix.toString().toLowerCase(Locale.US);
                     }
                     data.clear();
-                    List<Map<String, String>> values = versions;
-                    for (Map<String, String> map : values) {
+                    for (Map<String, String> map : versions) {
                         if (filter == null) {
                             data.add(map);
                         } else {
@@ -236,13 +234,15 @@ public class Versions extends Activity {
             if (code != null) {
                 queue.remove(String.valueOf(id));
                 queue.remove(code);
-                for (Map<String, String> map : data) {
+                data.clear();
+                for (Map<String, String> map : versions) {
                     if (String.valueOf(map.get("code")).equalsIgnoreCase(code)) {
                         changed = true;
                         String action = bible.getContext().getString(R.string.uninstall);
                         map.put("text", action);
                         map.put("action", action);
                     }
+                    data.add(map);
                 }
                 if (changed) {
                     adapter.notifyDataSetChanged();
