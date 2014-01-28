@@ -1102,9 +1102,7 @@ public class Bible
             os.close();
             tmpfile.renameTo(new File(mContext.getFilesDir(), JSON));
         } catch (IOException e) {
-            e.printStackTrace();
         }
-        android.util.Log.d("me.piebridge.bible", "json: " + json);
         return json;
     }
 
