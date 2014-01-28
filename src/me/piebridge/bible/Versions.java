@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -23,20 +24,20 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.Filter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 public class Versions extends Activity {
 
     static Bible bible;
-    static String query;
+    static CharSequence filter;
     static SimpleAdapter adapter;
     static boolean resume = false;
-    static HashMap<String, String> queue = new HashMap<String, String>();
-    static ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
+    static Map<String, String> queue = new HashMap<String, String>();
+    static List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,16 +49,16 @@ public class Versions extends Activity {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                Button button = (Button) view.findViewById(R.id.action);
-                if (button != null) {
-                    button.setTag(position);
-                    button.setOnClickListener(new View.OnClickListener() {
+                final TextView action = (TextView) view.findViewById(R.id.action);
+                if (action != null) {
+                    action.setTag(position);
+                    action.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             int position = (Integer) view.getTag();
                             @SuppressWarnings("unchecked")
-                            Map<String, Object> map = (HashMap<String, Object>) getItem(position);
-                            clickButton(view, map);
+                            Map<String, String> map = (Map<String, String>) getItem(position);
+                            clickVersion((TextView) view, map);
                         }
                     });
                 }
@@ -67,8 +68,17 @@ public class Versions extends Activity {
 
         final ListView list = (ListView) findViewById(android.R.id.list);
         list.setAdapter(adapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                @SuppressWarnings("unchecked")
+                Map<String, String> map = (Map<String, String>) list.getItemAtPosition(position);
+                TextView action = (TextView) view.findViewById(R.id.action);
+                clickVersion(action, map);
+            }
 
-        final Filter filter = adapter.getFilter();
+        });
+
         final EditText editText = (EditText) findViewById(R.id.query);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -77,8 +87,8 @@ public class Versions extends Activity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int after) {
-                query = s.toString();
-                filter.filter(s);
+                filter = s;
+                adapter.getFilter().filter(s);
             }
 
             @Override
@@ -88,17 +98,17 @@ public class Versions extends Activity {
         });
     }
 
-    static ArrayList<HashMap<String, Object>> parseVersions(String string) {
+    static List<Map<String, String>> parseVersions(String string) {
         bible.checkVersions();
         Context context = bible.getContext();
-        ArrayList<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
+        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         try {
             JSONObject jsons = new JSONObject(string);
-            ArrayList<String> installed = bible.get(Bible.TYPE.VERSIONPATH);
+            List<String> installed = bible.get(Bible.TYPE.VERSIONPATH);
             JSONArray versions = jsons.getJSONArray("versions");
             for (int i = 0; i < versions.length(); ++i) {
                 JSONObject version = versions.getJSONObject(i);
-                HashMap<String, Object> map = new HashMap<String, Object>();
+                Map<String, String> map = new HashMap<String, String>();
                 String action;
                 String code = version.getString("code");
                 String lang = version.getString("lang");
@@ -138,20 +148,20 @@ public class Versions extends Activity {
             json = "{versions:[]}";
         }
         data.clear();
-        for (HashMap<String, Object> map : parseVersions(json)) {
+        for (Map<String, String> map : parseVersions(json)) {
             data.add(map);
         }
         refresh(0);
         adapter.notifyDataSetChanged();
-        adapter.getFilter().filter(query);
+        adapter.getFilter().filter(filter);
     }
-    
+
     @Override
     protected void onPause() {
         super.onPause();
         resume = false;
     }
-    
+
     String getJsonVersions() throws IOException {
         InputStream is = null;
         File file = new File(getFilesDir(), "versions.json");
@@ -178,8 +188,8 @@ public class Versions extends Activity {
                 queue.remove(String.valueOf(id));
                 queue.remove(code);
             }
-            for (HashMap<String, Object> map : data) {
-                if (((String) map.get("code")).equalsIgnoreCase(code)) {
+            for (Map<String, String> map : data) {
+                if (String.valueOf(map.get("code")).equalsIgnoreCase(code)) {
                     changed = true;
                     String action = bible.getContext().getString(R.string.uninstall);
                     map.put("text", action);
@@ -188,34 +198,43 @@ public class Versions extends Activity {
             }
             if (changed) {
                 adapter.notifyDataSetChanged();
-                adapter.getFilter().filter(query);
+                adapter.getFilter().filter(filter);
             }
         }
     }
 
-    void clickButton(View view, final Map<String, Object> map) {
-        final Button button = (Button) view;
+    void clickVersion(final TextView view, final Map<String, String> map) {
         final String path = (String) map.get("path");
         final String code = (String) map.get("code");
         final String name = (String) map.get("name");
         final String action = (String) map.get("action");
-        final String text = button.getText().toString();
+        final String text = view.getText().toString();
+        android.util.Log.d("me.piebridge.bible", "path: " + path);
         if (text.equals(getString(R.string.install))) {
-            long id = bible.download(path);
+            long id;
+            if (queue.containsKey(code)) {
+                id = Long.parseLong(queue.get(code));
+            } else {
+                id = bible.download(path);
+            }
             if (id > 0) {
                 queue.put(code, String.valueOf(id));
                 queue.put(String.valueOf(id), code);
                 String cancel = getString(R.string.cancel_install);
                 map.put("text", cancel);
-                button.setText(cancel);
+                adapter.notifyDataSetChanged();
             }
         } else if (text.equals(getString(R.string.cancel_install))) {
-            long id = Long.parseLong(queue.get(code));
-            if (id > 0) {
-                bible.cancel(id);
+            if (queue.containsKey(code)) {
+                long id = Long.parseLong(queue.get(code));
+                if (id > 0) {
+                    bible.cancel(id);
+                    queue.remove(String.valueOf(id));
+                    queue.remove(code);
+                }
             }
             map.put("text", action);
-            button.setText(action);
+            adapter.notifyDataSetChanged();
         } else if (text.equals(getString(R.string.uninstall))) {
             areYouSure(getString(R.string.deleteversion, code.toUpperCase(Locale.US)),
                     getString(R.string.deleteversiondetail, name),
@@ -227,7 +246,7 @@ public class Versions extends Activity {
                             String install = getString(R.string.install);
                             map.put("text", install);
                             map.put("action", install);
-                            button.setText(install);
+                            adapter.notifyDataSetChanged();
                         }
                     });
         }
