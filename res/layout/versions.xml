@@ -5,21 +5,36 @@
     android:orientation="vertical"
     >
 
-    <EditText
-        android:id="@+id/query"
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:imeOptions="actionSearch"
-        android:inputType="text"
-        android:hint="@string/version_hint"
-        />
+        android:layout_height="wrap_content" >
+        <ImageView
+            android:id="@+id/refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@android:drawable/ic_popup_sync"
+	    />
+
+        <EditText
+            android:id="@+id/query"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/refresh"
+            android:hint="@string/version_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:singleLine="true"
+	    />
+    </RelativeLayout>
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-    />
+	/>
 
 </LinearLayout>
-<!-- vim: set sta sw=4 et: -->

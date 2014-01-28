@@ -15,7 +15,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -23,13 +26,15 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Filter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class Versions extends Activity {
 
-    static long mtime = 0;
+    ImageView refresh;
+
     static Bible bible;
     static CharSequence filter;
     static SimpleAdapter adapter;
@@ -139,6 +144,14 @@ public class Versions extends Activity {
             }
 
         });
+
+        refresh = (ImageView) findViewById(R.id.refresh);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshVersions();
+            }
+        });
     }
 
     static List<Map<String, String>> parseVersions(String string) {
@@ -175,7 +188,6 @@ public class Versions extends Activity {
                 list.add(map);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
         }
         return list;
     }
@@ -190,21 +202,38 @@ public class Versions extends Activity {
         } catch (IOException e) {
             json = "{versions:[]}";
         }
-        long now = System.currentTimeMillis() / 1000;
-        if (mtime == 0 || now - mtime > 86400) {
-            mtime = now;
+        setVersions(json);
+    }
+
+    boolean refreshing = false;
+
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            setVersions((String) msg.obj);
+            refreshing = false;
+            ((AnimationDrawable) refresh.getDrawable()).stop();
+            return false;
+        }
+    });
+
+    void refreshVersions() {
+        if (!refreshing) {
+            refreshing = true;
+            ((AnimationDrawable) refresh.getDrawable()).start();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    String json = null;
                     try {
-                        setVersions(bible.getRemoteVersions());
+                        json = bible.getRemoteVersions();
                     } catch (Exception e) {
+                    } finally {
+                        handler.sendMessage(handler.obtainMessage(0, json));
                     }
                 }
-
             }).start();
         }
-        setVersions(json);
     }
 
     void setVersions(String json) {
