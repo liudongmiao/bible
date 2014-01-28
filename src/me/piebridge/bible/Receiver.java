@@ -25,7 +25,7 @@ public class Receiver extends BroadcastReceiver {
         } else if ("android.provider.Telephony.SECRET_CODE".equals(action)) {
             context.startActivity(new Intent(context, Chapter.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        } else if ("android.intent.action.DOWNLOAD_COMPLETE".equals(action)) {
+        } else if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
             bible.checkBibleData(false);
             long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
             Versions.refresh(id);
