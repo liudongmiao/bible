@@ -34,9 +34,9 @@ import android.widget.TextView;
 public class Versions extends Activity {
 
     ImageView refresh;
+    static EditText query;
 
     static Bible bible;
-    static CharSequence filter;
     static SimpleAdapter adapter;
     static boolean resume = false;
     static List<Map<String, String>> versions;
@@ -53,6 +53,15 @@ public class Versions extends Activity {
         adapter = new SimpleAdapter(this, data, R.layout.version, from, to) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
+                if (data.size() <= position) {
+                    // why ?
+                    synchronized (data) {
+                        data.clear();
+                        for (Map<String, String> map : versions) {
+                            data.add(map);
+                        }
+                    }
+                }
                 View view = super.getView(position, convertView, parent);
                 final TextView action = (TextView) view.findViewById(R.id.action);
                 if (action != null) {
@@ -86,15 +95,17 @@ public class Versions extends Activity {
                     if (prefix != null && prefix.length() > 0) {
                         filter = prefix.toString().toLowerCase(Locale.US);
                     }
-                    data.clear();
-                    for (Map<String, String> map : versions) {
-                        if (filter == null) {
-                            data.add(map);
-                        } else {
-                            for (String value : map.values()) {
-                                if (value.toLowerCase(Locale.US).contains(filter)) {
-                                    data.add(map);
-                                    break;
+                    synchronized (data) {
+                        data.clear();
+                        for (Map<String, String> map : versions) {
+                            if (filter == null) {
+                                data.add(map);
+                            } else {
+                                for (String value : map.values()) {
+                                    if (value.toLowerCase(Locale.US).contains(filter)) {
+                                        data.add(map);
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -127,15 +138,14 @@ public class Versions extends Activity {
 
         });
 
-        final EditText editText = (EditText) findViewById(R.id.query);
-        editText.addTextChangedListener(new TextWatcher() {
+        query = (EditText) findViewById(R.id.query);
+        query.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int before, int after) {
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int after) {
-                filter = s;
                 adapter.getFilter().filter(s);
             }
 
@@ -240,14 +250,16 @@ public class Versions extends Activity {
         if (json == null || json.length() == 0) {
             return;
         }
-        data.clear();
         versions = parseVersions(json);
-        for (Map<String, String> map : versions) {
-            data.add(map);
+        synchronized (data) {
+            data.clear();
+            for (Map<String, String> map : versions) {
+                data.add(map);
+            }
         }
         refresh(0);
         adapter.notifyDataSetChanged();
-        adapter.getFilter().filter(filter);
+        query.setText("");
     }
 
     @Override
@@ -263,19 +275,21 @@ public class Versions extends Activity {
             if (code != null) {
                 queue.remove(String.valueOf(id));
                 queue.remove(code);
-                data.clear();
-                for (Map<String, String> map : versions) {
-                    if (String.valueOf(map.get("code")).equalsIgnoreCase(code)) {
-                        changed = true;
-                        String action = bible.getContext().getString(R.string.uninstall);
-                        map.put("text", action);
-                        map.put("action", action);
+                synchronized (data) {
+                    data.clear();
+                    for (Map<String, String> map : versions) {
+                        if (String.valueOf(map.get("code")).equalsIgnoreCase(code)) {
+                            changed = true;
+                            String action = bible.getContext().getString(R.string.uninstall);
+                            map.put("text", action);
+                            map.put("action", action);
+                        }
+                        data.add(map);
                     }
-                    data.add(map);
                 }
                 if (changed) {
                     adapter.notifyDataSetChanged();
-                    adapter.getFilter().filter(filter);
+                    query.setText("");
                 }
             }
         }
