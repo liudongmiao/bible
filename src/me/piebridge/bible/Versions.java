@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -73,7 +74,7 @@ public class Versions extends Activity {
                             int position = (Integer) view.getTag();
                             @SuppressWarnings("unchecked")
                             Map<String, String> map = (Map<String, String>) getItem(position);
-                            clickVersion((TextView) view, map);
+                            clickVersion((TextView) view, map, true);
                         }
                     });
                     @SuppressWarnings("unchecked")
@@ -141,7 +142,7 @@ public class Versions extends Activity {
                 @SuppressWarnings("unchecked")
                 Map<String, String> map = (Map<String, String>) list.getItemAtPosition(position);
                 TextView action = (TextView) view.findViewById(R.id.action);
-                clickVersion(action, map);
+                clickVersion(action, map, false);
             }
 
         });
@@ -309,7 +310,7 @@ public class Versions extends Activity {
         }
     }
 
-    void clickVersion(final TextView view, final Map<String, String> map) {
+    void clickVersion(final TextView view, final Map<String, String> map, final boolean button) {
         final String path = (String) map.get("path");
         final String code = (String) map.get("code");
         final String name = (String) map.get("name");
@@ -343,7 +344,13 @@ public class Versions extends Activity {
             map.put("text", action);
             adapter.notifyDataSetChanged();
         } else if (text.equals(getString(R.string.uninstall))) {
-            areYouSure(getString(R.string.deleteversion, code.toUpperCase(Locale.US)),
+            if (!button) {
+                bible.setVersion(code.toLowerCase(Locale.US));
+                Intent intent = new Intent(this, Chapter.class);
+                intent.putExtra("version", code.toLowerCase(Locale.US));
+                startActivity(intent);
+            } else {
+                areYouSure(getString(R.string.deleteversion, code.toUpperCase(Locale.US)),
                     getString(R.string.deleteversiondetail, name),
                     new DialogInterface.OnClickListener() {
                         @Override
@@ -356,6 +363,7 @@ public class Versions extends Activity {
                             adapter.notifyDataSetChanged();
                         }
                     });
+            }
         }
     }
 
