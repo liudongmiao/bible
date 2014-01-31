@@ -806,18 +806,29 @@ public class Bible
         } else {
             checkZipData(new File(Environment.getExternalStorageDirectory(), "Download"));
         }
+        checkVersions();
     }
 
-    public void checkBibleData(boolean block) {
+    public void checkBibleData(boolean block, final Runnable run) {
         if (block) {
             checkBibleData();
+            if (run != null) {
+                run.run();
+            }
         } else {
             new Thread(new Runnable() {
                 public void run() {
                     checkBibleData();
+                    if (run != null) {
+                        run.run();
+                    }
                 }
             }).start();
         }
+    }
+
+    public void checkBibleData(boolean block) {
+        checkBibleData(block, null);
     }
 
     private boolean checkZipData(File path) {

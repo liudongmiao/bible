@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 
 public class Receiver extends BroadcastReceiver {
 
@@ -26,10 +28,22 @@ public class Receiver extends BroadcastReceiver {
             context.startActivity(new Intent(context, Chapter.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } else if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-            bible.checkBibleData(false);
-            long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-            Versions.refresh(id);
+            final long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+            bible.checkBibleData(false, new Runnable() {
+                @Override
+                public void run() {
+                    handler.sendMessage(handler.obtainMessage(0, id));
+                }
+            });
         }
     }
+
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            Versions.refresh((Long) msg.obj);
+            return false;
+        }
+    });
 
 }
