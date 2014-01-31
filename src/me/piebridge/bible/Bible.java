@@ -83,6 +83,7 @@ public class Bible
     private ArrayList<String> osiss = new ArrayList<String>();
     private ArrayList<String> chapters = new ArrayList<String>();
     private ArrayList<String> versions = new ArrayList<String>();
+    private Object versionsLock = new Object();
     private HashMap<String, String> versionpaths = new HashMap<String, String>();
     private ArrayList<String> humans = new ArrayList<String>();
 
@@ -153,6 +154,12 @@ public class Bible
     }
 
     public boolean checkVersions() {
+        synchronized (versionsLock) {
+            return checkVersionsSync();
+        }
+    }
+
+    private boolean checkVersionsSync() {
         File path = getExternalFilesDirWrapper();
         if (path == null) {
             mtime.clear();
@@ -165,11 +172,12 @@ public class Bible
         if (oldmtime == null) {
             oldmtime = 0L;
         }
-        if (versions.size() != 0 && path.lastModified() <= oldmtime && (
-            !oldpath.exists() || !oldpath.isDirectory() || oldpath.lastModified() <= oldmtime)) {
+        if (versions.size() != 0 && path.lastModified() <= oldmtime
+                && (!oldpath.exists() || !oldpath.isDirectory() || oldpath.lastModified() <= oldmtime)) {
             return true;
         }
         versions.clear();
+        versionpaths.clear();
         checkVersion(oldpath);
         checkVersion(path);
         Collections.sort(versions);
@@ -331,6 +339,12 @@ public class Bible
     }
 
     public ArrayList<String> get(TYPE type) {
+        synchronized (versionsLock) {
+            return getSync(type);
+        }
+    }
+
+    public ArrayList<String> getSync(TYPE type) {
         switch (type) {
             case VERSION:
                 return versions;
@@ -790,7 +804,9 @@ public class Bible
         File file = getFile(version);
         if (file != null && file.isFile() && file.delete()) {
             checkBibleData(false);
-            versionpaths.remove(version);
+            if (version.equalsIgnoreCase(databaseVersion)) {
+                setVersion(get(TYPE.VERSION, 0));
+            }
             return true;
         } else {
             return false;
