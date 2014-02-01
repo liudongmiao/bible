@@ -254,7 +254,7 @@ public class Versions extends Activity {
                     try {
                         json = bible.getRemoteVersions();
                     } catch (Exception e) {
-                        Log.d(TAG, "", e);
+                        Log.e(TAG, "", e);
                     } finally {
                         handler.sendMessage(handler.obtainMessage(0, json));
                     }
