@@ -799,18 +799,24 @@ public class Bible
         return getField(object, object.getClass(), fieldName);
     }
 
-    public boolean deleteVersion(String version) {
+    public boolean deleteVersion(String version, Runnable run) {
+        boolean returncode = false;
         version = version.toLowerCase(Locale.US);
         File file = getFile(version);
         if (file != null && file.isFile() && file.delete()) {
-            checkBibleData(false);
+            checkBibleData(true);
             if (version.equalsIgnoreCase(databaseVersion)) {
                 setVersion(get(TYPE.VERSION, 0));
             }
-            return true;
-        } else {
-            return false;
+            if (run != null) {
+                run.run();
+            }
+            returncode = true;
         }
+        if (run != null) {
+            run.run();
+        }
+        return returncode;
     }
 
     @SuppressLint("NewApi")
@@ -1128,6 +1134,7 @@ public class Bible
         try {
             new JSONObject(json);
         } catch (JSONException e) {
+            Log.d(TAG, "json: " + json);
             return null;
         }
         try {

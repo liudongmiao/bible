@@ -713,8 +713,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            bible.deleteVersion(delete);
-                            bible.checkVersions();
+                            bible.deleteVersion(delete, null);
                             findViewById(R.id.version).performClick();
                         }
                     });

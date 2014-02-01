@@ -45,6 +45,8 @@ public class Versions extends Activity {
     static List<Map<String, String>> data = new ArrayList<Map<String, String>>();
     Map<String, String> request = new HashMap<String, String>();
 
+    final static String TAG = "me.piebridge.bible$Versions";
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.versions);
@@ -252,6 +254,7 @@ public class Versions extends Activity {
                     try {
                         json = bible.getRemoteVersions();
                     } catch (Exception e) {
+                        Log.d(TAG, "", e);
                     } finally {
                         handler.sendMessage(handler.obtainMessage(0, json));
                     }
@@ -355,12 +358,14 @@ public class Versions extends Activity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            bible.deleteVersion(code);
-                            bible.checkVersions();
-                            String install = getString(R.string.install);
-                            map.put("text", install);
-                            map.put("action", install);
-                            adapter.notifyDataSetChanged();
+                            final String install = getString(R.string.install);
+                            bible.deleteVersion(code, new Runnable() {
+                                public void run() {
+                                    map.put("text", install);
+                                    map.put("action", install);
+                                    adapter.notifyDataSetChanged();
+                                }
+                            });
                         }
                     });
             }
