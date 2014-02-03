@@ -808,9 +808,6 @@ public class Bible
             if (version.equalsIgnoreCase(databaseVersion)) {
                 setVersion(get(TYPE.VERSION, 0));
             }
-            if (run != null) {
-                run.run();
-            }
             returncode = true;
         }
         if (run != null) {
