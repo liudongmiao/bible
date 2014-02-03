@@ -954,7 +954,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public void setItemText(int index) {
         if (items != null && index >= 0 && index < items.size()) {
             OsisItem item = items.get(index);
-            String book = bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, item.book)) + item.chapter;
+            String book = bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, item.book));
+            if (!Bible.isCJK(book)) {
+                book += " ";
+            }
+            book += item.chapter;
             if (!item.verse.equals("") && !item.end.equals("")) {
                 book += ":" + item.verse + "-" + item.end;
             } else if (!item.verse.equals("") || !item.end.equals("")) {
