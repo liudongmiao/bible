@@ -279,6 +279,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             verse = sp.getString("verse", "");
         }
         show();
+        showData();
     }
 
     private void getVerse() {
@@ -733,7 +734,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume, items: " + items);
-        showData();
     }
 
     private void showData() {
@@ -1016,6 +1016,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         verse = bundle.getString("verse");
         Log.d(TAG, "onRestoreInstanceState, restore index: " + index + ", verse: " + verse);
+        // shouldn't happen in normal launchMode
+        showData();
     }
 
     @Override
