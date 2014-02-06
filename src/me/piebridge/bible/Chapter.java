@@ -125,6 +125,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final int MENU_MORE = 2;
     private final int MENU_HELP = 1;
 
+    public static boolean refresh = false;
+
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -279,7 +281,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             verse = sp.getString("verse", "");
         }
         show();
-        showData();
+        refresh = true;
     }
 
     private void getVerse() {
@@ -734,6 +736,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume, items: " + items);
+        String wanted = "";
+        String current = ((TextView)findViewById(R.id.version)).getText().toString();
+        if (bible != null) {
+            wanted = bible.getVersionName(bible.getVersion());
+        }
+        if (refresh || !wanted.equals(current)) {
+            refresh = false;
+            showData();
+        }
     }
 
     private void showData() {
@@ -1021,7 +1032,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         verse = bundle.getString("verse");
         Log.d(TAG, "onRestoreInstanceState, restore index: " + index + ", verse: " + verse);
         // shouldn't happen in normal launchMode
-        showData();
+        refresh = true;
     }
 
     @Override

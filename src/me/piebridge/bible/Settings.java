@@ -211,4 +211,10 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         editor.commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Chapter.refresh = true;
+    }
+
 }
