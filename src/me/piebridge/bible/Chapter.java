@@ -224,6 +224,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setSupportZoom(true);
         webview.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        // http://stackoverflow.com/questions/3031481#answer-4873626
+        webview.setFocusableInTouchMode(false);
         webview.addJavascriptInterface(new Object() {
             @JavascriptInterface
             public void setVerse(String string) {
