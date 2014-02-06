@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 public class Versions extends Activity {
 
+    long mtime = 0;
     ImageView refresh;
     static EditText query;
 
@@ -44,6 +45,9 @@ public class Versions extends Activity {
     static Map<String, String> queue = new HashMap<String, String>();
     static List<Map<String, String>> data = new ArrayList<Map<String, String>>();
     Map<String, String> request = new HashMap<String, String>();
+
+    final static int STOP = 0;
+    final static int START = 1;
 
     final static String TAG = "me.piebridge.bible$Versions";
 
@@ -170,7 +174,7 @@ public class Versions extends Activity {
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                refreshVersions();
+                handler.sendEmptyMessage(START);
             }
         });
 
@@ -229,6 +233,11 @@ public class Versions extends Activity {
             json = "{versions:[]}";
         }
         setVersions(json);
+        long now = System.currentTimeMillis() / 1000;
+        if (mtime == 0 || mtime - now > 86400) {
+            mtime = now;
+            handler.sendEmptyMessageDelayed(START, 400);
+        }
     }
 
     boolean refreshing = false;
@@ -236,17 +245,26 @@ public class Versions extends Activity {
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            setVersions((String) msg.obj);
-            refreshing = false;
-            ((AnimationDrawable) refresh.getDrawable()).stop();
-            return false;
+            switch (msg.what) {
+            case STOP:
+                setVersions((String) msg.obj);
+                refreshing = false;
+                ((AnimationDrawable) refresh.getDrawable()).stop();
+                return false;
+            case START:
+                Log.d(TAG, "will refreshVersions");
+                refreshVersions();
+                refreshing = true;
+                ((AnimationDrawable) refresh.getDrawable()).start();
+                return false;
+            default:
+                return false;
+            }
         }
     });
 
     void refreshVersions() {
         if (!refreshing) {
-            refreshing = true;
-            ((AnimationDrawable) refresh.getDrawable()).start();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -256,7 +274,7 @@ public class Versions extends Activity {
                     } catch (Exception e) {
                         Log.e(TAG, "", e);
                     } finally {
-                        handler.sendMessage(handler.obtainMessage(0, json));
+                        handler.sendMessage(handler.obtainMessage(STOP, json));
                     }
                 }
             }).start();
