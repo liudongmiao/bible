@@ -37,7 +37,7 @@ import android.widget.TextView;
 
 public class Versions extends Activity {
 
-    long mtime = 0;
+    static long mtime = 0;
     ImageView refresh;
     static EditText query;
 
