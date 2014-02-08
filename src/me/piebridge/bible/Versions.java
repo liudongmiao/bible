@@ -198,7 +198,9 @@ public class Versions extends Activity {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
             case STOP:
-                setVersions((String) msg.obj);
+                if (msg.obj != null) {
+                    setVersions((String) msg.obj);
+                }
                 refreshing = false;
                 ((AnimationDrawable) refresh.getDrawable()).stop();
                 return false;
