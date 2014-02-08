@@ -47,5 +47,6 @@
     <string name="uninstall">移除</string>
     <string name="cancel_install">取消</string>
     <string name="not_found">沒有找到</string>
+    <string name="request">索取</string>
     <string name="request_version">點擊這裡索取其它版本</string>
 </resources>

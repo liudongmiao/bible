@@ -47,5 +47,6 @@
     <string name="uninstall">Uninstall</string>
     <string name="cancel_install">Cancel</string>
     <string name="not_found">Not List</string>
+    <string name="request">Request</string>
     <string name="request_version">Click here to request other version</string>
 </resources>

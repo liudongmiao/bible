@@ -1156,6 +1156,10 @@ public class Bible
     }
 
     public void email(Context context) {
+        email(context, null);
+    }
+
+    public void email(Context context, String content) {
         StringBuffer subject = new StringBuffer();
         subject.append(context.getString(R.string.app_name));
         if (versionName != null) {
@@ -1169,6 +1173,9 @@ public class Bible
         subject.append(")");
         Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:liudongmiao@gmail.com"));
         intent.putExtra(Intent.EXTRA_SUBJECT, subject.toString());
+        if (content != null) {
+            intent.putExtra(Intent.EXTRA_TEXT, content);
+        }
         try {
             context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
