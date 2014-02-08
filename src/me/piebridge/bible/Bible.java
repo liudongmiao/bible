@@ -33,6 +33,7 @@ import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -1124,7 +1125,17 @@ public class Bible
 
     String getRemoteVersions() throws ClientProtocolException, IOException {
         HttpClient client = new DefaultHttpClient();
-        HttpResponse response = client.execute(new HttpGet(Bible.BIBLEDATA_PREFIX + JSON));
+        SharedPreferences sp = mContext.getSharedPreferences("json", Context.MODE_PRIVATE);
+        String etag = sp.getString(JSON + "_etag", null);
+        HttpGet get = new HttpGet(Bible.BIBLEDATA_PREFIX + JSON);
+        if (etag != null) {
+            get.addHeader("If-None-Match", etag);
+        }
+        HttpResponse response = client.execute(get);
+        if (response.getStatusLine().getStatusCode() == 304) {
+            Log.d(TAG, JSON + " not modified");
+            return null;
+        }
         InputStream is = response.getEntity().getContent();
         String json = getStringFromInputStream(is);
         is.close();
@@ -1135,6 +1146,10 @@ public class Bible
             return null;
         }
         try {
+            Header header = response.getFirstHeader("ETag");
+            if (header != null) {
+                sp.edit().putString(JSON + "_etag", header.getValue()).commit();
+            }
             File tmpfile = new File(mContext.getFilesDir(), JSON + ".tmp");
             OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpfile));
             os.write(json.getBytes("UTF-8"));
