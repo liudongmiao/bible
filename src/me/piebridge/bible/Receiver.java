@@ -1,10 +1,12 @@
 package me.piebridge.bible;
 
+import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 
@@ -28,7 +30,7 @@ public class Receiver extends BroadcastReceiver {
             context.startActivity(new Intent(context, Chapter.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } else if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-            final long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+            final long id = getDownloadId(intent);
             bible.checkBibleData(false, new Runnable() {
                 @Override
                 public void run() {
@@ -36,6 +38,11 @@ public class Receiver extends BroadcastReceiver {
                 }
             });
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+    long getDownloadId(Intent intent) {
+        return intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
     }
 
     private Handler handler = new Handler(new Handler.Callback() {
