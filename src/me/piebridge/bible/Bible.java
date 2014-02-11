@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.apache.http.Header;
@@ -894,6 +895,18 @@ public class Bible
 
         if (!newer && new File(dirpath, filename).isFile()) {
             return true;
+        }
+
+        // test for zip completeness
+        ZipFile zipfile = null;
+        try {
+            zipfile = new ZipFile(path);
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (zipfile != null) {
+                zipfile.close();
+            }
         }
 
         InputStream is = new FileInputStream(path);
