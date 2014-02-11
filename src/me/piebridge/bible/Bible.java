@@ -902,6 +902,7 @@ public class Bible
         try {
             zipfile = new ZipFile(path);
         } catch (Exception e) {
+            Log.e(TAG, "illegal zipfile " + path.getAbsolutePath() + ": " + e.getMessage());
             return false;
         } finally {
             if (zipfile != null) {
@@ -941,7 +942,6 @@ public class Bible
                     } else {
                         zero = 0;
                     }
-                    Log.d(TAG, "length: " + length);
                     os.write(buffer, 0, length);
                 }
                 os.close();
