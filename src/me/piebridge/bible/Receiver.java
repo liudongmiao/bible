@@ -34,7 +34,7 @@ public class Receiver extends BroadcastReceiver {
             bible.checkBibleData(false, new Runnable() {
                 @Override
                 public void run() {
-                    handler.sendMessage(handler.obtainMessage(0, id));
+                    Versions.onDownloadComplete(id);
                 }
             });
         }
@@ -44,13 +44,5 @@ public class Receiver extends BroadcastReceiver {
     long getDownloadId(Intent intent) {
         return intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
     }
-
-    private Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            Versions.refresh((Long) msg.obj);
-            return false;
-        }
-    });
 
 }

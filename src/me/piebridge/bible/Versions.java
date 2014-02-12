@@ -38,21 +38,26 @@ import android.widget.TextView;
 public class Versions extends Activity {
 
     static long mtime = 0;
-    ImageView refresh;
-    static EditText query;
 
-    static Bible bible;
-    static SimpleAdapter adapter;
-    static boolean resume = false;
-    static List<Map<String, String>> versions;
-    static List<String> languages = new ArrayList<String>();
-    static List<String> names = new ArrayList<String>();
-    static Map<String, String> queue = new HashMap<String, String>();
-    static List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+    Bible bible;
+    EditText query;
+    ImageView refresh;
+    SimpleAdapter adapter;
+    List<String> languages = new ArrayList<String>();
+    List<String> names = new ArrayList<String>();
+    List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+    List<Map<String, String>> versions = new ArrayList<Map<String, String>>();
     Map<String, String> request = new HashMap<String, String>();
 
     final static int STOP = 0;
     final static int START = 1;
+    final static int DELETE = 2;
+    final static int DELETED = 3;
+    final static int COMPLETE = 4;
+
+    static Handler resume = null;
+    static List<String> completed = new ArrayList<String>();
+    static Map<String, String> queue = new HashMap<String, String>();
 
     final static String TAG = "me.piebridge.bible$Versions";
 
@@ -107,27 +112,26 @@ public class Versions extends Activity {
             String none = "none";
             request.put("lang", none);
             request.put("code", getString(R.string.request_version));
-            Versions.languages.add(request.get("lang"));
-            Versions.names.add(getString(R.string.not_found));
+            languages.add(request.get("lang"));
+            names.add(getString(R.string.not_found));
         }
     }
 
-    static List<Map<String, String>> parseVersions(String string) {
+    List<Map<String, String>> parseVersions(List<Map<String, String>> list, String string) {
         bible.checkVersions();
         Context context = bible.getContext();
-        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         try {
             JSONObject jsons = new JSONObject(string);
             List<String> installed = bible.get(Bible.TYPE.VERSIONPATH);
-            JSONArray versions = jsons.getJSONArray("versions");
-            JSONObject languages = null;
+            JSONArray jsonVersions = jsons.getJSONArray("versions");
+            JSONObject jsonLanguages = null;
             try {
-                languages = jsons.getJSONObject("languages");
+                jsonLanguages = jsons.getJSONObject("languages");
             } catch (JSONException e) {
                 // do nothing
             }
-            for (int i = 0; i < versions.length(); ++i) {
-                JSONObject version = versions.getJSONObject(i);
+            for (int i = 0; i < jsonVersions.length(); ++i) {
+                JSONObject version = jsonVersions.getJSONObject(i);
                 Map<String, String> map = new HashMap<String, String>();
                 String action;
                 String code = version.getString("code");
@@ -155,16 +159,16 @@ public class Versions extends Activity {
                 }
                 map.put("action", action);
                 list.add(map);
-                if (!Versions.languages.contains(lang)) {
-                    Versions.languages.add(lang);
+                if (!languages.contains(lang)) {
+                    languages.add(lang);
                     String name = lang;
-                    if (languages != null) {
+                    if (jsonLanguages != null) {
                         try {
-                            name = languages.getString(lang);
+                            name = jsonLanguages.getString(lang);
                         } catch (JSONException e) {
                         }
                     }
-                    Versions.names.add(name);
+                    names.add(name);
                 }
             }
         } catch (JSONException e) {
@@ -175,7 +179,7 @@ public class Versions extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        resume = true;
+        resume = handler;
         String json;
         try {
             json = bible.getLocalVersions();
@@ -183,6 +187,9 @@ public class Versions extends Activity {
             json = "{versions:[]}";
         }
         setVersions(json);
+        if (completed.size() > 0) {
+            handler.sendEmptyMessage(COMPLETE);
+        }
         long now = System.currentTimeMillis() / 1000;
         if (mtime == 0 || mtime - now > 86400) {
             mtime = now;
@@ -194,7 +201,7 @@ public class Versions extends Activity {
 
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(final Message msg) {
             switch (msg.what) {
             case STOP:
                 if (msg.obj != null) {
@@ -204,10 +211,56 @@ public class Versions extends Activity {
                 ((AnimationDrawable) refresh.getDrawable()).stop();
                 return false;
             case START:
-                Log.d(TAG, "will refreshVersions");
+                Log.d(TAG, "start refresh versions");
                 refreshVersions();
                 refreshing = true;
                 ((AnimationDrawable) refresh.getDrawable()).start();
+                return false;
+            case DELETE:
+                if (bible == null) {
+                    return false;
+                }
+                final String code = (String) msg.obj;
+                Log.d(TAG, "delete " + code);
+                bible.deleteVersion(code, new Runnable() {
+                    public void run() {
+                        handler.sendMessage(handler.obtainMessage(DELETED, code));
+                    }
+                });
+                return false;
+            case DELETED:
+                Log.d(TAG, "deleted " + msg.obj);
+                final String install = getString(R.string.install);
+                synchronized (versions) {
+                    for (Map<String, String> map : versions) {
+                        if (map.get("code").equalsIgnoreCase((String) msg.obj)) {
+                            map.put("text", install);
+                            map.put("action", install);
+                        }
+                    }
+                }
+                filterVersion(query.getText().toString());
+                adapter.notifyDataSetChanged();
+                return false;
+            case COMPLETE:
+                String uninstall = getString(R.string.uninstall);
+                synchronized (versions) {
+                    for (Map<String, String> map : versions) {
+                        if (completed.size() == 0) {
+                            break;
+                        }
+                        synchronized (completed) {
+                            String version = map.get("code").toUpperCase(Locale.US);
+                            if (completed.contains(version)) {
+                                map.put("text", uninstall);
+                                map.put("action", uninstall);
+                                completed.remove(version);
+                            }
+                        }
+                    }
+                }
+                filterVersion(query.getText().toString());
+                adapter.notifyDataSetChanged();
                 return false;
             default:
                 return false;
@@ -237,48 +290,33 @@ public class Versions extends Activity {
         if (json == null || json.length() == 0) {
             return;
         }
-        versions = parseVersions(json);
-        versions.add(request);
-        synchronized (data) {
-            data.clear();
-            for (Map<String, String> map : versions) {
-                data.add(map);
-            }
+        synchronized (versions) {
+            versions.clear();
+            parseVersions(versions, json);
+            versions.add(request);
         }
-        refresh(0);
-        adapter.notifyDataSetChanged();
-        query.setText("");
+        adapter.getFilter().filter(query.getText().toString());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        resume = false;
+        resume = null;
     }
 
-    static void refresh(long id) {
-        if (resume) {
-            boolean changed = false;
-            String code = queue.get(String.valueOf(id));
-            if (code != null) {
+    public static void onDownloadComplete(long id) {
+        String code = queue.get(String.valueOf(id));
+        Log.d(TAG, "download complete: " + code);
+        if (code != null) {
+            synchronized (queue) {
                 queue.remove(String.valueOf(id));
                 queue.remove(code);
-                synchronized (data) {
-                    data.clear();
-                    for (Map<String, String> map : versions) {
-                        if (String.valueOf(map.get("code")).equalsIgnoreCase(code)) {
-                            changed = true;
-                            String action = bible.getContext().getString(R.string.uninstall);
-                            map.put("text", action);
-                            map.put("action", action);
-                        }
-                        data.add(map);
-                    }
-                }
-                if (changed) {
-                    adapter.notifyDataSetChanged();
-                    query.setText("");
-                }
+            }
+            synchronized (completed) {
+                completed.add(code.toUpperCase(Locale.US));
+            }
+            if (resume != null) {
+                resume.sendEmptyMessage(COMPLETE);
             }
         }
     }
@@ -296,15 +334,12 @@ public class Versions extends Activity {
             String content = code.toUpperCase(Locale.US) + ", " + name;
             bible.email(this, content);
         } else if (text.equals(getString(R.string.install))) {
-            long id;
-            if (queue.containsKey(code)) {
-                id = Long.parseLong(queue.get(code));
-            } else {
-                id = bible.download(path);
-            }
+            final long id =  bible.download(path);
             if (id > 0) {
-                queue.put(code, String.valueOf(id));
-                queue.put(String.valueOf(id), code);
+                synchronized (queue) {
+                    queue.put(code, String.valueOf(id));
+                    queue.put(String.valueOf(id), code);
+                }
                 String cancel = getString(R.string.cancel_install);
                 map.put("text", cancel);
                 adapter.notifyDataSetChanged();
@@ -314,8 +349,10 @@ public class Versions extends Activity {
                 long id = Long.parseLong(queue.get(code));
                 if (id > 0) {
                     bible.cancel(id);
-                    queue.remove(String.valueOf(id));
-                    queue.remove(code);
+                    synchronized (queue) {
+                        queue.remove(String.valueOf(id));
+                        queue.remove(code);
+                    }
                 }
             }
             map.put("text", action);
@@ -332,14 +369,7 @@ public class Versions extends Activity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            final String install = getString(R.string.install);
-                            bible.deleteVersion(code, new Runnable() {
-                                public void run() {
-                                    map.put("text", install);
-                                    map.put("action", install);
-                                    adapter.notifyDataSetChanged();
-                                }
-                            });
+                            handler.sendMessage(handler.obtainMessage(DELETE, code));
                         }
                     });
             }
@@ -363,15 +393,6 @@ public class Versions extends Activity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            if (data.size() <= position) {
-                // why ?
-                synchronized (data) {
-                    data.clear();
-                    for (Map<String, String> map : versions) {
-                        data.add(map);
-                    }
-                }
-            }
             View view = super.getView(position, convertView, parent);
             final View code = view.findViewById(R.id.name);
             final TextView action = (TextView) view.findViewById(R.id.action);
@@ -415,21 +436,7 @@ public class Versions extends Activity {
                 if (prefix != null && prefix.length() > 0) {
                     filter = prefix.toString().toLowerCase(Locale.US);
                 }
-                synchronized (data) {
-                    data.clear();
-                    for (Map<String, String> map : versions) {
-                        if (filter == null || map.get("action") == null) {
-                            data.add(map);
-                        } else {
-                            for (String value : map.values()) {
-                                if (value.toLowerCase(Locale.US).contains(filter)) {
-                                    data.add(map);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
+                filterVersion(filter);
                 results.count = data.size();
                 return results;
             }
@@ -453,7 +460,7 @@ public class Versions extends Activity {
             String name = null;
             if (section != -1) {
                 try {
-                    name = Versions.names.get((int) section);
+                    name = names.get((int) section);
                 } catch (IndexOutOfBoundsException e) {
                     // do nothing, shouldn't happened
                 }
@@ -479,7 +486,25 @@ public class Versions extends Activity {
             if (language == null) {
                 language = request.get("lang");
             }
-            return Versions.languages.indexOf(language);
+            return languages.indexOf(language);
+        }
+    }
+
+    void filterVersion(String filter) {
+        synchronized (data) {
+            data.clear();
+            for (Map<String, String> map : versions) {
+                if (filter == null || map.get("action") == null) {
+                    data.add(map);
+                } else {
+                    for (String value : map.values()) {
+                        if (value.toLowerCase(Locale.US).contains(filter)) {
+                            data.add(map);
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 }
