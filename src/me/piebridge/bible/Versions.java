@@ -109,7 +109,8 @@ public class Versions extends Activity {
         if (request.size() == 0) {
             String none = "none";
             request.put("lang", none);
-            request.put("code", getString(R.string.request_version));
+            request.put("code", getString(R.string.other_version));
+            request.put("name", getString(R.string.request_version));
             languages.add(request.get("lang"));
             names.add(getString(R.string.not_found));
         }
@@ -398,9 +399,8 @@ public class Versions extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = super.getView(position, convertView, parent);
-            final View code = view.findViewById(R.id.name);
             final TextView action = (TextView) view.findViewById(R.id.action);
-            if (code != null && action != null) {
+            if (action != null) {
                 action.setTag(position);
                 action.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -414,10 +414,8 @@ public class Versions extends Activity {
                 @SuppressWarnings("unchecked")
                 Map<String, String> map = (Map<String, String>) getItem(position);
                 if (map.get("action") == null) {
-                    code.setVisibility(View.GONE);
                     action.setVisibility(View.GONE);
                 } else {
-                    code.setVisibility(View.VISIBLE);
                     action.setVisibility(View.VISIBLE);
                 }
             }
