@@ -40,12 +40,14 @@ public class Versions extends Activity {
     static long mtime = 0;
 
     Bible bible;
+    ListView list;
     EditText query;
     ImageView refresh;
     SimpleAdapter adapter;
     List<String> languages = new ArrayList<String>();
     List<String> names = new ArrayList<String>();
     List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+    List<Map<String, String>> filtered = new ArrayList<Map<String, String>>();
     List<Map<String, String>> versions = new ArrayList<Map<String, String>>();
     Map<String, String> request = new HashMap<String, String>();
 
@@ -66,17 +68,12 @@ public class Versions extends Activity {
         setContentView(R.layout.versions);
         bible = Bible.getBible(this);
 
-        String[] from = { "code", "name", "text", "lang" };
-        int[] to = {R.id.code, R.id.name, R.id.action, 0 };
-        adapter = new Adapter(this, data, R.layout.version, from, to);
-
-        final ListView list = (ListView) findViewById(android.R.id.list);
-        list.setAdapter(adapter);
+        list = (ListView) findViewById(android.R.id.list);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 @SuppressWarnings("unchecked")
-                Map<String, String> map = (Map<String, String>) list.getItemAtPosition(position);
+                Map<String, String> map = (Map<String, String>) adapter.getItem(position);
                 TextView action = (TextView) view.findViewById(R.id.action);
                 clickVersion(action, map, false);
             }
@@ -91,6 +88,7 @@ public class Versions extends Activity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int after) {
+                filtering = true;
                 adapter.getFilter().filter(s);
             }
 
@@ -295,6 +293,12 @@ public class Versions extends Activity {
             parseVersions(versions, json);
             versions.add(request);
         }
+        if (adapter == null) {
+            String[] from = { "code", "name", "text", "lang" };
+            int[] to = {R.id.code, R.id.name, R.id.action, 0 };
+            adapter = new Adapter(this, data, R.layout.version, from, to);
+            list.setAdapter(adapter);
+        }
         adapter.getFilter().filter(query.getText().toString());
     }
 
@@ -490,21 +494,48 @@ public class Versions extends Activity {
         }
     }
 
+    volatile boolean filtering = false;
     void filterVersion(String filter) {
-        synchronized (data) {
-            data.clear();
+        filtering = false;
+        Log.d(TAG, "filtering Version: " + filter);
+        synchronized (versions) {
+            filtered.clear();
             for (Map<String, String> map : versions) {
+                if (filtering) {
+                    filtering = false;
+                    return;
+                }
                 if (filter == null || map.get("action") == null) {
-                    data.add(map);
+                    filtered.add(map);
                 } else {
                     for (String value : map.values()) {
+                        if (filtering) {
+                            filtering = false;
+                            return;
+                        }
                         if (value.toLowerCase(Locale.US).contains(filter)) {
-                            data.add(map);
+                            filtered.add(map);
                             break;
                         }
+                    }
+                    String language = map.get("lang");
+                    if (language != null) {
+                        int index = languages.indexOf(language);
+                        if (index != -1 && names.size() > index) {
+                            String name = names.get(index);
+                            if (name.toLowerCase(Locale.US).contains(filter)) {
+                                filtered.add(map);
+                            }
+                        }
+
                     }
                 }
             }
         }
+        synchronized (data) {
+            data.clear();
+            data.addAll(filtered);
+        }
+        Log.d(TAG, "filtered Version: " + filter);
     }
 }
