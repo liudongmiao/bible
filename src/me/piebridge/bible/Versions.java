@@ -506,6 +506,17 @@ public class Versions extends Activity {
                 if (filter == null || map.get("action") == null) {
                     filtered.add(map);
                 } else {
+                    String language = map.get("lang");
+                    if (language != null) {
+                        int index = languages.indexOf(language);
+                        if (index != -1 && names.size() > index) {
+                            String name = names.get(index);
+                            if (name.toLowerCase(Locale.US).contains(filter)) {
+                                filtered.add(map);
+                                continue;
+                            }
+                        }
+                    }
                     for (String value : map.values()) {
                         if (filtering) {
                             filtering = false;
@@ -515,17 +526,6 @@ public class Versions extends Activity {
                             filtered.add(map);
                             break;
                         }
-                    }
-                    String language = map.get("lang");
-                    if (language != null) {
-                        int index = languages.indexOf(language);
-                        if (index != -1 && names.size() > index) {
-                            String name = names.get(index);
-                            if (name.toLowerCase(Locale.US).contains(filter)) {
-                                filtered.add(map);
-                            }
-                        }
-
                     }
                 }
             }
