@@ -3,6 +3,8 @@
     <style name="theme" parent="@android:style/Theme.Holo">
         <item name="android:windowNoTitle">true</item>
     </style>
+    <style name="chapter" parent="@android:style/Theme.Holo">
+    </style>
     <style name="theme.light" parent="@android:style/Theme.Holo.Light">
         <item name="android:windowNoTitle">true</item>
     </style>

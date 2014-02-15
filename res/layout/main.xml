@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <GridView
+        android:id="@+id/gridview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:verticalSpacing="7dp"
+        android:horizontalSpacing="7dp"
+        android:stretchMode="columnWidth"
+        android:paddingLeft="13dp"
+        android:paddingRight="13dp"
+        />
+    <LinearLayout
+        android:id="@+id/progress"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        >
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            style="@style/progress"
+            />
+        <TextView
+            android:id="@+id/bibledata"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bibledata"
+            android:visibility="gone"
+            />
+    </LinearLayout>
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
+        />
+</merge>
+<!-- vim: set sta sw=4 et: -->

@@ -14,6 +14,8 @@
 package me.piebridge.bible;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.database.Cursor;
@@ -44,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import android.preference.PreferenceManager;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -121,12 +122,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private boolean hasIntentData = false;
     private String body;
 
-    private final int MENU_SETTINGS = 0;
-    private final int MENU_MORE = 2;
-    private final int MENU_HELP = 1;
+    private final int MENU_SEARCH = 0;
+    private final int MENU_SETTINGS = 1;
+    private final int MENU_HELP = 2;
+    private final int MENU_MORE = 3;
 
     private static boolean refresh = false;
-
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -167,6 +168,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     });
 
+    private View header;
+
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,12 +179,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chapter);
-        findViewById(R.id.book).setOnClickListener(this);
-        findViewById(R.id.chapter).setOnClickListener(this);
-        findViewById(R.id.search).setOnClickListener(this);
-        findViewById(R.id.version).setOnClickListener(this);
-        findViewById(R.id.share).setOnClickListener(this);
-        findViewById(R.id.items).setOnClickListener(this);
+        header = getHeader();
+        header.findViewById(R.id.book).setOnClickListener(this);
+        header.findViewById(R.id.chapter).setOnClickListener(this);
+        header.findViewById(R.id.version).setOnClickListener(this);
+        header.findViewById(R.id.items).setOnClickListener(this);
 
         gridview = (GridView) findViewById(R.id.gridview);
         final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -268,7 +270,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
         setIntentData();
         int color = 0x6633B5E5;
-        Integer mHighlightColor = (Integer) Bible.getField(findViewById(R.id.version), TextView.class, "mHighlightColor");
+        Integer mHighlightColor = (Integer) Bible.getField(header.findViewById(R.id.version), TextView.class, "mHighlightColor");
         if (mHighlightColor != null) {
             color = mHighlightColor.intValue();
         }
@@ -380,14 +382,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         Log.d(TAG, "set book chapter, osis: " + osis);
 
         setItemText(this.index);
-        ((TextView)findViewById(R.id.version)).setText(bible.getVersionName(bible.getVersion()));
-        ((TextView)findViewById(R.id.book)).setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
+        ((TextView)header.findViewById(R.id.version)).setText(bible.getVersionName(bible.getVersion()));
+        ((TextView)header.findViewById(R.id.book)).setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
         if (!"".equals(verse) && !"".equals(end)) {
-            ((TextView)findViewById(R.id.chapter)).setText(chapter + ":" + verse + "-" + end);
+            ((TextView)header.findViewById(R.id.chapter)).setText(chapter + ":" + verse + "-" + end);
         } else if (!"".equals(verse) || !"".equals(end)) {
-            ((TextView)findViewById(R.id.chapter)).setText(chapter + ":" + verse + end);
+            ((TextView)header.findViewById(R.id.chapter)).setText(chapter + ":" + verse + end);
         } else {
-            ((TextView)findViewById(R.id.chapter)).setText(chapter);
+            ((TextView)header.findViewById(R.id.chapter)).setText(chapter);
         }
     }
 
@@ -424,7 +426,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             versename = "versename";
         }
         copytext = "";
-        showView(R.id.share, !copytext.equals(""));
+        // TODO
         String context = content;
         // for biblegateway.com
         context = context.replaceAll("<span class=\"chapternum\">.*?</span>", "<sup class=\"versenum\">1 </sup>");
@@ -544,19 +546,19 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case R.id.items:
                 showSpinner(v);
                 break;
-            case R.id.search:
-                onSearchRequested();
+//            case R.id.share:
+//                if (!copytext.equals("")) {
+//                    Intent intent = new Intent(Intent.ACTION_SEND);
+//                    intent.putExtra(Intent.EXTRA_TEXT, copytext);
+//                    intent.setType("text/plain");
+//                    try {
+//                        startActivity(Intent.createChooser(intent, getString(R.string.share)));
+//                    } catch (ActivityNotFoundException e) {
+//                    }
+//                }
+//                break;
+            default:
                 break;
-            case R.id.share:
-                if (!copytext.equals("")) {
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.putExtra(Intent.EXTRA_TEXT, copytext);
-                    intent.setType("text/plain");
-                    try {
-                        startActivity(Intent.createChooser(intent, getString(R.string.share)));
-                    } catch (ActivityNotFoundException e) {
-                    }
-                }
         }
     }
 
@@ -688,7 +690,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     showView(R.id.chapter, true);
                     showView(R.id.items, false);
                     items.clear();
-                    findViewById(R.id.book).performClick();
+                    header.findViewById(R.id.book).performClick();
                 }
                 break;
         }
@@ -719,7 +721,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             bible.deleteVersion(delete, null);
-                            findViewById(R.id.version).performClick();
+                            header.findViewById(R.id.version).performClick();
                         }
                     });
             return true;
@@ -739,7 +741,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         super.onResume();
         Log.d(TAG, "onResume, items: " + items);
         String wanted = "";
-        String current = ((TextView)findViewById(R.id.version)).getText().toString();
+        String current = ((TextView)header.findViewById(R.id.version)).getText().toString();
         if (bible != null) {
             wanted = bible.getVersionName(bible.getVersion());
         }
@@ -788,7 +790,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (!osis.equals("")) {
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
         }
-        showView(R.id.search, true);
         if (items == null || items.size() == 0) {
             showView(R.id.items, false);
             showView(R.id.book, true);
@@ -961,7 +962,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void checkShare() {
-        showView(R.id.share, !copytext.equals(""));
+//        showView(R.id.share, !copytext.equals(""));
     }
 
     public void setItemText(int index) {
@@ -977,7 +978,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             } else if (!item.verse.equals("") || !item.end.equals("")) {
                 book += ":" + item.verse + item.end;
             }
-            ((TextView)findViewById(R.id.items)).setText(book);
+            ((TextView)header.findViewById(R.id.items)).setText(book);
         }
     }
 
@@ -1100,16 +1101,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         showView(R.id.webview, true);
     }
 
-    private void createMenu(Menu menu) {
-        menu.clear();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, MENU_SEARCH, MENU_SEARCH, android.R.string.search_go).setIcon(android.R.drawable.ic_menu_search);
         menu.add(Menu.NONE, MENU_SETTINGS, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
         menu.add(Menu.NONE, MENU_HELP, MENU_HELP, R.string.help).setIcon(android.R.drawable.ic_menu_help);
         menu.add(Menu.NONE, MENU_MORE, MENU_MORE, R.string.more).setIcon(android.R.drawable.ic_menu_more);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        createMenu(menu);
+        setupMenu(menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -1117,6 +1115,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
+            case MENU_SEARCH:
+                onSearchRequested();
+                break;
             case MENU_SETTINGS:
                 storeOsisVersion();
                 intent = new Intent(this, Settings.class);
@@ -1150,5 +1151,34 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     public static void setRefresh(boolean refreshing) {
         refresh = refreshing;
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private View getHeader() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            return findViewById(R.id.header);
+        }
+        ActionBar actionBar = getActionBar();
+        if (actionBar == null) {
+            return null;
+        }
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setCustomView(R.layout.header);
+        return actionBar.getCustomView();
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void setupMenu(Menu menu) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            return;
+        }
+        for (int i = 0; i < menu.size(); ++i) {
+            MenuItem item = menu.getItem(i);
+            if (item.getItemId() == MENU_SEARCH) {
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            } else {
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            }
+        }
     }
 }

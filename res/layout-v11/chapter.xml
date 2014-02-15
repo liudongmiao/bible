@@ -4,7 +4,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     >
-    <include layout="@layout/header" />
     <include layout="@layout/main" />
 </LinearLayout>
 <!-- vim: set sta sw=4 et: -->

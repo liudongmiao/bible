@@ -2,6 +2,8 @@
 <resources>
     <style name="theme" parent="@android:style/Theme.NoTitleBar">
     </style>
+    <style name="chapter" parent="@android:style/Theme.NoTitleBar">
+    </style>
     <style name="theme.light" parent="@android:style/Theme.Light.NoTitleBar">
     </style>
     <!-- spinner in android 2.X is waste screen space -->
