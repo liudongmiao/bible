@@ -368,12 +368,16 @@ public class Versions extends Activity {
         adapter.getFilter().filter(query.getText().toString());
     }
 
-    @SuppressLint("InlinedApi")
     @Override
     protected void onPause() {
         super.onPause();
-        saveQueue();
         resume = null;
+    }
+
+    @Override
+    protected void onDestroy() {
+        saveQueue();
+        super.onDestroy();
     }
 
     public static void onDownloadComplete(DownloadInfo info) {
