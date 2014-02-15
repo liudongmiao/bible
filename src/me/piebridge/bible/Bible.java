@@ -31,7 +31,6 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.apache.http.Header;
@@ -897,24 +896,17 @@ public class Bible
             return true;
         }
 
-        // test for zip completeness
-        ZipFile zipfile = null;
-        try {
-            zipfile = new ZipFile(path);
-        } catch (Exception e) {
-            Log.e(TAG, "illegal zipfile " + path.getAbsolutePath() + ": " + e.getMessage());
-            return false;
-        } finally {
-            if (zipfile != null) {
-                zipfile.close();
-            }
-        }
-
         InputStream is = new FileInputStream(path);
+        long fileSize = path.length();
         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is));
         try {
             ZipEntry ze;
             while ((ze = zis.getNextEntry()) != null) {
+                long zeSize = ze.getCompressedSize();
+                // zip is incomplete
+                if (fileSize < zeSize) {
+                    break;
+                }
                 String zename = ze.getName();
                 if (zename == null || !zename.endsWith((".sqlite3"))) {
                     continue;
@@ -946,8 +938,6 @@ public class Bible
                 }
                 os.close();
                 if (zero > 3) {
-                    // must do this, otherwise block forever
-                    is.close();
                     return false;
                 } else {
                     tmpfile.renameTo(file);
@@ -956,6 +946,7 @@ public class Bible
                 }
             }
         } finally {
+            is.close();
             zis.close();
         }
         return false;
@@ -1093,19 +1084,19 @@ public class Bible
     public static final String BIBLEDATA_PREFIX = "http://github.com/liudongmiao/bibledata/raw/master/";
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-    public long download(String filename) {
+    public DownloadInfo download(String filename) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            return 0;
+            return null;
         }
         if (getExternalFilesDirWrapper() == null) {
-            return 0;
+            return null;
         }
         String url = BIBLEDATA_PREFIX + filename;
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setTitle(filename);
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
         DownloadManager dm = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
-        return dm.enqueue(request);
+        return DownloadInfo.getDownloadInfo(mContext, dm.enqueue(request));
     }
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)

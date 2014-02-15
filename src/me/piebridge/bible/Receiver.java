@@ -1,5 +1,6 @@
 package me.piebridge.bible;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
@@ -7,13 +8,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
 
 public class Receiver extends BroadcastReceiver {
 
     public static String TAG = "me.piebridge.bible$Receiver";
 
+    @SuppressLint("InlinedApi")
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
@@ -30,19 +30,28 @@ public class Receiver extends BroadcastReceiver {
             context.startActivity(new Intent(context, Chapter.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } else if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-            final long id = getDownloadId(intent);
-            bible.checkBibleData(false, new Runnable() {
-                @Override
-                public void run() {
-                    Versions.onDownloadComplete(id);
-                }
-            });
+            long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+            final DownloadInfo info = DownloadInfo.getDownloadInfo(context, id);
+            if (info == null) {
+            } else if (info.status != DownloadManager.STATUS_SUCCESSFUL) {
+                Versions.onDownloadComplete(info);
+            } else {
+                bible.checkBibleData(false, new Runnable() {
+                    @Override
+                    public void run() {
+                        Versions.onDownloadComplete(info);
+                    }
+                });
+            }
+        } else if (DownloadManager.ACTION_NOTIFICATION_CLICKED.equals(action)) {
+            viewDownloads(context);
         }
     }
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-    long getDownloadId(Intent intent) {
-        return intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+    private void viewDownloads(Context context) {
+        context.startActivity(new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS)
+            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
 }

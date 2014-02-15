@@ -125,7 +125,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final int MENU_MORE = 2;
     private final int MENU_HELP = 1;
 
-    public static boolean refresh = false;
+    private static boolean refresh = false;
 
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -1148,4 +1148,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         message.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    public static void setRefresh(boolean refreshing) {
+        refresh = refreshing;
+    }
 }

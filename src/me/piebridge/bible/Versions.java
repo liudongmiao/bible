@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,11 +14,15 @@ import org.json.JSONObject;
 
 import com.emilsjolander.components.stickylistheaders.StickyListHeadersAdapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -58,7 +63,7 @@ public class Versions extends Activity {
     final static int COMPLETE = 4;
 
     static Handler resume = null;
-    static List<String> completed = new ArrayList<String>();
+    static Map<String, Integer> completed = new HashMap<String, Integer>();
     static Map<String, String> queue = new HashMap<String, String>();
 
     final static String TAG = "me.piebridge.bible$Versions";
@@ -114,6 +119,60 @@ public class Versions extends Activity {
             languages.add(request.get("lang"));
             names.add(getString(R.string.not_found));
         }
+
+        if (queue.size() == 0) {
+            readQueue();
+        }
+    }
+
+    public static final String QUEUE = "download_queue";
+
+    @SuppressLint("InlinedApi")
+    private void readQueue() {
+        SharedPreferences sp = getSharedPreferences(QUEUE, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS);
+        Map<String, ?> map = sp.getAll();
+        if (map == null || map.size() == 0) {
+            return;
+        }
+        for (Entry<String, ?> entry : map.entrySet()) {
+            String key = entry.getKey();
+            long value;
+            try {
+                value = Long.parseLong(String.valueOf(entry.getValue()));
+            } catch (NumberFormatException e) {
+                continue;
+            }
+            DownloadInfo info = DownloadInfo.getDownloadInfo(this, value);
+            if (info == null) {
+                continue;
+            }
+            switch (info.status) {
+            case DownloadManager.STATUS_PAUSED:
+            case DownloadManager.STATUS_PENDING:
+            case DownloadManager.STATUS_RUNNING:
+                queue.put(key, String.valueOf(value));
+                queue.put(String.valueOf(value), key);
+                break;
+            case DownloadManager.STATUS_FAILED:
+            case DownloadManager.STATUS_SUCCESSFUL:
+            default:
+                break;
+            }
+        }
+    }
+
+    @SuppressLint("InlinedApi")
+    private void saveQueue() {
+        final Editor editor = getSharedPreferences(QUEUE, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS).edit();
+        editor.clear();
+        for (Entry<String, String> entry : queue.entrySet()) {
+            try {
+                long key = Long.parseLong(entry.getKey());
+                editor.putLong(entry.getValue(), key);
+            } catch (NumberFormatException e) {
+            }
+        }
+        editor.commit();
     }
 
     List<Map<String, String>> parseVersions(List<Map<String, String>> list, String string) {
@@ -250,9 +309,15 @@ public class Versions extends Activity {
                         }
                         synchronized (completed) {
                             String version = map.get("code").toUpperCase(Locale.US);
-                            if (completed.contains(version)) {
-                                map.put("text", uninstall);
-                                map.put("action", uninstall);
+                            if (completed.containsKey(version)) {
+                                String action;
+                                if (DownloadManager.STATUS_SUCCESSFUL !=  completed.get(version)) {
+                                    action = getString(R.string.install);
+                                } else {
+                                    action = uninstall;
+                                }
+                                map.put("text", action);
+                                map.put("action", action);
                                 completed.remove(version);
                             }
                         }
@@ -303,13 +368,16 @@ public class Versions extends Activity {
         adapter.getFilter().filter(query.getText().toString());
     }
 
+    @SuppressLint("InlinedApi")
     @Override
     protected void onPause() {
         super.onPause();
+        saveQueue();
         resume = null;
     }
 
-    public static void onDownloadComplete(long id) {
+    public static void onDownloadComplete(DownloadInfo info) {
+        long id = info.id;
         String code = queue.get(String.valueOf(id));
         Log.d(TAG, "download complete: " + code);
         if (code != null) {
@@ -318,7 +386,7 @@ public class Versions extends Activity {
                 queue.remove(code);
             }
             synchronized (completed) {
-                completed.add(code.toUpperCase(Locale.US));
+                completed.put(code.toUpperCase(Locale.US), info.status);
             }
             if (resume != null) {
                 resume.sendEmptyMessage(COMPLETE);
@@ -339,11 +407,12 @@ public class Versions extends Activity {
             String content = code.toUpperCase(Locale.US) + ", " + name;
             bible.email(this, content);
         } else if (text.equals(getString(R.string.install))) {
-            final long id =  bible.download(path);
-            if (id > 0) {
+            DownloadInfo info = bible.download(path);
+            if (info != null) {
+                String id = String.valueOf(info.id);
                 synchronized (queue) {
-                    queue.put(code, String.valueOf(id));
-                    queue.put(String.valueOf(id), code);
+                    queue.put(code, id);
+                    queue.put(id, code);
                 }
                 String cancel = getString(R.string.cancel_install);
                 map.put("text", cancel);

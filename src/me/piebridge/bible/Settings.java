@@ -214,7 +214,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Chapter.refresh = true;
+        Chapter.setRefresh(true);
     }
 
 }
