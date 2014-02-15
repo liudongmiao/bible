@@ -118,10 +118,6 @@ public class Bible
         setDefaultVersion();
     }
 
-    public Locale getLocale() {
-        return lastLocale;
-    }
-
     public void checkLocale() {
         Locale locale = Locale.getDefault();
         if (!locale.equals(lastLocale)) {
@@ -764,20 +760,6 @@ public class Bible
             if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS) {
                 return true;
             }
-        }
-        return false;
-    }
-
-    public static boolean isVersionZHCN(String s) {
-        if (s.endsWith("ss") || s.equals("ccb")) {
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean isVersionZHTW(String s) {
-        if (s.endsWith("ts")) {
-            return true;
         }
         return false;
     }
