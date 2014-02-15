@@ -4,6 +4,7 @@ obj
 ant.properties
 .ant-targets-build.xml
 build.xml
+custom_rules.xml
 local.properties
 proguard.cfg
 project.properties
