@@ -48,6 +48,6 @@
     <string name="cancel_install">取消</string>
     <string name="not_found">没有找到</string>
     <string name="request">获取</string>
-    <string name="other_version">其它版本</string>
-    <string name="request_version">请告知详细版本名称及链接</string>
+    <string name="request_other_version">获取其它版本</string>
+    <string name="request_version_message">请告知详细版本名称或链接</string>
 </resources>

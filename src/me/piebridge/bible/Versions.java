@@ -109,8 +109,8 @@ public class Versions extends Activity {
         if (request.size() == 0) {
             String none = "none";
             request.put("lang", none);
-            request.put("code", getString(R.string.other_version));
-            request.put("name", getString(R.string.request_version));
+            request.put("code", getString(R.string.request_other_version));
+            request.put("name", getString(R.string.request_version_message));
             languages.add(request.get("lang"));
             names.add(getString(R.string.not_found));
         }

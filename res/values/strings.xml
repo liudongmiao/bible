@@ -48,6 +48,6 @@
     <string name="cancel_install">Cancel</string>
     <string name="not_found">Not List</string>
     <string name="request">Request</string>
-    <string name="other_version">Other Version</string>
-    <string name="request_version">Please inform the detailed version name and/or link.</string>
+    <string name="request_other_version">Request Other Version</string>
+    <string name="request_version_message">Please inform the version name or link.</string>
 </resources>
