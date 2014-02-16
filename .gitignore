@@ -10,3 +10,4 @@ proguard.cfg
 project.properties
 Makefile
 .DS_Store
+reader.full.js
