@@ -44,7 +44,6 @@ import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.Locale;
-
 import android.preference.PreferenceManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -128,9 +127,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private String body;
 
     private final int MENU_SEARCH = 0;
-    private final int MENU_SETTINGS = 1;
+    private final int MENU_SETTINGS = 4;
     private final int MENU_HELP = 2;
     private final int MENU_MORE = 3;
+    private final int MENU_BOOKMARK = 1;
 
     private static boolean refresh = false;
     private Handler handler = new Handler(new Handler.Callback() {
@@ -139,7 +139,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             String[] message;
             switch (msg.what) {
                 case COPYTEXT:
-                    checkShare();
+                    if (!"".equals(copytext)) {
+                        showSharing(true);
+                        header.findViewById(R.id.bookmark).setSelected(true);
+                    } else {
+                        header.findViewById(R.id.bookmark).setSelected(false);
+                    }
                     break;
                 case SHOWCONTENT:
                     message = (String[]) msg.obj;
@@ -179,11 +184,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                             view.setVisibility(View.GONE);
                         }
                         copytext = "";
-                        checkShare();
+                        showSharing(false);
                     }
                     break;
                 case SHOWHEAD:
-                    checkShare();
+                    showSharing(true);
                     break;
                 case HIDEGRID:
                     if (gridview.getVisibility() == View.VISIBLE) {
@@ -278,6 +283,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             @JavascriptInterface
             public void setCopyText(String text) {
                 if (!text.equals("")) {
+                    setHighlight(osis, text.split("\n")[0]);
                     try {
                         if (Bible.isCJK(text.split("\n")[1].trim().substring(0, 4))) {
                             text = text.replace(" ", "");
@@ -292,6 +298,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     Log.d(TAG, "copy from javascript: " + copytext);
                 } else {
                     copytext = "";
+                    setHighlight(osis, "");
                 }
                 handler.sendEmptyMessage(COPYTEXT);
             }
@@ -322,7 +329,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         show();
         refresh = true;
-        checkShare();
+        showSharing(!copytext.equals(""));
     }
 
     private void getVerse() {
@@ -519,7 +526,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<title>" + title + "</title>\n";
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
         body += "<script type=\"text/javascript\">\n";
-        body += String.format("var verse_start=%s, verse_end=%s, versename=\"%s\", search=\"%s\";", verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, versename, items != null ? search : "");
+        body += String.format("var verse_start=%s, verse_end=%s, versename=\"%s\", search=\"%s\", highlighted=\"%s\";",
+                verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, versename, items != null ? search : "",
+                getHighlight(osis));
         body += "\n</script>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
         body += "</head>\n<body>\n";
@@ -569,7 +578,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         gridview.setVisibility(View.GONE);
         if (bible.getCount(Bible.TYPE.VERSION) == 0 && bible.getDatabase() == null && v.getId() != R.id.version) {
             return;
@@ -596,10 +605,21 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 break;
             case R.id.back:
                 copytext = "";
-                checkShare();
+                showSharing(false);
                 break;
             case R.id.bookmark:
-                v.setSelected(!v.isSelected());
+                if (v.isSelected()) {
+                areYouSure(getString(R.string.deletehighlight), null,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                v.setSelected(false);
+                                setHighlight(osis, null);
+                                copytext = "";
+                                webview.loadUrl("javascript:unhighlight();");
+                            }
+                        });
+                }
                 break;
             case R.id.note:
                 break;
@@ -1013,13 +1033,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         findViewById(resId).setVisibility(enable ? View.VISIBLE : View.GONE);
     }
 
-    private void checkShare() {
-        if (copytext.equals("")) {
+    private void showSharing(boolean show) {
+        if (!show) {
             header.findViewById(R.id.reading).setVisibility(View.VISIBLE);
             header.findViewById(R.id.sharing).setVisibility(View.GONE);
         } else {
             header.findViewById(R.id.sharing).setVisibility(View.VISIBLE);
             header.findViewById(R.id.reading).setVisibility(View.GONE);
+            if (!"".equals(getHighlight(osis))) {
+                header.findViewById(R.id.bookmark).setSelected(true);
+            }
         }
 
         updateOptionsMenu();
@@ -1125,9 +1148,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public void onBackPressed() {
         if (gridview.getVisibility() != View.GONE) {
             gridview.setVisibility(View.GONE);
-        } else if (!copytext.equals("")) {
+        } else if (header.findViewById(R.id.sharing).getVisibility() != View.GONE) {
             copytext = "";
-            checkShare();
+            showSharing(false);
         } else {
             super.onBackPressed();
         }
@@ -1172,6 +1195,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         menu.add(Menu.NONE, MENU_SETTINGS, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
         menu.add(Menu.NONE, MENU_HELP, MENU_HELP, R.string.help).setIcon(android.R.drawable.ic_menu_help);
         menu.add(Menu.NONE, MENU_MORE, MENU_MORE, R.string.more).setIcon(android.R.drawable.ic_menu_more);
+        menu.add(Menu.NONE, MENU_BOOKMARK, MENU_BOOKMARK, R.string.bookmarks).setIcon(R.drawable.star);
         setupMenu(menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -1194,6 +1218,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 break;
             case MENU_HELP:
                 bible.email(this);
+                break;
+            case MENU_BOOKMARK:
+                handler.sendEmptyMessage(SHOWHEAD);
                 break;
         }
         return false;
@@ -1237,12 +1264,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             return;
         }
-        if (!copytext.equals("")) {
-            menu.clear();
+        boolean sharing = header.findViewById(R.id.sharing).getVisibility() == View.VISIBLE;
+        if (sharing) {
+            menu.removeItem(MENU_BOOKMARK);
         }
         for (int i = 0; i < menu.size(); ++i) {
             MenuItem item = menu.getItem(i);
-            if (item.getItemId() == MENU_SEARCH) {
+            if (item.getItemId() == MENU_SEARCH && !sharing) {
                 item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             } else {
                 item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -1269,5 +1297,24 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
             invalidateOptionsMenu();
         }
+    }
+
+    public static final String HIGHLIGHT = "highlight";
+
+    @SuppressLint("InlinedApi")
+    private String getHighlight(String osis) {
+        SharedPreferences sp = getSharedPreferences(HIGHLIGHT, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS);
+        return sp.getString(osis, "");
+    }
+
+    @SuppressLint("InlinedApi")
+    private void setHighlight(String osis, String verse) {
+        final Editor editor = getSharedPreferences(HIGHLIGHT, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS).edit();
+        if (verse == null || "".equals(verse)) {
+            editor.remove(osis);
+        } else {
+            editor.putString(osis, verse);
+        }
+        editor.commit();
     }
 }
