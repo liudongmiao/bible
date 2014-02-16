@@ -15,6 +15,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:src="@android:drawable/ic_popup_sync"
+            android:contentDescription="@string/sync"
 	    />
 
         <EditText

@@ -50,4 +50,7 @@
     <string name="request">Request</string>
     <string name="request_other_version">Request Other Version</string>
     <string name="request_version_message">Please inform the version name or link.</string>
+    <string name="sync">Sync</string>
+    <string name="note">Add Notes</string>
+    <string name="bookmark">Add Bookmark</string>
 </resources>

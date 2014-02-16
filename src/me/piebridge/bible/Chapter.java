@@ -115,6 +115,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int SHOWZOOM = 5;
     protected static final int CHECKBIBLEDATA = 6;
     protected static final int BIBLEDATA = 7;
+    protected static final int CHECKVIEW = 8;
+    protected static final int SHOWHEAD = 9;
 
     private boolean red = true;
     private boolean nightmode = false;
@@ -132,16 +134,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+            String[] message;
             switch (msg.what) {
                 case COPYTEXT:
                     checkShare();
                     break;
                 case SHOWCONTENT:
-                    String[] message = (String[]) msg.obj;
+                    message = (String[]) msg.obj;
                     if (!"".equals(message[0])) {
-                        setBookChapter();
+                        setBookChapter(message);
                     }
-                    _showContent(message[0], message[1]);
                     break;
                 case SHOWDATA:
                     _showData();
@@ -163,6 +165,23 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     break;
                 case BIBLEDATA:
                     showView(R.id.bibledata, false);
+                    break;
+                case CHECKVIEW:
+                    message = (String[]) msg.obj;
+                    _showContent(message[0], message[1]);
+                    View view = header.findViewById(R.id.extra);
+                    if (header.getWidth() == 0) {
+                        setBookChapter(message);
+                    } else {
+                        if (view.getWidth() <= 0) {
+                            view.setVisibility(View.GONE);
+                        }
+                        copytext = "";
+                        checkShare();
+                    }
+                    break;
+                case SHOWHEAD:
+                    checkShare();
                     break;
             }
             return false;
@@ -187,7 +206,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         header.findViewById(R.id.items).setOnClickListener(this);
         header.findViewById(R.id.share).setOnClickListener(this);
         header.findViewById(R.id.bookmark).setOnClickListener(this);
-        header.findViewById(R.id.highlight).setOnClickListener(this);
         header.findViewById(R.id.note).setOnClickListener(this);
         header.findViewById(R.id.back).setOnClickListener(this);
 
@@ -292,6 +310,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         show();
         refresh = true;
+        checkShare();
     }
 
     private void getVerse() {
@@ -378,7 +397,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         return true;
     }
 
-    private void setBookChapter() {
+    private void setBookChapter(String[] message) {
         book = osis.split("\\.")[0];
         if (osis.split("\\.").length > 1) {
             chapter = osis.split("\\.")[1];
@@ -388,6 +407,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         Log.d(TAG, "set book chapter, osis: " + osis);
 
         setItemText(this.index);
+        header.findViewById(R.id.extra).setVisibility(View.VISIBLE);
         ((TextView)header.findViewById(R.id.version)).setText(bible.getVersionName(bible.getVersion()));
         ((TextView)header.findViewById(R.id.book)).setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
         if (!"".equals(verse) && !"".equals(end)) {
@@ -397,6 +417,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         } else {
             ((TextView)header.findViewById(R.id.chapter)).setText(chapter);
         }
+        handler.sendMessageDelayed(handler.obtainMessage(CHECKVIEW, message), 40);
     }
 
     private void storeOsisVersion() {
@@ -431,8 +452,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         } else {
             versename = "versename";
         }
-        copytext = "";
-        // TODO
         String context = content;
         // for biblegateway.com
         context = context.replaceAll("<span class=\"chapternum\">.*?</span>", "<sup class=\"versenum\">1 </sup>");
@@ -566,6 +585,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case R.id.back:
                 copytext = "";
                 checkShare();
+                break;
+            case R.id.bookmark:
+                v.setSelected(!v.isSelected());
+                break;
+            case R.id.note:
                 break;
             default:
                 break;
@@ -997,6 +1021,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 book += ":" + item.verse + item.end;
             }
             ((TextView)header.findViewById(R.id.items)).setText(book);
+            header.findViewById(R.id.extra).setVisibility(View.GONE);
         }
     }
 
@@ -1105,7 +1130,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private void _show() {
         if (progress) {
-            showView(R.id.header, showed);
+            showHeader(showed);
             showView(R.id.progress, true);
             showView(R.id.webview, false);
         }
@@ -1117,7 +1142,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void _dismiss() {
-        showView(R.id.header, true);
+        showHeader(true);
         showView(R.id.progress, false);
         showView(R.id.webview, true);
     }
