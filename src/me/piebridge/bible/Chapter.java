@@ -118,6 +118,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int SHOWHEAD = 9;
     protected static final int HIDEGRID = 10;
     protected static final int SHOWGRID = 11;
+    protected static final int SETHIGHLIGHT = 12;
 
     private boolean red = true;
     private boolean nightmode = false;
@@ -199,6 +200,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     if (gridview.getVisibility() != View.VISIBLE) {
                         gridview.setVisibility(View.VISIBLE);
                     }
+                    break;
+                case SETHIGHLIGHT:
+                    ((TextView) header.findViewById(R.id.highlight)).setText((String) msg.obj);
                     break;
             }
             return false;
@@ -283,7 +287,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             @JavascriptInterface
             public void setCopyText(String text) {
                 if (!text.equals("")) {
-                    setHighlight(osis, text.split("\n")[0]);
                     try {
                         if (Bible.isCJK(text.split("\n")[1].trim().substring(0, 4))) {
                             text = text.replace(" ", "");
@@ -296,6 +299,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     copytext += bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, book)) + " " + chapter + ":" + text;
                     ((android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setText(copytext);
                     Log.d(TAG, "copy from javascript: " + copytext);
+                    setHighlight(osis, text.split("\n")[0]);
                 } else {
                     copytext = "";
                     setHighlight(osis, "");
@@ -613,9 +617,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                v.setSelected(false);
-                                setHighlight(osis, null);
                                 copytext = "";
+                                v.setSelected(false);
+                                setHighlight(osis, "");
                                 webview.loadUrl("javascript:unhighlight();");
                             }
                         });
@@ -1304,16 +1308,19 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     @SuppressLint("InlinedApi")
     private String getHighlight(String osis) {
         SharedPreferences sp = getSharedPreferences(HIGHLIGHT, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS);
-        return sp.getString(osis, "");
+        String highlighted = sp.getString(osis, "");
+        handler.sendMessage(handler.obtainMessage(SETHIGHLIGHT, highlighted));;
+        return highlighted;
     }
 
     @SuppressLint("InlinedApi")
-    private void setHighlight(String osis, String verse) {
+    private void setHighlight(String osis, String highlighted) {
+        handler.sendMessage(handler.obtainMessage(SETHIGHLIGHT, highlighted));
         final Editor editor = getSharedPreferences(HIGHLIGHT, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS).edit();
-        if (verse == null || "".equals(verse)) {
+        if ("".equals(highlighted)) {
             editor.remove(osis);
         } else {
-            editor.putString(osis, verse);
+            editor.putString(osis, highlighted);
         }
         editor.commit();
     }

@@ -74,6 +74,13 @@
             android:src="@drawable/ic_menu_back"
             />
 
+        <TextView
+            android:id="@+id/highlight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            />
+
         <ImageView
             android:id="@+id/bookmark"
             android:layout_width="0dp"
