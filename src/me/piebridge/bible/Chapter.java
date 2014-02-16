@@ -117,6 +117,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int BIBLEDATA = 7;
     protected static final int CHECKVIEW = 8;
     protected static final int SHOWHEAD = 9;
+    protected static final int HIDEGRID = 10;
+    protected static final int SHOWGRID = 11;
 
     private boolean red = true;
     private boolean nightmode = false;
@@ -182,6 +184,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     break;
                 case SHOWHEAD:
                     checkShare();
+                    break;
+                case HIDEGRID:
+                    if (gridview.getVisibility() == View.VISIBLE) {
+                        gridview.setVisibility(View.GONE);
+                    }
+                    break;
+                case SHOWGRID:
+                    if (gridview.getVisibility() != View.VISIBLE) {
+                        gridview.setVisibility(View.VISIBLE);
+                    }
                     break;
             }
             return false;
@@ -665,7 +677,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
 
         if (adapter.getCount() > 0) {
-            gridview.setVisibility(View.VISIBLE);
+            handler.sendEmptyMessageDelayed(SHOWGRID, 300);
             gridview.setSelection(adapter.getPosition(selected));
         } else {
             gridview.setVisibility(View.GONE);
@@ -986,6 +998,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     showItem(index - 1);
                     return true;
                 }
+                return false;
+            }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                handler.sendEmptyMessage(HIDEGRID);
                 return false;
             }
         });
