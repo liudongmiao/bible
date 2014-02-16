@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import android.preference.PreferenceManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -184,6 +185,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         header.findViewById(R.id.chapter).setOnClickListener(this);
         header.findViewById(R.id.version).setOnClickListener(this);
         header.findViewById(R.id.items).setOnClickListener(this);
+        header.findViewById(R.id.share).setOnClickListener(this);
+        header.findViewById(R.id.bookmark).setOnClickListener(this);
+        header.findViewById(R.id.highlight).setOnClickListener(this);
+        header.findViewById(R.id.note).setOnClickListener(this);
+        header.findViewById(R.id.back).setOnClickListener(this);
 
         gridview = (GridView) findViewById(R.id.gridview);
         final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -546,17 +552,21 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case R.id.items:
                 showSpinner(v);
                 break;
-//            case R.id.share:
-//                if (!copytext.equals("")) {
-//                    Intent intent = new Intent(Intent.ACTION_SEND);
-//                    intent.putExtra(Intent.EXTRA_TEXT, copytext);
-//                    intent.setType("text/plain");
-//                    try {
-//                        startActivity(Intent.createChooser(intent, getString(R.string.share)));
-//                    } catch (ActivityNotFoundException e) {
-//                    }
-//                }
-//                break;
+            case R.id.share:
+                if (!copytext.equals("")) {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.putExtra(Intent.EXTRA_TEXT, copytext);
+                    intent.setType("text/plain");
+                    try {
+                        startActivity(Intent.createChooser(intent, getString(R.string.share)));
+                    } catch (ActivityNotFoundException e) {
+                    }
+                }
+                break;
+            case R.id.back:
+                copytext = "";
+                checkShare();
+                break;
             default:
                 break;
         }
@@ -962,7 +972,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void checkShare() {
-//        showView(R.id.share, !copytext.equals(""));
+        if (copytext.equals("")) {
+            header.findViewById(R.id.reading).setVisibility(View.VISIBLE);
+            header.findViewById(R.id.sharing).setVisibility(View.GONE);
+        } else {
+            header.findViewById(R.id.sharing).setVisibility(View.VISIBLE);
+            header.findViewById(R.id.reading).setVisibility(View.GONE);
+        }
+
+        updateOptionsMenu();
     }
 
     public void setItemText(int index) {
@@ -1064,6 +1082,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public void onBackPressed() {
         if (gridview.getVisibility() != View.GONE) {
             gridview.setVisibility(View.GONE);
+        } else if (!copytext.equals("")) {
+            copytext = "";
+            checkShare();
         } else {
             super.onBackPressed();
         }
@@ -1103,6 +1124,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        menu.clear();
         menu.add(Menu.NONE, MENU_SEARCH, MENU_SEARCH, android.R.string.search_go).setIcon(android.R.drawable.ic_menu_search);
         menu.add(Menu.NONE, MENU_SETTINGS, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
         menu.add(Menu.NONE, MENU_HELP, MENU_HELP, R.string.help).setIcon(android.R.drawable.ic_menu_help);
@@ -1172,6 +1194,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             return;
         }
+        if (!copytext.equals("")) {
+            menu.clear();
+        }
         for (int i = 0; i < menu.size(); ++i) {
             MenuItem item = menu.getItem(i);
             if (item.getItemId() == MENU_SEARCH) {
@@ -1179,6 +1204,27 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             } else {
                 item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             }
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void showHeader(boolean show) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            header.setVisibility(show ? View.VISIBLE : View.GONE);
+        } else {
+            ActionBar actionBar = getActionBar();
+            if (show) {
+                actionBar.show();
+            } else {
+                actionBar.hide();
+            }
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void updateOptionsMenu() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+            invalidateOptionsMenu();
         }
     }
 }
