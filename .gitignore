@@ -9,3 +9,4 @@ local.properties
 proguard.cfg
 project.properties
 Makefile
+.DS_Store
