@@ -89,13 +89,10 @@ public class Bible
     private ArrayList<String> humans = new ArrayList<String>();
 
     private static Bible bible = null;
-    private static float scale;
 
     private HashMap<String, String> versionNames = new HashMap<String, String>();
     private HashMap<String, String> versionFullnames = new HashMap<String, String>();
 
-    private LinkedHashMap<String, String> osisZHCN = new LinkedHashMap<String, String>();
-    private LinkedHashMap<String, String> osisZHTW = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> allhuman = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> allosis = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> searchfull = new LinkedHashMap<String, String>();;
@@ -128,7 +125,6 @@ public class Bible
 
     public synchronized static Bible getBible(Context context) {
         if (bible == null) {
-            scale = context.getResources().getDisplayMetrics().density;
             bible = new Bible(context);
         }
         if (context != null) {
@@ -272,17 +268,7 @@ public class Bible
                 }
                 allhuman.put(book, osis);
                 osiss.add(osis);
-                if (scale > 1.0f) {
-                    books.add(book);
-                } else {
-                    if (dataversion.endsWith("ts")) {
-                        books.add(getResourceValue(osisZHTW, osis));
-                    } else if (dataversion.endsWith("ss") || dataversion.equals("ccb")) {
-                        books.add(getResourceValue(osisZHCN, osis));
-                    } else {
-                        books.add(osis);
-                    }
-                }
+                books.add(book);
                 chapters.add(chapter);
                 humans.add(book);
             }
@@ -442,8 +428,6 @@ public class Bible
         Log.d(TAG, "setResources");
         setResourceValues(versionNames, R.array.versionname);
         setResourceValues(versionFullnames, R.array.versionfullname);
-        setResourceValues(osisZHCN, R.array.osiszhcn);
-        setResourceValues(osisZHTW, R.array.osiszhtw);
         setResourceValuesReverse(allosis, R.array.osiszhcn);
         setResourceValuesReverse(allosis, R.array.osiszhtw);
         setResourceValuesReverse(searchfull, R.array.searchfullzhcn);
