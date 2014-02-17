@@ -118,7 +118,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int SHOWHEAD = 9;
     protected static final int HIDEGRID = 10;
     protected static final int SHOWGRID = 11;
-    protected static final int SETHIGHLIGHT = 12;
+    protected static final int SETSELECTED = 12;
 
     private boolean red = true;
     private boolean nightmode = false;
@@ -131,7 +131,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final int MENU_SETTINGS = 4;
     private final int MENU_HELP = 2;
     private final int MENU_MORE = 3;
-    private final int MENU_BOOKMARK = 1;
+    private final int MENU_SHARING = 1;
 
     private static boolean refresh = false;
     private Handler handler = new Handler(new Handler.Callback() {
@@ -140,12 +140,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             String[] message;
             switch (msg.what) {
                 case COPYTEXT:
+                    boolean selected = (Boolean) msg.obj;
                     if (!"".equals(copytext)) {
                         showSharing(true);
-                        header.findViewById(R.id.bookmark).setSelected(true);
-                    } else {
-                        header.findViewById(R.id.bookmark).setSelected(false);
                     }
+                    header.findViewById(R.id.bookmark).setSelected(selected);
                     break;
                 case SHOWCONTENT:
                     message = (String[]) msg.obj;
@@ -201,8 +200,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                         gridview.setVisibility(View.VISIBLE);
                     }
                     break;
-                case SETHIGHLIGHT:
-                    ((TextView) header.findViewById(R.id.highlight)).setText((String) msg.obj);
+                case SETSELECTED:
+                    ((TextView) header.findViewById(R.id.selected)).setText((String) msg.obj);
                     break;
             }
             return false;
@@ -229,6 +228,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         header.findViewById(R.id.bookmark).setOnClickListener(this);
         header.findViewById(R.id.note).setOnClickListener(this);
         header.findViewById(R.id.back).setOnClickListener(this);
+        header.findViewById(R.id.selected).setOnClickListener(this);
 
         gridview = (GridView) findViewById(R.id.gridview);
         final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -286,9 +286,21 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             @SuppressWarnings("deprecation")
             @JavascriptInterface
             public void setCopyText(String text) {
+                boolean selected = false;
                 if (!text.equals("")) {
+                    String[] fields = text.split("\n");
                     try {
-                        if (Bible.isCJK(text.split("\n")[1].trim().substring(0, 4))) {
+                        int hilected = Integer.parseInt(fields[0]);
+                        if (hilected > 0) {
+                            selected = true;
+                        }
+                    } catch (NumberFormatException e) {
+                    }
+                    selectverse = fields[1];
+                    String content = fields[2];
+                    text = selectverse + " " + content;
+                    try {
+                        if (Bible.isCJK(content.trim().substring(0, 4))) {
                             text = text.replace(" ", "");
                         } else {
                             text = text.replaceAll(" +", " ");
@@ -299,12 +311,22 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     copytext += bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, book)) + " " + chapter + ":" + text;
                     ((android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setText(copytext);
                     Log.d(TAG, "copy from javascript: " + copytext);
-                    setHighlight(osis, text.split("\n")[0]);
+                    // setHighlight(osis, text.split("\n")[0]);
                 } else {
                     copytext = "";
-                    setHighlight(osis, "");
+                    selectverse = "";
+                    if (!"".equals(highlighted)) {
+                        selected = true;
+                    }
+                    // setHighlight(osis, "");
                 }
-                handler.sendEmptyMessage(COPYTEXT);
+                handler.sendMessage(handler.obtainMessage(SETSELECTED, selectverse));
+                handler.sendMessage(handler.obtainMessage(COPYTEXT, selected));
+            }
+
+            @JavascriptInterface
+            public void setHighlighted(String text) {
+                highlighted = text;
             }
         }, "android");
         webview.getSettings().setBuiltInZoomControls(true);
@@ -444,6 +466,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void storeOsisVersion() {
+        saveHighlight();
         final Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString("osis", osis);
         if (!version.endsWith("demo") && !version.equals("")) {
@@ -524,12 +547,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
         body += ".selected {" + background + "}\n";
-        body += ".highlight {" + background + "}\n";
         body += bible.getCSS();
         body += "</style>\n";
         body += "<title>" + title + "</title>\n";
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
         body += "<script type=\"text/javascript\">\n";
+        selectverse = "";
+        highlighted = null;
         body += String.format("var verse_start=%s, verse_end=%s, versename=\"%s\", search=\"%s\", highlighted=\"%s\";",
                 verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, versename, items != null ? search : "",
                 getHighlight(osis));
@@ -611,18 +635,43 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 copytext = "";
                 showSharing(false);
                 break;
+            case R.id.selected:
+                if (!"".equals(selectverse)) {
+                    webview.loadUrl("javascript:highlight('" + selectverse + "', false);");
+                    selectverse = "";
+                    handler.sendMessage(handler.obtainMessage(SETSELECTED, selectverse));
+                }
+                break;
             case R.id.bookmark:
                 if (v.isSelected()) {
-                areYouSure(getString(R.string.deletehighlight), null,
+                    String unhighlight;
+                    if ("".equals(selectverse)) {
+                        unhighlight = highlighted;
+                    } else {
+                        unhighlight = selectverse;
+                    }
+                    areYouSure(getString(R.string.deletehighlight, unhighlight), null,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 copytext = "";
                                 v.setSelected(false);
-                                setHighlight(osis, "");
-                                webview.loadUrl("javascript:unhighlight();");
+                                if ("".equals(selectverse)) {
+                                    webview.loadUrl("javascript:highlight('" + highlighted + "', false);");
+                                } else {
+                                    webview.loadUrl("javascript:highlight('" + selectverse + "', false);");
+                                    selectverse = "";
+                                    handler.sendMessage(handler.obtainMessage(SETSELECTED, selectverse));
+                                }
                             }
                         });
+                } else {
+                    if (!"".equals(selectverse)) {
+                        v.setSelected(true);
+                        webview.loadUrl("javascript:highlight('" + selectverse + "');");
+                        selectverse = "";
+                        handler.sendMessage(handler.obtainMessage(SETSELECTED, selectverse));
+                    }
                 }
                 break;
             case R.id.note:
@@ -1044,8 +1093,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         } else {
             header.findViewById(R.id.sharing).setVisibility(View.VISIBLE);
             header.findViewById(R.id.reading).setVisibility(View.GONE);
-            if (!"".equals(getHighlight(osis))) {
+            if (!"".equals(highlighted)) {
                 header.findViewById(R.id.bookmark).setSelected(true);
+            } else {
+                header.findViewById(R.id.bookmark).setSelected(false);
             }
         }
 
@@ -1071,6 +1122,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     public void showItem(int index) {
+        saveHighlight();
         osis = "";
         if (items == null || items.size() < 2) {
             showView(R.id.items, false);
@@ -1199,7 +1251,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         menu.add(Menu.NONE, MENU_SETTINGS, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
         menu.add(Menu.NONE, MENU_HELP, MENU_HELP, R.string.help).setIcon(android.R.drawable.ic_menu_help);
         menu.add(Menu.NONE, MENU_MORE, MENU_MORE, R.string.more).setIcon(android.R.drawable.ic_menu_more);
-        menu.add(Menu.NONE, MENU_BOOKMARK, MENU_BOOKMARK, R.string.bookmarks).setIcon(R.drawable.star);
+        menu.add(Menu.NONE, MENU_SHARING, MENU_SHARING, R.string.sharing).setIcon(R.drawable.ic_menu_share);
         setupMenu(menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -1223,7 +1275,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case MENU_HELP:
                 bible.email(this);
                 break;
-            case MENU_BOOKMARK:
+            case MENU_SHARING:
                 handler.sendEmptyMessage(SHOWHEAD);
                 break;
         }
@@ -1270,7 +1322,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         boolean sharing = header.findViewById(R.id.sharing).getVisibility() == View.VISIBLE;
         if (sharing) {
-            menu.removeItem(MENU_BOOKMARK);
+            menu.removeItem(MENU_SHARING);
         }
         for (int i = 0; i < menu.size(); ++i) {
             MenuItem item = menu.getItem(i);
@@ -1305,17 +1357,24 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     public static final String HIGHLIGHT = "highlight";
 
+    String highlighted = null;
+    String selectverse = "";
+
     @SuppressLint("InlinedApi")
     private String getHighlight(String osis) {
-        SharedPreferences sp = getSharedPreferences(HIGHLIGHT, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS);
-        String highlighted = sp.getString(osis, "");
-        handler.sendMessage(handler.obtainMessage(SETHIGHLIGHT, highlighted));;
+        if (highlighted == null) {
+            SharedPreferences sp = getSharedPreferences(HIGHLIGHT, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS);
+            highlighted = sp.getString(osis, "");
+        }
         return highlighted;
     }
 
     @SuppressLint("InlinedApi")
     private void setHighlight(String osis, String highlighted) {
-        handler.sendMessage(handler.obtainMessage(SETHIGHLIGHT, highlighted));
+        this.highlighted = highlighted;
+    }
+
+    private void saveHighlight() {
         final Editor editor = getSharedPreferences(HIGHLIGHT, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS).edit();
         if ("".equals(highlighted)) {
             editor.remove(osis);

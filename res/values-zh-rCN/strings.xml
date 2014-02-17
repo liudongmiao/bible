@@ -55,5 +55,5 @@
     <string name="bookmark">添加书签</string>
     <string name="sharing">分享</string>
     <string name="bookmarks">书签</string>
-    <string name="deletehighlight">取消本章书签？</string>
+    <string name="deletehighlight">取消高亮%s？</string>
 </resources>

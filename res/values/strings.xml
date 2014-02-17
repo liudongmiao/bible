@@ -55,5 +55,5 @@
     <string name="bookmark">Add Bookmark</string>
     <string name="sharing">Share</string>
     <string name="bookmarks">Bookmarks</string>
-    <string name="deletehighlight">Deleted All bookmarks in this chapter?</string>
+    <string name="deletehighlight">Unhighlight %s?</string>
 </resources>
