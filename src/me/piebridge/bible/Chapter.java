@@ -117,7 +117,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int CHECKVIEW = 8;
     protected static final int SHOWHEAD = 9;
     protected static final int HIDEGRID = 10;
-    protected static final int SHOWGRID = 11;
     protected static final int SETSELECTED = 12;
 
     private boolean red = true;
@@ -193,11 +192,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 case HIDEGRID:
                     if (gridview.getVisibility() == View.VISIBLE) {
                         gridview.setVisibility(View.GONE);
-                    }
-                    break;
-                case SHOWGRID:
-                    if (gridview.getVisibility() != View.VISIBLE) {
-                        gridview.setVisibility(View.VISIBLE);
                     }
                     break;
                 case SETSELECTED:
@@ -750,7 +744,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
 
         if (adapter.getCount() > 0) {
-            handler.sendEmptyMessageDelayed(SHOWGRID, 300);
+            gridview.setVisibility(View.VISIBLE);
             gridview.setSelection(adapter.getPosition(selected));
         } else {
             gridview.setVisibility(View.GONE);
@@ -1076,10 +1070,28 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-                handler.sendEmptyMessage(HIDEGRID);
+                if (!isInside(R.id.items, e)
+                    && !isInside(R.id.book, e)
+                    && !isInside(R.id.chapter, e)
+                    && !isInside(R.id.version, e)) {
+                    handler.sendEmptyMessage(HIDEGRID);
+                }
                 return false;
             }
         });
+    }
+
+    private boolean isInside(int viewId, MotionEvent e) {
+        float rawX = e.getRawX();
+        float rawY = e.getRawY();
+        int[] position = new int[2];
+        View view = header.findViewById(viewId);
+        view.getLocationOnScreen(position);
+        if (rawX < position[0] || rawX > position[0] + view.getWidth() ||
+            rawY < position[1] || rawY > position[1] + view.getHeight()) {
+            return false;
+        }
+        return true;
     }
 
     private void showView(int resId, boolean enable) {
