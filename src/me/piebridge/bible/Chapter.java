@@ -118,6 +118,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int CHECKVIEW = 8;
     protected static final int SHOWHEAD = 9;
     protected static final int HIDEGRID = 10;
+    protected static final int SHOWURI = 11;
     protected static final int SETSELECTED = 12;
 
     private boolean red = true;
@@ -133,6 +134,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final int MENU_MORE = 3;
     private final int MENU_ANNOTATION = 1;
 
+    private boolean showed = false;
+
     private static boolean refresh = false;
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -147,19 +150,41 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     header.findViewById(R.id.bookmark).setSelected(selected);
                     break;
                 case SHOWCONTENT:
+                    showed = true;
                     message = (String[]) msg.obj;
                     if (!"".equals(message[0])) {
                         setBookChapter(message);
                     }
                     break;
                 case SHOWDATA:
-                    _showData();
+                    if (bible == null) {
+                        bible = Bible.getBible(getBaseContext());
+                    }
+                    handler.sendEmptyMessageDelayed(CHECKBIBLEDATA, 400);
+                    bible.checkBibleData(true);
+                    handler.sendEmptyMessage(BIBLEDATA);
+                    bible.checkVersions();
+                    Log.d(TAG, "will set version: " + version);
+                    if ("".equals(version)) {
+                        version = bible.getVersion();
+                    }
+                    if (version.endsWith("demo")) {
+                        bible.setDefaultVersion();
+                    }
+                    showData();
                     break;
                 case SHOWBAR:
-                    _show();
+                    if (progress) {
+                        showHeader(showed);
+                        showView(R.id.progress, true);
+                        showView(R.id.webview, false);
+                    }
                     break;
                 case DISMISSBAR:
-                    _dismiss();
+                    progress = false;
+                    showHeader(true);
+                    showView(R.id.progress, false);
+                    showView(R.id.webview, true);
                     break;
                 case SHOWZOOM:
                     if (mZoomButtonsController != null) {
@@ -175,7 +200,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     break;
                 case CHECKVIEW:
                     message = (String[]) msg.obj;
-                    _showContent(message[0], message[1]);
+                    showContent(message[0], message[1]);
                     View view = header.findViewById(R.id.extra);
                     if (header.getWidth() == 0) {
                         setBookChapter(message);
@@ -194,6 +219,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     if (gridview.getVisibility() == View.VISIBLE) {
                         gridview.setVisibility(View.GONE);
                     }
+                    break;
+                case SHOWURI:
+                    show();
+                    showUri();
                     break;
                 case SETSELECTED:
                     String text = (String) msg.obj;
@@ -383,15 +412,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void showUri() {
-        show();
-        new Thread(new Runnable() {
-            public void run() {
-                _showUri();
-            }
-        }).start();
-    }
-
-    private void _showUri() {
         version = bible.getVersion();
         Log.d(TAG, "showuri: " + uri);
         if (uri == null) {
@@ -402,7 +422,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         try {
             cursor = getContentResolver().query(uri, null, null, null, null);
         } catch (SQLiteException e) {
-            showContent("", getString(R.string.queryerror));
+            handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[] {"", getString(R.string.queryerror) }));
             return;
         } catch (Exception e) {
         }
@@ -416,15 +436,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             final String content = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CONTENT));
             cursor.close();
 
-            showContent(human + " | " + version, content);
+            handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[] {human + " | " + version, content}));
         } else {
             Log.d(TAG, "no such chapter, try first chapter");
             Uri nulluri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(null).fragment(version).build();
             if (!nulluri.equals(uri)) {
                 uri = nulluri;
-                showUri();
+                handler.sendEmptyMessage(SHOWURI);
             } else {
-                showContent("", getString(R.string.queryerror));
+                handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[] {"", getString(R.string.queryerror) }));
             }
         }
     }
@@ -446,7 +466,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 this.verse = verse;
             }
             this.end = end;
-            showUri();
+            handler.sendEmptyMessage(SHOWURI);
         }
         return true;
     }
@@ -495,13 +515,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         editor.commit();
     }
 
-    private boolean showed = false;
     private void showContent(String title, String content) {
-        handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[] {title, content }));
-        showed = true;
-    }
-
-    private void _showContent(String title, String content) {
         if (!title.equals("")) {
             versename = "pb-" + version + "-" + book.toLowerCase(Locale.US) + "-" + chapter;
         } else {
@@ -583,7 +597,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         scale = defaultScale;
         webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
-        dismiss();
+        handler.sendEmptyMessage(DISMISSBAR);
         if ("".equals(verse)) {
             setDisplayZoomControls(true);
         }
@@ -763,7 +777,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             gridview.setSelection(adapter.getPosition(selected));
         } else {
             gridview.setVisibility(View.GONE);
-            showUri();
+            handler.sendEmptyMessage(SHOWURI);
         }
     }
 
@@ -807,7 +821,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     bible.setVersion(version);
                     fontsize = PreferenceManager.getDefaultSharedPreferences(this).getInt("fontsize-" + version, fontsize);
                     uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
-                    showUri();
+                    handler.sendEmptyMessage(SHOWURI);
                 }
                 break;
             case R.id.items:
@@ -875,33 +889,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         if (refresh || !wanted.equals(current)) {
             refresh = false;
-            showData();
+            handler.sendEmptyMessage(SHOWDATA);
         }
     }
 
     private void showData() {
-        new Thread(new Runnable() {
-            public void run() {
-                if (bible == null) {
-                    bible = Bible.getBible(getBaseContext());
-                }
-                handler.sendEmptyMessageDelayed(CHECKBIBLEDATA, 400);
-                bible.checkBibleData(true);
-                handler.sendEmptyMessage(BIBLEDATA);
-                bible.checkVersions();
-                Log.d(TAG, "will set version: " + version);
-                if ("".equals(version)) {
-                    version = bible.getVersion();
-                }
-                if (version.endsWith("demo")) {
-                    bible.setDefaultVersion();
-                }
-                handler.sendEmptyMessage(SHOWDATA);
-            }
-        }).start();
-    }
-
-    private void _showData() {
         version = bible.getVersion();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         red = sp.getBoolean(Settings.RED, true);
@@ -922,7 +914,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             showView(R.id.items, false);
             showView(R.id.book, true);
             showView(R.id.chapter, true);
-            showUri();
+            handler.sendEmptyMessage(SHOWURI);
         } else {
             showView(R.id.items, true);
             showView(R.id.book, false);
@@ -1030,7 +1022,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             fontsize += (zoomIn ? 1 : -1);
             Log.d(TAG, "update fontsize to " + fontsize + ", zoomIn: " + zoomIn);
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
-            showUri();
+            handler.sendEmptyMessage(SHOWURI);
             handler.sendEmptyMessageDelayed(SHOWZOOM, 250);
         }
     }
@@ -1253,25 +1245,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         handler.sendEmptyMessageDelayed(SHOWBAR, showed ? 250 : 0);
     }
 
-    private void _show() {
-        if (progress) {
-            showHeader(showed);
-            showView(R.id.progress, true);
-            showView(R.id.webview, false);
-        }
-    }
-
-    private void dismiss() {
-        handler.sendEmptyMessage(DISMISSBAR);
-        progress = false;
-    }
-
-    private void _dismiss() {
-        showHeader(true);
-        showView(R.id.progress, false);
-        showView(R.id.webview, true);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.clear();
@@ -1402,6 +1375,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         this.highlighted = highlighted;
     }
 
+    @SuppressLint("InlinedApi")
     private void saveHighlight() {
         final Editor editor = getSharedPreferences(HIGHLIGHT, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS).edit();
         if ("".equals(highlighted)) {
