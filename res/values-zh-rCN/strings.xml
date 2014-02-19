@@ -53,7 +53,7 @@
     <string name="sync">同步</string>
     <string name="note">添加笔记</string>
     <string name="bookmark">添加书签</string>
-    <string name="sharing">分享</string>
+    <string name="annotation">注释</string>
     <string name="bookmarks">书签</string>
     <string name="deletehighlight">取消高亮%s？</string>
 </resources>

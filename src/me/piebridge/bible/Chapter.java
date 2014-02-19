@@ -131,7 +131,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final int MENU_SETTINGS = 4;
     private final int MENU_HELP = 2;
     private final int MENU_MORE = 3;
-    private final int MENU_SHARING = 1;
+    private final int MENU_ANNOTATION = 1;
 
     private static boolean refresh = false;
     private Handler handler = new Handler(new Handler.Callback() {
@@ -1106,9 +1106,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private void showSharing(boolean show) {
         if (!show) {
             header.findViewById(R.id.reading).setVisibility(View.VISIBLE);
-            header.findViewById(R.id.sharing).setVisibility(View.GONE);
+            header.findViewById(R.id.annotation).setVisibility(View.GONE);
         } else {
-            header.findViewById(R.id.sharing).setVisibility(View.VISIBLE);
+            header.findViewById(R.id.annotation).setVisibility(View.VISIBLE);
             header.findViewById(R.id.reading).setVisibility(View.GONE);
             if (!"".equals(highlighted)) {
                 header.findViewById(R.id.bookmark).setSelected(true);
@@ -1222,7 +1222,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public void onBackPressed() {
         if (gridview.getVisibility() != View.GONE) {
             gridview.setVisibility(View.GONE);
-        } else if (header.findViewById(R.id.sharing).getVisibility() != View.GONE) {
+        } else if (header.findViewById(R.id.annotation).getVisibility() != View.GONE) {
             copytext = "";
             showSharing(false);
         } else {
@@ -1269,7 +1269,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         menu.add(Menu.NONE, MENU_SETTINGS, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
         menu.add(Menu.NONE, MENU_HELP, MENU_HELP, R.string.help).setIcon(android.R.drawable.ic_menu_help);
         menu.add(Menu.NONE, MENU_MORE, MENU_MORE, R.string.more).setIcon(android.R.drawable.ic_menu_more);
-        menu.add(Menu.NONE, MENU_SHARING, MENU_SHARING, R.string.sharing).setIcon(R.drawable.ic_menu_share);
+        menu.add(Menu.NONE, MENU_ANNOTATION, MENU_ANNOTATION, R.string.annotation).setIcon(R.drawable.ic_menu_share);
         setupMenu(menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -1293,7 +1293,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case MENU_HELP:
                 bible.email(this);
                 break;
-            case MENU_SHARING:
+            case MENU_ANNOTATION:
                 handler.sendEmptyMessage(SHOWHEAD);
                 break;
         }
@@ -1338,13 +1338,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             return;
         }
-        boolean sharing = header.findViewById(R.id.sharing).getVisibility() == View.VISIBLE;
-        if (sharing) {
-            menu.removeItem(MENU_SHARING);
+        boolean annotation = header.findViewById(R.id.annotation).getVisibility() == View.VISIBLE;
+        if (annotation) {
+            menu.removeItem(MENU_ANNOTATION);
         }
         for (int i = 0; i < menu.size(); ++i) {
             MenuItem item = menu.getItem(i);
-            if (item.getItemId() == MENU_SEARCH && !sharing) {
+            if (item.getItemId() == MENU_SEARCH && !annotation) {
                 item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             } else {
                 item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);

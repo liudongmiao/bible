@@ -53,7 +53,7 @@
     <string name="sync">Sync</string>
     <string name="note">Add Notes</string>
     <string name="bookmark">Add Bookmark</string>
-    <string name="sharing">Share</string>
+    <string name="annotation">Annotation</string>
     <string name="bookmarks">Bookmarks</string>
     <string name="deletehighlight">Unhighlight %s?</string>
 </resources>
