@@ -76,9 +76,13 @@
 
         <TextView
             android:id="@+id/selected"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:ellipsize="middle"
+            android:singleLine="true"
             />
 
         <ImageView
@@ -99,6 +103,7 @@
             android:layout_weight="1"
             android:contentDescription="@string/note"
             android:src="@drawable/ic_menu_note"
+            android:visibility="gone"
             />
 
         <ImageView

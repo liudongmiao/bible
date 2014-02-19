@@ -196,7 +196,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     }
                     break;
                 case SETSELECTED:
-                    ((TextView) header.findViewById(R.id.selected)).setText((String) msg.obj);
+                    String text = (String) msg.obj;
+                    TextView selectedView = (TextView) header.findViewById(R.id.selected);
+                    if (text == null || text.length() == 0) {
+                        selectedView.setVisibility(View.GONE);
+                    } else {
+                        selectedView.setVisibility(View.VISIBLE);
+                        selectedView.setText(text);
+                    }
                     break;
             }
             return false;
