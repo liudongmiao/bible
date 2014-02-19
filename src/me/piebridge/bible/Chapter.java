@@ -13,55 +13,51 @@
 
 package me.piebridge.bible;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Locale;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebView;
-import android.webkit.WebSettings;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.widget.GridView;
-import android.widget.ArrayAdapter;
-import android.widget.AdapterView;
-import android.widget.TextView;
-import android.widget.ToggleButton;
-
-import java.util.ArrayList;
-import java.util.Locale;
-import android.preference.PreferenceManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-
-import java.lang.reflect.Method;
-
-import android.widget.ZoomButtonsController;
-import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-
-import java.io.File;
-
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.view.GestureDetector;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.TextView;
+import android.widget.ToggleButton;
+import android.widget.ZoomButtonsController;
 
-public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private final String TAG = "me.piebridge.bible$Chapter";
 
@@ -92,6 +88,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private GridView gridview;
     private WebView webview;
+    private View header;
     private ArrayAdapter<String> adapter;
 
     private final int DISTANCE = 100;
@@ -134,8 +131,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final int MENU_MORE = 3;
     private final int MENU_ANNOTATION = 1;
 
-    private boolean showed = false;
+    private Collator collator;
 
+    private boolean showed = false;
     private static boolean refresh = false;
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -239,8 +237,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     });
 
-    private View header;
-
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -295,7 +291,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         gridview.setAdapter(adapter);
         gridview.setVisibility(View.GONE);
         gridview.setOnItemClickListener(this);
-        gridview.setOnItemLongClickListener(this);
 
         setGestureDetector();
         webview = (WebView) findViewById(R.id.webview);
@@ -461,6 +456,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             return false;
         }
         if (!osis.equals(newOsis)) {
+            selectverse = "";
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(newOsis).build();
             if ("".equals(this.verse)) {
                 this.verse = verse;
@@ -753,13 +749,20 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 break;
             case R.id.version:
                 gridview.setNumColumns(1);
+                version = bible.getVersion();
                 Log.d(TAG, "version=" + version);
                 selected = bible.getVersionFullname(version);
                 for (String string: bible.get(Bible.TYPE.VERSION)) {
                     Log.d(TAG, "add version " + string);
                     adapter.add(bible.getVersionFullname(string));
                 }
-                adapter.add(getString(R.string.more));
+                adapter.sort(new Comparator<String>() {
+                    @Override
+                    public int compare(String item1, String item2) {
+                        return collator.compare(item1, item2);
+                    }
+                });
+                adapter.add(getString(R.string.manageversion));
                 break;
             case R.id.items:
                 gridview.setNumColumns(1);
@@ -825,6 +828,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 }
                 break;
             case R.id.items:
+                selectverse = "";
                 if (items != null && pos < items.size()) {
                     showItem(pos);
                 } else {
@@ -838,40 +842,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     }
 
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int pos, long id) {
-        gridview.setVisibility(View.GONE);
-        switch (gridviewid) {
-        case R.id.version:
-            if (bible.getCount(Bible.TYPE.VERSION) == 1) {
-                return false;
-            }
-            if (bible.isDemoVersion(version)) {
-                return false;
-            }
-            if (pos >= bible.getCount(Bible.TYPE.VERSION)) {
-                return false;
-            }
-            if (bible.get(Bible.TYPE.VERSION, pos).equals(bible.getVersion())) {
-                return false;
-            }
-            final String delete = bible.get(Bible.TYPE.VERSION, pos);
-            areYouSure(
-                    getString(R.string.deleteversion, bible.getVersionName(delete)),
-                    getString(R.string.deleteversiondetail, bible.getVersionFullname(delete)),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            bible.deleteVersion(delete, null);
-                            header.findViewById(R.id.version).performClick();
-                        }
-                    });
-            return true;
-        default:
-            return false;
-        }
-    }
-
     private void areYouSure(String title, String message, DialogInterface.OnClickListener handler) {
         new AlertDialog.Builder(this).setTitle(title).setMessage(message)
                 .setPositiveButton(android.R.string.yes, handler)
@@ -881,6 +851,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     @Override
     public void onResume() {
         super.onResume();
+        collator = Collator.getInstance(Locale.getDefault());
         Log.d(TAG, "onResume, items: " + items);
         String wanted = "";
         String current = ((TextView)header.findViewById(R.id.version)).getText().toString();
@@ -1251,7 +1222,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         menu.add(Menu.NONE, MENU_SEARCH, MENU_SEARCH, android.R.string.search_go).setIcon(android.R.drawable.ic_menu_search);
         menu.add(Menu.NONE, MENU_SETTINGS, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
         menu.add(Menu.NONE, MENU_HELP, MENU_HELP, R.string.help).setIcon(android.R.drawable.ic_menu_help);
-        menu.add(Menu.NONE, MENU_MORE, MENU_MORE, R.string.more).setIcon(android.R.drawable.ic_menu_more);
+        menu.add(Menu.NONE, MENU_MORE, MENU_MORE, R.string.manageversion).setIcon(android.R.drawable.ic_menu_more);
         menu.add(Menu.NONE, MENU_ANNOTATION, MENU_ANNOTATION, R.string.annotation).setIcon(R.drawable.ic_menu_share);
         setupMenu(menu);
         return super.onCreateOptionsMenu(menu);
@@ -1284,18 +1255,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void showMoreVersion() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            startActivity(new Intent(this, Versions.class));
-            return;
-        }
-        String link_market = "<a href=\"market://search?q=" + getString(R.string.bibledatalink) + "&c=apps\">" + getString(R.string.bibledatahuman) + "</a>";
-        String text = getString(R.string.moreversion, new Object[] {link_market, Chapter.link_github}) + "</div>\n";
-        AlertDialog dialog = new AlertDialog.Builder(this)
-            .setTitle(R.string.more)
-            .setMessage(Html.fromHtml(text))
-            .setPositiveButton(android.R.string.ok, null).show();
-        TextView message = (TextView) dialog.findViewById(android.R.id.message);
-        message.setMovementMethod(LinkMovementMethod.getInstance());
+        startActivity(new Intent(this, Versions.class));
     }
 
     public static void setRefresh(boolean refreshing) {

@@ -8,9 +8,8 @@
        <item quantity="other">在“%5$s”中從“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
     </plurals>
     <string name="search_result_verse">%1$d:%2$d</string>
-    <string name="noversion">此版本僅供演示，請轉到“更多版本”安裝聖經數據。提示：聖經閱讀器僅支持外部存儲(如SDCARD)。</string>
-    <string name="moreversion">非常抱歉，您的設備不支持直接下載。請通過電子市場搜尋並安裝%1$s，或者聖經數據項目網站%2$s下載並安裝聖經數據庫。</string>
-    <string name="more">更多版本</string>
+    <string name="noversion">此版本僅供演示，請轉到“管理版本”安裝聖經數據。提示：聖經閱讀器僅支持外部存儲(如SDCARD)。</string>
+    <string name="manageversion">管理版本</string>
     <string name="chooseversion">選擇版本</string>
     <string name="searchall">搜尋整本聖經</string>
     <string name="searchold">搜尋舊約聖經</string>
