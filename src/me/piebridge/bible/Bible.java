@@ -1027,8 +1027,9 @@ public class Bible
     }
 
     private void checkVersionMeta(File file, String version) {
+        SQLiteDatabase metadata = null;
         try {
-            SQLiteDatabase metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
+            metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
                 SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
             String dataversion = version.replace("demo", "");
             if (!versionFullnames.containsKey(version)) {
@@ -1038,11 +1039,14 @@ public class Bible
                 versionNames.put(version, getVersionMetadata("name", metadata, dataversion));
             }
             setMetadata(metadata, dataversion);
-            metadata.close();
         } catch (Exception e) {
             try {
                 file.delete();
             } catch (Exception f) {
+            }
+        } finally {
+            if (metadata != null) {
+                metadata.close();
             }
         }
     }
