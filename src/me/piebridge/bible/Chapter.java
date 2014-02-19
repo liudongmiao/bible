@@ -105,6 +105,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private float scale;
     private float defaultScale;
     protected String background = null;
+    protected String hilected = null;
     protected String copytext = "";
     protected static final int COPYTEXT = 0;
     protected static final int SHOWCONTENT = 1;
@@ -284,8 +285,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 if (!text.equals("")) {
                     String[] fields = text.split("\n");
                     try {
-                        int hilected = Integer.parseInt(fields[0]);
-                        if (hilected > 0) {
+                        if (Integer.parseInt(fields[0]) > 0) {
                             selected = true;
                         }
                     } catch (NumberFormatException e) {
@@ -337,8 +337,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (mHighlightColor != null) {
             color = mHighlightColor.intValue();
         }
-        background = String.format("background: rgba(%d, %d, %d, %.2f);",
-                (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >>> 24) / 255.0);
+        int red = (color >> 16) & 0xFF;
+        int green = (color >> 8) & 0xFF;
+        int blue = color & 0xFF;
+        int alpha = color >>> 24;
+        background = String.format("background: rgba(%d, %d, %d, %.2f);", red, green, blue, alpha/ 255.0);
+        hilected = String.format("background: rgba(%d, %d, %d, %.2f);",
+            (red * alpha / 255 + 255 - alpha), (green * alpha / 255 + 255 - alpha), blue * alpha / 255, 1 - alpha / 255.0);
         Log.d(TAG, "onCreate");
         hasIntentData = true;
         font = new File(new File(new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName()), "files"), "custom.ttf");
@@ -541,16 +546,17 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
         body += ".selected {" + background + "}\n";
+        body += ".highlight { background: #ffff00 }\n";
+        body += ".selected.highlight {" + hilected + "}\n";
         body += bible.getCSS();
         body += "</style>\n";
         body += "<title>" + title + "</title>\n";
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
         body += "<script type=\"text/javascript\">\n";
-        selectverse = "";
         highlighted = null;
-        body += String.format("var verse_start=%s, verse_end=%s, versename=\"%s\", search=\"%s\", highlighted=\"%s\";",
+        body += String.format("var verse_start=%s, verse_end=%s, versename=\"%s\", search=\"%s\", selected=\"%s\"; highlighted=\"%s\";",
                 verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, versename, items != null ? search : "",
-                getHighlight(osis));
+                selectverse, getHighlight(osis));
         body += "\n</script>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
         body += "</head>\n<body>\n";
@@ -631,7 +637,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 break;
             case R.id.selected:
                 if (!"".equals(selectverse)) {
-                    webview.loadUrl("javascript:highlight('" + selectverse + "', false);");
+                    webview.loadUrl("javascript:select('" + selectverse + "', false);");
                     selectverse = "";
                     handler.sendMessage(handler.obtainMessage(SETSELECTED, selectverse));
                 }
@@ -654,8 +660,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                                     webview.loadUrl("javascript:highlight('" + highlighted + "', false);");
                                 } else {
                                     webview.loadUrl("javascript:highlight('" + selectverse + "', false);");
-                                    selectverse = "";
-                                    handler.sendMessage(handler.obtainMessage(SETSELECTED, selectverse));
                                 }
                             }
                         });
@@ -663,6 +667,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     if (!"".equals(selectverse)) {
                         v.setSelected(true);
                         webview.loadUrl("javascript:highlight('" + selectverse + "');");
+                        webview.loadUrl("javascript:select('" + selectverse + "', false);");
                         selectverse = "";
                         handler.sendMessage(handler.obtainMessage(SETSELECTED, selectverse));
                     }
@@ -1134,6 +1139,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     public void showItem(int index) {
+        selectverse = "";
         saveHighlight();
         osis = "";
         if (items == null || items.size() < 2) {
