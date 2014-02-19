@@ -341,6 +341,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         int green = (color >> 8) & 0xFF;
         int blue = color & 0xFF;
         int alpha = color >>> 24;
+        if (alpha > 127) {
+            alpha /= 2;
+        }
         background = String.format("background: rgba(%d, %d, %d, %.2f);", red, green, blue, alpha/ 255.0);
         hilected = String.format("background: rgba(%d, %d, %d, %.2f);",
             (red * alpha / 255 + 255 - alpha), (green * alpha / 255 + 255 - alpha), blue * alpha / 255, 1 - alpha / 255.0);
