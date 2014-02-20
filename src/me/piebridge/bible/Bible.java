@@ -49,17 +49,17 @@ import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.content.res.Resources;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 
 public class Bible
 {
@@ -273,17 +273,12 @@ public class Bible
                 humans.add(book);
             }
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
-        css = "";
-        cursor = metadata.query("metadata", new String[] {"value"}, "name = ?",
-                new String[] { "css" }, null, null, null, "1");
-        while (cursor != null && cursor.moveToNext()) {
-            css = cursor.getString(cursor.getColumnIndexOrThrow("value"));
-            cursor.close();
-            break;
-        }
+        css = getVersionMetadata("css", metadata, "");
     }
 
     public String getCSS() {
@@ -383,8 +378,10 @@ public class Bible
                 null, null, "name desc", "1");
         while (cursor != null && cursor.moveToNext()) {
             value = cursor.getString(cursor.getColumnIndexOrThrow("value"));
-            cursor.close();
             break;
+        }
+        if (cursor != null) {
+            cursor.close();
         }
         return value;
     }
