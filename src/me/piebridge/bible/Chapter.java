@@ -81,8 +81,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public static int FONTSIZE_MED = 15;
     public static int FONTSIZE_MAX = 72;
     private int fontsize = FONTSIZE_MED;
-    public final static String link_bibledata = "https://github.com/liudongmiao/bibledata?mobile=0";
-    public final static String link_github = "<a href=\"" + link_bibledata + "\">Bible Data</a>";
 
     private ZoomButtonsController mZoomButtonsController = null;
 
