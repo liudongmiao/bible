@@ -12,8 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.emilsjolander.components.stickylistheaders.StickyListHeadersAdapter;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,6 +22,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -39,6 +38,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import com.emilsjolander.components.stickylistheaders.StickyListHeadersAdapter;
 
 public class Versions extends Activity {
 
@@ -61,6 +62,7 @@ public class Versions extends Activity {
     final static int DELETE = 2;
     final static int DELETED = 3;
     final static int COMPLETE = 4;
+    final static int CHECKZIP = 5;
 
     static Handler resume = null;
     static Map<String, Integer> completed = new HashMap<String, Integer>();
@@ -122,6 +124,14 @@ public class Versions extends Activity {
 
         if (queue.size() == 0) {
             readQueue();
+        }
+        Intent intent = getIntent();
+        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            Uri uri = intent.getData();
+            final String path = uri.getLastPathSegment();
+            if ("file".equals(uri.getScheme()) && path != null && path.startsWith("bibledata")) {
+                handler.sendMessage(handler.obtainMessage(CHECKZIP, path));
+            }
         }
     }
 
@@ -326,6 +336,15 @@ public class Versions extends Activity {
                 filterVersion(query.getText().toString());
                 adapter.notifyDataSetChanged();
                 return false;
+            case CHECKZIP:
+                final String path = (String) msg.obj;
+                bible.checkBibleData(false, new Runnable() {
+                    @Override
+                    public void run() {
+                        onDownloadComplete(path);
+                    }
+                });
+                return false;
             default:
                 return false;
             }
@@ -398,6 +417,32 @@ public class Versions extends Activity {
         }
     }
 
+    @SuppressLint("InlinedApi")
+    private void onDownloadComplete(String path) {
+        if (path == null || !path.endsWith(".zip")) {
+            return;
+        }
+        int sep = path.lastIndexOf("-");
+        if (sep == -1) {
+            return;
+        }
+        String code = path.substring(sep + 1, path.length() - 4);
+        Log.d(TAG, "download complete: " + code);
+        synchronized (queue) {
+            String id = queue.get(code);
+            if (id != null) {
+                queue.remove(id);
+            }
+            queue.remove(code);
+        }
+        synchronized (completed) {
+            completed.put(code.toUpperCase(Locale.US), DownloadManager.STATUS_SUCCESSFUL);
+        }
+        if (resume != null) {
+            resume.sendEmptyMessage(COMPLETE);
+        }
+    }
+
     void clickVersion(final TextView view, final Map<String, String> map, final boolean button) {
         final String path = (String) map.get("path");
         final String code = (String) map.get("code");
@@ -411,19 +456,26 @@ public class Versions extends Activity {
             String content = code.toUpperCase(Locale.US) + ", " + name;
             bible.email(this, content);
         } else if (text.equals(getString(R.string.install))) {
+            String id = null;
             DownloadInfo info = bible.download(path);
             if (info != null) {
-                String id = String.valueOf(info.id);
-                synchronized (queue) {
-                    queue.put(code, id);
+                id = String.valueOf(info.id);
+            }
+            synchronized (queue) {
+                queue.put(code, id);
+                if (id != null) {
                     queue.put(id, code);
                 }
+            }
+            if (id != null) {
                 String cancel = getString(R.string.cancel_install);
                 map.put("text", cancel);
                 adapter.notifyDataSetChanged();
+            } else {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Bible.BIBLEDATA_PREFIX + path)));
             }
         } else if (text.equals(getString(R.string.cancel_install))) {
-            if (queue.containsKey(code)) {
+            if (queue.containsKey(code) && queue.get(code) != null) {
                 long id = Long.parseLong(queue.get(code));
                 if (id > 0) {
                     bible.cancel(id);
