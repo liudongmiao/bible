@@ -1329,11 +1329,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     @SuppressLint("InlinedApi")
-    private void setHighlight(String osis, String highlighted) {
-        this.highlighted = highlighted;
-    }
-
-    @SuppressLint("InlinedApi")
     private void saveHighlight() {
         final Editor editor = getSharedPreferences(HIGHLIGHT, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS).edit();
         if ("".equals(highlighted)) {

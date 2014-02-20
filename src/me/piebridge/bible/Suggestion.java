@@ -26,10 +26,7 @@ import android.provider.BaseColumns;
 
 public class Suggestion extends ContentProvider {
 
-    private static final String AUTHORITY = "me.piebridge.bible";
     private static final String TAG = "me.piebridge.bible$Suggestion";
-
-    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     Bible bible = null;
 
     @Override
