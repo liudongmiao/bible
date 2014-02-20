@@ -50,7 +50,7 @@ public class Result extends Activity
     private String osisto = null;
     private SimpleCursorAdapter adapter = null;
 
-    protected int color;
+    protected final static int color = 0x6633B5E5;
     protected final static int SHOWRESULT = 1;
 
     private Handler handler = new Handler(new Handler.Callback() {
@@ -76,12 +76,6 @@ public class Result extends Activity
             osisfrom = intent.getStringExtra("osisfrom");
             osisto = intent.getStringExtra("osisto");
             Log.d(TAG, "query: " + query + ", osisfrom: " + osisfrom + ", osisto: " + osisto);
-            Integer mHighlightColor = (Integer) Bible.getField(findViewById(R.id.text), TextView.class, "mHighlightColor");
-            if (mHighlightColor != null) {
-                color = mHighlightColor.intValue();
-            } else {
-                color = 0x6633B5E5;
-            }
             textView = (TextView) findViewById(R.id.text);
             listView = (ListView) findViewById(R.id.list);
             show();

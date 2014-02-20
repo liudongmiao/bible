@@ -62,6 +62,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final String TAG = "me.piebridge.bible$Chapter";
 
     private int index = 0;
+    private String[] chapters = null;
     private ArrayList<OsisItem> items = null;
     private String search = null;
     private Uri uri = null;
@@ -99,8 +100,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private int gridviewid = 0;
     private float scale;
     private float defaultScale;
-    protected String background = null;
-    protected String hilected = null;
     protected String copytext = "";
     protected static final int COPYTEXT = 0;
     protected static final int SHOWCONTENT = 1;
@@ -244,6 +243,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chapter);
+        show();
         header = getHeader();
         header.findViewById(R.id.book).setOnClickListener(this);
         header.findViewById(R.id.chapter).setOnClickListener(this);
@@ -361,21 +361,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
 
         setIntentData();
-        int color = 0x6633B5E5;
-        Integer mHighlightColor = (Integer) Bible.getField(header.findViewById(R.id.version), TextView.class, "mHighlightColor");
-        if (mHighlightColor != null) {
-            color = mHighlightColor.intValue();
-        }
-        int red = (color >> 16) & 0xFF;
-        int green = (color >> 8) & 0xFF;
-        int blue = color & 0xFF;
-        int alpha = color >>> 24;
-        if (alpha > 127) {
-            alpha /= 2;
-        }
-        background = String.format("background: rgba(%d, %d, %d, %.2f);", red, green, blue, alpha/ 255.0);
-        hilected = String.format("background: rgba(%d, %d, %d, %.2f);",
-            (red * alpha / 255 + 255 - alpha), (green * alpha / 255 + 255 - alpha), blue * alpha / 255, 1 - alpha / 255.0);
         Log.d(TAG, "onCreate");
         hasIntentData = true;
         font = new File(new File(new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName()), "files"), "custom.ttf");
@@ -384,7 +369,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (!hasIntentData) {
             verse = sp.getString("verse", "");
         }
-        show();
         refresh = true;
         showSharing(!copytext.equals(""));
     }
@@ -469,6 +453,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         book = osis.split("\\.")[0];
         if (osis.split("\\.").length > 1) {
             chapter = osis.split("\\.")[1];
+            if ("int".equalsIgnoreCase(chapter)) {
+                chapter = getString(R.string.intro);
+            }
         } else {
             chapter = "0";
         }
@@ -563,9 +550,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
-        body += ".selected {" + background + "}\n";
-        body += ".highlight { background: #ffff00 }\n";
-        body += ".selected.highlight {" + hilected + "}\n";
         body += bible.getCSS();
         body += "</style>\n";
         body += "<title>" + title + "</title>\n";
@@ -735,14 +719,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case R.id.chapter:
                 gridview.setNumColumns(5);
                 selected = chapter;
-                String chapters = bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, book));
-                int maxchapter = 1;
-                try {
-                    maxchapter = Integer.parseInt(chapters);
-                } catch (Exception e) {
-                }
-                for (int i = 1; i <= maxchapter; i++) {
-                    adapter.add(String.valueOf(i));
+                chapters = bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, book)).split(",");
+                for (String chapter : chapters) {
+                    if ("int".equalsIgnoreCase(chapter)) {
+                        adapter.add(getString(R.string.intro));
+                    } else {
+                        adapter.add(chapter);
+                    }
                 }
                 break;
             case R.id.version:
@@ -810,9 +793,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 }
                 break;
             case R.id.chapter:
-                openOsis(String.format("%s.%d", book, pos + 1));
+                if (chapters != null && pos < chapters.length) {
+                    openOsis(String.format("%s.%s", book, chapters[pos]));
+                }
                 break;
             case R.id.version:
+                show();
                 storeOsisVersion();
                 if (pos >= bible.getCount(Bible.TYPE.VERSION)) {
                     showMoreVersion();
@@ -860,6 +846,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             refresh = false;
             handler.sendEmptyMessage(SHOWDATA);
         }
+        handler.sendEmptyMessage(DISMISSBAR);
     }
 
     private void showData() {
@@ -1205,13 +1192,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private void show() {
         progress = true;
-        /*
-         * http://en.wikipedia.org/wiki/Frame_rate
-         *
-         * while single-millisecond visual stimulus may have a perceived duration
-         * between 100ms and 400ms due to persistence of vision in the visual cortex.
-         */
-        handler.sendEmptyMessageDelayed(SHOWBAR, showed ? 250 : 0);
+        handler.sendEmptyMessageDelayed(SHOWBAR, 0);
     }
 
     @Override

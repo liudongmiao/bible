@@ -55,4 +55,5 @@
     <string name="annotation">Annotation</string>
     <string name="bookmarks">Bookmarks</string>
     <string name="deletehighlight">Unhighlight %s?</string>
+    <string name="intro">Intro</string>
 </resources>

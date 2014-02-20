@@ -39,7 +39,7 @@ public class Provider extends ContentProvider
     private static final String TABLE_VERSES = "verses left outer join books on (verses.book = books.osis)";
     private static final String[] COLUMNS_VERSE = {"id as _id", "book", "human", "verse * 1000 as verse", "unformatted"};
 
-    private static final String TABLE_CHAPTERS = "chapters";
+    static final String TABLE_CHAPTERS = "chapters";
     private static final String[] COLUMNS_CHAPTER = {
         "reference_osis as osis",
         "reference_human as human",
@@ -147,11 +147,11 @@ public class Provider extends ContentProvider
             cursor = database.query(
                 TABLE_CHAPTERS,
                 COLUMNS_CHAPTER,
-                "reference_osis = ?",
-                new String[] {osis},
+                "reference_osis = ? or reference_osis = ?",
+                new String[] {osis, osis.replaceFirst("int", "1")},
                 null,
                 null,
-                null,
+                "reference_osis desc", // Gen.int, then Gen.1
                 "1");
         } else {
             cursor = database.query(

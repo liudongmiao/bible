@@ -55,4 +55,5 @@
     <string name="annotation">注解</string>
     <string name="bookmarks">書籤</string>
     <string name="deletehighlight">取消高亮%s？</string>
+    <string name="intro">簡介</string>
 </resources>

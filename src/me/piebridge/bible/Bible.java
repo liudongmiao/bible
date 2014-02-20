@@ -269,7 +269,25 @@ public class Bible
                 allhuman.put(book, osis);
                 osiss.add(osis);
                 books.add(book);
-                chapters.add(chapter);
+
+                Cursor cursor_chapter = null;
+                // select group_concat(replace(reference_osis, "Gen.", "")) as osis from chapters where reference_osis like 'Gen.%';
+                try {
+                    cursor_chapter = metadata.query(Provider.TABLE_CHAPTERS,
+                            new String[] { "group_concat(replace(reference_osis, \"" + osis + ".\", \"\")) as osis" },
+                            "reference_osis like ?", new String[] { osis + ".%" }, null, null, null);
+                    if (cursor_chapter.moveToNext()) {
+                        // we have only one column
+                        chapters.add(cursor_chapter.getString(0));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    chapters.add(chapter);
+                } finally {
+                    if (cursor_chapter != null) {
+                        cursor_chapter.close();
+                    }
+                }
                 humans.add(book);
             }
         } finally {
@@ -336,8 +354,9 @@ public class Bible
                 return humans;
             case VERSIONPATH:
                 return new ArrayList<String>(versionpaths.keySet());
+            default:
+                return new ArrayList<String>();
         }
-        return new ArrayList<String>();
     }
 
     public int getPosition(TYPE type, String string) {
