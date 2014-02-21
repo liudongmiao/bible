@@ -24,4 +24,4 @@ sup { line-height: 0; }
 .selected { background: rgba(51, 181, 229, 0.40); }
 .selected.highlight { background: rgba(173, 225, 91, 0.60); }
 .introduction .iot { border-bottom: 1px solid #b2b2b2; text-transform: uppercase; }
-.introduction .io1 { background-color: #f2f2f2; font: 0.8em; margin: 0; padding: 8px 5px 8px 20px; }
+.introduction .io1 { background-color: #f2f2f2; font-size: 0.8em; margin: 0; padding: 8px 5px 8px 20px; }
