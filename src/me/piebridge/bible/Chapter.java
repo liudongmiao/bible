@@ -47,6 +47,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -131,6 +132,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private Collator collator;
 
     private boolean showed = false;
+    private boolean checked = false;
     private static boolean refresh = false;
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -152,20 +154,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     }
                     break;
                 case SHOWDATA:
-                    if (bible == null) {
-                        bible = Bible.getBible(getBaseContext());
-                    }
-                    handler.sendEmptyMessageDelayed(CHECKBIBLEDATA, 400);
-                    bible.checkBibleData(true);
-                    handler.sendEmptyMessage(BIBLEDATA);
-                    bible.checkVersions();
-                    Log.d(TAG, "will set version: " + version);
-                    if ("".equals(version)) {
-                        version = bible.getVersion();
-                    }
-                    if (version.endsWith("demo")) {
-                        bible.setDefaultVersion();
-                    }
                     showData();
                     break;
                 case SHOWBAR:
@@ -188,9 +176,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     }
                     break;
                 case CHECKBIBLEDATA:
-                    showView(R.id.bibledata, true);
+                    if (!checked) {
+                        showView(R.id.bibledata, true);
+                    }
                     break;
                 case BIBLEDATA:
+                    checked = true;
                     showView(R.id.bibledata, false);
                     break;
                 case CHECKVIEW:
@@ -234,6 +225,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     });
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void hideActionBar() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+            getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+            getActionBar().hide();
+        }
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,9 +241,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             setTheme(android.R.style.Theme_Light_NoTitleBar);
         }
         super.onCreate(savedInstanceState);
+        hideActionBar();
         setContentView(R.layout.chapter);
-        show();
         header = getHeader();
+        webview = (WebView) findViewById(R.id.webview);
+        gridview = (GridView) findViewById(R.id.gridview);
+        show();
+
         header.findViewById(R.id.book).setOnClickListener(this);
         header.findViewById(R.id.chapter).setOnClickListener(this);
         header.findViewById(R.id.version).setOnClickListener(this);
@@ -255,7 +258,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         header.findViewById(R.id.back).setOnClickListener(this);
         header.findViewById(R.id.selected).setOnClickListener(this);
 
-        gridview = (GridView) findViewById(R.id.gridview);
         final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         adapter = new ArrayAdapter<String>(this, R.layout.grid) {
             @Override
@@ -291,7 +293,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         gridview.setOnItemClickListener(this);
 
         setGestureDetector();
-        webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setSupportZoom(true);
         webview.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
@@ -832,21 +833,45 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 .setNegativeButton(android.R.string.no, null).create().show();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        collator = Collator.getInstance(Locale.getDefault());
-        Log.d(TAG, "onResume, items: " + items);
+    private void resume() {
         String wanted = "";
-        String current = ((TextView)header.findViewById(R.id.version)).getText().toString();
+        String current = ((TextView) header.findViewById(R.id.version)).getText().toString();
         if (bible != null) {
             wanted = bible.getVersionName(bible.getVersion());
         }
         if (refresh || !wanted.equals(current)) {
             refresh = false;
+            if (bible == null) {
+                bible = Bible.getBible(getBaseContext());
+            }
+            checked = false;
+            handler.sendEmptyMessageDelayed(CHECKBIBLEDATA, 400);
+            bible.checkBibleData(true);
+            handler.sendEmptyMessage(BIBLEDATA);
+            bible.checkVersions();
+            Log.d(TAG, "will set version: " + version);
+            if ("".equals(version)) {
+                version = bible.getVersion();
+            }
+            if (version.endsWith("demo")) {
+                bible.setDefaultVersion();
+            }
             handler.sendEmptyMessage(SHOWDATA);
         }
         handler.sendEmptyMessage(DISMISSBAR);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        collator = Collator.getInstance(Locale.getDefault());
+        Log.d(TAG, "onResume, items: " + items);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                resume();
+            }
+        }).start();
     }
 
     private void showData() {
