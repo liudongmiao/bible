@@ -158,9 +158,9 @@ public class Bible
         Map<String, String> newVersionpaths = new HashMap<String, String>();
         File path = getExternalFilesDirWrapper();
         if (path == null) {
-            mtime.clear();
             checkInternalVersions(newVersions, newVersionpaths);
             synchronized (versionsLock) {
+                mtime.clear();
                 versions.clear();
                 versionpaths.clear();
                 versions.addAll(newVersions);
@@ -188,8 +188,8 @@ public class Bible
         if (newVersions.size() == 0) {
             checkInternalVersions(newVersions, newVersionpaths);
         }
-        mtime.put(path.getAbsolutePath(), path.lastModified());
         synchronized (versionsLock) {
+            mtime.put(path.getAbsolutePath(), path.lastModified());
             versions.clear();
             versionpaths.clear();
             versions.addAll(newVersions);
@@ -864,28 +864,20 @@ public class Bible
             return false;
         }
         Log.d(TAG, "checking zipdata " + path.getAbsolutePath());
-        SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(mContext);
-        Long oldmtime = mtime.get(path.getAbsolutePath());
-        if (oldmtime == null) {
-            oldmtime = preference.getLong(path.getAbsolutePath(), 0);
-        }
-        boolean newer = (path.lastModified() > oldmtime);
         for (String name : path.list()) {
             if (name.startsWith("bibledata-") && name.endsWith("zip")) {
                 try {
-                    unpackZip(new File(path, name), newer);
+                    unpackZip(new File(path, name));
                 } catch (IOException e) {
                 } catch (Exception e) {
                     Log.e(TAG, "unpackZip", e);
                 }
             }
         }
-        mtime.put(path.getAbsolutePath(), path.lastModified());
-        preference.edit().putLong(path.getAbsolutePath(), path.lastModified()).commit();
         return true;
     }
 
-    private boolean unpackZip(File path, boolean newer) throws IOException {
+    private boolean unpackZip(File path) throws IOException {
         if (path == null || !path.isFile()) {
             return false;
         }
@@ -899,10 +891,6 @@ public class Bible
             filename = filename.substring(sep + 1, filename.length() - 4);
         }
         filename += ".sqlite3";
-
-        if (!newer && new File(dirpath, filename).isFile()) {
-            return true;
-        }
 
         InputStream is = new FileInputStream(path);
         long fileSize = path.length();
