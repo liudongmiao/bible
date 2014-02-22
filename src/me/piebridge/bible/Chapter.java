@@ -73,6 +73,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private String end = "";
     private Object verseLock = new Object();
     private String version = "";
+    private boolean changeVersion = false;
 
     private String osis_next;
     private String osis_prev;
@@ -453,6 +454,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 this.verse = verse;
             }
             this.end = end;
+            changeVersion = false;
             showUri();
         }
         return true;
@@ -475,7 +477,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         header.findViewById(R.id.extra).setVisibility(View.VISIBLE);
         ((TextView)header.findViewById(R.id.version)).setText(bible.getVersionName(bible.getVersion()));
         ((TextView)header.findViewById(R.id.book)).setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
-        if (!"".equals(verse) && !"".equals(end)) {
+        if (changeVersion) {
+            // don't change chapter
+        } else if (!"".equals(verse) && !"".equals(end)) {
             ((TextView)header.findViewById(R.id.chapter)).setText(chapter + ":" + verse + "-" + end);
         } else if (!"".equals(verse) || !"".equals(end)) {
             ((TextView)header.findViewById(R.id.chapter)).setText(chapter + ":" + verse + end);
@@ -819,6 +823,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                             bible.setVersion(version);
                             fontsize = sp.getInt("fontsize-" + version, fontsize);
                             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
+                            changeVersion = true;
                             showUri();
                         }
                     }).start();
