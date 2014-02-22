@@ -56,4 +56,5 @@
     <string name="bookmarks">Bookmarks</string>
     <string name="deletehighlight">Unhighlight %s?</string>
     <string name="intro">Intro</string>
+    <string name="noback">Please press Home button to leave Bible</string>
 </resources>

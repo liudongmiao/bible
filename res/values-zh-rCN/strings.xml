@@ -56,4 +56,5 @@
     <string name="bookmarks">书签</string>
     <string name="deletehighlight">取消高亮%s？</string>
     <string name="intro">简介</string>
+    <string name="noback">推荐使用Home键离开圣经</string>
 </resources>
