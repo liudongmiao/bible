@@ -15,9 +15,7 @@ package me.piebridge.bible;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
@@ -31,7 +29,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
@@ -130,7 +127,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final int MENU_MORE = 3;
     private final int MENU_ANNOTATION = 1;
 
-    private boolean showed = false;
     private static boolean refresh = false;
     private static boolean noback = true;
     private Handler handler = new Handler(new Handler.Callback() {
@@ -146,7 +142,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     header.findViewById(R.id.bookmark).setSelected(selected);
                     break;
                 case SHOWCONTENT:
-                    showed = true;
                     bibledata.setVisibility(View.INVISIBLE);
                     message = (String[]) msg.obj;
                     if (!"".equals(message[0])) {
@@ -206,7 +201,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     String text = (String) msg.obj;
                     TextView selectedView = (TextView) header.findViewById(R.id.selected);
                     if (text == null || text.length() == 0) {
-                        selectedView.setVisibility(View.GONE);
+                        selectedView.setVisibility(View.INVISIBLE);
                     } else {
                         selectedView.setVisibility(View.VISIBLE);
                         selectedView.setText(text);
@@ -1300,7 +1295,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         boolean annotation = header.findViewById(R.id.annotation).getVisibility() == View.VISIBLE;
         if (annotation) {
-            menu.removeItem(MENU_ANNOTATION);
+            menu.clear();
+            return;
         }
         for (int i = 0; i < menu.size(); ++i) {
             MenuItem item = menu.getItem(i);
