@@ -186,7 +186,6 @@ public class Versions extends Activity {
     }
 
     List<Map<String, String>> parseVersions(List<Map<String, String>> list, String string) {
-        bible.checkVersions();
         Context context = bible.getContext();
         try {
             JSONObject jsons = new JSONObject(string);

@@ -79,7 +79,6 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bible = Bible.getBible(getBaseContext());
-        bible.checkVersions();
 
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 
