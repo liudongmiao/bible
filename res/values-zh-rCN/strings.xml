@@ -38,7 +38,7 @@
     <string name="bibledata">正在检查圣经数据...</string>
     <string name="log">调试日志</string>
     <string name="version">版本</string>
-    <string name="help">帮助</string>
+    <string name="help">反馈</string>
     <string name="pinch">双指缩放</string>
     <string name="pinch_not_work">可能无法正常使用</string>
     <string name="version_hint">版本或描述</string>

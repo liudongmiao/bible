@@ -39,7 +39,7 @@
     <string name="bibledata">Checking Bible Data ...</string>
     <string name="log">Debug Log</string>
     <string name="version">Version</string>
-    <string name="help">Help</string>
+    <string name="help">Feedback</string>
     <string name="pinch">Pinch to Zoom</string>
     <string name="pinch_not_work">May not work properly</string>
     <string name="install">Install</string>

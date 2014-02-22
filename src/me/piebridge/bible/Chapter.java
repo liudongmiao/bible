@@ -125,8 +125,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private final int MENU_SEARCH = 0;
     private final int MENU_SETTINGS = 4;
-    private final int MENU_HELP = 2;
-    private final int MENU_MORE = 3;
+    private final int MENU_FEEDBACK = 3;
+    private final int MENU_VERSIONS = 2;
     private final int MENU_ANNOTATION = 1;
 
     private static boolean refresh = false;
@@ -1260,8 +1260,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         menu.clear();
         menu.add(Menu.NONE, MENU_SEARCH, MENU_SEARCH, android.R.string.search_go).setIcon(android.R.drawable.ic_menu_search);
         menu.add(Menu.NONE, MENU_SETTINGS, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
-        menu.add(Menu.NONE, MENU_HELP, MENU_HELP, R.string.help).setIcon(android.R.drawable.ic_menu_help);
-        menu.add(Menu.NONE, MENU_MORE, MENU_MORE, R.string.manageversion).setIcon(android.R.drawable.ic_menu_more);
+        menu.add(Menu.NONE, MENU_FEEDBACK, MENU_FEEDBACK, R.string.help).setIcon(android.R.drawable.ic_menu_help);
+        menu.add(Menu.NONE, MENU_VERSIONS, MENU_VERSIONS, R.string.manageversion).setIcon(android.R.drawable.ic_menu_more);
         menu.add(Menu.NONE, MENU_ANNOTATION, MENU_ANNOTATION, R.string.annotation).setIcon(R.drawable.ic_menu_share);
         setupMenu(menu);
         return super.onCreateOptionsMenu(menu);
@@ -1280,10 +1280,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 intent.putExtra("body", body);
                 startActivityIfNeeded(intent, -1);
                 break;
-            case MENU_MORE:
+            case MENU_VERSIONS:
                 showMoreVersion();
                 break;
-            case MENU_HELP:
+            case MENU_FEEDBACK:
                 bible.email(this);
                 break;
             case MENU_ANNOTATION:
