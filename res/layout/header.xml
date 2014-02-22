@@ -103,7 +103,6 @@
             android:layout_weight="1"
             android:contentDescription="@string/note"
             android:src="@drawable/ic_menu_note"
-            android:visibility="gone"
             />
 
         <ImageView
