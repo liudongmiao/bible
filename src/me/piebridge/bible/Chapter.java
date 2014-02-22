@@ -343,7 +343,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
             @JavascriptInterface
             public void setHighlighted(String text) {
-                highlighted = text;
+                // some translation has no some verses
+                // highlighted = text;
             }
 
             @JavascriptInterface
