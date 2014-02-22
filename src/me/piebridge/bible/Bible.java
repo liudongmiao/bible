@@ -24,11 +24,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -98,6 +102,7 @@ public class Bible
     private LinkedHashMap<String, String> searchfull = new LinkedHashMap<String, String>();;
     private LinkedHashMap<String, String> searchshort = new LinkedHashMap<String, String>();;
 
+    private Collator collator;
     private Locale lastLocale;
     private boolean unpacked = false;
     private HashMap<String, Long> mtime = new HashMap<String, Long>();
@@ -117,6 +122,7 @@ public class Bible
 
     public void checkLocale() {
         Locale locale = Locale.getDefault();
+        collator = Collator.getInstance(Locale.getDefault());
         if (!locale.equals(lastLocale)) {
             lastLocale = locale;
             setResources();
@@ -146,18 +152,19 @@ public class Bible
         return new int[] {chapter, verse};
     }
 
-    public boolean checkVersions() {
-        synchronized (versionsLock) {
-            return checkVersionsSync();
-        }
-    }
-
     private boolean checkVersionsSync() {
+        List<String> newVersions = new ArrayList<String>();
+        Map<String, String> newVersionpaths = new HashMap<String, String>();
         File path = getExternalFilesDirWrapper();
         if (path == null) {
             mtime.clear();
-            versions.clear();
-            checkInternalVersions();
+            checkInternalVersions(newVersions, newVersionpaths);
+            synchronized (versionsLock) {
+                versions.clear();
+                versionpaths.clear();
+                versions.addAll(newVersions);
+                versionpaths.putAll(newVersionpaths);
+            }
             return false;
         }
         File oldpath = new File(Environment.getExternalStorageDirectory(), ".piebridge");
@@ -169,24 +176,33 @@ public class Bible
                 && (!oldpath.exists() || !oldpath.isDirectory() || oldpath.lastModified() <= oldmtime)) {
             return true;
         }
-        versions.clear();
-        versionpaths.clear();
-        checkVersion(oldpath);
-        checkVersion(path);
-        Collections.sort(versions);
-        if (versions.size() == 0) {
-            checkInternalVersions();
+        checkVersion(oldpath, newVersions, newVersionpaths);
+        checkVersion(path, newVersions, newVersionpaths);
+        Collections.sort(newVersions, new Comparator<String>() {
+            @Override
+            public int compare(String item1, String item2) {
+                return collator.compare(getVersionFullname(item1), getVersionFullname(item2));
+            }
+        });
+        if (newVersions.size() == 0) {
+            checkInternalVersions(newVersions, newVersionpaths);
         }
         mtime.put(path.getAbsolutePath(), path.lastModified());
+        synchronized (versionsLock) {
+            versions.clear();
+            versionpaths.clear();
+            versions.addAll(newVersions);
+            versionpaths.putAll(newVersionpaths);
+        }
         return true;
     }
 
-    private void checkInternalVersions() {
+    private void checkInternalVersions(List<String> versions, Map<String, String> versionpaths) {
         if (!unpacked) {
             setDemoVersions();
             unpacked = true;
         }
-        checkVersion(mContext.getFilesDir());
+        checkVersion(mContext.getFilesDir(), versions, versionpaths);
     }
 
     public boolean isDemoVersion(String version) {
@@ -222,7 +238,7 @@ public class Bible
             database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
                     SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
             Log.d(TAG, "open database \"" + database.getPath() + "\"");
-            setMetadata(database, databaseVersion);
+            setMetadata(database, databaseVersion, true);
             return true;
         } catch (Exception e) {
             try {
@@ -246,12 +262,14 @@ public class Bible
         }
     }
 
-    private void setMetadata(SQLiteDatabase metadata, String dataversion) {
+    private void setMetadata(SQLiteDatabase metadata, String dataversion, boolean change) {
         Cursor cursor = metadata.query(Provider.TABLE_BOOKS, Provider.COLUMNS_BOOKS, null, null, null, null, null);
-        osiss.clear();
-        books.clear();
-        chapters.clear();
-        humans.clear();
+        if (change) {
+            osiss.clear();
+            books.clear();
+            chapters.clear();
+            humans.clear();
+        }
         try {
             while (cursor.moveToNext()) {
                 String osis = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_OSIS));
@@ -267,8 +285,6 @@ public class Bible
                     book = book.substring(0, book.length() - 2);
                 }
                 allhuman.put(book, osis);
-                osiss.add(osis);
-                books.add(book);
 
                 Cursor cursor_chapter = null;
                 // select group_concat(replace(reference_osis, "Gen.", "")) as osis from chapters where reference_osis like 'Gen.%';
@@ -278,17 +294,20 @@ public class Bible
                             "reference_osis like ?", new String[] { osis + ".%" }, null, null, null);
                     if (cursor_chapter.moveToNext()) {
                         // we have only one column
-                        chapters.add(cursor_chapter.getString(0));
+                        chapter = cursor_chapter.getString(0);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    chapters.add(chapter);
                 } finally {
                     if (cursor_chapter != null) {
                         cursor_chapter.close();
                     }
                 }
-                humans.add(book);
+                if (change) {
+                    osiss.add(osis);
+                    books.add(book);
+                    chapters.add(chapter);
+                    humans.add(book);
+                }
             }
         } finally {
             if (cursor != null) {
@@ -468,7 +487,7 @@ public class Bible
     }
 
     public boolean setDefaultVersion() {
-        checkVersions();
+        checkVersionsSync();
         if (versions.size() == 0) {
             return false;
         }
@@ -808,7 +827,7 @@ public class Bible
         } else {
             checkZipData(new File(Environment.getExternalStorageDirectory(), "Download"));
         }
-        checkVersions();
+        checkVersionsSync();
     }
 
     public void checkBibleData(boolean block, final Runnable run) {
@@ -1018,7 +1037,7 @@ public class Bible
         return true;
     }
 
-    void checkVersion(File path) {
+    void checkVersion(File path, List<String> versions, Map<String, String> versionpaths) {
         if (!path.exists() || !path.isDirectory() || path.list() == null) {
             return;
         }
@@ -1054,7 +1073,7 @@ public class Bible
             if (!versionNames.containsKey(version)) {
                 versionNames.put(version, getVersionMetadata("name", metadata, dataversion));
             }
-            setMetadata(metadata, dataversion);
+            setMetadata(metadata, dataversion, false);
         } catch (Exception e) {
             try {
                 file.delete();
