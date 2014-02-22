@@ -113,6 +113,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int SHOWHEAD = 9;
     protected static final int HIDEGRID = 10;
     protected static final int SETSELECTED = 11;
+    protected static final int SYNCED = 12;
 
     private boolean red = true;
     private boolean nightmode = false;
@@ -206,6 +207,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                         selectedView.setVisibility(View.VISIBLE);
                         selectedView.setText(text);
                     }
+                    break;
+                case SYNCED:
+                    Toast.makeText(Chapter.this, R.string.versionsynced, Toast.LENGTH_SHORT).show();
                     break;
             }
             return false;
@@ -609,6 +613,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         storeOsisVersion();
         hasIntentData = false;
         version = "";
+        bible.getSynced(null);
         super.onPause();
     }
 
@@ -620,6 +625,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         switch (v.getId()) {
             case R.id.version:
+                if (!getSynced()) {
+                    return;
+                }
                 getVerse();
                 // bible.checkVersions();
             case R.id.book:
@@ -848,10 +856,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             handler.sendEmptyMessage(CHECKBIBLEDATA);
             if (bible == null) {
                 bible = Bible.getBible(getBaseContext());
-                bible.checkBibleData(true);
             } else {
                 bible.checkLocale();
-                bible.checkBibleData(false);
+                bible.checkBibleData(false, null);
             }
             Log.d(TAG, "will set version: " + version);
             if ("".equals(version)) {
@@ -938,8 +945,23 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         return mGestureDetector.onTouchEvent(e);
     }
 
+    boolean getSynced() {
+        boolean synced = bible.getSynced(new Runnable() {
+            @Override
+            public void run() {
+                handler.sendEmptyMessage(SYNCED);
+            }
+        });
+        if (!synced) {
+            Toast.makeText(this, R.string.versionsyncing, Toast.LENGTH_SHORT).show();
+        }
+        return synced;
+    }
     @Override
     public boolean onSearchRequested() {
+        if (!getSynced()) {
+            return true;
+        }
         startActivity(new Intent(this, Search.class));
         return false;
     }

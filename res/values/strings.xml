@@ -57,4 +57,6 @@
     <string name="deletehighlight">Unhighlight %s?</string>
     <string name="intro">Intro</string>
     <string name="noback">Please press Home button to leave Bible</string>
+    <string name="versionsyncing">Bible Data is updating, please wait...</string>
+    <string name="versionsynced">Bible Data is updated</string>
 </resources>

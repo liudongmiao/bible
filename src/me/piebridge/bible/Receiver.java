@@ -24,7 +24,7 @@ public class Receiver extends BroadcastReceiver {
             String applicationName = (uri != null) ? uri.getSchemeSpecificPart() : null;
             if (applicationName != null && applicationName.startsWith(context.getPackageName())) {
                 Log.d(TAG,  "action: " + action + ", packageName: " + context.getPackageName() + ", applicationName: " + applicationName);
-                bible.checkBibleData(false);
+                bible.checkBibleData(false, null);
             }
         } else if ("android.provider.Telephony.SECRET_CODE".equals(action)) {
             context.startActivity(new Intent(context, Chapter.class)

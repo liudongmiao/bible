@@ -110,6 +110,8 @@ public class Bible
     private String css;
     public String versionName;
 
+    private boolean synced = false;
+    private Runnable syncedAction = null;
     private Bible(Context context) {
         Log.d(TAG, "init bible");
         mContext = context;
@@ -119,6 +121,19 @@ public class Bible
         }
         checkLocale();
         setDefaultVersion();
+    }
+
+    public boolean getSynced(Runnable action) {
+        syncedAction = action;
+        return synced;
+    }
+
+    private void notifySynced() {
+        synced = true;
+        if (syncedAction != null) {
+            syncedAction.run();
+            syncedAction = null;
+        }
     }
 
     public void checkLocale() {
@@ -133,6 +148,12 @@ public class Bible
     public synchronized static Bible getBible(Context context) {
         if (bible == null) {
             bible = new Bible(context);
+            bible.checkBibleData(false, new Runnable() {
+                @Override
+                public void run() {
+                    bible.notifySynced();
+                }
+            });
         }
         if (context != null) {
             mContext = context;
@@ -153,12 +174,12 @@ public class Bible
         return new int[] {chapter, verse};
     }
 
-    private boolean checkVersionsSync() {
+    private int checkVersionsSync(boolean all) {
         List<String> newVersions = new ArrayList<String>();
         Map<String, String> newVersionpaths = new HashMap<String, String>();
         File path = getExternalFilesDirWrapper();
         if (path == null) {
-            checkInternalVersions(newVersions, newVersionpaths);
+            checkInternalVersions(newVersions, newVersionpaths, all);
             synchronized (versionsLock) {
                 mtime.clear();
                 versions.clear();
@@ -166,7 +187,7 @@ public class Bible
                 versions.addAll(newVersions);
                 versionpaths.putAll(newVersionpaths);
             }
-            return false;
+            return versions.size();
         }
         File oldpath = new File(Environment.getExternalStorageDirectory(), ".piebridge");
         Long oldmtime = mtime.get(path.getAbsolutePath());
@@ -175,10 +196,10 @@ public class Bible
         }
         if (versions.size() != 0 && path.lastModified() <= oldmtime
                 && (!oldpath.exists() || !oldpath.isDirectory() || oldpath.lastModified() <= oldmtime)) {
-            return true;
+            return versions.size();
         }
-        checkVersion(oldpath, newVersions, newVersionpaths);
-        checkVersion(path, newVersions, newVersionpaths);
+        checkVersion(oldpath, newVersions, newVersionpaths, all);
+        checkVersion(path, newVersions, newVersionpaths, all);
         Collections.sort(newVersions, new Comparator<String>() {
             @Override
             public int compare(String item1, String item2) {
@@ -186,7 +207,7 @@ public class Bible
             }
         });
         if (newVersions.size() == 0) {
-            checkInternalVersions(newVersions, newVersionpaths);
+            checkInternalVersions(newVersions, newVersionpaths, all);
         }
         synchronized (versionsLock) {
             mtime.put(path.getAbsolutePath(), path.lastModified());
@@ -195,15 +216,15 @@ public class Bible
             versions.addAll(newVersions);
             versionpaths.putAll(newVersionpaths);
         }
-        return true;
+        return versions.size();
     }
 
-    private void checkInternalVersions(List<String> versions, Map<String, String> versionpaths) {
+    private void checkInternalVersions(List<String> versions, Map<String, String> versionpaths, boolean all) {
         if (!unpacked) {
             setDemoVersions();
             unpacked = true;
         }
-        checkVersion(mContext.getFilesDir(), versions, versionpaths);
+        checkVersion(mContext.getFilesDir(), versions, versionpaths, all);
     }
 
     public boolean isDemoVersion(String version) {
@@ -488,17 +509,24 @@ public class Bible
     }
 
     public boolean setDefaultVersion() {
-        checkVersionsSync();
-        if (versions.size() == 0) {
-            return false;
+        String defaultVersion = "";
+        if (versions.size() > 0) {
+            defaultVersion = get(TYPE.VERSION, 0);
         }
-        String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version", get(TYPE.VERSION, 0));
+        String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version", defaultVersion);
+        if ((version == null || version.length() == 0) && defaultVersion.length() > 0) {
+            version = defaultVersion;
+        }
         // check actual file
         File file = getFile(version);
         if (file != null && file.isFile()) {
             return setVersion(version);
         }
         PreferenceManager.getDefaultSharedPreferences(mContext).edit().remove("version").commit();
+        checkBibleData(false);
+        if (versions.size() > 0) {
+            return setDefaultVersion();
+        }
         return false;
     }
 
@@ -826,7 +854,12 @@ public class Bible
     }
 
     @SuppressLint("NewApi")
-    void checkBibleData() {
+    private void checkBibleData(boolean all) {
+        if (!all) {
+            if (checkVersionsSync(false) > 0) {
+                return;
+            };
+        }
         checkApkData();
         checkZipData(Environment.getExternalStorageDirectory());
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR_MR1) {
@@ -834,29 +867,26 @@ public class Bible
         } else {
             checkZipData(new File(Environment.getExternalStorageDirectory(), "Download"));
         }
-        checkVersionsSync();
+        checkVersionsSync(true);
     }
 
     public void checkBibleData(boolean block, final Runnable run) {
         if (block) {
-            checkBibleData();
+            checkBibleData(false);
             if (run != null) {
                 run.run();
             }
+            checkBibleData(true, null);
         } else {
             new Thread(new Runnable() {
                 public void run() {
-                    checkBibleData();
+                    checkBibleData(true);
                     if (run != null) {
                         run.run();
                     }
                 }
             }).start();
         }
-    }
-
-    public void checkBibleData(boolean block) {
-        checkBibleData(block, null);
     }
 
     private boolean checkZipData(File path) {
@@ -1032,12 +1062,15 @@ public class Bible
         return true;
     }
 
-    void checkVersion(File path, List<String> versions, Map<String, String> versionpaths) {
+    int checkVersion(File path, List<String> versions, Map<String, String> versionpaths, boolean all) {
         if (!path.exists() || !path.isDirectory() || path.list() == null) {
-            return;
+            return versions.size();
         }
         String[] names = path.list();
         for (String name : names) {
+            if (!all && versions.size() > 0) {
+                break;
+            }
             File file = new File(path, name);
             if (name.endsWith(".sqlite3") && file.exists() && file.isFile()) {
                 Log.d(TAG, "add version " + name);
@@ -1054,6 +1087,7 @@ public class Bible
                 }
             }
         }
+        return versions.size();
     }
 
     private void checkVersionMeta(File file, String version) {

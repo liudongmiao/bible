@@ -57,4 +57,6 @@
     <string name="deletehighlight">取消高亮%s？</string>
     <string name="intro">简介</string>
     <string name="noback">推荐使用Home键离开圣经</string>
+    <string name="versionsyncing">正在更新圣经数据，请稍等</string>
+    <string name="versionsynced">圣经数据更新完成</string>
 </resources>
