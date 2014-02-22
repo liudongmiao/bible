@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -801,19 +802,25 @@ public class Bible
         return getField(object, object.getClass(), fieldName);
     }
 
-    public boolean deleteVersion(String version, Runnable run) {
+    public boolean deleteVersion(String version) {
         boolean returncode = false;
         version = version.toLowerCase(Locale.US);
         File file = getFile(version);
         if (file != null && file.isFile() && file.delete()) {
-            checkBibleData(true);
+            synchronized (versionsLock) {
+                Iterator<String> it = versions.iterator();
+                while (it.hasNext()) {
+                    if (version.equals(it.next())) {
+                        it.remove();
+                    }
+                }
+                versionpaths.remove(version);
+            }
+            checkBibleData(false);
             if (version.equalsIgnoreCase(databaseVersion)) {
                 setVersion(get(TYPE.VERSION, 0));
             }
             returncode = true;
-        }
-        if (run != null) {
-            run.run();
         }
         return returncode;
     }

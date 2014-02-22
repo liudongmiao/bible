@@ -289,11 +289,8 @@ public class Versions extends Activity {
                 }
                 final String code = (String) msg.obj;
                 Log.d(TAG, "delete " + code);
-                bible.deleteVersion(code, new Runnable() {
-                    public void run() {
-                        handler.sendMessage(handler.obtainMessage(DELETED, code));
-                    }
-                });
+                bible.deleteVersion(code);
+                handler.sendMessage(handler.obtainMessage(DELETED, code));
                 return false;
             case DELETED:
                 Log.d(TAG, "deleted " + msg.obj);
