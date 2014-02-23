@@ -55,7 +55,6 @@
     <string name="bookmarks">書籤</string>
     <string name="deletehighlight">取消高亮%s？</string>
     <string name="intro">簡介</string>
-    <string name="noback">推薦使用Home鍵退出聖經</string>
     <string name="versionsyncing">聖經數據正在更新，請稍候</string>
     <string name="versionsynced">聖經數據更新完成</string>
     <string name="flink">注釋</string>

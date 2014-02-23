@@ -138,7 +138,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final int MENU_ANNOTATION = 1;
 
     private static boolean refresh = false;
-    private static boolean noback = true;
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -1329,10 +1328,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             showSharing(false);
         } else {
             setRefresh(true);
-            if (noback) {
-                noback = false;
-                Toast.makeText(this, R.string.noback, Toast.LENGTH_LONG).show();
-            }
             super.onBackPressed();
         }
     }
