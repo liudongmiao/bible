@@ -46,11 +46,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,6 +90,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private GridView gridview;
     private TextView bibledata;
+    private EditText addnote;
     private WebView webview;
     private View header;
     private ArrayAdapter<String> adapter;
@@ -239,6 +242,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         webview = (WebView) findViewById(R.id.webview);
         gridview = (GridView) findViewById(R.id.gridview);
         bibledata = (TextView) findViewById(R.id.bibledata);
+        addnote = (EditText) findViewById(R.id.addnote);
         show();
 
         header.findViewById(R.id.book).setOnClickListener(this);
@@ -250,6 +254,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         header.findViewById(R.id.note).setOnClickListener(this);
         header.findViewById(R.id.back).setOnClickListener(this);
         header.findViewById(R.id.selected).setOnClickListener(this);
+        findViewById(R.id.savenote).setOnClickListener(this);
 
         final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         adapter = new ArrayAdapter<String>(this, R.layout.grid) {
@@ -441,6 +446,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private boolean openOsis(String newOsis, String verse, String end) {
+        if (bible == null) {
+            return false;
+        }
         if (newOsis == null || newOsis.equals("")) {
             if (bible.isDemoVersion(bible.getVersion())) {
                 showMoreVersion();
@@ -693,10 +701,29 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 }
                 break;
             case R.id.note:
+                showView(R.id.annotation, true);
+                addnote.setText(getNote());
+                break;
+            case R.id.savenote:
+                String note = addnote.getText().toString();
+                showView(R.id.annotation, false);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+                saveNote(note);
                 break;
             default:
                 break;
         }
+    }
+
+    private String getNote() {
+        return "";
+    }
+
+    private void saveNote(String note) {
+        // TODO
     }
 
     private int getMatt() {
@@ -778,6 +805,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     protected String formatOsisItem(OsisItem item) {
         String book = bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, item.book));
+        // FIXME: replace item.chapter
         return book + " " + item.chapter + (item.verse.equals("") ? "" : ":" + item.verse) + (item.end.equals("") ? "" : "-" + item.end);
     }
 
@@ -1239,7 +1267,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             copytext = "";
             showSharing(false);
         } else {
-            refresh = true;
+            setRefresh(true);
             if (noback) {
                 noback = false;
                 Toast.makeText(this, R.string.noback, Toast.LENGTH_LONG).show();

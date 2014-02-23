@@ -9,7 +9,6 @@
         <item quantity="one">%1$d result for \"%2$s\" from \"%3$s\" to \"%4$s\" in \"%5$s\": </item>
         <item quantity="other">%1$d results for \"%2$s\" from \"%3$s\" to \"%4$s\" in \"%5$s\": </item>
     </plurals>
-    <string name="search_result_verse">%1$d:%2$d</string>
     <string name="noversion">This version is only for demo, please navigate "Manage Version" to install Bible Data. Note: Bible Reader only supports Bible Data on external storage(ie, sdcard).</string>
     <string name="manageversion">Manage Versions</string>
     <string name="chooseversion">Choose Version</string>
@@ -59,4 +58,6 @@
     <string name="noback">Please press Home button to leave Bible</string>
     <string name="versionsyncing">Bible Data is updating, please wait...</string>
     <string name="versionsynced">Bible Data is updated</string>
+    <string name="save">Save</string>
+    <string name="addnote_hint">Note Content</string>
 </resources>

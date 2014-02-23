@@ -34,7 +34,43 @@
         android:id="@+id/webview"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.0"
+        android:layout_weight="5.0"
         />
+
+    <LinearLayout
+        android:id="@+id/annotation"
+        android:gravity="bottom"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        >
+        <EditText
+            android:id="@+id/addnote"
+            android:hint="@string/addnote_hint"
+            android:layout_weight="1.0"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:maxLines="3"
+            android:scrollHorizontally="false"
+            android:imeOptions="actionSend"
+            android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textShortMessage"
+            />
+        <FrameLayout
+            android:gravity="bottom"
+            android:layout_gravity="bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+            <Button
+                android:id="@+id/savenote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/save"
+                />
+        </FrameLayout>
+    </LinearLayout>
+
 </merge>
 <!-- vim: set sta sw=4 et: -->

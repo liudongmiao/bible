@@ -7,7 +7,6 @@
     <plurals name="search_results">
        <item quantity="other">在“%5$s”中從“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
     </plurals>
-    <string name="search_result_verse">%1$d:%2$d</string>
     <string name="noversion">此版本僅供演示，請轉到“管理版本”安裝聖經數據。提示：聖經閱讀器僅支持外部存儲(如SDCARD)。</string>
     <string name="manageversion">管理版本</string>
     <string name="chooseversion">選擇版本</string>
