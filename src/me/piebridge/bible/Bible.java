@@ -271,6 +271,18 @@ public class Bible
         }
     }
 
+    private File getFile(File dir, String version) {
+        android.util.Log.d(TAG, "directory: " + dir + ", version: " + version);
+        if (dir == null || !dir.isDirectory()) {
+            return null;
+        }
+        File path = new File(dir, version + ".sqlite3");
+        if (path == null || !path.isFile()) {
+            return null;
+        }
+        return path;
+    }
+
     private File getFile(String version) {
         if (version == null) {
             return null;
@@ -280,6 +292,18 @@ public class Bible
         if (path != null) {
             return new File(path);
         } else {
+            File file;
+            file = getFile(getExternalFilesDirWrapper(), version);
+            android.util.Log.d(TAG, "version: " + version);
+            if (file != null) {
+                versionpaths.put(version, file.getAbsolutePath());
+                return file;
+            }
+            file = getFile(new File(Environment.getExternalStorageDirectory(), ".piebridge"), version);
+            if (file != null) {
+                versionpaths.put(version, file.getAbsolutePath());
+                return file;
+            }
             return null;
         }
     }
