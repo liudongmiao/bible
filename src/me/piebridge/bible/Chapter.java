@@ -292,8 +292,19 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     view.setTag(column);
                 }
                 ToggleButton grid = (ToggleButton) view.findViewById(R.id.text1);
-                grid.setTextOn(getItem(position));
-                grid.setTextOff(getItem(position));
+                if (gridviewid == R.id.book) {
+                    String[] values = getItem(position).split(splitter);
+                    if (values.length > 1) {
+                        grid.setTextOn(values[1]);
+                        grid.setTextOff(values[1]);
+                    } else {
+                        grid.setTextOn("");
+                        grid.setTextOff("");
+                    }
+                } else {
+                    grid.setTextOn(getItem(position));
+                    grid.setTextOff(getItem(position));
+                }
                 grid.setChecked(getItem(position).equals(selected));
                 grid.setVisibility(getItem(position).equals("") ? View.INVISIBLE : View.VISIBLE);
                 return view;
@@ -662,7 +673,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         storeOsisVersion();
         hasIntentData = false;
         version = "";
-        bible.getSynced(null);
+        if (bible != null) {
+            bible.getSynced(null);
+        }
         super.onPause();
     }
 
@@ -772,6 +785,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     }
 
+    private static final String splitter = "!";
+    private String getBook(int pos) {
+        if (pos == -1) {
+            return "";
+        } else {
+            return bible.get(Bible.TYPE.OSIS, pos) + splitter + bible.get(Bible.TYPE.HUMAN, pos);
+        }
+    }
+
     private void showSpinner(View v) {
         adapter.clear();
         gridviewid = v.getId();
@@ -780,20 +802,20 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 int matt = getMatt();
                 gridview.setNumColumns(2);
                 Log.d(TAG, "book=" + book);
-                selected = bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, book));
+                selected = getBook(bible.getPosition(Bible.TYPE.OSIS, book));
                 if (matt > 0) {
                     for (int id = 0; id < matt; id++) {
                         int right = matt + id;
-                        adapter.add(bible.get(Bible.TYPE.HUMAN, id));
+                        adapter.add(getBook(id));
                         if (right < bible.getCount(Bible.TYPE.OSIS)) {
-                            adapter.add(bible.get(Bible.TYPE.HUMAN, right));
+                            adapter.add(getBook(right));
                         } else {
-                            adapter.add("");
+                            adapter.add(getBook(-1));
                         }
                     }
                 } else {
-                    for (String string: bible.get(Bible.TYPE.HUMAN)) {
-                        adapter.add(string);
+                    for (int id = 0; id < bible.getCount(Bible.TYPE.OSIS); ++id) {
+                        adapter.add(getBook(id));
                     }
                 }
                 break;

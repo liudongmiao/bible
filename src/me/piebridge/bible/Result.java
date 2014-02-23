@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -114,7 +115,7 @@ public class Result extends Activity
         if (osis != null) {
             String human = bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, osis));
             String chapters = bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, osis));
-            String unformatted = getString(R.string.chapters, new Object[] { human, chapters });
+            String unformatted = getString(R.string.chapters, new Object[] { human, chapters.split(",").length });
             MatrixCursor extras = new MatrixCursor(new String[] { "_id", "book", "human", "verse", "unformatted" });
             extras.addRow(new String[] { "-1", osis, human, "0", unformatted });
             Cursor[] cursors = { extras, cursor };
@@ -168,8 +169,9 @@ public class Result extends Activity
                     if (chapterVerse[0] == 0) {
                         return true;
                     }
+                    String book = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_BOOK));
                     String string = getString(R.string.search_result_verse,
-                        new Object[] {chapterVerse[0], chapterVerse[1]});
+                        new Object[] {getChapter(book, chapterVerse[0]), chapterVerse[1]});
                     TextView textView = (TextView) view;
                     textView.setText(string);
                     return true;
@@ -204,27 +206,42 @@ public class Result extends Activity
                 try {
                     showVerse((Cursor) adapter.getItem(position));
                 } catch (Exception e) {
+                    Log.e(TAG, "", e);
                 }
             }
         });
+    }
+
+    private String getChapter(String book, int chapterId) {
+        String[] chapters = bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, book)).split(",");
+        String chapter;
+        if (chapterId < 1) {
+            chapter = chapters[0];
+        } else if (chapterId > chapters.length) {
+            chapter = chapters[chapters.length - 1];
+        } else {
+            chapter = chapters[chapterId - 1];
+        }
+        return chapter;
+
     }
 
     private boolean showVerse(Cursor verseCursor) {
         String book = verseCursor.getString(verseCursor.getColumnIndexOrThrow(Provider.COLUMN_BOOK));
         String verse = verseCursor.getString(verseCursor.getColumnIndexOrThrow(Provider.COLUMN_VERSE));
         int[] chapterVerse = bible.getChapterVerse(verse);
-        showChapter(book, chapterVerse[0], chapterVerse[1]);
+        showChapter(book, getChapter(book, chapterVerse[0]), chapterVerse[1]);
         return true;
     }
 
-    private void showChapter(String book, int chapter, int verse) {
+    private void showChapter(String book, String chapter, int verse) {
         Intent intent = new Intent(this, Chapter.class);
         ArrayList<OsisItem> items = new ArrayList<OsisItem>();
-        Log.d(TAG, String.format("book: %s, chapter: %d, verse: %d", book, chapter, verse));
-        if (chapter == 0) {
+        Log.d(TAG, String.format("book: %s, chapter: %s, verse: %d", book, chapter, verse));
+        if (chapter.equals("0")) {
             items.add(new OsisItem(book, 1));
         } else {
-            items.add(new OsisItem(book, chapter, verse));
+            items.add(new OsisItem(book, chapter, verse > 0 ? String.valueOf(verse) : ""));
         }
         intent.putParcelableArrayListExtra("osiss", items);
         intent.putExtra("search", query);

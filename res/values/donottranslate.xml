@@ -2,7 +2,7 @@
 <resources>
 
     <string name="bibledatalink">%22Bible%20Data%22</string>
-    <string name="search_result_verse">%1$d:%2$d</string>
+    <string name="search_result_verse">%1$s:%2$d</string>
     <string name="bibledatahuman">\"Bible Data\"</string>
 
     <string-array name="searchfullzhcn">
