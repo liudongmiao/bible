@@ -469,6 +469,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
             handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[] {human + " | " + version, content}));
         } else {
+            changeVersion = false;
             Log.d(TAG, "no such chapter, try first chapter");
             Uri nulluri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(null).fragment(version).build();
             if (!nulluri.equals(uri)) {
@@ -522,16 +523,17 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
         setItemText(this.index);
         header.findViewById(R.id.extra).setVisibility(View.VISIBLE);
+        TextView chapterView = (TextView) header.findViewById(R.id.chapter);
         ((TextView)header.findViewById(R.id.version)).setText(bible.getVersionName(bible.getVersion()));
         ((TextView)header.findViewById(R.id.book)).setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
-        if (changeVersion) {
-            // don't change chapter
+        if (changeVersion && (chapterView.getText().toString() + ":").startsWith(chapter + ":")) {
+            // don't update chapter
         } else if (!"".equals(verse) && !"".equals(end)) {
-            ((TextView)header.findViewById(R.id.chapter)).setText(chapter + ":" + verse + "-" + end);
+            chapterView.setText(chapter + ":" + verse + "-" + end);
         } else if (!"".equals(verse) || !"".equals(end)) {
-            ((TextView)header.findViewById(R.id.chapter)).setText(chapter + ":" + verse + end);
+            chapterView.setText(chapter + ":" + verse + end);
         } else {
-            ((TextView)header.findViewById(R.id.chapter)).setText(chapter);
+            chapterView.setText(chapter);
         }
         handler.sendMessageDelayed(handler.obtainMessage(CHECKVIEW, message), 40);
     }
