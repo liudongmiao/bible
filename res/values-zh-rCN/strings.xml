@@ -58,4 +58,8 @@
     <string name="noback">推荐使用Home键离开圣经</string>
     <string name="versionsyncing">正在更新圣经数据，请稍等</string>
     <string name="versionsynced">圣经数据更新完成</string>
+    <string name="save">保存</string>
+    <string name="addnote_hint">笔记内容</string>
+    <string name="flink">注释</string>
+    <string name="xlink">交叉引用</string>
 </resources>

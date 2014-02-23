@@ -58,4 +58,6 @@
     <string name="noback">推薦使用Home鍵退出聖經</string>
     <string name="versionsyncing">聖經數據正在更新，請稍候</string>
     <string name="versionsynced">聖經數據更新完成</string>
+    <string name="flink">注釋</string>
+    <string name="xlink">交叉引用</string>
 </resources>

@@ -60,4 +60,6 @@
     <string name="versionsynced">Bible Data is updated</string>
     <string name="save">Save</string>
     <string name="addnote_hint">Note Content</string>
+    <string name="flink">Footnotes</string>
+    <string name="xlink">Cross References</string>
 </resources>

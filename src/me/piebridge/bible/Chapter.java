@@ -120,6 +120,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int SYNCED = 12;
 
     private boolean red = true;
+    private boolean xlink = true;
+    private boolean flink = true;
     private boolean nightmode = false;
     private boolean justify = false;
     private boolean pinch = false;
@@ -528,8 +530,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         // for biblegateway.com
         context = context.replaceAll("<span class=\"chapternum\">.*?</span>", "<sup class=\"versenum\">1 </sup>");
         context = context.replaceAll("<span class=\"chapternum mid-paragraph\">.*?</span>", "");
-        context = context.replaceAll("(<strong>\\D*?(\\d+).*?</strong>)", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup>$1</sup></span>");
-        context = context.replaceAll("<sup(.*?>\\D*?(\\d+).*?)</sup>", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup><strong$1</strong></sup></span>");
+        context = context.replaceAll("(<strong>[^\\d<>]*?(\\d+).*?</strong>)", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup>$1</sup></span>");
+        context = context.replaceAll("<sup(.*?>[^\\d<>]*?(\\d+).*?)</sup>", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup><strong$1</strong></sup></span>");
         if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE) || "CCB".equalsIgnoreCase(bible.getVersion()) || bible.getVersion().endsWith("ss")) {
             context = context.replaceAll("「", "“").replaceAll("」", "”");
             context = context.replaceAll("『", "‘").replaceAll("』", "’");
@@ -569,6 +571,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += ".trans {display: none;}\n";
         if (red) {
             body += ".wordsofchrist, .woj, .wj {color: red;}\n";
+        }
+        if (!flink) {
+            body += "a.f-link {display: none}\n";
+        }
+        if (!xlink) {
+            body += "a.x-link {display: none}\n";
         }
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
@@ -921,6 +929,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         version = bible.getVersion();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         red = sp.getBoolean(Settings.RED, true);
+        flink = sp.getBoolean(Settings.FLINK, true);
+        xlink = sp.getBoolean(Settings.XLINK, true);
         nightmode = sp.getBoolean(Settings.NIGHTMODE, false);
         justify = sp.getBoolean(Settings.JUSTIFY, true);
         pinch = sp.getBoolean(Settings.PINCH, true);

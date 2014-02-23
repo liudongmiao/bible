@@ -27,6 +27,8 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     private static Bible bible = null;
 
     public static String RED = "red";
+    public static String FLINK = "xlink";
+    public static String XLINK = "flink";
     public static String FONTSIZE = "fontsize";
     public static String NIGHTMODE = "nightmode";
     public static String JUSTIFY = "justify";
@@ -54,6 +56,8 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     private PreferenceScreen createPreferenceHierarchy(PreferenceScreen root) {
         root.addPreference(addPreference(FONTSIZE, R.string.fontsize));
         root.addPreference(addBooleanPreference(RED, R.string.red, R.string.wojinred));
+        root.addPreference(addBooleanPreference(FLINK, R.string.flink, 0));
+        root.addPreference(addBooleanPreference(XLINK, R.string.xlink, 0));
         root.addPreference(addBooleanPreference(NIGHTMODE, R.string.nightmode, 0));
         root.addPreference(addBooleanPreference(JUSTIFY, R.string.justify, 0));
         root.addPreference(addBooleanPreference(PINCH, R.string.pinch, R.string.pinch_not_work));
@@ -99,6 +103,8 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
             preference.setDefaultValue(false);
             break;
         case R.string.red:
+        case R.string.flink:
+        case R.string.xlink:
         case R.string.justify:
         case R.string.pinch:
             preference.setDefaultValue(true);
