@@ -61,6 +61,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -97,6 +98,7 @@ public class Bible
 
     private HashMap<String, String> versionNames = new HashMap<String, String>();
     private HashMap<String, String> versionFullnames = new HashMap<String, String>();
+    private HashMap<String, String> annotations = new HashMap<String, String>();
 
     private LinkedHashMap<String, String> allhuman = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> allosis = new LinkedHashMap<String, String>();
@@ -1257,5 +1259,33 @@ public class Bible
             context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
         }
+    }
+
+    public void loadAnnotations(String osis, boolean load) {
+        annotations.clear();
+        if (!load) {
+            return;
+        }
+        Cursor cursor = null;
+        try {
+            cursor = database.query("annotations", new String[] { "link", "content" }, "osis = ?",
+                    new String[] { osis }, null, null, null, null);
+            while (cursor.moveToNext()) {
+                String link = cursor.getString(0);
+                String content = cursor.getString(1);
+                android.util.Log.d(TAG, "link: " + link + ", annotation: " + content);
+                annotations.put(link, content);
+            }
+        } catch (SQLiteException e) {
+            // ignore
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    public String getAnnotation(String link) {
+        return annotations.get(link);
     }
 }

@@ -38,6 +38,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -118,6 +120,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int HIDEGRID = 10;
     protected static final int SETSELECTED = 11;
     protected static final int SYNCED = 12;
+    protected static final int SHOWANNOTATION = 13;
 
     private boolean red = true;
     private boolean xlink = true;
@@ -217,6 +220,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 case SYNCED:
                     Toast.makeText(Chapter.this, R.string.versionsynced, Toast.LENGTH_SHORT).show();
                     break;
+                case SHOWANNOTATION:
+                    String[] link_annotation = (String[]) msg.obj;
+                    showAnnotation(link_annotation[0], link_annotation[1]);
+                    break;
             }
             return false;
         }
@@ -228,6 +235,20 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
             getActionBar().hide();
         }
+    }
+
+    protected void showAnnotation(String link, String annotation) {
+        String title = link;
+        if (link.contains("!f.") || link.startsWith("f")) {
+            title = getString(R.string.flink);
+        } else if (link.contains("!x.") || link.startsWith("c")) {
+            title = getString(R.string.xlink);
+        }
+        // <span verse_id="Sir.2.1" id="Sir.2.1!f.1" class="note f"><span class="fr">2:1–11</span><span class="ft">Serving the Lord is not without its trials (v. 1); but no matter what happens, the genuine believer will remain sincere, steadfast, and faithful (vv. 2–3). Misfortune and humiliation are means of purification to prove one’s worth (vv. 4–5). Ben Sira believed that patience and unwavering trust in God are ultimately rewarded with the benefits of God’s mercy and of lasting joy (vv. 6–11).</span></span>
+        annotation = annotation.replaceAll("<span class=\"fr\">(.*?)</span>", "<strong>$1&nbsp;</strong>");
+        AlertDialog dialog = new AlertDialog.Builder(Chapter.this).setTitle(title)
+                .setMessage(Html.fromHtml(annotation)).setPositiveButton(android.R.string.ok, null).show();
+        ((TextView) dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -355,8 +376,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             }
 
             @JavascriptInterface
-            public void showAnnotation(String type, String link) {
-                // TODO: show annotation
+            public void showAnnotation(String link) {
+                android.util.Log.d(TAG, "link: " + link);
+                String annotation = bible.getAnnotation(link);
+                if (annotation != null) {
+                    handler.sendMessage(handler.obtainMessage(SHOWANNOTATION, new String[] {link, annotation}));
+                }
             }
         }, "android");
         webview.getSettings().setBuiltInZoomControls(true);
@@ -429,6 +454,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             final String human = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN));
             final String content = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CONTENT));
             cursor.close();
+
+            bible.loadAnnotations(osis, xlink || flink);
 
             handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[] {human + " | " + version, content}));
         } else {
@@ -530,8 +557,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         // for biblegateway.com
         context = context.replaceAll("<span class=\"chapternum\">.*?</span>", "<sup class=\"versenum\">1 </sup>");
         context = context.replaceAll("<span class=\"chapternum mid-paragraph\">.*?</span>", "");
-        context = context.replaceAll("(<strong>[^\\d<>]*?(\\d+).*?</strong>)", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup>$1</sup></span>");
-        context = context.replaceAll("<sup(.*?>[^\\d<>]*?(\\d+).*?)</sup>", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup><strong$1</strong></sup></span>");
+        context = context.replaceAll("<strong>([^\\d<>]*?(\\d+).*?)</strong>", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup>$1</sup></span>");
+        // for bibles.org
+        context = context.replaceAll("(<sup.*?>[^\\d<>]*?(\\d+).*?</sup>)", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a>$1</span>");
+        // context = context.replaceAll("(<a.*?class=[\"'][^\"']*?notelink.*?>.*?</a>)", "<sup>$1</sup>");
         if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE) || "CCB".equalsIgnoreCase(bible.getVersion()) || bible.getVersion().endsWith("ss")) {
             context = context.replaceAll("「", "“").replaceAll("」", "”");
             context = context.replaceAll("『", "‘").replaceAll("』", "’");
