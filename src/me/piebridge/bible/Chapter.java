@@ -387,7 +387,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
             @JavascriptInterface
             public void showAnnotation(String link) {
-                android.util.Log.d(TAG, "link: " + link);
+                Log.d(TAG, "link: " + link);
                 String annotation = bible.getAnnotation(link);
                 if (annotation != null) {
                     handler.sendMessage(handler.obtainMessage(SHOWANNOTATION, new String[] {link, annotation}));

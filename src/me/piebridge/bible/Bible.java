@@ -253,7 +253,7 @@ public class Bible
     }
 
     private File getFile(File dir, String version) {
-        android.util.Log.d(TAG, "directory: " + dir + ", version: " + version);
+        Log.d(TAG, "directory: " + dir + ", version: " + version);
         if (dir == null || !dir.isDirectory()) {
             return null;
         }
@@ -275,7 +275,7 @@ public class Bible
         } else {
             File file;
             file = getFile(getExternalFilesDirWrapper(), version);
-            android.util.Log.d(TAG, "version: " + version);
+            Log.d(TAG, "version: " + version);
             if (file != null) {
                 versionpaths.put(version, file.getAbsolutePath());
                 return file;
@@ -1251,7 +1251,7 @@ public class Bible
             while (cursor.moveToNext()) {
                 String link = cursor.getString(0);
                 String content = cursor.getString(1);
-                android.util.Log.d(TAG, "link: " + link + ", annotation: " + content);
+                Log.d(TAG, "link: " + link + ", annotation: " + content);
                 annotations.put(link, content);
             }
         } catch (SQLiteException e) {
