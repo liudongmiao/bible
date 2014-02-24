@@ -11,5 +11,11 @@
         android:indeterminate="true"
         style="@style/progress"
         />
+    <TextView
+        android:id="@+id/bibledata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bibledata"
+        />
 </LinearLayout>
 <!-- vim: set sta sw=4 et: -->

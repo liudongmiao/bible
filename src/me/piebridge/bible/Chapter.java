@@ -674,9 +674,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         storeOsisVersion();
         hasIntentData = false;
         version = "";
-        if (bible != null) {
-            bible.getSynced(null);
-        }
+        notifySync = false;
         super.onPause();
     }
 
@@ -938,6 +936,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 .setNegativeButton(android.R.string.no, null).create().show();
     }
 
+    private static boolean synced = true;
+    private static boolean notifySync = false;
     private void resume() {
         String wanted = "";
         String current = ((TextView) header.findViewById(R.id.version)).getText().toString();
@@ -949,6 +949,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             handler.sendEmptyMessage(CHECKBIBLEDATA);
             if (bible == null) {
                 bible = Bible.getBible(getBaseContext());
+                synced = false;
+                bible.checkBibleData(false, new Runnable() {
+                    @Override
+                    public void run() {
+                        synced = true;
+                        if (notifySync) {
+                            handler.sendEmptyMessage(SYNCED);
+                        }
+                    }
+                });
             } else {
                 bible.checkLocale();
                 bible.checkBibleData(false, null);
@@ -1041,13 +1051,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     boolean getSynced() {
-        boolean synced = bible.getSynced(new Runnable() {
-            @Override
-            public void run() {
-                handler.sendEmptyMessage(SYNCED);
-            }
-        });
         if (!synced) {
+            notifySync = true;
             Toast.makeText(this, R.string.versionsyncing, Toast.LENGTH_SHORT).show();
         }
         return synced;

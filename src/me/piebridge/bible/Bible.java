@@ -112,8 +112,6 @@ public class Bible
     private String css;
     public String versionName;
 
-    private boolean synced = false;
-    private Runnable syncedAction = null;
     private Bible(Context context) {
         Log.d(TAG, "init bible");
         mContext = context;
@@ -123,19 +121,6 @@ public class Bible
         }
         checkLocale();
         setDefaultVersion();
-    }
-
-    public boolean getSynced(Runnable action) {
-        syncedAction = action;
-        return synced;
-    }
-
-    private void notifySynced() {
-        synced = true;
-        if (syncedAction != null) {
-            syncedAction.run();
-            syncedAction = null;
-        }
     }
 
     public void checkLocale() {
@@ -150,12 +135,6 @@ public class Bible
     public synchronized static Bible getBible(Context context) {
         if (bible == null) {
             bible = new Bible(context);
-            bible.checkBibleData(false, new Runnable() {
-                @Override
-                public void run() {
-                    bible.notifySynced();
-                }
-            });
         }
         if (context != null) {
             mContext = context;
@@ -870,7 +849,7 @@ public class Bible
                 }
                 versionpaths.remove(version);
             }
-            checkBibleData(false);
+            checkBibleData(false, null);
             if (version.equalsIgnoreCase(databaseVersion)) {
                 setVersion(get(TYPE.VERSION, 0));
             }
@@ -898,11 +877,10 @@ public class Bible
 
     public void checkBibleData(boolean block, final Runnable run) {
         if (block) {
-            checkBibleData(false);
+            checkBibleData(true);
             if (run != null) {
                 run.run();
             }
-            checkBibleData(true, null);
         } else {
             new Thread(new Runnable() {
                 public void run() {
