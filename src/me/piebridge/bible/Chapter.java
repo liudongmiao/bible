@@ -940,16 +940,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             } else {
                 bible.checkLocale();
             }
-            synced = false;
-            bible.checkBibleData(false, new Runnable() {
-                @Override
-                public void run() {
-                    synced = true;
-                    if (notifySync) {
-                        handler.sendEmptyMessage(SYNCED);
-                    }
-                }
-            });
             Log.d(TAG, "will set version: " + version);
             if ("".equals(version)) {
                 version = bible.getVersion();
@@ -959,6 +949,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             }
             handler.sendEmptyMessage(SHOWDATA);
         }
+        synced = false;
+        bible.checkBibleData(false, new Runnable() {
+            @Override
+            public void run() {
+                synced = true;
+                if (notifySync) {
+                    handler.sendEmptyMessage(SYNCED);
+                }
+            }
+        });
         handler.sendEmptyMessage(DISMISSBAR);
     }
 
