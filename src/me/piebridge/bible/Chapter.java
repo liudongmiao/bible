@@ -39,7 +39,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -244,7 +243,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         // <span verse_id="Sir.2.1" id="Sir.2.1!f.1" class="note f"><span class="fr">2:1–11</span><span class="ft">Serving the Lord is not without its trials (v. 1); but no matter what happens, the genuine believer will remain sincere, steadfast, and faithful (vv. 2–3). Misfortune and humiliation are means of purification to prove one’s worth (vv. 4–5). Ben Sira believed that patience and unwavering trust in God are ultimately rewarded with the benefits of God’s mercy and of lasting joy (vv. 6–11).</span></span>
         annotation = annotation.replaceAll("<span class=\"fr\">(.*?)</span>", "<strong>$1&nbsp;</strong>");
-        AlertDialog dialog = new AlertDialog.Builder(Chapter.this).setTitle(title)
+        new AlertDialog.Builder(Chapter.this).setTitle(title)
                 .setMessage(Html.fromHtml(annotation)).setPositiveButton(android.R.string.ok, null).show();
         // ((TextView) dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
@@ -614,7 +613,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
         body += "<script type=\"text/javascript\">\n";
         highlighted = null;
-        body += String.format("var verse_start=%s, verse_end=%s, search=\"%s\", selected=\"%s\"; highlighted=\"%s\";",
+        body += String.format("var verse_start=%s, verse_end=%s, search=\"%s\", selected=\"%s\", highlighted=\"%s\";",
                 verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, items != null ? search : "",
                 selectverse, getHighlight(osis));
         body += "\n</script>\n";
