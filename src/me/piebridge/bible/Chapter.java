@@ -937,20 +937,19 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             handler.sendEmptyMessage(CHECKBIBLEDATA);
             if (bible == null) {
                 bible = Bible.getBible(getBaseContext());
-                synced = false;
-                bible.checkBibleData(false, new Runnable() {
-                    @Override
-                    public void run() {
-                        synced = true;
-                        if (notifySync) {
-                            handler.sendEmptyMessage(SYNCED);
-                        }
-                    }
-                });
             } else {
                 bible.checkLocale();
-                bible.checkBibleData(false, null);
             }
+            synced = false;
+            bible.checkBibleData(false, new Runnable() {
+                @Override
+                public void run() {
+                    synced = true;
+                    if (notifySync) {
+                        handler.sendEmptyMessage(SYNCED);
+                    }
+                }
+            });
             Log.d(TAG, "will set version: " + version);
             if ("".equals(version)) {
                 version = bible.getVersion();
