@@ -682,7 +682,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case R.id.book:
             case R.id.chapter:
             case R.id.items:
-                showSpinner(v);
+                // close it when open
+                if (gridviewid == v.getId()) {
+                    gridviewid = 0;
+                } else {
+                    showSpinner(v);
+                }
                 break;
             case R.id.share:
                 if (!copytext.equals("")) {
