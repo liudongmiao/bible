@@ -102,7 +102,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private static Bible bible = null;
     private String selected = "";
-    private String versename = "";
     private File font;
     private int gridviewid = 0;
     private float scale;
@@ -247,7 +246,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         annotation = annotation.replaceAll("<span class=\"fr\">(.*?)</span>", "<strong>$1&nbsp;</strong>");
         AlertDialog dialog = new AlertDialog.Builder(Chapter.this).setTitle(title)
                 .setMessage(Html.fromHtml(annotation)).setPositiveButton(android.R.string.ok, null).show();
-        ((TextView) dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+        // ((TextView) dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -560,19 +559,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void showContent(String title, String content) {
-        if (!title.equals("")) {
-            versename = "pb-" + version + "-" + book.toLowerCase(Locale.US) + "-" + chapter;
-        } else {
-            versename = "versename";
-        }
         String context = content;
-        // for biblegateway.com
-        context = context.replaceAll("<span class=\"chapternum\">.*?</span>", "<sup class=\"versenum\">1 </sup>");
-        context = context.replaceAll("<span class=\"chapternum mid-paragraph\">.*?</span>", "");
-        context = context.replaceAll("<strong>([^\\d<>]*?(\\d+).*?)</strong>", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a><sup>$1</sup></span>");
-        // for bibles.org
-        context = context.replaceAll("(<sup.*?>[^\\d<>]*?(\\d+).*?</sup>)", "<span class=\"pb-verse\" title=\"$2\"><a id=\"" + versename + "-$2\"></a>$1</span>");
-        // context = context.replaceAll("(<a.*?class=[\"'][^\"']*?notelink.*?>.*?</a>)", "<sup>$1</sup>");
         if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE) || "CCB".equalsIgnoreCase(bible.getVersion()) || bible.getVersion().endsWith("ss")) {
             context = context.replaceAll("「", "“").replaceAll("」", "”");
             context = context.replaceAll("『", "‘").replaceAll("』", "’");
@@ -614,10 +601,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             body += ".wordsofchrist, .woj, .wj {color: red;}\n";
         }
         if (!flink) {
-            body += "a.f-link {display: none}\n";
+            body += "a.f-link, sup.footnote {display: none}\n";
         }
         if (!xlink) {
-            body += "a.x-link {display: none}\n";
+            body += "a.x-link, sup.crossreference {display: none}\n";
         }
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
@@ -627,8 +614,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
         body += "<script type=\"text/javascript\">\n";
         highlighted = null;
-        body += String.format("var verse_start=%s, verse_end=%s, versename=\"%s\", search=\"%s\", selected=\"%s\"; highlighted=\"%s\";",
-                verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, versename, items != null ? search : "",
+        body += String.format("var verse_start=%s, verse_end=%s, search=\"%s\", selected=\"%s\"; highlighted=\"%s\";",
+                verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, items != null ? search : "",
                 selectverse, getHighlight(osis));
         body += "\n</script>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
@@ -654,6 +641,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         search = "";
         /*
         {
+            String versename = "pb-" + version + "-" + book.toLowerCase(Locale.US) + "-" + chapter;
             File path = new File(Environment.getExternalStorageDirectory(), versename + ".html");
             try {
                 Log.d("write", path.getAbsolutePath());

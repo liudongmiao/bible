@@ -18,12 +18,13 @@ span.level3 { display: block; margin-left: 30px; padding: 0; }
 span.level4 { display: block; margin-left: 45px; padding: 0; }
 span.para { display: block; padding: 0; padding-bottom: 10px; }
 .title-passage { display: block; font-weight: bold; padding-bottom: 10px; }
-sup { line-height: 0; }
-.pb-verse sup { font-weight: bold; }
+sup { line-height: 0;  font-weight: bold; }
+sup.footnote, sup.crossreference { font-weight: normal }
 #pb-demo { display: none; background: #ffff00; border: 1px solid #999; padding: 5px }
 .highlight { background: #ffff00 }
 .selected { background: rgba(51, 181, 229, 0.40); }
 .selected.highlight { background: rgba(173, 225, 91, 0.60); }
 .introduction .iot { border-bottom: 1px solid #b2b2b2; text-transform: uppercase; }
 .introduction .io1 { background-color: #f2f2f2; font-size: 0.8em; margin: 0; padding: 8px 5px 8px 20px; }
-a.notelink { text-decoration: none; color: #2c96dd; padding: 0 0.2em }
+a.notelink, .footnote a, .crossreference a { text-decoration: none; color: #2c96dd; }
+a.notelink { padding: 0 0.2em }
