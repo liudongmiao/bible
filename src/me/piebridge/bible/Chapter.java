@@ -1281,10 +1281,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     @Override
     public void onRestoreInstanceState(Bundle bundle) {
         super.onRestoreInstanceState(bundle);
-        if (items == null || items.size() == 0) {
-            items = bundle.getParcelableArrayList("osiss");
-            index = bundle.getInt("index");
-        }
+        items = bundle.getParcelableArrayList("osiss");
+        index = bundle.getInt("index");
         verse = bundle.getString("verse");
         Log.d(TAG, "onRestoreInstanceState, restore index: " + index + ", verse: " + verse);
         // shouldn't happen in normal launchMode
