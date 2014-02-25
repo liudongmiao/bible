@@ -122,7 +122,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int SHOWANNOTATION = 13;
 
     private boolean red = true;
-    private boolean xlink = true;
+    private boolean xlink = false;
     private boolean flink = true;
     private boolean nightmode = false;
     private boolean justify = false;
@@ -979,7 +979,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         red = sp.getBoolean(Settings.RED, true);
         flink = sp.getBoolean(Settings.FLINK, true);
-        xlink = sp.getBoolean(Settings.XLINK, true);
+        xlink = sp.getBoolean(Settings.XLINK, false);
         nightmode = sp.getBoolean(Settings.NIGHTMODE, false);
         justify = sp.getBoolean(Settings.JUSTIFY, true);
         pinch = sp.getBoolean(Settings.PINCH, true);

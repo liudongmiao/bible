@@ -100,11 +100,11 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         switch (title) {
         case R.string.log:
         case R.string.nightmode:
+        case R.string.xlink:
             preference.setDefaultValue(false);
             break;
         case R.string.red:
         case R.string.flink:
-        case R.string.xlink:
         case R.string.justify:
         case R.string.pinch:
             preference.setDefaultValue(true);
