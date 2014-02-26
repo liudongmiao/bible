@@ -49,7 +49,7 @@
     <string name="request_other_version">Request Other Version</string>
     <string name="request_version_message">Please inform the version name or link.</string>
     <string name="sync">Sync</string>
-    <string name="note">Add Notes</string>
+    <string name="notes">Add Notes</string>
     <string name="bookmark">Add Bookmark</string>
     <string name="annotation">Annotation</string>
     <string name="bookmarks">Bookmarks</string>
@@ -59,6 +59,7 @@
     <string name="versionsynced">Bible Data is updated</string>
     <string name="save">Save</string>
     <string name="addnote_hint">Note Content</string>
+    <string name="note">Note</string>
     <string name="flink">Footnotes</string>
     <string name="xlink">Cross References</string>
 </resources>

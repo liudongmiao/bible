@@ -49,7 +49,7 @@
     <string name="request_other_version">索取其它版本</string>
     <string name="request_version_message">請告知詳細版本名稱或網址</string>
     <string name="sync">同步</string>
-    <string name="note">添加筆記</string>
+    <string name="notes">添加筆記</string>
     <string name="bookmark">添加書籤</string>
     <string name="annotation">注解</string>
     <string name="bookmarks">書籤</string>
@@ -59,4 +59,5 @@
     <string name="versionsynced">聖經數據更新完成</string>
     <string name="flink">注釋</string>
     <string name="xlink">交叉引用</string>
+    <string name="note">筆記</string>
 </resources>

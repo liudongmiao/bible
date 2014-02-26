@@ -1266,4 +1266,80 @@ public class Bible
     public String getAnnotation(String link) {
         return annotations.get(link);
     }
+
+//    private HashMap<String, String> notes = new HashMap<String, String>();
+//    private SQLiteDatabase annotation = null;
+//    private volatile boolean initialized = false;
+//    private void initAnnotation() {
+//        if (annotation == null) {
+//            synchronized (this) {
+//                if (!initialized) {
+//                    final File file = new File(mContext.getFilesDir(), "annotation.sqlite3");
+//                    initialized = true;
+//                    annotation = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
+//                            SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.OPEN_READWRITE | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+//                    Cursor cursor = annotation.
+//                }
+//            }
+//        }
+//    }
+
+    private String osis = null;
+    private HashMap<String, String> notes = new HashMap<String, String>();
+
+    /**
+     * load notes, called when osis is changed
+     * @param osis book.chapter
+     */
+    public void loadNotes(String osis) {
+        this.osis = osis;
+        notes.clear();
+        // TODO: read from system
+    }
+
+    /**
+     * get notes for osis, called when the reading page refresh.
+     * @param osis book.chapter
+     * @return
+     */
+    public String[] getNotes(String osis) {
+        if (osis == null) {
+            return null;
+        }
+        if (!osis.equals(this.osis)) {
+            loadNotes(osis);
+        }
+        return notes.keySet().toArray(new String[0]);
+    }
+
+
+    /**
+     * get notes for book.cpater.verse
+     * @param osis book.chapter
+     * @param versenum versenum, the versenum is one of the result in {@link #getNotes(String)}
+     * @return note
+     * @see {@link #getNotes(String)}
+     */
+    public String getNote(String osis, String versenum) {
+        if (osis == null) {
+            return null;
+        }
+        if (!osis.equals(this.osis)) {
+            loadNotes(osis);
+        }
+        return notes.get(versenum);
+    }
+
+    /**
+     * save the note for book.chapter.verse
+     * @param osis book.chapter
+     * @param versenum verse, normally number
+     * @param content note content
+     * @return true if saved, false if not
+     */
+    public boolean saveNote(String osis, String versenum, String content) {
+        notes.put(versenum,  content);
+        // TODO: save it to system
+        return true;
+    }
 }

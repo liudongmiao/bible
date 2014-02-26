@@ -16,6 +16,7 @@ package me.piebridge.bible;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
@@ -119,6 +120,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int SETSELECTED = 11;
     protected static final int SYNCED = 12;
     protected static final int SHOWANNOTATION = 13;
+    protected static final int SHOWNOTE = 14;
 
     private boolean red = true;
     private boolean xlink = false;
@@ -221,6 +223,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     String[] link_annotation = (String[]) msg.obj;
                     showAnnotation(link_annotation[0], link_annotation[1]);
                     break;
+                case SHOWNOTE:
+                    showNote((String) msg.obj);
+                    break;
             }
             return false;
         }
@@ -232,6 +237,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
             getActionBar().hide();
         }
+    }
+
+    protected void showNote(String content) {
+        new AlertDialog.Builder(Chapter.this).setTitle(R.string.note)
+            .setMessage(Html.fromHtml(content)).setPositiveButton(android.R.string.ok, null).show();
     }
 
     protected void showAnnotation(String link, String annotation) {
@@ -391,6 +401,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     handler.sendMessage(handler.obtainMessage(SHOWANNOTATION, new String[] {link, annotation}));
                 }
             }
+
+            @JavascriptInterface
+            public void showNote(String versenum) {
+                Log.d(TAG, "note: " + versenum);
+                String note = bible.getNote(osis, versenum);
+                if (note != null) {
+                    handler.sendMessage(handler.obtainMessage(SHOWNOTE, note));
+                }
+            }
         }, "android");
         webview.getSettings().setBuiltInZoomControls(true);
         if (!setZoomButtonsController(webview)) {
@@ -464,6 +483,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             cursor.close();
 
             bible.loadAnnotations(osis, xlink || flink);
+            if (!changeVersion) {
+                bible.loadNotes(osis);
+            }
 
             handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[] {human + " | " + version, content}));
         } else {
@@ -613,9 +635,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
         body += "<script type=\"text/javascript\">\n";
         highlighted = null;
-        body += String.format("var verse_start=%s, verse_end=%s, search=\"%s\", selected=\"%s\", highlighted=\"%s\";",
+        body += String.format("var verse_start=%s, verse_end=%s, search=\"%s\", selected=\"%s\", highlighted=\"%s\", notes=%s;",
                 verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, items != null ? search : "",
-                selectverse, getHighlight(osis));
+                selectverse, getHighlight(osis), Arrays.toString(bible.getNotes(osis)));
         body += "\n</script>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
         body += "</head>\n<body>\n";
@@ -638,7 +660,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         verse = "";
         search = "";
-        /*
         {
             String versename = "pb-" + version + "-" + book.toLowerCase(Locale.US) + "-" + chapter;
             File path = new File(Environment.getExternalStorageDirectory(), versename + ".html");
@@ -651,7 +672,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 Log.e("write", path.getAbsolutePath(), e);
             }
         }
-        */
     }
 
     @Override
@@ -742,12 +762,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 }
                 break;
             case R.id.note:
-                showView(R.id.annotation, true);
+                showView(R.id.notes, true);
                 addnote.setText(getNote());
                 break;
             case R.id.savenote:
                 String note = addnote.getText().toString();
-                showView(R.id.annotation, false);
+                showView(R.id.notes, false);
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
@@ -759,12 +779,39 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     }
 
+    /**
+     * get single verse from possible verses
+     * @param verses
+     * @return verse
+     */
+    private String getVerse(String verses) {
+        if (verses == null || verses.length() == 0) {
+            return "";
+        }
+        String verse = verses.replaceAll("[-,].*$", "");
+        try {
+            Integer.parseInt(verse);
+            return verse;
+        } catch (NumberFormatException e) {
+            return "";
+        }
+    }
+
     private String getNote() {
-        return "";
+        String verse = getVerse(selectverse);
+        if (verse.length() == 0) {
+            return "";
+        }
+        return bible.getNote(osis, verse);
     }
 
     private void saveNote(String note) {
-        // TODO
+        String verse = getVerse(selectverse);
+        if (verse.length() > 0 && bible.saveNote(osis, verse, note)) {
+            if (webview != null) {
+                webview.loadUrl("javascript:addnote('" + verse + "');");
+            }
+        }
     }
 
     private int getMatt() {

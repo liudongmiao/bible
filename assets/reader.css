@@ -28,3 +28,4 @@ sup.footnote, sup.crossreference { font-weight: normal }
 .introduction .io1 { background-color: #f2f2f2; font-size: 0.8em; margin: 0; padding: 8px 5px 8px 20px; }
 a.notelink, .footnote a, .crossreference a { text-decoration: none; color: #2c96dd; }
 a.notelink { padding: 0 0.2em }
+img.note { height: 1em }
