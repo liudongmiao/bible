@@ -1278,7 +1278,10 @@ public class Bible
      * @param osis book.chapter
      */
     public void loadNotes(String osis) {
-        if (this.osis == osis) {
+        if (osis == null) {
+            return;
+        }
+        if (this.osis != null && this.osis.equals(osis)) {
             return;
         }
         this.osis = osis;
