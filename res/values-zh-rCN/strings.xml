@@ -62,4 +62,6 @@
     <string name="flink">注释</string>
     <string name="xlink">交叉引用</string>
     <string name="note">笔记</string>
+    <string name="editnote">修改</string>
+    <string name="deletenote">删除</string>
 </resources>

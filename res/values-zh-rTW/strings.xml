@@ -60,4 +60,6 @@
     <string name="flink">注釋</string>
     <string name="xlink">交叉引用</string>
     <string name="note">筆記</string>
+    <string name="editnote">修改</string>
+    <string name="deletenote">刪除</string>
 </resources>

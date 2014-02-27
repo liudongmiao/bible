@@ -62,4 +62,6 @@
     <string name="note">Note</string>
     <string name="flink">Footnotes</string>
     <string name="xlink">Cross References</string>
+    <string name="editnote">Edit</string>
+    <string name="deletenote">Delete</string>
 </resources>

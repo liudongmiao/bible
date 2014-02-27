@@ -15,8 +15,10 @@ package me.piebridge.bible;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
@@ -121,6 +123,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int SYNCED = 12;
     protected static final int SHOWANNOTATION = 13;
     protected static final int SHOWNOTE = 14;
+    protected static final int EDITNOTE = 15;
 
     private boolean red = true;
     private boolean xlink = false;
@@ -224,7 +227,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     showAnnotation(link_annotation[0], link_annotation[1]);
                     break;
                 case SHOWNOTE:
-                    showNote((String) msg.obj);
+                    showNote((Bible.Note) msg.obj);
+                    break;
+                case EDITNOTE:
+                    showView(R.id.notes, true);
+                    addnote.setText((String) msg.obj);
                     break;
             }
             return false;
@@ -239,9 +246,47 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     }
 
-    protected void showNote(String content) {
-        new AlertDialog.Builder(Chapter.this).setTitle(R.string.note)
-            .setMessage(Html.fromHtml(content)).setPositiveButton(android.R.string.ok, null).show();
+    protected void showNote(final Bible.Note note) {
+        if (note == null) {
+            return;
+        }
+        DateFormat df = DateFormat.getDateInstance();
+        String createtime = df.format(new Date(note.createtime * 1000));
+        String updatetime = df.format(new Date(note.updatetime * 1000));
+        StringBuffer title = new StringBuffer(getString(R.string.note));
+        title.append(" ");
+        title.append(note.verses);
+        title.append("(");
+        if (note.createtime != 0) {
+            title.append(createtime.replaceAll("-", "/"));
+        }
+        if (!updatetime.equals(createtime)) {
+            if (note.createtime != 0) {
+                title.append("-");
+            }
+            title.append(updatetime.replaceAll("-", "/"));
+        }
+        title.append(")");
+        new AlertDialog.Builder(Chapter.this).setTitle(title)
+            .setMessage(Html.fromHtml(note.content))
+            .setPositiveButton(android.R.string.ok, null)
+            .setNeutralButton(R.string.editnote, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    handler.sendMessage(handler.obtainMessage(EDITNOTE, note.content));
+                }
+            })
+            .setNegativeButton(R.string.deletenote, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // dont pop up a new note
+                    bible.deleteNote(note);
+                    if (webview != null) {
+                        webview.loadUrl("javascript:addnote('" + note.verse + "', false);");
+                    }
+                }
+            })
+            .show();
     }
 
     protected void showAnnotation(String link, String annotation) {
@@ -405,7 +450,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             @JavascriptInterface
             public void showNote(String versenum) {
                 Log.d(TAG, "note: " + versenum);
-                String note = bible.getNote(osis, versenum);
+                Bible.Note note = bible.getNote(osis, versenum);
                 if (note != null) {
                     handler.sendMessage(handler.obtainMessage(SHOWNOTE, note));
                 }
@@ -559,7 +604,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void storeOsisVersion() {
-        saveHighlight();
+        if (bible != null) {
+            bible.saveHighlight(osis, highlighted);
+        }
         final Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString("osis", osis);
         if (!version.endsWith("demo") && !version.equals("")) {
@@ -634,10 +681,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<title>" + title + "</title>\n";
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
         body += "<script type=\"text/javascript\">\n";
-        highlighted = null;
+        highlighted = "";
         body += String.format("var verse_start=%s, verse_end=%s, search=\"%s\", selected=\"%s\", highlighted=\"%s\", notes=%s;",
                 verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, items != null ? search : "",
-                selectverse, getHighlight(osis), Arrays.toString(bible.getNotes(osis)));
+                selectverse, bible.getHighlight(osis), Arrays.toString(bible.getNoteVerses(osis)));
         body += "\n</script>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
         body += "</head>\n<body>\n";
@@ -762,10 +809,13 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 }
                 break;
             case R.id.note:
-                showView(R.id.notes, true);
-                addnote.setText(getNote());
+                if (selectverse != null && selectverse.length() > 0) {
+                    showView(R.id.notes, true);
+                    addnote.setText(getNote());
+                }
                 break;
             case R.id.savenote:
+                addnote.clearFocus();
                 String note = addnote.getText().toString();
                 showView(R.id.notes, false);
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -802,12 +852,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (verse.length() == 0) {
             return "";
         }
-        return bible.getNote(osis, verse);
+        Bible.Note note = bible.getNote(osis, verse);
+        if (note == null) {
+            return "";
+        }
+        return note.content;
     }
 
     private void saveNote(String note) {
         String verse = getVerse(selectverse);
-        if (verse.length() > 0 && bible.saveNote(osis, verse, note)) {
+        if (verse.length() > 0 && bible.saveNote(osis, verse, selectverse, note)) {
             if (webview != null) {
                 webview.loadUrl("javascript:addnote('" + verse + "');");
             }
@@ -1001,15 +1055,17 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             handler.sendEmptyMessage(SHOWDATA);
         }
         synced = false;
-        bible.checkBibleData(false, new Runnable() {
-            @Override
-            public void run() {
-                synced = true;
-                if (notifySync) {
-                    handler.sendEmptyMessage(SYNCED);
+        if (bible != null) {
+            bible.checkBibleData(false, new Runnable() {
+                @Override
+                public void run() {
+                    synced = true;
+                    if (notifySync) {
+                        handler.sendEmptyMessage(SYNCED);
+                    }
                 }
-            }
-        });
+            });
+        }
         handler.sendEmptyMessage(DISMISSBAR);
     }
 
@@ -1286,7 +1342,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     public void showItem(int index) {
         selectverse = "";
-        saveHighlight();
+        if (bible != null) {
+            bible.saveHighlight(osis, highlighted);
+        }
         osis = "";
         if (items == null || items.size() < 2) {
             showView(R.id.items, false);
@@ -1483,29 +1541,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
     }
 
-    public static final String HIGHLIGHT = "highlight";
-
-    String highlighted = null;
+    String highlighted = "";
     String selectverse = "";
-
-    @SuppressLint("InlinedApi")
-    private String getHighlight(String osis) {
-        if (highlighted == null) {
-            SharedPreferences sp = getSharedPreferences(HIGHLIGHT, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS);
-            highlighted = sp.getString(osis, "");
-        }
-        return highlighted;
-    }
-
-    @SuppressLint("InlinedApi")
-    private void saveHighlight() {
-        final Editor editor = getSharedPreferences(HIGHLIGHT, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS).edit();
-        if ("".equals(highlighted)) {
-            editor.remove(osis);
-        } else {
-            editor.putString(osis, highlighted);
-        }
-        editor.commit();
-    }
 
 }

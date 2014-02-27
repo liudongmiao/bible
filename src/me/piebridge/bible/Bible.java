@@ -52,6 +52,7 @@ import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -62,10 +63,12 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.BaseColumns;
 
 public class Bible
 {
@@ -1267,42 +1270,117 @@ public class Bible
         return annotations.get(link);
     }
 
-//    private HashMap<String, String> notes = new HashMap<String, String>();
-//    private SQLiteDatabase annotation = null;
-//    private volatile boolean initialized = false;
-//    private void initAnnotation() {
-//        if (annotation == null) {
-//            synchronized (this) {
-//                if (!initialized) {
-//                    final File file = new File(mContext.getFilesDir(), "annotation.sqlite3");
-//                    initialized = true;
-//                    annotation = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
-//                            SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.OPEN_READWRITE | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-//                    Cursor cursor = annotation.
-//                }
-//            }
-//        }
-//    }
-
     private String osis = null;
-    private HashMap<String, String> notes = new HashMap<String, String>();
+    private HashMap<String, Note> notes = new HashMap<String, Note>();
 
     /**
      * load notes, called when osis is changed
      * @param osis book.chapter
      */
     public void loadNotes(String osis) {
+        if (this.osis == osis) {
+            return;
+        }
         this.osis = osis;
         notes.clear();
-        // TODO: read from system
+        if (mOpenHelper == null) {
+            mOpenHelper = new AnnotationsDatabaseHelper(mContext);
+        }
+        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+
+        Cursor cursor = null;
+        try {
+            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, "osis = ? and type = ?", new String[] {
+                    osis, "note" }, null, null, null);
+            while (cursor != null && cursor.moveToNext()) {
+                long id = cursor.getInt(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_ID));
+                String verse = cursor.getString(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_VERSE));
+                String verses = cursor.getString(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_VERSES));
+                String content = cursor.getString(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
+                Long create = cursor.getLong(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
+                Long update = cursor.getLong(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_UPDATETIME));
+                notes.put(verses, new Note(id, verse, verses, content, create, update));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    class Note {
+        Long id = null;
+        String verse;
+        String verses;
+        String content;
+        long createtime;
+        long updatetime;
+        ContentValues values = null;
+
+        public Note(Long id, String verse, String verses, String content, long create, long update) {
+            this.id = id;
+            this.verse = verse;
+            this.verses = verses;
+            this.content = content;
+            this.createtime = create;
+            this.updatetime = update;
+        }
+
+        public Note(String verse, String verses, String content) {
+            long time = System.currentTimeMillis() / 1000;
+            this.verse = verse;
+            this.verses = verses;
+            this.content = content;
+            this.createtime = time;
+            this.updatetime = time;
+        }
+
+        public boolean update(String verses, String content) {
+            if (this.verses.equals(verses) && this.content.equals(content)) {
+                return false;
+            }
+            long time = System.currentTimeMillis() / 1000;
+            this.verses = verses;
+            this.content = content;
+            this.updatetime = time;
+            if (values != null) {
+                values.put(AnnotationsDatabaseHelper.COLUMN_VERSES, verses);
+                values.put(AnnotationsDatabaseHelper.COLUMN_CONTENT, content);
+                values.put(AnnotationsDatabaseHelper.COLUMN_UPDATETIME, time);
+            }
+            return true;
+        }
+
+        public ContentValues getContentValues() {
+            if (values == null) {
+                values = new ContentValues();
+                values.put(AnnotationsDatabaseHelper.COLUMN_TYPE, "note");
+                values.put(AnnotationsDatabaseHelper.COLUMN_VERSE, verse);
+                values.put(AnnotationsDatabaseHelper.COLUMN_VERSES, verses);
+                values.put(AnnotationsDatabaseHelper.COLUMN_CONTENT, content);
+                values.put(AnnotationsDatabaseHelper.COLUMN_CREATETIME, createtime);
+                values.put(AnnotationsDatabaseHelper.COLUMN_UPDATETIME, updatetime);
+            }
+            return values;
+        }
+
+        public Long getId() {
+            return this.id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
     }
 
     /**
-     * get notes for osis, called when the reading page refresh.
+     * get a list of verse for osis, called when the reading page refresh.
      * @param osis book.chapter
      * @return
      */
-    public String[] getNotes(String osis) {
+    public String[] getNoteVerses(String osis) {
         if (osis == null) {
             return null;
         }
@@ -1312,34 +1390,149 @@ public class Bible
         return notes.keySet().toArray(new String[0]);
     }
 
-
     /**
      * get notes for book.cpater.verse
      * @param osis book.chapter
-     * @param versenum versenum, the versenum is one of the result in {@link #getNotes(String)}
+     * @param verse the verse is one of the result in {@link #getNoteVerses(String)}
      * @return note
-     * @see {@link #getNotes(String)}
+     * @see {@link #getNoteVerses(String)}
      */
-    public String getNote(String osis, String versenum) {
+    public Note getNote(String osis, String verse) {
         if (osis == null) {
             return null;
         }
         if (!osis.equals(this.osis)) {
             loadNotes(osis);
         }
-        return notes.get(versenum);
+        return notes.get(verse);
     }
 
     /**
      * save the note for book.chapter.verse
      * @param osis book.chapter
-     * @param versenum verse, normally number
+     * @param verse verse, normally number
      * @param content note content
      * @return true if saved, false if not
      */
-    public boolean saveNote(String osis, String versenum, String content) {
-        notes.put(versenum,  content);
-        // TODO: save it to system
+    public boolean saveNote(String osis, String verse, String verses, String content) {
+        if (content == null || content.length() == 0) {
+            return false;
+        }
+        Note note = notes.get(verse);
+        if (note == null) {
+            note = new Note(verse, verses, content);
+        } else if (!note.update(verses, content)) {
+            return false;
+        }
+        notes.put(verse,  note);
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        ContentValues values = note.getContentValues();
+        values.put(AnnotationsDatabaseHelper.COLUMN_OSIS, osis);
+        Long id = note.getId();
+        if (id == null) {
+            id = db.insert(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, values);
+            note.setId(id);
+        } else {
+            db.update(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, values,
+                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?", new String[] { String.valueOf(id) });
+        }
         return true;
+    }
+
+    public boolean deleteNote(Note note) {
+        if (note == null || note.getId() == null) {
+            return false;
+        }
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        db.delete(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, AnnotationsDatabaseHelper.COLUMN_ID + " = ?",
+                new String[] { String.valueOf(note.getId()) });
+        notes.remove(note.verse);
+        return true;
+    }
+
+    Long highlightId = null;
+    public String getHighlight(String osis) {
+        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            highlightId = null;
+            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, new String[] {
+                    AnnotationsDatabaseHelper.COLUMN_ID, AnnotationsDatabaseHelper.COLUMN_VERSES },
+                    "osis = ? and type = ?", new String[] { osis, "highlight" }, null, null, null);
+            while (cursor != null && cursor.moveToNext()) {
+                highlightId = cursor.getLong(0);
+                return cursor.getString(1);
+            }
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return "";
+    }
+
+    public boolean saveHighlight(String osis, String verses) {
+        if (verses == null) {
+            return false;
+        }
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(AnnotationsDatabaseHelper.COLUMN_OSIS, osis);
+        values.put(AnnotationsDatabaseHelper.COLUMN_OSIS, "highlight");
+        values.put(AnnotationsDatabaseHelper.COLUMN_VERSES, verses);
+        if (highlightId == null) {
+            highlightId = db.insert(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, values);
+        } else {
+            db.update(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, values,
+                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?", new String[] { String.valueOf(highlightId) });
+        }
+        return true;
+    }
+
+    private SQLiteOpenHelper mOpenHelper = null;
+    private class AnnotationsDatabaseHelper extends SQLiteOpenHelper {
+
+        private static final int DATABASE_VERSION = 1;
+        private static final String DATABASE_NAME = "annotations.db";
+
+        AnnotationsDatabaseHelper(Context context) {
+            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        }
+
+        public static final String TABLE_ANNOTATIONS = "annotations";
+        public static final String COLUMN_ID = BaseColumns._ID;
+        public static final String COLUMN_TYPE = "type";
+        public static final String COLUMN_OSIS = "osis";
+        public static final String COLUMN_VERSE = "verse";
+        public static final String COLUMN_VERSES = "verses";
+        public static final String COLUMN_CONTENT = "content";
+        public static final String COLUMN_CREATETIME = "createtime";
+        public static final String COLUMN_UPDATETIME = "updatetime";
+
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_ANNOTATIONS);
+            db.execSQL("CREATE TABLE " + TABLE_ANNOTATIONS + " (" +
+                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    COLUMN_OSIS + " VARCHAR NOT NULL," +
+                    COLUMN_TYPE + " VARCHAR NOT NULL," +
+                    COLUMN_VERSE + " VARCHAR NOT NULL," +
+                    COLUMN_VERSES + " TEXT NOT NULL," +
+                    COLUMN_CONTENT + " TEXT NOT NULL," +
+                    COLUMN_CREATETIME + " DATETIME NOT NULL," +
+                    COLUMN_UPDATETIME + " DATETIME NOT NULL" +
+            ");");
+
+            db.execSQL("CREATE INDEX osis_tye ON " + TABLE_ANNOTATIONS + " (" +
+                    COLUMN_OSIS + ", " + COLUMN_TYPE +
+            ");");
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        }
+
     }
 }
