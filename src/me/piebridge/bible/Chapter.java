@@ -273,6 +273,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             .setNeutralButton(R.string.editnote, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    noteverses = note.verses;
                     handler.sendMessage(handler.obtainMessage(EDITNOTE, note.content));
                 }
             })
@@ -288,6 +289,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             })
             .show();
     }
+
+    private String noteverses = null;
 
     protected void showAnnotation(String link, String annotation) {
         String title = link;
@@ -810,6 +813,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 break;
             case R.id.note:
                 if (selectverse != null && selectverse.length() > 0) {
+                    noteverses = selectverse;
                     showView(R.id.notes, true);
                     addnote.setText(getNote());
                 }
@@ -823,6 +827,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
                 saveNote(note);
+                noteverses = null;
                 break;
             default:
                 break;
@@ -859,9 +864,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         return note.content;
     }
 
-    private void saveNote(String note) {
-        String verse = getVerse(selectverse);
-        if (verse.length() > 0 && bible.saveNote(osis, verse, selectverse, note)) {
+    private void saveNote(String content) {
+        if (noteverses == null) {
+            return;
+        }
+        String verse = getVerse(noteverses);
+        if (verse.length() > 0 && bible.saveNote(osis, verse, noteverses, content)) {
             if (webview != null) {
                 webview.loadUrl("javascript:addnote('" + verse + "');");
             }
