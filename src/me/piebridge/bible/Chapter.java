@@ -214,6 +214,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     TextView selectedView = (TextView) header.findViewById(R.id.selected);
                     if (text == null || text.length() == 0) {
                         selectedView.setVisibility(View.INVISIBLE);
+                        if (highlighted != null && highlighted.length() > 0) {
+                            selected = true;
+                            header.findViewById(R.id.bookmark).setSelected(selected);
+                        }
                     } else {
                         selectedView.setVisibility(View.VISIBLE);
                         selectedView.setText(text);
@@ -426,7 +430,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 } else {
                     copytext = "";
                     selectverse = "";
-                    if (!"".equals(highlighted)) {
+                    if (highlighted != null && highlighted.length() > 0) {
                         selected = true;
                     }
                     // setHighlight(osis, "");
@@ -439,6 +443,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             public void setHighlighted(String text) {
                 // some translation has no some verses
                 highlighted = text;
+                bible.saveHighlight(osis, highlighted);
             }
 
             @JavascriptInterface
@@ -607,9 +612,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void storeOsisVersion() {
-        if (bible != null) {
-            bible.saveHighlight(osis, highlighted);
-        }
         final Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString("osis", osis);
         if (!version.endsWith("demo") && !version.equals("")) {
@@ -684,10 +686,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<title>" + title + "</title>\n";
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
         body += "<script type=\"text/javascript\">\n";
-        highlighted = "";
+        highlighted = bible.getHighlight(osis);
         body += String.format("var verse_start=%s, verse_end=%s, search=\"%s\", selected=\"%s\", highlighted=\"%s\", notes=%s;",
                 verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, items != null ? search : "",
-                selectverse, bible.getHighlight(osis), Arrays.toString(bible.getNoteVerses(osis)));
+                selectverse, highlighted, Arrays.toString(bible.getNoteVerses(osis)));
         body += "\n</script>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
         body += "</head>\n<body>\n";
@@ -795,7 +797,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                                 copytext = "";
                                 v.setSelected(false);
                                 if ("".equals(selectverse)) {
-                                    webview.loadUrl("javascript:highlight('" + highlighted + "', false);");
+                                    if (highlighted != null && highlighted.length() > 0) {
+                                        webview.loadUrl("javascript:highlight('" + highlighted + "', false);");
+                                    }
                                 } else {
                                     webview.loadUrl("javascript:highlight('" + selectverse + "', false);");
                                 }
@@ -1320,7 +1324,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         } else {
             header.findViewById(R.id.annotation).setVisibility(View.VISIBLE);
             header.findViewById(R.id.reading).setVisibility(View.GONE);
-            if (!"".equals(highlighted)) {
+            if (highlighted != null && highlighted.length() > 0) {
                 header.findViewById(R.id.bookmark).setSelected(true);
             } else {
                 header.findViewById(R.id.bookmark).setSelected(false);
@@ -1350,9 +1354,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     public void showItem(int index) {
         selectverse = "";
-        if (bible != null) {
-            bible.saveHighlight(osis, highlighted);
-        }
         osis = "";
         if (items == null || items.size() < 2) {
             showView(R.id.items, false);
@@ -1455,7 +1456,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         menu.add(Menu.NONE, MENU_SETTINGS, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
         menu.add(Menu.NONE, MENU_FEEDBACK, MENU_FEEDBACK, R.string.help).setIcon(android.R.drawable.ic_menu_help);
         menu.add(Menu.NONE, MENU_VERSIONS, MENU_VERSIONS, R.string.manageversion).setIcon(android.R.drawable.ic_menu_more);
-        menu.add(Menu.NONE, MENU_ANNOTATION, MENU_ANNOTATION, R.string.annotation).setIcon(R.drawable.ic_menu_share);
+        menu.add(Menu.NONE, MENU_ANNOTATION, MENU_ANNOTATION, R.string.annotation).setIcon(R.drawable.ic_menu_note);
         setupMenu(menu);
         return super.onCreateOptionsMenu(menu);
     }

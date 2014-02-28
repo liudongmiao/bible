@@ -1454,17 +1454,19 @@ public class Bible
     }
 
     Long highlightId = null;
+    String highlighted = "";
     public String getHighlight(String osis) {
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
         Cursor cursor = null;
         try {
             highlightId = null;
+            highlighted = "";
             cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, new String[] {
                     AnnotationsDatabaseHelper.COLUMN_ID, AnnotationsDatabaseHelper.COLUMN_VERSES },
-                    "osis = ? and type = ?", new String[] { osis, "highlight" }, null, null, null);
+                    AnnotationsDatabaseHelper.COLUMN_OSIS + " = ? and " + AnnotationsDatabaseHelper.COLUMN_TYPE + " = ?", new String[] { osis, "highlight" }, null, null, null);
             while (cursor != null && cursor.moveToNext()) {
                 highlightId = cursor.getLong(0);
-                return cursor.getString(1);
+                highlighted = cursor.getString(1);
             }
         } catch (SQLiteException e) {
             e.printStackTrace();
@@ -1473,17 +1475,17 @@ public class Bible
                 cursor.close();
             }
         }
-        return "";
+        return highlighted;
     }
 
     public boolean saveHighlight(String osis, String verses) {
-        if (verses == null) {
+        if (highlighted.equals(verses)) {
             return false;
         }
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(AnnotationsDatabaseHelper.COLUMN_OSIS, osis);
-        values.put(AnnotationsDatabaseHelper.COLUMN_OSIS, "highlight");
+        values.put(AnnotationsDatabaseHelper.COLUMN_TYPE, "highlight");
         values.put(AnnotationsDatabaseHelper.COLUMN_VERSES, verses);
         if (highlightId == null) {
             highlightId = db.insert(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, values);
@@ -1497,7 +1499,7 @@ public class Bible
     private SQLiteOpenHelper mOpenHelper = null;
     private class AnnotationsDatabaseHelper extends SQLiteOpenHelper {
 
-        private static final int DATABASE_VERSION = 1;
+        private static final int DATABASE_VERSION = 2;
         private static final String DATABASE_NAME = "annotations.db";
 
         AnnotationsDatabaseHelper(Context context) {
@@ -1521,11 +1523,11 @@ public class Bible
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     COLUMN_OSIS + " VARCHAR NOT NULL," +
                     COLUMN_TYPE + " VARCHAR NOT NULL," +
-                    COLUMN_VERSE + " VARCHAR NOT NULL," +
-                    COLUMN_VERSES + " TEXT NOT NULL," +
-                    COLUMN_CONTENT + " TEXT NOT NULL," +
-                    COLUMN_CREATETIME + " DATETIME NOT NULL," +
-                    COLUMN_UPDATETIME + " DATETIME NOT NULL" +
+                    COLUMN_VERSE + " VARCHAR," +
+                    COLUMN_VERSES + " TEXT," +
+                    COLUMN_CONTENT + " TEXT," +
+                    COLUMN_CREATETIME + " DATETIME," +
+                    COLUMN_UPDATETIME + " DATETIME" +
             ");");
 
             db.execSQL("CREATE INDEX osis_tye ON " + TABLE_ANNOTATIONS + " (" +
@@ -1535,6 +1537,9 @@ public class Bible
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            if (oldVersion < 2) {
+                onCreate(db);
+            }
         }
 
     }
