@@ -63,7 +63,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.ZoomButtonsController;
 
-public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private final String TAG = "me.piebridge.bible$Chapter";
 
@@ -386,6 +386,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         gridview.setAdapter(adapter);
         gridview.setVisibility(View.GONE);
         gridview.setOnItemClickListener(this);
+        gridview.setOnItemLongClickListener(this);
 
         setGestureDetector();
         webview.getSettings().setJavaScriptEnabled(true);
@@ -1574,5 +1575,38 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     String highlighted = "";
     String selectverse = "";
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int pos, long id) {
+        gridview.setVisibility(View.GONE);
+        switch (gridviewid) {
+        case R.id.version:
+            if (bible.getCount(Bible.TYPE.VERSION) == 1) {
+                return false;
+            }
+            if (bible.isDemoVersion(version)) {
+                return false;
+            }
+            if (pos >= bible.getCount(Bible.TYPE.VERSION)) {
+                return false;
+            }
+            if (bible.get(Bible.TYPE.VERSION, pos).equals(bible.getVersion())) {
+                return false;
+            }
+            final String delete = bible.get(Bible.TYPE.VERSION, pos);
+            areYouSure(getString(R.string.deleteversion, bible.getVersionName(delete)),
+                    getString(R.string.deleteversiondetail, bible.getVersionFullname(delete)),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            bible.deleteVersion(delete);
+                            header.findViewById(R.id.version).performClick();
+                        }
+                    });
+            return true;
+        default:
+            return false;
+        }
+    }
 
 }

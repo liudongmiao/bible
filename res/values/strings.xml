@@ -71,4 +71,5 @@
     <string name="download_yes">Dismiss warning</string>
     <string name="download_no">Warning</string>
     <string name="download_detail">Download will cost you data usage.\n\nDismiss warning?</string>
+    <string name="update">Update</string>
 </resources>

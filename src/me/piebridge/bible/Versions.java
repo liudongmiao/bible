@@ -102,7 +102,9 @@ public class Versions extends Activity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int after) {
                 filtering = true;
-                adapter.getFilter().filter(s);
+                if (adapter != null) {
+                    adapter.getFilter().filter(s);
+                }
             }
 
             @Override
@@ -226,6 +228,9 @@ public class Versions extends Activity {
                     } else {
                         map.put("text", action);
                     }
+                } else if (canUpdate(date, code)) {
+                    action = context.getString(R.string.update);
+                    map.put("text", action);
                 } else {
                     action = context.getString(R.string.uninstall);
                     map.put("text", action);
@@ -247,6 +252,17 @@ public class Versions extends Activity {
         } catch (JSONException e) {
         }
         return list;
+    }
+
+    private boolean canUpdate(String date, String code) {
+        if (bible != null) {
+            String current = bible.getDate(code);
+            try {
+                return Integer.parseInt(date) > Integer.parseInt(current);
+            } catch (NumberFormatException e) {
+            }
+        }
+        return false;
     }
 
     @Override
@@ -485,7 +501,7 @@ public class Versions extends Activity {
         if (text.equals(getString(R.string.request))) {
             String content = code.toUpperCase(Locale.US) + ", " + name;
             bible.email(this, content);
-        } else if (text.equals(getString(R.string.install))) {
+        } else if (text.equals(getString(R.string.install)) || text.equals(getString(R.string.update))) {
             if (download) {
                 download(map);
             } else {
@@ -543,8 +559,10 @@ public class Versions extends Activity {
 
     void areYouSure(String title, String message, DialogInterface.OnClickListener positive, DialogInterface.OnClickListener negative) {
         new AlertDialog.Builder(this).setTitle(title).setMessage(message)
-                .setPositiveButton(android.R.string.yes, positive).setNegativeButton(android.R.string.no, negative).create()
-                .show();
+                .setPositiveButton(android.R.string.yes, positive)
+                .setNegativeButton(android.R.string.no, negative)
+                .setCancelable(false)
+                .create().show();
     }
 
     class Adapter extends SimpleAdapter implements StickyListHeadersAdapter {

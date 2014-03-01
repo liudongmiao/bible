@@ -100,6 +100,7 @@ public class Bible
     private static Bible bible = null;
 
     private HashMap<String, String> versionNames = new HashMap<String, String>();
+    private HashMap<String, String> versionDates = new HashMap<String, String>();
     private HashMap<String, String> versionFullnames = new HashMap<String, String>();
     private HashMap<String, String> annotations = new HashMap<String, String>();
 
@@ -306,11 +307,6 @@ public class Bible
                 String book = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN));
                 String chapter = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CHAPTERS));
 
-                // fix for ccb
-                if ("出埃及".equals(book)) {
-                    book = "出埃及记";
-                }
-
                 if (book.endsWith(" 1")) {
                     book = book.substring(0, book.length() - 2);
                 }
@@ -406,6 +402,10 @@ public class Bible
             default:
                 return new ArrayList<String>();
         }
+    }
+
+    public String getDate(String version) {
+        return versionDates.get(version);
     }
 
     public int getPosition(TYPE type, String string) {
@@ -1109,6 +1109,7 @@ public class Bible
             if (!versionNames.containsKey(version)) {
                 versionNames.put(version, getVersionMetadata("name", metadata, dataversion));
             }
+            versionDates.put(version, getVersionMetadata("date", metadata, "0"));
             setMetadata(metadata, dataversion, false);
         } catch (Exception e) {
             try {

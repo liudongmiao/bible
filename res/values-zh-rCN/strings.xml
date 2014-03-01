@@ -71,4 +71,5 @@
     <string name="download_yes">不再提示</string>
     <string name="download_no">提示</string>
     <string name="download_detail">下载需要消耗数据流量。\n\n是否不再提示？</string>
+    <string name="update">更新</string>
 </resources>
