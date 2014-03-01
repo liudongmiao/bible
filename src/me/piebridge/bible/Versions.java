@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -69,6 +70,10 @@ public class Versions extends Activity {
     static Map<String, String> queue = new HashMap<String, String>();
 
     final static String TAG = "me.piebridge.bible$Versions";
+
+    private boolean checkversion;
+    private boolean showing = false;
+    public static final String CHECKVERSION = "checkversion";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -257,10 +262,39 @@ public class Versions extends Activity {
         if (completed.size() > 0) {
             handler.sendEmptyMessage(COMPLETE);
         }
-        long now = System.currentTimeMillis() / 1000;
-        if (mtime == 0 || mtime - now > 86400) {
-            mtime = now;
-            handler.sendEmptyMessageDelayed(START, 400);
+        if (!showing) {
+            final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+            Map<String, ?> map = sp.getAll();
+            if (map.containsKey(CHECKVERSION)) {
+                checkversion = Boolean.valueOf(String.valueOf(map.get(CHECKVERSION)));
+            } else {
+                areYouSure(getString(R.string.checkversion),
+                        getString(R.string.checkversion_detail, getString(android.R.string.yes)),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                checkversion = true;
+                                showing = false;
+                                sp.edit().putBoolean(CHECKVERSION, true).commit();
+                                handler.sendEmptyMessage(START);
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                checkversion = false;
+                                showing = false;
+                                sp.edit().putBoolean(CHECKVERSION, false).commit();
+                            }
+                        });
+                showing = true;
+            }
+        }
+        if (!showing && Boolean.TRUE.equals(checkversion)) {
+            long now = System.currentTimeMillis() / 1000;
+            if (mtime == 0 || mtime - now > 86400) {
+                mtime = now;
+                handler.sendEmptyMessageDelayed(START, 400);
+            }
         }
     }
 
@@ -505,6 +539,12 @@ public class Versions extends Activity {
     void areYouSure(String title, String message, DialogInterface.OnClickListener handler) {
         new AlertDialog.Builder(this).setTitle(title).setMessage(message)
                 .setPositiveButton(android.R.string.yes, handler).setNegativeButton(android.R.string.no, null).create()
+                .show();
+    }
+
+    void areYouSure(String title, String message, DialogInterface.OnClickListener positive, DialogInterface.OnClickListener negative) {
+        new AlertDialog.Builder(this).setTitle(title).setMessage(message)
+                .setPositiveButton(android.R.string.yes, positive).setNegativeButton(android.R.string.no, negative).create()
                 .show();
     }
 

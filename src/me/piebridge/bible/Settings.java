@@ -36,6 +36,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     public static String PINCH = "pinch";
     public static String VERSION = "version";
     public static String SHANGTI = "shangti";
+    public static String CHECKVERSION = Versions.CHECKVERSION;
 
     private String versionName = null;
 
@@ -63,6 +64,10 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         root.addPreference(addBooleanPreference(JUSTIFY, R.string.justify, 0));
         root.addPreference(addBooleanPreference(PINCH, R.string.pinch, R.string.pinch_not_work));
         root.addPreference(addBooleanPreference(SHANGTI, R.string.shangti, R.string.shangti_or_shen));
+        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        if (sp.getAll().containsKey(CHECKVERSION)) {
+            root.addPreference(addBooleanPreference(CHECKVERSION, R.string.checkversion, 0));
+        }
         root.addPreference(addBooleanPreference(LOG, R.string.log, 0));
         root.addPreference(addPreference(VERSION, R.string.version));
         return root;

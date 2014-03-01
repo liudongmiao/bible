@@ -64,4 +64,6 @@
     <string name="xlink">Cross References</string>
     <string name="editnote">Edit</string>
     <string name="deletenote">Delete</string>
+    <string name="checkversion">Auto-refresh version list?</string>
+    <string name="checkversion_detail">It\'s recommended to choose <b>%1$s</b>, which will cost you little data usage every time. You can change it on Setting page.</string>
 </resources>
