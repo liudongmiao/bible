@@ -948,7 +948,13 @@ public class Bible
                 if (sep != -1) {
                     zename = zename.substring(sep + 1);
                 }
-                File file = new File(dirpath, zename);
+                File file;
+                String version = zename.toLowerCase(Locale.US).replace(".sqlite3", "");
+                if (versionpaths.containsKey(version)) {
+                    file = new File(versionpaths.get(version));
+                } else {
+                    file = new File(dirpath, zename);
+                }
                 if (file.exists() && file.lastModified() > ze.getTime()) {
                     continue;
                 }
@@ -1018,7 +1024,12 @@ public class Bible
                 }
 
                 // file
-                File file = new File(getExternalFilesDirWrapper(), version + ".sqlite3");
+                File file;
+                if (versionpaths.containsKey(version)) {
+                    file = new File(versionpaths.get(version));
+                } else {
+                    file = new File(getExternalFilesDirWrapper(), version + ".sqlite3");
+                }
                 if (file.exists() && !file.isFile()) {
                     file.delete();
                 }
