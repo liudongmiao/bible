@@ -52,6 +52,7 @@
     <string name="notes">Add Notes</string>
     <string name="bookmark">Add Bookmark</string>
     <string name="annotation">Annotation</string>
+    <string name="annotation_local">Bookmarks and notes are stored in your device, won\'t be uploaded to anywhere else. They will be lost if you unstall this app, or clear data.</string>
     <string name="bookmarks">Bookmarks</string>
     <string name="deletehighlight">Unhighlight %s?</string>
     <string name="intro">Intro</string>

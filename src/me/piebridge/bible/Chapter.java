@@ -133,6 +133,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private boolean justify = false;
     private boolean pinch = false;
     private boolean hasIntentData = false;
+    private boolean annotation_local_noticed = false;
     private String body;
 
     private final int MENU_SEARCH = 0;
@@ -809,14 +810,24 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                                 }
                             }
                         });
-                } else {
-                    if (!"".equals(selectverse)) {
-                        v.setSelected(true);
-                        webview.loadUrl("javascript:highlight('" + selectverse + "');");
-                        webview.loadUrl("javascript:select('" + selectverse + "', false);");
-                        selectverse = "";
-                        handler.sendMessage(handler.obtainMessage(SETSELECTED, selectverse));
+                } else if (!v.isSelected() && !"".equals(selectverse)) {
+                    if (!annotation_local_noticed) {
+                        areYouSure(getString(R.string.annotation), getString(R.string.annotation_local),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    annotation_local_noticed = true;
+                                    final Editor editor = PreferenceManager.getDefaultSharedPreferences(Chapter.this).edit();
+                                    editor.putBoolean("annotation_local_noticed", true).commit();
+                                }
+                            }
+                        );
                     }
+                    v.setSelected(true);
+                    webview.loadUrl("javascript:highlight('" + selectverse + "');");
+                    webview.loadUrl("javascript:select('" + selectverse + "', false);");
+                    selectverse = "";
+                    handler.sendMessage(handler.obtainMessage(SETSELECTED, selectverse));
                 }
                 break;
             case R.id.note:
@@ -1108,6 +1119,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         justify = sp.getBoolean(Settings.JUSTIFY, true);
         pinch = sp.getBoolean(Settings.PINCH, true);
         fontsize = sp.getInt(Settings.FONTSIZE + "-" + version, 0);
+        annotation_local_noticed = sp.getBoolean("annotation_local_noticed",  false);
         if (fontsize == 0) {
             fontsize = sp.getInt(Settings.FONTSIZE, FONTSIZE_MED);
         }

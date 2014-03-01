@@ -52,6 +52,7 @@
     <string name="notes">添加笔记</string>
     <string name="bookmark">添加书签</string>
     <string name="annotation">注释</string>
+    <string name="annotation_local">书签和笔记保存在您的设备，不会上传到任何地方。如果您卸载这个应用，或者清除数据，所有书签和笔记将会丢失！</string>
     <string name="bookmarks">书签</string>
     <string name="deletehighlight">取消高亮%s？</string>
     <string name="intro">简介</string>
