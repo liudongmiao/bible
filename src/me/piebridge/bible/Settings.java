@@ -35,6 +35,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     public static String LOG = "log";
     public static String PINCH = "pinch";
     public static String VERSION = "version";
+    public static String SHANGTI = "shangti";
 
     private String versionName = null;
 
@@ -61,6 +62,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         root.addPreference(addBooleanPreference(NIGHTMODE, R.string.nightmode, 0));
         root.addPreference(addBooleanPreference(JUSTIFY, R.string.justify, 0));
         root.addPreference(addBooleanPreference(PINCH, R.string.pinch, R.string.pinch_not_work));
+        root.addPreference(addBooleanPreference(SHANGTI, R.string.shangti, R.string.shangti_or_shen));
         root.addPreference(addBooleanPreference(LOG, R.string.log, 0));
         root.addPreference(addPreference(VERSION, R.string.version));
         return root;
@@ -101,6 +103,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         case R.string.log:
         case R.string.nightmode:
         case R.string.xlink:
+        case R.string.shangti:
             preference.setDefaultValue(false);
             break;
         case R.string.red:

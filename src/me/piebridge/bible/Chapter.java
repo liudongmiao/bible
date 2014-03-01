@@ -126,6 +126,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int EDITNOTE = 15;
 
     private boolean red = true;
+    private boolean shangti = false;
     private boolean xlink = false;
     private boolean flink = true;
     private boolean nightmode = false;
@@ -679,6 +680,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (!xlink) {
             body += "a.x-link, sup.crossreference {display: none}\n";
         }
+        if (!shangti) {
+            context = context.replace("上帝", "　神");
+        }
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
         body += bible.getCSS();
@@ -1097,6 +1101,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         version = bible.getVersion();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         red = sp.getBoolean(Settings.RED, true);
+        shangti = sp.getBoolean(Settings.SHANGTI, false);
         flink = sp.getBoolean(Settings.FLINK, true);
         xlink = sp.getBoolean(Settings.XLINK, false);
         nightmode = sp.getBoolean(Settings.NIGHTMODE, false);
