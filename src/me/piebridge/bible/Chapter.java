@@ -207,6 +207,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     break;
                 case HIDEGRID:
                     if (gridview.getVisibility() == View.VISIBLE) {
+                        gridviewid = 0;
                         gridview.setVisibility(View.GONE);
                     }
                     break;
@@ -743,7 +744,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public void onClick(final View v) {
-        gridview.setVisibility(View.GONE);
         if (bible.getCount(Bible.TYPE.VERSION) == 0 && bible.getDatabase() == null && v.getId() != R.id.version) {
             return;
         }
@@ -758,8 +758,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case R.id.chapter:
             case R.id.items:
                 // close it when open
-                if (gridviewid == v.getId()) {
-                    gridviewid = 0;
+                if (gridviewid == v.getId() && gridview.getVisibility() == View.VISIBLE) {
+                    handler.sendEmptyMessage(HIDEGRID);
                 } else {
                     showSpinner(v);
                 }
@@ -1294,7 +1294,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-                if (!isInside(R.id.items, e)
+                if (gridviewid != 0 && !isInside(R.id.items, e)
                     && !isInside(R.id.book, e)
                     && !isInside(R.id.chapter, e)
                     && !isInside(R.id.version, e)) {
