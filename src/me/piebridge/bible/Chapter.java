@@ -125,6 +125,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int SHOWNOTE = 14;
     protected static final int EDITNOTE = 15;
 
+    private boolean showzoom = true;
     private boolean red = true;
     private boolean shangti = false;
     private boolean xlink = false;
@@ -713,11 +714,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         scale = defaultScale;
         webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
         handler.sendEmptyMessage(DISMISSBAR);
-        if ("".equals(verse)) {
-            setDisplayZoomControls(true);
-        }
         verse = "";
         search = "";
+        /*
         {
             String versename = "pb-" + version + "-" + book.toLowerCase(Locale.US) + "-" + chapter;
             File path = new File(Environment.getExternalStorageDirectory(), versename + ".html");
@@ -730,6 +729,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 Log.e("write", path.getAbsolutePath(), e);
             }
         }
+        */
     }
 
     @Override
@@ -1029,6 +1029,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                             bible.setVersion(version);
                             fontsize = sp.getInt("fontsize-" + version, fontsize);
                             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
+                            showzoom = true;
                             changeVersion = true;
                             showUri();
                         }
@@ -1153,8 +1154,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent e){
-        int scrollY = webview.getScrollY();
-        if (scrollY <= 0) {
+        if (showzoom) {
             setDisplayZoomControls(true);
         } else {
             setDisplayZoomControls(false);
@@ -1237,11 +1237,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         public void onVisibilityChanged(boolean visible) {
             if (visible) {
                 handler.sendEmptyMessageDelayed(SHOWZOOM, 0);
+            } else {
+                showzoom = false;
             }
         }
 
         @Override
         public void onZoom(boolean zoomIn) {
+            if (!showzoom) {
+                return;
+            }
             if (fontsize == FONTSIZE_MIN && !zoomIn) {
                 return;
             }
