@@ -45,6 +45,7 @@ import com.emilsjolander.components.stickylistheaders.StickyListHeadersAdapter;
 public class Versions extends Activity {
 
     static long mtime = 0;
+    static boolean download = false;
 
     Bible bible;
     ListView list;
@@ -474,7 +475,6 @@ public class Versions extends Activity {
     }
 
     void clickVersion(final TextView view, final Map<String, String> map, final boolean button) {
-        final String path = (String) map.get("path");
         final String code = (String) map.get("code");
         final String name = (String) map.get("name");
         final String action = (String) map.get("action");
@@ -486,23 +486,22 @@ public class Versions extends Activity {
             String content = code.toUpperCase(Locale.US) + ", " + name;
             bible.email(this, content);
         } else if (text.equals(getString(R.string.install))) {
-            String id = null;
-            DownloadInfo info = bible.download(path);
-            if (info != null) {
-                id = String.valueOf(info.id);
-            }
-            synchronized (queue) {
-                queue.put(code, id);
-                if (id != null) {
-                    queue.put(id, code);
-                }
-            }
-            if (id != null) {
-                String cancel = getString(R.string.cancel_install);
-                map.put("text", cancel);
-                adapter.notifyDataSetChanged();
+            if (download) {
+                download(map);
             } else {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Bible.BIBLEDATA_PREFIX + path)));
+                new AlertDialog.Builder(this).setTitle(R.string.download).setMessage(R.string.download_detail)
+                        .setPositiveButton(R.string.download_yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                download = true;
+                                download(map);
+                            }
+                        }).setNeutralButton(R.string.download_no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                download(map);
+                            }
+                        }).setNegativeButton(android.R.string.cancel, null).create().show();
             }
         } else if (text.equals(getString(R.string.cancel_install))) {
             if (queue.containsKey(code) && queue.get(code) != null) {
@@ -696,5 +695,28 @@ public class Versions extends Activity {
             data.addAll(filtered);
         }
         Log.d(TAG, "filtered Version: " + filter);
+    }
+
+    void download(final Map<String, String> map) {
+        String id = null;
+        final String path = (String) map.get("path");
+        final String code = (String) map.get("code");
+        DownloadInfo info = bible.download(path);
+        if (info != null) {
+            id = String.valueOf(info.id);
+        }
+        synchronized (queue) {
+            queue.put(code, id);
+            if (id != null) {
+                queue.put(id, code);
+            }
+        }
+        if (id != null) {
+            String cancel = getString(R.string.cancel_install);
+            map.put("text", cancel);
+            adapter.notifyDataSetChanged();
+        } else {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Bible.BIBLEDATA_PREFIX + path)));
+        }
     }
 }

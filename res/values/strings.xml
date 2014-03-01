@@ -67,4 +67,8 @@
     <string name="deletenote">Delete</string>
     <string name="checkversion">Auto-refresh version list?</string>
     <string name="checkversion_detail">It\'s recommended to choose <b>%1$s</b>, which will cost you little data usage every time. You can change it on Setting page.</string>
+    <string name="download">Download</string>
+    <string name="download_yes">Dismiss warning</string>
+    <string name="download_no">Warning</string>
+    <string name="download_detail">Download will cost you data usage.\n\nDismiss warning?</string>
 </resources>

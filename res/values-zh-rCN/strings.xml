@@ -67,4 +67,8 @@
     <string name="deletenote">删除</string>
     <string name="checkversion">自动更新版本列表</string>
     <string name="checkversion_detail">建议选择<b>%1$s</b>，但这需要您极少数据流量。您可以设置页面更改。</string>
+    <string name="download">下载</string>
+    <string name="download_yes">不再提示</string>
+    <string name="download_no">提示</string>
+    <string name="download_detail">下载需要消耗数据流量。\n\n是否不再提示？</string>
 </resources>
