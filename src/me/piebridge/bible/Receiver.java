@@ -11,7 +11,7 @@ import android.os.Build;
 
 public class Receiver extends BroadcastReceiver {
 
-    public static String TAG = "me.piebridge.bible$Receiver";
+    public static final String TAG = "me.piebridge.bible$Receiver";
 
     @SuppressLint("InlinedApi")
     @Override

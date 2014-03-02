@@ -24,23 +24,21 @@ import android.widget.SeekBar;
 
 public class Settings extends PreferenceActivity implements OnPreferenceChangeListener {
 
-    private static Bible bible = null;
+    public static final String RED = "red";
+    public static final String FLINK = "xlink";
+    public static final String XLINK = "flink";
+    public static final String FONTSIZE = "fontsize";
+    public static final String NIGHTMODE = "nightmode";
+    public static final String JUSTIFY = "justify";
+    public static final String LOG = "log";
+    public static final String PINCH = "pinch";
+    public static final String VERSION = "version";
+    public static final String SHANGTI = "shangti";
+    public static final String CHECKVERSION = Versions.CHECKVERSION;
 
-    public static String RED = "red";
-    public static String FLINK = "xlink";
-    public static String XLINK = "flink";
-    public static String FONTSIZE = "fontsize";
-    public static String NIGHTMODE = "nightmode";
-    public static String JUSTIFY = "justify";
-    public static String LOG = "log";
-    public static String PINCH = "pinch";
-    public static String VERSION = "version";
-    public static String SHANGTI = "shangti";
-    public static String CHECKVERSION = Versions.CHECKVERSION;
-
-    private String versionName = null;
-
+    private Bible bible = null;
     private String body;
+    private String versionName = null;
 
     @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState) {

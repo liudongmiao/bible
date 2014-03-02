@@ -44,37 +44,37 @@ import com.emilsjolander.components.stickylistheaders.StickyListHeadersAdapter;
 
 public class Versions extends Activity {
 
-    static long mtime = 0;
-    static boolean download = false;
+    private static long mtime = 0;
+    private static boolean download = false;
 
-    Bible bible;
-    ListView list;
-    EditText query;
-    ImageView refresh;
-    SimpleAdapter adapter;
-    List<String> languages = new ArrayList<String>();
-    List<String> names = new ArrayList<String>();
-    List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-    List<Map<String, String>> filtered = new ArrayList<Map<String, String>>();
-    List<Map<String, String>> versions = new ArrayList<Map<String, String>>();
-    Map<String, String> request = new HashMap<String, String>();
+    private Bible bible;
+    private ListView list;
+    private EditText query;
+    private ImageView refresh;
+    private SimpleAdapter adapter;
+    private List<String> languages = new ArrayList<String>();
+    private List<String> names = new ArrayList<String>();
+    private List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+    private List<Map<String, String>> filtered = new ArrayList<Map<String, String>>();
+    private List<Map<String, String>> versions = new ArrayList<Map<String, String>>();
+    private Map<String, String> request = new HashMap<String, String>();
 
-    final static int STOP = 0;
-    final static int START = 1;
-    final static int DELETE = 2;
-    final static int DELETED = 3;
-    final static int COMPLETE = 4;
-    final static int CHECKZIP = 5;
+    public static final int STOP = 0;
+    public static final int START = 1;
+    public static final int DELETE = 2;
+    public static final int DELETED = 3;
+    public static final int COMPLETE = 4;
+    public static final int CHECKZIP = 5;
 
-    static Handler resume = null;
-    static Map<String, Integer> completed = new HashMap<String, Integer>();
-    static Map<String, String> queue = new HashMap<String, String>();
+    public static final String CHECKVERSION = "checkversion";
+    public static final String TAG = "me.piebridge.bible$Versions";
 
-    final static String TAG = "me.piebridge.bible$Versions";
+    private static Handler resume = null;
+    private static Map<String, Integer> completed = new HashMap<String, Integer>();
+    private static Map<String, String> queue = new HashMap<String, String>();
 
     private boolean checkversion;
     private boolean showing = false;
-    public static final String CHECKVERSION = "checkversion";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
