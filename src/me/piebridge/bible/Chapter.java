@@ -355,21 +355,22 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     view.setTag(column);
                 }
                 ToggleButton grid = (ToggleButton) view.findViewById(R.id.text1);
-                if (gridviewid == R.id.book) {
-                    String[] values = getItem(position).split(splitter);
+                String value = getItem(position);
+                if (gridviewid == R.id.book || gridviewid == R.id.version) {
+                    String[] values = value.split(splitter);
                     if (values.length > 1) {
                         grid.setTextOn(values[1]);
                         grid.setTextOff(values[1]);
                     } else {
-                        grid.setTextOn("");
-                        grid.setTextOff("");
+                        grid.setTextOn(value);
+                        grid.setTextOff(value);
                     }
                 } else {
-                    grid.setTextOn(getItem(position));
-                    grid.setTextOff(getItem(position));
+                    grid.setTextOn(value);
+                    grid.setTextOff(value);
                 }
-                grid.setChecked(getItem(position).equals(selected));
-                grid.setVisibility(getItem(position).equals("") ? View.INVISIBLE : View.VISIBLE);
+                grid.setChecked(value.equals(selected));
+                grid.setVisibility(value.length() == 0 ? View.INVISIBLE : View.VISIBLE);
                 return view;
             }
 
@@ -735,6 +736,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public void onPause() {
+        gridviewid = 0;
         getVerse();
         Log.d(TAG, "onPause");
         storeOsisVersion();
@@ -955,10 +957,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 gridview.setNumColumns(1);
                 version = bible.getVersion();
                 Log.d(TAG, "version=" + version);
-                selected = bible.getVersionFullname(version);
+                selected = version + splitter + bible.getVersionFullname(version);
                 for (String string: bible.get(Bible.TYPE.VERSION)) {
                     Log.d(TAG, "add version " + string);
-                    adapter.add(bible.getVersionFullname(string));
+                    adapter.add(string + splitter + bible.getVersionFullname(string));
                 }
                 adapter.add(getString(R.string.manageversion));
                 break;
@@ -1183,6 +1185,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         return synced;
     }
+
     @Override
     public boolean onSearchRequested() {
         if (!getSynced()) {
@@ -1513,6 +1516,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void showMoreVersion() {
+        if (!getSynced()) {
+            return;
+        }
         startActivity(new Intent(this, Versions.class));
     }
 
