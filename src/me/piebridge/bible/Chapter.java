@@ -85,9 +85,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private String osis_prev;
 
     private boolean setListener = false;
-    public static int FONTSIZE_MIN = 1;
-    public static int FONTSIZE_MED = 15;
-    public static int FONTSIZE_MAX = 72;
+    public static final int FONTSIZE_MIN = 1;
+    public static final int FONTSIZE_MED = 15;
+    public static final int FONTSIZE_MAX = 72;
     private int fontsize = FONTSIZE_MED;
 
     private ZoomButtonsController mZoomButtonsController = null;
@@ -102,7 +102,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private final int DISTANCE = 100;
     private GestureDetector mGestureDetector = null;
 
-    private static Bible bible = null;
+    private Bible bible = null;
     private String selected = "";
     private File font;
     private int gridviewid = 0;
@@ -124,6 +124,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int SHOWANNOTATION = 13;
     protected static final int SHOWNOTE = 14;
     protected static final int EDITNOTE = 15;
+    protected static final int INIT = 16;
 
     private boolean showzoom = true;
     private boolean red = true;
@@ -157,14 +158,18 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     header.findViewById(R.id.bookmark).setSelected(selected);
                     break;
                 case SHOWCONTENT:
-                    bibledata.setVisibility(View.INVISIBLE);
+                    if (bibledata != null) {
+                        bibledata.setVisibility(View.INVISIBLE);
+                    }
                     message = (String[]) msg.obj;
                     if (!"".equals(message[0])) {
                         setBookChapter(message);
                     }
                     break;
                 case SHOWDATA:
-                    bibledata.setText("");
+                    if (bibledata != null) {
+                        bibledata.setText("");
+                    }
                     showData();
                     break;
                 case SHOWBAR:
@@ -187,8 +192,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     break;
                 case CHECKBIBLEDATA:
                     showHeader(false);
-                    bibledata.setText(R.string.bibledata);
-                    bibledata.setVisibility(View.VISIBLE);
+                    if (bibledata != null) {
+                        bibledata.setText(R.string.bibledata);
+                        bibledata.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case CHECKVIEW:
                     message = (String[]) msg.obj;
@@ -240,6 +247,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 case EDITNOTE:
                     showView(R.id.notes, true);
                     addnote.setText((String) msg.obj);
+                    break;
+                case INIT:
+                    init();
                     break;
             }
             return false;
@@ -300,6 +310,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private String noteverses = null;
 
+    private TextView chapterView;
+    private TextView versionView;
+    private TextView bookView;
+    private TextView itemsView;
+
     protected void showAnnotation(String link, String annotation) {
         String title = link;
         if (link.contains("!f.") || link.startsWith("f")) {
@@ -324,6 +339,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         super.onCreate(savedInstanceState);
         hideActionBar();
         setContentView(R.layout.chapter);
+        initialized = false;
+    }
+
+    private volatile boolean initialized = false;
+    private synchronized void init() {
+        if (initialized) {
+            return;
+        }
+
         header = getHeader();
         webview = (WebView) findViewById(R.id.webview);
         gridview = (GridView) findViewById(R.id.gridview);
@@ -331,10 +355,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         addnote = (EditText) findViewById(R.id.addnote);
         show();
 
-        header.findViewById(R.id.book).setOnClickListener(this);
-        header.findViewById(R.id.chapter).setOnClickListener(this);
-        header.findViewById(R.id.version).setOnClickListener(this);
-        header.findViewById(R.id.items).setOnClickListener(this);
+        chapterView = (TextView) header.findViewById(R.id.chapter);
+        versionView = (TextView) header.findViewById(R.id.version);
+        bookView = (TextView) header.findViewById(R.id.book);
+        itemsView = (TextView) header.findViewById(R.id.items);
+
+        bookView.setOnClickListener(this);
+        chapterView.setOnClickListener(this);
+        versionView.setOnClickListener(this);
+        itemsView.setOnClickListener(this);
         header.findViewById(R.id.share).setOnClickListener(this);
         header.findViewById(R.id.bookmark).setOnClickListener(this);
         header.findViewById(R.id.note).setOnClickListener(this);
@@ -479,7 +508,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
 
         setIntentData();
-        Log.d(TAG, "onCreate");
         hasIntentData = true;
         font = new File(new File(new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName()), "files"), "custom.ttf");
 
@@ -489,10 +517,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         refresh = true;
         showSharing(!copytext.equals(""));
+        initialized = true;
     }
 
     private void getVerse() {
-        if (webview.getScrollY() != 0) {
+        if (webview != null && webview.getScrollY() != 0) {
             verse = "";
             webview.loadUrl("javascript:getFirstVisibleVerse();");
             synchronized(verseLock) {
@@ -602,9 +631,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
         setItemText(this.index);
         header.findViewById(R.id.extra).setVisibility(View.VISIBLE);
-        TextView chapterView = (TextView) header.findViewById(R.id.chapter);
-        ((TextView)header.findViewById(R.id.version)).setText(bible.getVersionName(bible.getVersion()));
-        ((TextView)header.findViewById(R.id.book)).setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
+        versionView.setVisibility(View.VISIBLE);
+        versionView.setText(bible.getVersionName(bible.getVersion()));
+        bookView.setText(bible.get(Bible.TYPE.BOOK, bible.getPosition(Bible.TYPE.OSIS, book)));
         if (changeVersion && (chapterView.getText().toString() + ":").startsWith(chapter + ":")) {
             // don't update chapter
         } else if (!"".equals(verse) && !"".equals(end)) {
@@ -1064,9 +1093,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private static volatile boolean notifySync = false;
     private void resume() {
         String wanted = "";
-        String current = ((TextView) header.findViewById(R.id.version)).getText().toString();
+        String current = null;
+        if (versionView != null) {
+            current = versionView.getText().toString();
+        }
         if (bible != null) {
             wanted = bible.getVersionName(bible.getVersion());
+        } else {
+            handler.sendEmptyMessage(INIT);
         }
         if (refresh || !wanted.equals(current)) {
             refresh = false;
@@ -1104,7 +1138,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume, items: " + items);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -1134,6 +1167,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (!osis.equals("")) {
             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
         }
+        showView(R.id.version, true);
         if (items == null || items.size() == 0) {
             showView(R.id.items, false);
             showView(R.id.book, true);
@@ -1153,7 +1187,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @SuppressWarnings("deprecation")
     private float getScale(WebView webview) {
-        return webview.getScale();
+        if (webview != null) {
+            return webview.getScale();
+        } else {
+            return 1.0f;
+        }
     }
 
     @Override
@@ -1164,8 +1202,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             setDisplayZoomControls(false);
         }
 
-        super.dispatchTouchEvent(e);
-
         // getActionMasked since api-8
         switch (e.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_CANCEL:
@@ -1174,7 +1210,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 break;
         }
 
-        return mGestureDetector.onTouchEvent(e);
+        if (mGestureDetector == null) {
+            return super.dispatchTouchEvent(e);
+        } else {
+            super.dispatchTouchEvent(e);
+            return mGestureDetector.onTouchEvent(e);
+        }
     }
 
     boolean getSynced() {
@@ -1341,7 +1382,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void showView(int resId, boolean enable) {
-        findViewById(resId).setVisibility(enable ? View.VISIBLE : View.GONE);
+        View view = findViewById(resId);
+        if (view != null) {
+            view.setVisibility(enable ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void showSharing(boolean show) {
@@ -1374,7 +1418,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             } else if (!item.verse.equals("") || !item.end.equals("")) {
                 book += ":" + item.verse + item.end;
             }
-            ((TextView)header.findViewById(R.id.items)).setText(book);
+            itemsView.setVisibility(View.VISIBLE);
+            itemsView.setText(book);
             header.findViewById(R.id.extra).setVisibility(View.GONE);
         }
     }
@@ -1458,9 +1503,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public void onBackPressed() {
-        if (gridview.getVisibility() != View.GONE) {
+        if (gridview != null && gridview.getVisibility() != View.GONE) {
             gridview.setVisibility(View.GONE);
-        } else if (header.findViewById(R.id.annotation).getVisibility() != View.GONE) {
+        } else if (header != null && header.findViewById(R.id.annotation).getVisibility() != View.GONE) {
             copytext = "";
             showSharing(false);
         } else {
@@ -1478,6 +1523,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (header == null) {
+            return false;
+        }
         menu.clear();
         menu.add(Menu.NONE, MENU_SEARCH, MENU_SEARCH, android.R.string.search_go).setIcon(android.R.drawable.ic_menu_search);
         menu.add(Menu.NONE, MENU_SETTINGS, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
@@ -1544,6 +1592,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             return;
         }
+        if (header == null) {
+            return;
+        }
         boolean annotation = header.findViewById(R.id.annotation).getVisibility() == View.VISIBLE;
         if (annotation) {
             menu.clear();
@@ -1562,7 +1613,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void showHeader(boolean show) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            header.setVisibility(show ? View.VISIBLE : View.GONE);
+            if (header != null) {
+                header.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
         } else {
             ActionBar actionBar = getActionBar();
             if (show) {
@@ -1607,7 +1660,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             bible.deleteVersion(delete);
-                            header.findViewById(R.id.version).performClick();
+                            versionView.performClick();
                         }
                     });
             return true;

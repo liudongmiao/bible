@@ -11,6 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="48dp"
         android:orientation="horizontal"
+        android:visibility="gone"
         >
 
         <TextView
@@ -32,6 +33,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="middle"
             android:singleLine="true"
+            android:visibility="gone"
             />
 
         <TextView
@@ -39,6 +41,7 @@
             style="@style/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             />
 
         <View
@@ -54,6 +57,7 @@
             android:textAllCaps="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             />
     </LinearLayout>
 
@@ -62,6 +66,7 @@
         android:layout_width="fill_parent"
         android:layout_height="48dp"
         android:orientation="horizontal"
+        android:visibility="gone"
         >
 
         <ImageView
