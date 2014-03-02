@@ -228,7 +228,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     }
                     break;
                 case SYNCED:
-                    Toast.makeText(Chapter.this, R.string.versionsynced, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Chapter.this, getString(R.string.versionsynced, (String) msg.obj), Toast.LENGTH_SHORT).show();
                     break;
                 case SHOWANNOTATION:
                     String[] link_annotation = (String[]) msg.obj;
@@ -1085,12 +1085,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         synced = false;
         if (bible != null) {
+            final long mtime = System.currentTimeMillis();
             bible.checkBibleData(false, new Runnable() {
                 @Override
                 public void run() {
                     synced = true;
                     if (notifySync) {
-                        handler.sendEmptyMessage(SYNCED);
+                        String duration = String.valueOf(System.currentTimeMillis() - mtime);
+                        handler.sendMessage(handler.obtainMessage(SYNCED, duration));
                     }
                 }
             });

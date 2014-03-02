@@ -57,7 +57,7 @@
     <string name="deletehighlight">Unhighlight %s?</string>
     <string name="intro">Intro</string>
     <string name="versionsyncing">Bible Data is updating, please wait...</string>
-    <string name="versionsynced">Bible Data is updated</string>
+    <string name="versionsynced">Bible Data is updated: %1$s ms</string>
     <string name="save">Save</string>
     <string name="addnote_hint">Note Content</string>
     <string name="note">Note</string>
