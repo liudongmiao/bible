@@ -94,6 +94,7 @@ public class Bible
     private ArrayList<String> chapters = new ArrayList<String>();
     private ArrayList<String> versions = new ArrayList<String>();
     private Object versionsLock = new Object();
+    private Object versionsCheckingLock = new Object();
     private HashMap<String, String> versionpaths = new HashMap<String, String>();
     private ArrayList<String> humans = new ArrayList<String>();
 
@@ -531,7 +532,9 @@ public class Bible
             return setVersion(version);
         }
         PreferenceManager.getDefaultSharedPreferences(mContext).edit().remove("version").commit();
-        checkBibleData(false);
+        if (versions.size() == 0) {
+            checkBibleData(false);
+        }
         if (versions.size() > 0) {
             return setDefaultVersion();
         }
@@ -863,27 +866,36 @@ public class Bible
 
     @SuppressLint("NewApi")
     private void checkBibleData(boolean all) {
-        if (!all) {
-            if (checkVersionsSync(false) > 0) {
+        synchronized (versionsCheckingLock) {
+            if ((!checking || !all) && versions.size() > 0) {
+                android.util.Log.d(TAG, "cancel checking");
                 return;
-            };
+            }
+            if (!all) {
+                if (checkVersionsSync(false) > 0) {
+                    return;
+                }
+            }
+            checkApkData();
+            checkZipData(Environment.getExternalStorageDirectory());
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR_MR1) {
+                checkZipData(new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS));
+            } else {
+                checkZipData(new File(Environment.getExternalStorageDirectory(), "Download"));
+            }
+            checkVersionsSync(true);
         }
-        checkApkData();
-        checkZipData(Environment.getExternalStorageDirectory());
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR_MR1) {
-            checkZipData(new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS));
-        } else {
-            checkZipData(new File(Environment.getExternalStorageDirectory(), "Download"));
-        }
-        checkVersionsSync(true);
     }
 
+    private volatile boolean checking = false;
     public void checkBibleData(boolean block, final Runnable run) {
+        checking = true;
         if (block) {
             checkBibleData(true);
             if (run != null) {
                 run.run();
             }
+            checking = false;
         } else {
             new Thread(new Runnable() {
                 public void run() {
@@ -891,6 +903,7 @@ public class Bible
                     if (run != null) {
                         run.run();
                     }
+                    checking = false;
                 }
             }).start();
         }
@@ -991,7 +1004,7 @@ public class Bible
         return false;
     }
 
-    private synchronized void checkApkData() {
+    private void checkApkData() {
         Log.d(TAG, "checking apkdata");
         try {
             String packageName = mContext.getPackageName();
@@ -1094,10 +1107,10 @@ public class Bible
                 Log.d(TAG, "add version " + name);
                 String version = name.toLowerCase(Locale.US).replace(".sqlite3", "");
                 if (!versions.contains(version)) {
+                    versions.add(version);
                     checkVersionMeta(file, version);
                 }
-                versions.add(version);
-                versionpaths.put(version.toLowerCase(Locale.US), file.getAbsolutePath());
+                versionpaths.put(version, file.getAbsolutePath());
                 if (version.equalsIgnoreCase("niv2011")) {
                     versionpaths.put("niv", file.getAbsolutePath());
                 } else if (version.equalsIgnoreCase("niv1984")) {
