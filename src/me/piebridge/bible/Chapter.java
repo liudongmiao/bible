@@ -1060,7 +1060,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 .setNegativeButton(android.R.string.no, null).create().show();
     }
 
-    private static volatile boolean synced = true;
+    private static volatile boolean synced = false;
     private static volatile boolean notifySync = false;
     private void resume() {
         String wanted = "";
@@ -1085,7 +1085,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             }
             handler.sendEmptyMessage(SHOWDATA);
         }
-        synced = false;
         if (bible != null) {
             final long mtime = System.currentTimeMillis();
             bible.checkBibleData(false, new Runnable() {
