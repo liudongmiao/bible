@@ -69,4 +69,6 @@
     <string name="download_no">提示</string>
     <string name="download_detail">下載需要消耗數據流量。 \n\n是否不再提示？</string>
     <string name="update">更新</string>
+    <string name="about_source">項目網站: %s</string>
+    <string name="about_libraries">第三方庫: %s</string>
 </resources>

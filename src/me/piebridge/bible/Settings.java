@@ -17,10 +17,13 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 public class Settings extends PreferenceActivity implements OnPreferenceChangeListener {
 
@@ -143,6 +146,12 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         final String key = preference.getKey();
         if (FONTSIZE.equals(key)) {
             setupFontDialog(preference);
+        } else if (VERSION.equals(key)) {
+            String content = getString(R.string.about_source, "<a href=\"http://github.com/liudongmiao/bible\">bible</a>") + "<br />"
+                    + getString(R.string.about_libraries, "<a href=\"http://github.com/emilsjolander/StickyListHeaders\">StickyListHeaders</a>");
+            AlertDialog dialog = new AlertDialog.Builder(this).setTitle(R.string.app_name)
+                    .setMessage(Html.fromHtml(content)).setPositiveButton(android.R.string.ok, null).show();
+            ((TextView) dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
         }
         return true;
     }

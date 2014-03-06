@@ -72,4 +72,6 @@
     <string name="download_no">Warning</string>
     <string name="download_detail">Download will cost you data usage.\n\nDismiss warning?</string>
     <string name="update">Update</string>
+    <string name="about_source">Source code: %s</string>
+    <string name="about_libraries">Use libraries: %s</string>
 </resources>
