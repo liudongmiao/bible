@@ -1496,7 +1496,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             search = intent.getStringExtra("search");
         }
         if (null != intent.getParcelableArrayListExtra("osiss")) {
-            index = 0;
             items = intent.getParcelableArrayListExtra("osiss");
         }
     }
