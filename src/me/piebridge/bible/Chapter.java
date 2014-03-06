@@ -329,7 +329,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         // ((TextView) dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // on MB612, the search and share icon is so dark ...
@@ -343,6 +342,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private volatile boolean initialized = false;
+    @SuppressLint("SetJavaScriptEnabled")
     private synchronized void init() {
         if (initialized) {
             return;
