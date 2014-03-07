@@ -559,6 +559,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[] {"", getString(R.string.queryerror) }));
             return;
         } catch (Exception e) {
+        } catch (Error e) {
+            bible.deleteVersion(version);
+            version = bible.getVersion();
         }
         if (cursor != null) {
             cursor.moveToFirst();

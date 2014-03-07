@@ -846,20 +846,20 @@ public class Bible
         version = version.toLowerCase(Locale.US);
         File file = getFile(version);
         if (file != null && file.isFile() && file.delete()) {
-            synchronized (versionsLock) {
-                Iterator<String> it = versions.iterator();
-                while (it.hasNext()) {
-                    if (version.equals(it.next())) {
-                        it.remove();
-                    }
-                }
-                versionpaths.remove(version);
-            }
-            checkBibleData(false, null);
-            if (version.equalsIgnoreCase(databaseVersion)) {
-                setVersion(get(TYPE.VERSION, 0));
-            }
             returncode = true;
+        }
+        synchronized (versionsLock) {
+            Iterator<String> it = versions.iterator();
+            while (it.hasNext()) {
+                if (version.equals(it.next())) {
+                    it.remove();
+                }
+            }
+            versionpaths.remove(version);
+        }
+        checkBibleData(false, null);
+        if (version.equalsIgnoreCase(databaseVersion)) {
+            setVersion(get(TYPE.VERSION, 0));
         }
         return returncode;
     }
