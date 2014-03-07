@@ -586,12 +586,14 @@ public class Versions extends Activity {
                         int position = (Integer) view.getTag();
                         @SuppressWarnings("unchecked")
                         Map<String, String> map = (Map<String, String>) getItem(position);
-                        clickVersion((TextView) view, map, true);
+                        if (map != null) {
+                            clickVersion((TextView) view, map, true);
+                        }
                     }
                 });
                 @SuppressWarnings("unchecked")
                 Map<String, String> map = (Map<String, String>) getItem(position);
-                if (map.get("action") == null) {
+                if (map == null || map.get("action") == null) {
                     action.setVisibility(View.GONE);
                 } else {
                     action.setVisibility(View.VISIBLE);
