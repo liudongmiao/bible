@@ -1106,9 +1106,11 @@ public class Bible
             if (name.endsWith(".sqlite3") && file.exists() && file.isFile()) {
                 Log.d(TAG, "add version " + name);
                 String version = name.toLowerCase(Locale.US).replace(".sqlite3", "");
+                if (!checkVersionMeta(file, version)) {
+                    continue;
+                }
                 if (!versions.contains(version)) {
                     versions.add(version);
-                    checkVersionMeta(file, version);
                 }
                 versionpaths.put(version, file.getAbsolutePath());
                 if (version.equalsIgnoreCase("niv2011")) {
@@ -1121,11 +1123,24 @@ public class Bible
         return versions.size();
     }
 
-    private void checkVersionMeta(File file, String version) {
+    @SuppressLint("NewApi")
+    private boolean isDatabaseIntegrityOk(SQLiteDatabase database) {
+        // assume ok if the api is not available
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            return true;
+        } else {
+            return database.isDatabaseIntegrityOk();
+        }
+    }
+
+    private boolean checkVersionMeta(File file, String version) {
         SQLiteDatabase metadata = null;
         try {
             metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
                 SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+            if (!isDatabaseIntegrityOk(metadata)) {
+                return false;
+            }
             String dataversion = version.replace("demo", "");
             if (!versionFullnames.containsKey(version)) {
                 versionFullnames.put(version, getVersionMetadata("fullname", metadata, dataversion));
@@ -1135,6 +1150,7 @@ public class Bible
             }
             versionDates.put(version, getVersionMetadata("date", metadata, "0"));
             setMetadata(metadata, dataversion, false);
+            return true;
         } catch (Exception e) {
             try {
                 file.delete();
@@ -1145,6 +1161,7 @@ public class Bible
                 metadata.close();
             }
         }
+        return true;
     }
 
     public static final String BIBLEDATA_PREFIX = "http://github.com/liudongmiao/bibledata/raw/master/";
@@ -1315,6 +1332,9 @@ public class Bible
             mOpenHelper = new AnnotationsDatabaseHelper(mContext);
         }
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        if (!isDatabaseIntegrityOk(db)) {
+            return;
+        }
 
         Cursor cursor = null;
         try {
@@ -1454,6 +1474,13 @@ public class Bible
         }
         notes.put(verse,  note);
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        if (!isDatabaseIntegrityOk(db)) {
+            File path = mContext.getDatabasePath(AnnotationsDatabaseHelper.DATABASE_NAME);
+            if (path != null && path.delete()) {
+                return saveNote(osis, verse, verses, content);
+            }
+            return false;
+        }
         ContentValues values = note.getContentValues();
         values.put(AnnotationsDatabaseHelper.COLUMN_OSIS, osis);
         Long id = note.getId();
@@ -1472,6 +1499,9 @@ public class Bible
             return false;
         }
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        if (!isDatabaseIntegrityOk(db)) {
+            return true;
+        }
         db.delete(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, AnnotationsDatabaseHelper.COLUMN_ID + " = ?",
                 new String[] { String.valueOf(note.getId()) });
         notes.remove(note.verse);
@@ -1481,11 +1511,14 @@ public class Bible
     Long highlightId = null;
     String highlighted = "";
     public String getHighlight(String osis) {
+        highlightId = null;
+        highlighted = "";
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        if (!isDatabaseIntegrityOk(db)) {
+            return highlighted;
+        }
         Cursor cursor = null;
         try {
-            highlightId = null;
-            highlighted = "";
             cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, new String[] {
                     AnnotationsDatabaseHelper.COLUMN_ID, AnnotationsDatabaseHelper.COLUMN_VERSES },
                     AnnotationsDatabaseHelper.COLUMN_OSIS + " = ? and " + AnnotationsDatabaseHelper.COLUMN_TYPE + " = ?", new String[] { osis, "highlight" }, null, null, null);
@@ -1508,6 +1541,13 @@ public class Bible
             return false;
         }
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        if (!isDatabaseIntegrityOk(db)) {
+            File path = mContext.getDatabasePath(AnnotationsDatabaseHelper.DATABASE_NAME);
+            if (path != null && path.delete()) {
+                return saveHighlight(osis, verses);
+            }
+            return false;
+        }
         ContentValues values = new ContentValues();
         values.put(AnnotationsDatabaseHelper.COLUMN_OSIS, osis);
         values.put(AnnotationsDatabaseHelper.COLUMN_TYPE, "highlight");
