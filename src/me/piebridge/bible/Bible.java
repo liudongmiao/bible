@@ -1156,12 +1156,12 @@ public class Bible
                 file.delete();
             } catch (Exception f) {
             }
+            return false;
         } finally {
             if (metadata != null) {
                 metadata.close();
             }
         }
-        return true;
     }
 
     public static final String BIBLEDATA_PREFIX = "http://github.com/liudongmiao/bibledata/raw/master/";
