@@ -77,8 +77,8 @@ public class Passage extends Activity {
         new Thread(new Runnable() {
             public void run() {
                 Bible bible = Bible.getBible(getBaseContext());
-                bible.checkBibleData(true, null);
-                if (version != null) {
+                if (version != null && version.length() > 0) {
+                    bible.checkBibleData(true, null);
                     bible.setVersion(version);
                 }
                 route();
