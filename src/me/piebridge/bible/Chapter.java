@@ -26,6 +26,7 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -317,16 +318,32 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     protected void showAnnotation(String link, String annotation) {
         String title = link;
+        boolean isCross = false;
         if (link.contains("!f.") || link.startsWith("f")) {
             title = getString(R.string.flink);
         } else if (link.contains("!x.") || link.startsWith("c")) {
+            isCross = true;
             title = getString(R.string.xlink);
         }
         // <span verse_id="Sir.2.1" id="Sir.2.1!f.1" class="note f"><span class="fr">2:1–11</span><span class="ft">Serving the Lord is not without its trials (v. 1); but no matter what happens, the genuine believer will remain sincere, steadfast, and faithful (vv. 2–3). Misfortune and humiliation are means of purification to prove one’s worth (vv. 4–5). Ben Sira believed that patience and unwavering trust in God are ultimately rewarded with the benefits of God’s mercy and of lasting joy (vv. 6–11).</span></span>
         annotation = annotation.replaceAll("<span class=\"fr\">(.*?)</span>", "<strong>$1&nbsp;</strong>");
-        new AlertDialog.Builder(Chapter.this).setTitle(title)
+        annotation = annotation.replaceAll("<span class=\"xo\">(.*?)</span>", "");
+        final AlertDialog dialog = new AlertDialog.Builder(Chapter.this).setTitle(title)
                 .setMessage(Html.fromHtml(annotation)).setPositiveButton(android.R.string.ok, null).show();
-        // ((TextView) dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+        if (!isCross) {
+            return;
+        }
+        final TextView message = (TextView) dialog.findViewById(android.R.id.message);
+        message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Intent intent = new Intent(Chapter.this, Passage.class);
+                intent.setAction(Intent.ACTION_SEARCH);
+                intent.putExtra(SearchManager.QUERY, message.getText().toString());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
