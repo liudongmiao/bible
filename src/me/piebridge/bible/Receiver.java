@@ -11,6 +11,7 @@ import android.os.Build;
 
 public class Receiver extends BroadcastReceiver {
 
+    private static Bible bible = null;
     public static final String TAG = "me.piebridge.bible$Receiver";
 
     @SuppressLint("InlinedApi")
@@ -18,12 +19,14 @@ public class Receiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         Log.d(TAG, action);
-        Bible bible = Bible.getBible(context);
         if (Intent.ACTION_PACKAGE_ADDED.equals(action)) {
             Uri uri = intent.getData();
             String applicationName = (uri != null) ? uri.getSchemeSpecificPart() : null;
             if (applicationName != null && applicationName.startsWith(context.getPackageName())) {
                 Log.d(TAG,  "action: " + action + ", packageName: " + context.getPackageName() + ", applicationName: " + applicationName);
+                if (bible == null) {
+                    bible = Bible.getBible(context);
+                }
                 bible.checkBibleData(false, null);
             }
         } else if ("android.provider.Telephony.SECRET_CODE".equals(action)) {
@@ -36,6 +39,9 @@ public class Receiver extends BroadcastReceiver {
             } else if (info.status != DownloadManager.STATUS_SUCCESSFUL) {
                 Versions.onDownloadComplete(info);
             } else {
+                if (bible == null) {
+                    bible = Bible.getBible(context);
+                }
                 bible.checkBibleData(false, new Runnable() {
                     @Override
                     public void run() {
