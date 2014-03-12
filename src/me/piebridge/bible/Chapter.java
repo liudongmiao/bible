@@ -288,7 +288,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         title.append(")");
         new AlertDialog.Builder(Chapter.this).setTitle(title)
             .setMessage(Html.fromHtml(note.content))
-            .setPositiveButton(android.R.string.ok, null)
+            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (webview != null) {
+                        webview.loadUrl("javascript:select('" + note.verses + "');");
+                    }
+                }
+            })
             .setNeutralButton(R.string.editnote, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
