@@ -715,11 +715,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         } else {
             body += "body {font-family: serif; line-height: 1.4em; font-weight: 100; font-size: " + fontsize + "pt;}\n";
         }
-        if (nightmode) {
-            body += "body { background-color: black; color: white; }\n";
-        } else {
-            body += "body { background-color: white; color: black; }\n";
-        }
         if (justify) {
             body += "body { text-align: justify; }\n";
             body += "body { text-justify: distribute }\n";
@@ -750,7 +745,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 selectverse, highlighted, Arrays.toString(bible.getNoteVerses(osis)));
         body += "\n</script>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
-        body += "</head>\n<body>\n";
+        body += "</head>\n";
+        if (nightmode) {
+            body += "<body class=\"nightmode\">\n";
+        } else {
+            body += "<body>\n";
+        }
         if (!"".equals(title) && bible.getVersion().endsWith("demo")) {
             body += "<div id=\"pb-demo\">" + getString(R.string.noversion) + "</div>\n";
         }
