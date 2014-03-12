@@ -333,6 +333,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (!isCross) {
             return;
         }
+        storeOsisVersion();
         final TextView message = (TextView) dialog.findViewById(android.R.id.message);
         message.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1438,7 +1439,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             } else if (!item.verse.equals("") || !item.end.equals("")) {
                 book += ":" + item.verse + item.end;
             }
-            itemsView.setVisibility(View.VISIBLE);
+            showView(R.id.items, true);
+            showView(R.id.book, false);
+            showView(R.id.chapter, false);
             itemsView.setText(book);
             header.findViewById(R.id.extra).setVisibility(View.GONE);
         }
