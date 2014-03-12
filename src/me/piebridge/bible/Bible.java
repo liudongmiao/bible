@@ -1347,7 +1347,7 @@ public class Bible
                 String content = cursor.getString(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
                 Long create = cursor.getLong(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
                 Long update = cursor.getLong(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_UPDATETIME));
-                notes.put(verses, new Note(id, verse, verses, content, create, update));
+                notes.put(verse, new Note(id, verse, verses, content, create, update));
             }
         } catch (Exception e) {
             e.printStackTrace();
