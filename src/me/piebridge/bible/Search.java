@@ -116,11 +116,19 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
             }
 
             public int getCount() {
-                return mStrings.size();
+                if (mStrings == null) {
+                    return 0;
+                } else {
+                    return mStrings.size();
+                }
             }
 
             public String getItem(int position) {
-                return mStrings.get(position);
+                if (mStrings == null) {
+                    return "";
+                } else {
+                    return mStrings.get(position);
+                }
             }
 
             class BibleFilter extends Filter {
