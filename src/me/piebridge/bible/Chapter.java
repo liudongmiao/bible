@@ -465,15 +465,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     }
                     selectverse = fields[1];
                     String content = fields[2];
-                    text = selectverse + " " + content;
                     try {
                         if (Bible.isCJK(content.trim().substring(0, 4))) {
-                            text = text.replace(" ", "");
+                            content = content.replace(" ", "");
                         } else {
-                            text = text.replaceAll(" +", " ");
+                            content = content.replaceAll(" +", " ");
                         }
                     } catch (Exception e) {
                     }
+                    text = selectverse + " " + content;
                     copytext = bible.getVersionFullname(version).replace("(" + getString(R.string.demo) + ")", "") + " ";
                     copytext += bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, book)) + " " + chapter + ":" + text;
                     ((android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setText(copytext);
