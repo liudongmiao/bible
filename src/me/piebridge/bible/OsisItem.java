@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 
 public class OsisItem implements Parcelable {
 
@@ -101,6 +102,8 @@ public class OsisItem implements Parcelable {
         s = s.replace("\u3011", "");
         s = s.replace("\u3016", "");
         s = s.replace("\u3017", "");
+        s = s.replace("[", "");
+        s = s.replace("]", "");
 
         Pattern p = Pattern.compile("\\s*(\\d*?\\s*?[^\\d\\s;]+)\\s*(\\d*):?(\\d*)\\s*?-?\\s*?(\\d*):?(\\d*);?");
         Matcher m = p.matcher(s);
@@ -129,7 +132,24 @@ public class OsisItem implements Parcelable {
                 prevchap = "";
             }
 
-            String osis = Bible.getBible(context).getOsis(book);
+            String osis;
+            if (book.equalsIgnoreCase("ch") || book.equalsIgnoreCase("ch.")) {
+                osis = PreferenceManager.getDefaultSharedPreferences(context).getString("osis", "Gen");
+                osis = osis.split("\\.")[0];
+            } else if (book.equalsIgnoreCase("vv") || book.equalsIgnoreCase("vv.") || book.equalsIgnoreCase("v") || book.equalsIgnoreCase("v.")) {
+                osis = PreferenceManager.getDefaultSharedPreferences(context).getString("osis", "Gen.1");
+                if (osis.contains(".")) {
+                    start_verse = start_chapter;
+                    end_verse = end_chapter;
+                    end_chapter = "";
+                    start_chapter = osis.split("\\.")[1];
+                    osis = osis.split("\\.")[0];
+                } else {
+                    continue;
+                }
+            } else {
+                osis = Bible.getBible(context).getOsis(book);
+            }
             Log.d("OsisItem", String.format("book:%s, osis:%s, %s:%s-%s%s", book, osis, start_chapter, start_verse, end_chapter, end_verse));
             if (osis == null) {
                 continue;
