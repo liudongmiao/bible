@@ -104,9 +104,10 @@ public class OsisItem implements Parcelable {
         s = s.replace("\u3017", "");
         s = s.replace("[", "");
         s = s.replace("]", "");
+        s = s.replaceAll("-\\d?[A-Za-z]+\\s*", "-");
 
-        // John 3; John 3:16; John 3:16-17; John 3-4; John 3-4:5; John 3:16-4:6; 1John 1:5-1John 1:7
-        Pattern p = Pattern.compile("\\s*(\\d*?\\s*?[^\\d\\s;]+)\\s*(\\d*):?(\\d*)\\s*?-?(?:\\d?[^\\d\\s;:]+\\s*)\\s*?(\\d*):?(\\d*);?");
+        // John 3; John 3:16; John 3:16-17; John 3-4; John 3-4:5; John 3:16-4:6
+        Pattern p = Pattern.compile("\\s*(\\d*?\\s*?[^\\d\\s;]+)\\s*(\\d*):?(\\d*)\\s*?-?\\s*?(\\d*):?(\\d*);?");
         Matcher m = p.matcher(s);
         String prevbook = "";
         String prevchap = "";
@@ -116,13 +117,6 @@ public class OsisItem implements Parcelable {
             String start_verse = m.group(3);
             String end_chapter = m.group(4);
             String end_verse = m.group(5);
-
-            if ("".equals(start_chapter) && "".equals(start_verse)) {
-                start_chapter = end_chapter;
-                start_verse = end_verse;
-                end_chapter = "";
-                end_verse = "";
-            }
 
             book = book.replace(":", "");
             if (book.startsWith(",")) {
