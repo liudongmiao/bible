@@ -331,8 +331,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         } else if (link.contains("!x.") || link.startsWith("c")) {
             isCross = true;
             title = getString(R.string.xlink);
+            annotation = annotation.replaceAll("^.*?/passage/\\?search=([^&]*?)&.*?$", "$1").replaceAll(",", ";");
         }
-        // <span verse_id="Sir.2.1" id="Sir.2.1!f.1" class="note f"><span class="fr">2:1–11</span><span class="ft">Serving the Lord is not without its trials (v. 1); but no matter what happens, the genuine believer will remain sincere, steadfast, and faithful (vv. 2–3). Misfortune and humiliation are means of purification to prove one’s worth (vv. 4–5). Ben Sira believed that patience and unwavering trust in God are ultimately rewarded with the benefits of God’s mercy and of lasting joy (vv. 6–11).</span></span>
         annotation = annotation.replaceAll("<span class=\"fr\">(.*?)</span>", "<strong>$1&nbsp;</strong>");
         annotation = annotation.replaceAll("<span class=\"xo\">(.*?)</span>", "");
         final AlertDialog dialog = new AlertDialog.Builder(Chapter.this).setTitle(title)
