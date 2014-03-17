@@ -888,14 +888,16 @@ public class Bible
     }
 
     private volatile boolean checking = false;
+    private volatile boolean checked = false;
     public void checkBibleData(boolean block, final Runnable run) {
         checking = true;
-        if (block) {
+        if (block && !checked) {
             checkBibleData(true);
             if (run != null) {
                 run.run();
             }
             checking = false;
+            checked = true;
         } else {
             new Thread(new Runnable() {
                 public void run() {
@@ -904,6 +906,7 @@ public class Bible
                         run.run();
                     }
                     checking = false;
+                    checked = true;
                 }
             }).start();
         }
