@@ -27,8 +27,9 @@ sup.footnote, sup.crossreference { font-weight: normal }
 .introduction .iot { border-bottom: 1px solid #b2b2b2; text-transform: uppercase; }
 .introduction .io1 { background-color: #f2f2f2; font-size: 0.8em; margin: 0; padding: 8px 5px 8px 20px; }
 a.notelink, .footnote a, .crossreference a { text-decoration: none; color: #2c96dd; }
-@font-face { font-family: 'annotation'; src: url('annotation.svg') format('svg'); }
-a.notelink, sup.footnote, sup.crossreference { font-family: "annotation"; }
+@font-face { font-family: 'annotation'; src: url('annotation.ttf') format('truetype'); }
+.icon-footnote:before { font-family: "annotation"; content: '\e800'; } 
+.icon-crossreference:before { font-family: "annotation"; content: '\e801'; }
 a.notelink { padding: 0 0.2em }
 img.note { height: 1em }
 body { background-color: white; color: black; }
