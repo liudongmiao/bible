@@ -76,6 +76,7 @@ public class OsisItem implements Parcelable {
             return items;
         }
 
+        s = s.replaceAll("([A-Za-z]+)\\.", "$1");
         s = s.replace("+", " ");
         s = s.replace("\uff1a", ":");
         s = s.replace("\ufe55", ":");
@@ -111,12 +112,16 @@ public class OsisItem implements Parcelable {
         s = s.replaceAll("-\\d?[A-Za-z]+\\s*", "-");
 
         // John 3; John 3:16; John 3:16-17; John 3-4; John 3-4:5; John 3:16-4:6
-        Pattern p = Pattern.compile("\\s*(\\d*?\\s*?[^\\d\\s:-;]*)\\s*(\\d*):?(\\d*)\\s*?-?\\s*?(\\d*):?(\\d*);?");
+        Pattern p = Pattern.compile("\\s*(\\d?\\s*?[^\\d\\s:-;]*)\\s*(\\d*):?(\\d*)\\s*?-?\\s*?(\\d*):?(\\d*);?");
         Matcher m = p.matcher(s);
         String prevbook = "";
         String prevchap = "";
         String prevosis = "";
         while (m.find()) {
+            String group = m.group();
+            if (group == null || group.length() == 0) {
+                continue;
+            }
             String book = m.group(1);
             String start_chapter = m.group(2);
             String start_verse = m.group(3);
@@ -130,7 +135,8 @@ public class OsisItem implements Parcelable {
                     start_verse = start_chapter;
                     start_chapter = prevchap;
                 }
-            } else if ("".equals(book)) {
+            } else if (book.length() < 2) {
+                start_chapter = book + start_chapter;
                 book = prevbook;
             }
 
@@ -141,15 +147,16 @@ public class OsisItem implements Parcelable {
                 prevchap = "";
             }
 
-            String osis;
-            if (book.equalsIgnoreCase("ch") || book.equalsIgnoreCase("ch.")) {
+            String osis = null;
+            Log.d("OsisItem", String.format("book:%s, %s:%s-%s:%s", book, start_chapter, start_verse, end_chapter, end_verse));
+            if (book.equalsIgnoreCase("ch")) {
                 if ("".equals(prevosis)) {
                     osis = PreferenceManager.getDefaultSharedPreferences(context).getString("osis", "Gen");
                 } else {
                     osis = prevosis;
                 }
                 osis = osis.split("\\.")[0];
-            } else if (book.equalsIgnoreCase("vv") || book.equalsIgnoreCase("vv.") || book.equalsIgnoreCase("v") || book.equalsIgnoreCase("v.")) {
+            } else if (book.equalsIgnoreCase("vv") || book.equalsIgnoreCase("v")) {
                 if ("".equals(prevosis) || "".equals(prevchap)) {
                     osis = PreferenceManager.getDefaultSharedPreferences(context).getString("osis", "Gen.1");
                 } else {
@@ -167,7 +174,6 @@ public class OsisItem implements Parcelable {
             } else {
                 osis = Bible.getBible(context).getOsis(book);
             }
-            Log.d("OsisItem", String.format("book:%s, osis:%s, %s:%s-%s:%s", book, osis, start_chapter, start_verse, end_chapter, end_verse));
             if (osis == null) {
                 continue;
             }
