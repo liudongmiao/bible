@@ -49,11 +49,9 @@
     <string name="request_other_version">Email a Request</string>
     <string name="request_version_message">Please include version name and/or link.</string>
     <string name="sync">Sync</string>
-    <string name="notes">Add Notes</string>
     <string name="bookmark">Add Bookmark</string>
     <string name="annotation">Annotation</string>
     <string name="annotation_local">Bookmarks and notes are currently only stored on your device. Thus they will be lost if you uninstall this app, or clear its data.</string>
-    <string name="bookmarks">Bookmarks</string>
     <string name="deletehighlight">Unhighlight %s?</string>
     <string name="intro">Intro</string>
     <string name="versionsyncing">Bible Data is updating, please wait...</string>

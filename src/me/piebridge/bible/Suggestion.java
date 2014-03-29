@@ -27,7 +27,7 @@ import android.provider.BaseColumns;
 public class Suggestion extends ContentProvider {
 
     private static final String TAG = "me.piebridge.bible$Suggestion";
-    private static Bible bible = null;
+    private Bible bible = null;
 
     @Override
     public String getType(Uri uri) {
@@ -44,6 +44,7 @@ public class Suggestion extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         if (bible == null) {
             bible = Bible.getBible(getContext());
+            bible.checkBibleData(true, null);
         }
         Log.d(TAG , "uri: " + uri);
         String query = uri.getLastPathSegment();

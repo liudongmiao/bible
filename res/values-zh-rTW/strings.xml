@@ -19,7 +19,6 @@
     <string name="queryerror">無法打開數據庫，請稍候再試。</string>
     <string name="share">分享聖經經句至..</string>
     <string name="fromto">從%1$s到%2$s</string>
-    <string name="bibledatahuman">\"聖經数据\"</string>
     <string name="otherbook">選擇其他書卷</string>
     <string name="search">在聖經中搜尋“%1$s”</string>
     <string name="demo">演示</string>
@@ -49,14 +48,15 @@
     <string name="request_other_version">索取其它版本</string>
     <string name="request_version_message">請告知詳細版本名稱或網址</string>
     <string name="sync">同步</string>
-    <string name="notes">添加筆記</string>
     <string name="bookmark">添加書籤</string>
     <string name="annotation">注解</string>
     <string name="annotation_local">書籤和筆記存儲在您的设备，不會上載到任何地方。如果您卸載這個應用，或者清除數據，所有書籤和註釋將會丟失！</string>
-    <string name="bookmarks">書籤</string>
     <string name="deletehighlight">取消高亮%s？</string>
     <string name="intro">簡介</string>
+    <string name="versionsyncing">聖經數據正在更新，請稍候...</string>
     <string name="versionsynced">聖經數據更新完成: %1$s毫秒</string>
+    <string name="save">保存</string>
+    <string name="addnote_hint">筆記内容</string>
     <string name="flink">注釋</string>
     <string name="xlink">交叉引用</string>
     <string name="note">筆記</string>

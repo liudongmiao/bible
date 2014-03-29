@@ -66,6 +66,10 @@ public class OsisItem implements Parcelable {
         this.end = end;
     }
 
+    public String toString() {
+        return String.format("%s %s:%s-%s", book, chapter, verse, end);
+    }
+
     public static ArrayList<OsisItem> parseSearch(String s, Context context) {
         ArrayList<OsisItem> items = new ArrayList<OsisItem>();
         if (s == null) {

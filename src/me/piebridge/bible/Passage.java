@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 public class Passage extends Activity {
 
+    private Bible bible;
     private final String TAG = "me.piebridge.bible$Passage";
 
     String action = null;
@@ -76,8 +77,11 @@ public class Passage extends Activity {
         }
         new Thread(new Runnable() {
             public void run() {
+                if (bible == null) {
+                    bible = Bible.getBible(getBaseContext());
+                    bible.checkBibleData(true, null);
+                }
                 if (version != null && version.length() > 0) {
-                    Bible bible = Bible.getBible(getBaseContext());
                     bible.setVersion(version);
                 }
                 route();

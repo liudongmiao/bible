@@ -691,6 +691,15 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (!Log.on) {
             editor.remove("log");
         }
+        StringBuilder sb = new StringBuilder();
+        if (items != null && items.size() > 0) {
+            for (OsisItem item : items) {
+                sb.append(item.toString());
+                sb.append("; ");
+            }
+        }
+        editor.putString("items", sb.toString());
+        editor.putInt("index", index);
         editor.commit();
     }
 
@@ -1197,6 +1206,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         showView(R.id.version, true);
         if (items == null || items.size() == 0) {
+            android.util.Log.d(TAG, "items: " + sp.getString("items", null));
+            items = OsisItem.parseSearch(sp.getString("items", null), this);
+            this.index = sp.getInt("index", 0);
+        }
+        if (items == null || items.size() == 0) {
             showView(R.id.items, false);
             showView(R.id.book, true);
             showView(R.id.chapter, true);
@@ -1224,7 +1238,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent e){
-        if (showzoom) {
+        boolean bottom = false;
+        if (showzoom && webview.getScrollY() * 3 / 2 >= webview.getContentHeight() * webview.getScale() - webview.getHeight()) {
+            bottom = true;
+        }
+        if (showzoom && !bottom) {
             setDisplayZoomControls(true);
         } else {
             setDisplayZoomControls(false);

@@ -64,7 +64,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
     String osisfrom;
     String osisto;
 
-    Bible bible;
+    private Bible bible;
     ListPreference version;
     ListPreference searchfrom;
     ListPreference searchto;
