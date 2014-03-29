@@ -971,7 +971,7 @@ public class Bible
                 } else {
                     file = new File(dirpath, zename);
                 }
-                if (file.exists() && file.lastModified() > ze.getTime()) {
+                if (file.exists() && file.lastModified() > ze.getTime() && file.lastModified() > path.lastModified()) {
                     continue;
                 }
                 Log.d(TAG, "unpacking " + file.getAbsoluteFile());
@@ -1299,7 +1299,6 @@ public class Bible
             while (cursor.moveToNext()) {
                 String link = cursor.getString(0);
                 String content = cursor.getString(1);
-                Log.d(TAG, "link: " + link + ", annotation: " + content);
                 annotations.put(link, content);
             }
         } catch (SQLiteException e) {
