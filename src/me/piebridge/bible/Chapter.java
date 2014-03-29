@@ -26,7 +26,6 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,6 +35,7 @@ import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -59,6 +59,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -325,19 +326,19 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     protected void showAnnotation(String link, String annotation) {
         String title = link;
+        final String cross = annotation.replaceAll("^.*?/passage/\\?search=([^&]*?)&.*?$", "$1").replaceAll(",", ";");
         boolean isCross = false;
         if (link.contains("!f.") || link.startsWith("f")) {
             title = getString(R.string.flink);
         } else if (link.contains("!x.") || link.startsWith("c")) {
             isCross = true;
             title = getString(R.string.xlink);
-            annotation = annotation.replaceAll("^.*?/passage/\\?search=([^&]*?)&.*?$", "$1").replaceAll(",", ";");
         }
         annotation = annotation.replaceAll("<span class=\"fr\">(.*?)</span>", "<strong>$1&nbsp;</strong>");
         annotation = annotation.replaceAll("<span class=\"xo\">(.*?)</span>", "");
         final AlertDialog dialog = new AlertDialog.Builder(Chapter.this).setTitle(title)
                 .setMessage(Html.fromHtml(annotation)).setPositiveButton(android.R.string.ok, null).show();
-        if (!isCross) {
+        if (!isCross || cross == null || cross.length() == 0) {
             return;
         }
         storeOsisVersion();
@@ -346,12 +347,102 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                Intent intent = new Intent(Chapter.this, Passage.class);
-                intent.setAction(Intent.ACTION_SEARCH);
-                intent.putExtra(SearchManager.QUERY, message.getText().toString());
-                startActivity(intent);
+                if (cross.contains("<")) {
+                    showReference(message.getText().toString());
+                } else {
+                    showReference(cross);
+                }
             }
         });
+    }
+
+    protected String getBody(OsisItem item) {
+        String body = "";
+        String osis = item.book + "." + item.chapter;
+        Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
+        Cursor cursor = getContentResolver().query(uri, new String[] { Provider.COLUMN_CONTENT }, null, null, null);
+        if (cursor != null) {
+            String content = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CONTENT));
+            cursor.close();
+            android.util.Log.d(TAG, String.format("verse: %s, end: %s", verse, end));
+            body =  getBody(null, content, item.verse, item.end, false);
+        }
+        return body;
+    }
+
+    private void loadReference(final OsisItem item, final View progress, final WebView webview) {
+        if (item == null) {
+            return;
+        }
+        new AsyncTask<OsisItem, Void, String>() {
+            @Override
+            protected void onPreExecute() {
+                progress.setVisibility(View.VISIBLE);
+                webview.setVisibility(View.GONE);
+            }
+
+            @Override
+            protected String doInBackground(OsisItem... params) {
+                return getBody(params[0]);
+            }
+
+            @Override
+            protected void onPostExecute(String body) {
+                progress.setVisibility(View.GONE);
+                webview.setVisibility(View.VISIBLE);
+                webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
+            }
+        }.execute(item);
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    protected void showReference(String search) {
+        final ArrayList<OsisItem> items = OsisItem.parseSearch(search, this);
+        if (items.size() == 0) {
+            return;
+        }
+
+        ArrayList<String> texts = new ArrayList<String>();
+        android.util.Log.d(TAG, "search: " + search);
+        for (OsisItem item : items) {
+            String end = item.end;
+            if (end != null && end.length() > 0) {
+                end = "-" + end;
+            } else {
+                end = "";
+            }
+            String book;
+            int pos = bible.getPosition(Bible.TYPE.OSIS, item.book);
+            if (pos == -1) {
+                book = item.book;
+            } else {
+                book = bible.get(Bible.TYPE.HUMAN, pos);
+            }
+            texts.add(String.format("%s %s:%s%s", book, item.chapter, item.verse, end));
+        }
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.reference, null);
+        final View progress = view.findViewById(R.id.progress);
+        final WebView webview = (WebView) view.findViewById(R.id.webview);
+        final Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
+        webview.getSettings().setJavaScriptEnabled(true);
+        spinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, texts));
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position >= items.size()) {
+                    return;
+                }
+                loadReference(items.get(position), progress, webview);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+
+        });
+        new AlertDialog.Builder(this).setView(view).setNeutralButton(android.R.string.ok, null).show();
+        loadReference(items.get(0), progress, webview);
     }
 
     @Override
@@ -703,7 +794,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         editor.commit();
     }
 
-    private void showContent(String title, String content) {
+    private String getBody(String title, String content, String verse, String end, boolean annotation) {
         String context = content;
         if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE) || "CCB".equalsIgnoreCase(bible.getVersion()) || bible.getVersion().endsWith("ss")) {
             context = context.replaceAll("「", "“").replaceAll("」", "”");
@@ -720,7 +811,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (fontsize > FONTSIZE_MAX) {
             fontsize = FONTSIZE_MAX;
         }
-
         body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n";
         body += "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">\n";
         body += "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
@@ -736,30 +826,41 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             body += "body { text-align: justify; }\n";
             body += "body { text-justify: distribute }\n";
         }
-        body += ".trans {display: none;}\n";
+//        body += ".trans {display: none;}\n";
         if (red) {
             body += ".wordsofchrist, .woj, .wj {color: red;}\n";
         }
-        if (!flink) {
+        if (!flink || !annotation) {
             body += "a.f-link, sup.footnote {display: none}\n";
         }
-        if (!xlink) {
+        if (!xlink || !annotation) {
             body += "a.x-link, sup.crossreference {display: none}\n";
         }
-        if (!shangti) {
+        if (shangti) {
+            context = content.replace("　神", "上帝");
+        } else {
             context = context.replace("上帝", "　神");
         }
         body += "h1 {font-size: 2em;}\n";
         body += "h2 {font-size: 1.5em;}\n";
         body += bible.getCSS();
         body += "</style>\n";
-        body += "<title>" + title + "</title>\n";
+        if (title != null) {
+            body += "<title>" + title + "</title>\n";
+        }
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
         body += "<script type=\"text/javascript\">\n";
-        highlighted = bible.getHighlight(osis);
-        body += String.format("var verse_start=%s, verse_end=%s, search=\"%s\", selected=\"%s\", highlighted=\"%s\", notes=%s;",
-                verse.equals("") ? "-1" : verse, end.equals("") ? "-1" : verse, items != null ? search : "",
-                selectverse, highlighted, Arrays.toString(bible.getNoteVerses(osis)));
+        verse = (verse == null || verse.trim().length() == 0) ? "-1" : verse;
+        end = (end == null || end.trim().length() == 0) ? "-1" : end;
+        if (annotation) {
+            highlighted = bible.getHighlight(osis);
+            body += String.format("var verse_start=%s, verse_end=%s, search=\"%s\", selected=\"%s\", highlighted=\"%s\", notes=%s;",
+                    verse, end, items != null ? search : "", selectverse, highlighted,
+                    Arrays.toString(bible.getNoteVerses(osis)));
+        } else {
+            body += String.format("var verse_start=%s, verse_end=%s, search=\"\", selected=\"\", highlighted=\"\", notes=[];",
+                    verse, end);
+        }
         body += "\n</script>\n";
         body += "<script type=\"text/javascript\" src=\"reader.js\"></script>\n";
         body += "</head>\n";
@@ -774,16 +875,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<div id=\"content\">\n";
         body += context;
         body += "</div>\n</body>\n</html>\n";
-        // webview.clearCache(true);
-        // webview.setInitialScale(100);
-        if (defaultScale == 0.0f) {
-            defaultScale = getScale(webview);
-        }
-        scale = defaultScale;
-        webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
-        handler.sendEmptyMessage(DISMISSBAR);
-        verse = "";
-        search = "";
         /*
         {
             String versename = "pb-" + version + "-" + book.toLowerCase(Locale.US) + "-" + chapter;
@@ -798,6 +889,21 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             }
         }
         */
+        return body;
+    }
+
+    private void showContent(String title, String content) {
+        String body = getBody(title, content, verse, end, true);
+        // webview.clearCache(true);
+        // webview.setInitialScale(100);
+        if (defaultScale == 0.0f) {
+            defaultScale = getScale(webview);
+        }
+        scale = defaultScale;
+        webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
+        handler.sendEmptyMessage(DISMISSBAR);
+        verse = "";
+        search = "";
     }
 
     @Override
@@ -1239,7 +1345,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     @Override
     public boolean dispatchTouchEvent(MotionEvent e){
         boolean bottom = false;
-        if (showzoom && webview.getScrollY() * 3 / 2 >= webview.getContentHeight() * webview.getScale() - webview.getHeight()) {
+        if (showzoom && webview.getScrollY() * 3 / 2 >= webview.getContentHeight() * getScale(webview) - webview.getHeight()) {
             bottom = true;
         }
         if (showzoom && !bottom) {
