@@ -48,4 +48,10 @@ public class Log {
         }
         return 0;
     }
+
+    public static void setOn(Boolean value) {
+        if (value != null) {
+            on = value;
+        }
+    }
 }

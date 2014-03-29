@@ -135,7 +135,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         String key = preference.getKey();
         if (LOG.equals(key)) {
-            Log.on = (Boolean) newValue;
+            Log.setOn((Boolean) newValue);
         }
         return true;
     }
