@@ -71,12 +71,19 @@ public class OsisItem implements Parcelable {
     }
 
     public static ArrayList<OsisItem> parseSearch(String s, Context context) {
+        String previous = PreferenceManager.getDefaultSharedPreferences(context).getString("osis", "Gen.1");
+        return parseSearch(s, context, previous);
+    }
+
+    public static ArrayList<OsisItem> parseSearch(String s, Context context, String previous) {
         ArrayList<OsisItem> items = new ArrayList<OsisItem>();
         if (s == null) {
             return items;
         }
 
         s = s.replaceAll("([A-Za-z]+)\\.", "$1");
+        s = s.replace("cf", "");
+        s = s.replaceAll("(\\d?)\\s*?([^\\d\\s:-;]*)", "$1$2");
         s = s.replace("+", " ");
         s = s.replace("\uff1a", ":");
         s = s.replace("\ufe55", ":");
@@ -151,14 +158,14 @@ public class OsisItem implements Parcelable {
             Log.d("OsisItem", String.format("book:%s, %s:%s-%s:%s", book, start_chapter, start_verse, end_chapter, end_verse));
             if (book.equalsIgnoreCase("ch")) {
                 if ("".equals(prevosis)) {
-                    osis = PreferenceManager.getDefaultSharedPreferences(context).getString("osis", "Gen");
+                    osis = previous;
                 } else {
                     osis = prevosis;
                 }
                 osis = osis.split("\\.")[0];
-            } else if (book.equalsIgnoreCase("vv") || book.equalsIgnoreCase("v")) {
+            } else if (book.equalsIgnoreCase("v") || book.equalsIgnoreCase("vv") || book.equalsIgnoreCase("ver")) {
                 if ("".equals(prevosis) || "".equals(prevchap)) {
-                    osis = PreferenceManager.getDefaultSharedPreferences(context).getString("osis", "Gen.1");
+                    osis = previous;
                 } else {
                     osis = prevosis + "." + prevchap;
                 }

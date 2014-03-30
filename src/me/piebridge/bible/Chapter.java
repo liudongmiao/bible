@@ -397,7 +397,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     @SuppressLint("SetJavaScriptEnabled")
     protected void showReference(String search) {
-        final ArrayList<OsisItem> items = OsisItem.parseSearch(search, this);
+        final ArrayList<OsisItem> items = OsisItem.parseSearch(search, this, osis);
         if (items.size() == 0) {
             return;
         }
