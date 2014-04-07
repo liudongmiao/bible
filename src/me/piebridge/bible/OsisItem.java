@@ -82,8 +82,8 @@ public class OsisItem implements Parcelable {
         }
 
         s = s.replaceAll("([A-Za-z]+)\\.", "$1");
+        s = s.replaceAll("(\\d?)\\s*(\\D?)", "$1$2");
         s = s.replace("cf", "");
-        s = s.replaceAll("(\\d?)\\s*?([^\\d\\s:-;]*)", "$1$2");
         s = s.replace("+", " ");
         s = s.replace("\uff1a", ":");
         s = s.replace("\ufe55", ":");
