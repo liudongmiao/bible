@@ -875,8 +875,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         body += "<div id=\"content\">\n";
         body += context;
         body += "</div>\n</body>\n</html>\n";
-        /*
-        {
+        if (Log.on && annotation) {
             String versename = "pb-" + version + "-" + book.toLowerCase(Locale.US) + "-" + chapter;
             File path = new File(Environment.getExternalStorageDirectory(), versename + ".html");
             try {
@@ -888,7 +887,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 Log.e("write", path.getAbsolutePath(), e);
             }
         }
-        */
         return body;
     }
 
