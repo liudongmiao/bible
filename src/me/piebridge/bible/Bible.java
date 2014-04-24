@@ -117,9 +117,15 @@ public class Bible
     private String css;
     public String versionName;
 
+    private static String HUMAN_PREFERENCE = "human";
+
     private Bible(Context context) {
         Log.d(TAG, "init bible");
         mContext = context;
+        SharedPreferences preferences = mContext.getSharedPreferences(HUMAN_PREFERENCE, Context.MODE_MULTI_PROCESS);
+        for (Entry<String, ?> entry : preferences.getAll().entrySet()) {
+            allhuman.put(entry.getKey(), String.valueOf(entry.getValue()));
+        }
         try {
             versionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (NameNotFoundException e) {
@@ -246,7 +252,15 @@ public class Bible
             database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
                     SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
             Log.d(TAG, "open database \"" + database.getPath() + "\"");
+            int oldsize = allhuman.size();
             setMetadata(database, databaseVersion, true);
+            if (allhuman.size() > oldsize) {
+                SharedPreferences.Editor editor = mContext.getSharedPreferences(HUMAN_PREFERENCE, Context.MODE_MULTI_PROCESS).edit();
+                for (Entry<String, String> entry : allhuman.entrySet()) {
+                    editor.putString(entry.getKey(), entry.getValue());
+                }
+                editor.commit();
+            }
             return true;
         } catch (Exception e) {
             try {
@@ -311,7 +325,9 @@ public class Bible
                 if (book.endsWith(" 1")) {
                     book = book.substring(0, book.length() - 2);
                 }
-                allhuman.put(book, osis);
+                if (!allhuman.containsKey(book)) {
+                    allhuman.put(book, osis);
+                }
 
                 Cursor cursor_chapter = null;
                 // select group_concat(replace(reference_osis, "Gen.", "")) as osis from chapters where reference_osis like 'Gen.%';
@@ -868,7 +884,7 @@ public class Bible
     private void checkBibleData(boolean all) {
         synchronized (versionsCheckingLock) {
             if ((!checking || !all) && versions.size() > 0) {
-                android.util.Log.d(TAG, "cancel checking");
+                Log.d(TAG, "cancel checking");
                 return;
             }
             if (!all) {
@@ -1141,9 +1157,6 @@ public class Bible
         try {
             metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
                 SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-            if (!isDatabaseIntegrityOk(metadata)) {
-                return false;
-            }
             String dataversion = version.replace("demo", "");
             if (!versionFullnames.containsKey(version)) {
                 versionFullnames.put(version, getVersionMetadata("fullname", metadata, dataversion));
@@ -1152,7 +1165,7 @@ public class Bible
                 versionNames.put(version, getVersionMetadata("name", metadata, dataversion));
             }
             versionDates.put(version, getVersionMetadata("date", metadata, "0"));
-            setMetadata(metadata, dataversion, false);
+            // setMetadata(metadata, dataversion, false);
             return true;
         } catch (Exception e) {
             try {
@@ -1215,7 +1228,7 @@ public class Bible
 
     String getRemoteVersions() throws ClientProtocolException, IOException {
         HttpClient client = new DefaultHttpClient();
-        SharedPreferences sp = mContext.getSharedPreferences("json", Context.MODE_PRIVATE);
+        SharedPreferences sp = mContext.getSharedPreferences("json", Context.MODE_MULTI_PROCESS);
         String etag = sp.getString(JSON + "_etag", null);
         HttpGet get = new HttpGet(Bible.BIBLEDATA_PREFIX + JSON);
         if (etag != null) {
