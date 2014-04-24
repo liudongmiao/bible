@@ -21,6 +21,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Passage extends Activity {
 
@@ -34,14 +35,18 @@ public class Passage extends Activity {
     String version = null;
     ProgressDialog dialog = null;
 
+    Uri uri = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.passage);
         Intent intent = getIntent();
         action = intent.getAction();
+        uri = null;
+        version = null;
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            Uri uri = intent.getData();
+            uri = intent.getData();
             if (uri == null) {
                 finish();
                 return;
@@ -102,6 +107,9 @@ public class Passage extends Activity {
             intent.setAction(Intent.ACTION_SEND);
             intent.putExtra(SearchManager.QUERY, search);
             startActivity(intent);
+        } else if (uri != null && version != null && bible.get(Bible.TYPE.VERSION).indexOf(version.toLowerCase(Locale.US)) == -1) {
+            intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(Intent.createChooser(intent, version));
         } else if (search != null) {
             intent = new Intent(this, Result.class);
             intent.setAction(Intent.ACTION_SEARCH);
