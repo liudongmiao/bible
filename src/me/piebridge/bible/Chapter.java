@@ -34,6 +34,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -455,6 +456,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         hideActionBar();
         setContentView(R.layout.chapter);
         initialized = false;
+        font = new File(new File(new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName()), "files"), "custom.ttf");
     }
 
     private volatile boolean initialized = false;
@@ -476,6 +478,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         bookView = (TextView) header.findViewById(R.id.book);
         itemsView = (TextView) header.findViewById(R.id.items);
 
+        setFont(bookView);
+        setFont(itemsView);
         bookView.setOnClickListener(this);
         chapterView.setOnClickListener(this);
         versionView.setOnClickListener(this);
@@ -514,6 +518,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     grid.setTextOn(value);
                     grid.setTextOff(value);
                 }
+                setFont(grid);
                 grid.setChecked(value.equals(selected));
                 grid.setVisibility(value.length() == 0 ? View.INVISIBLE : View.VISIBLE);
                 return view;
@@ -625,7 +630,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
         setIntentData();
         hasIntentData = true;
-        font = new File(new File(new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName()), "files"), "custom.ttf");
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         if (!hasIntentData) {
@@ -1817,6 +1821,16 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             return true;
         default:
             return false;
+        }
+    }
+
+    private void setFont(TextView textView) {
+        if (font == null) {
+            android.util.Log.d(TAG, "font is null");
+            font = new File(new File(new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName()), "files"), "custom.ttf");
+        }
+        if (font.exists()) {
+            textView.setTypeface(Typeface.createFromFile(font));
         }
     }
 
