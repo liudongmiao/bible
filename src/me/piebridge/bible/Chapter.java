@@ -480,6 +480,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
         setFont(bookView);
         setFont(itemsView);
+        setFont(chapterView);
         bookView.setOnClickListener(this);
         chapterView.setOnClickListener(this);
         versionView.setOnClickListener(this);
