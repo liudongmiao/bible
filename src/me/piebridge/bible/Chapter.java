@@ -518,7 +518,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     grid.setTextOn(value);
                     grid.setTextOff(value);
                 }
-                setFont(grid);
+                if (column != null && column == 2) {
+                    setFont(grid);
+                }
                 grid.setChecked(value.equals(selected));
                 grid.setVisibility(value.length() == 0 ? View.INVISIBLE : View.VISIBLE);
                 return view;
