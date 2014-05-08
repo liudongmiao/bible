@@ -52,6 +52,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
@@ -183,7 +184,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     break;
                 case DISMISSBAR:
                     progress = false;
-                    showHeader(true);
+                    showHeader(!fullscreen);
                     showView(R.id.progress, false);
                     showView(R.id.webview, true);
                     break;
@@ -743,7 +744,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private void setBookChapter(String[] message) {
-        showHeader(true);
+        showHeader(!fullscreen);
         book = osis.split("\\.")[0];
         if (osis.split("\\.").length > 1) {
             chapter = osis.split("\\.")[1];
@@ -1522,7 +1523,40 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 }
                 return false;
             }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                toggleFullScreen();
+                return true;
+            }
         });
+    }
+
+    boolean fullscreen = false;
+    protected void toggleFullScreen() {
+        android.util.Log.d(TAG, "toggleFullScreen");
+        int flag;
+        Window window = getWindow();
+        if (Build.VERSION.SDK_INT < 16) {
+            flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
+            if (!fullscreen) {
+                window.addFlags(flag);
+            } else {
+                window.clearFlags(flag);
+            }
+        } else {
+            View decorView = window.getDecorView();
+            flag = decorView.getSystemUiVisibility();
+            int full = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            if (!fullscreen) {
+                flag |= full;
+            } else {
+                flag = flag & ~full;
+            }
+            decorView.setSystemUiVisibility(flag);
+        }
+        fullscreen = !fullscreen;
+        showHeader(!fullscreen);
     }
 
     private boolean isInside(int viewId, MotionEvent e) {
@@ -1547,9 +1581,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private void showSharing(boolean show) {
         if (!show) {
+            showHeader(!fullscreen);
             header.findViewById(R.id.reading).setVisibility(View.VISIBLE);
             header.findViewById(R.id.annotation).setVisibility(View.GONE);
         } else {
+            showHeader(true);
             header.findViewById(R.id.annotation).setVisibility(View.VISIBLE);
             header.findViewById(R.id.reading).setVisibility(View.GONE);
             if (highlighted != null && highlighted.length() > 0) {
