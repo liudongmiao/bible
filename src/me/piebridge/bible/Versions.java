@@ -56,8 +56,11 @@ public class Versions extends Activity {
     private List<String> names = new ArrayList<String>();
     private List<Map<String, String>> data = new ArrayList<Map<String, String>>();
     private List<Map<String, String>> filtered = new ArrayList<Map<String, String>>();
-    private List<Map<String, String>> versions = new ArrayList<Map<String, String>>();
-    private Map<String, String> request = new HashMap<String, String>();
+    private List<Map<String, String>> updated = new ArrayList<Map<String, String>>();
+    private List<Map<String, String>> matched = new ArrayList<Map<String, String>>();
+    private List<Map<String, String>> halfmatched = new ArrayList<Map<String, String>>();
+    private List<HashMap<String, String>> versions = new ArrayList<HashMap<String, String>>();
+    private HashMap<String, String> request = new HashMap<String, String>();
 
     public static final int STOP = 0;
     public static final int START = 1;
@@ -193,7 +196,7 @@ public class Versions extends Activity {
         editor.commit();
     }
 
-    List<Map<String, String>> parseVersions(List<Map<String, String>> list, String string) {
+    List<HashMap<String, String>> parseVersions(List<HashMap<String, String>> list, String string) {
         Context context = bible.getContext();
         try {
             JSONObject jsons = new JSONObject(string);
@@ -207,7 +210,7 @@ public class Versions extends Activity {
             }
             for (int i = 0; i < jsonVersions.length(); ++i) {
                 JSONObject version = jsonVersions.getJSONObject(i);
-                Map<String, String> map = new HashMap<String, String>();
+                HashMap<String, String> map = new HashMap<String, String>();
                 String action;
                 String code = version.getString("code");
                 String lang = version.getString("lang");
@@ -674,25 +677,41 @@ public class Versions extends Activity {
 
     volatile boolean filtering = false;
     void filterVersion(String filter) {
+        final Locale locale = Locale.getDefault();
+        final String lang = locale.getLanguage().toLowerCase(Locale.US);
+        final String fullname = lang + "-" + locale.getCountry().toLowerCase(Locale.US);
         filtering = false;
         Log.d(TAG, "filtering Version: " + filter);
         synchronized (versions) {
+            updated.clear();
+            matched.clear();
+            halfmatched.clear();
             filtered.clear();
-            for (Map<String, String> map : versions) {
+            for (HashMap<String, String> map : versions) {
                 if (filtering) {
                     filtering = false;
                     return;
                 }
-                if (filter == null || map.get("action") == null) {
-                    filtered.add(map);
+                String language = map.get("lang");
+                List<Map<String, String>> list;
+                if (fullname.equals(language)) {
+                    list = matched;
+                } else if (language.startsWith(lang)) {
+                    list = halfmatched;
                 } else {
-                    String language = map.get("lang");
+                    list = filtered;
+                }
+                if (filter == null || map.get("action") == null) {
+                    list.add(map);
+                    addIfUpdated(updated, map);
+                } else {
                     if (language != null) {
                         int index = languages.indexOf(language);
                         if (index != -1 && names.size() > index) {
                             String name = names.get(index);
                             if (name.toLowerCase(Locale.US).contains(filter)) {
-                                filtered.add(map);
+                                list.add(map);
+                                addIfUpdated(updated, map);
                                 continue;
                             }
                         }
@@ -703,7 +722,8 @@ public class Versions extends Activity {
                             return;
                         }
                         if (value.toLowerCase(Locale.US).contains(filter)) {
-                            filtered.add(map);
+                            list.add(map);
+                            addIfUpdated(updated, map);
                             break;
                         }
                     }
@@ -712,9 +732,22 @@ public class Versions extends Activity {
         }
         synchronized (data) {
             data.clear();
+            data.addAll(updated);
+            data.addAll(matched);
+            data.addAll(halfmatched);
             data.addAll(filtered);
         }
         Log.d(TAG, "filtered Version: " + filter);
+    }
+
+    void addIfUpdated(List<Map<String, String>> updated, HashMap<String, String> map) {
+        String update = bible.getContext().getString(R.string.update);
+        if (update.equals(map.get("text"))) {
+            @SuppressWarnings("unchecked")
+            HashMap<String, String> clone = (HashMap<String, String>) map.clone();
+            clone.put("lang", update);
+            updated.add(clone);
+        }
     }
 
     void download(final Map<String, String> map) {
