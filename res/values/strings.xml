@@ -47,7 +47,7 @@
     <string name="not_found">Other Versions</string>
     <string name="request">Request</string>
     <string name="request_other_version">Email a Request</string>
-    <string name="request_version_message">Please include version name and/or link.</string>
+    <string name="request_version_message">Please find your version from bibles.org/versions or biblegateway.com/versions, then email me the link.</string>
     <string name="sync">Sync</string>
     <string name="bookmark">Add Bookmark</string>
     <string name="annotation">Annotation</string>
