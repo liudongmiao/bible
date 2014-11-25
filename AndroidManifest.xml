@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.piebridge.bible"
     android:sharedUserId="me.piebridge.bible"
-    android:versionCode="81"
-    android:versionName="0.11.12">
+    android:versionCode="83"
+    android:versionName="0.11.14">
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="21" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

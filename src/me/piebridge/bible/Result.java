@@ -51,6 +51,10 @@ public class Result extends Activity
     private String osisto = null;
     private SimpleCursorAdapter adapter = null;
 
+    private String prevQuery = null;
+    private String prevBooks = null;
+    private String prevVersion = null;
+
     protected final static int color = 0x6633B5E5;
     protected final static int SHOWRESULT = 1;
 
@@ -95,7 +99,9 @@ public class Result extends Activity
                 }
                 version = bible.getVersion();
                 books = getQueryBooks(osisfrom, osisto);
-                doSearch(query, books);
+                if (!query.equals(prevQuery) || !books.equals(prevBooks) || !version.equals(prevVersion)) {
+                    doSearch(query, books);
+                }
             }
         }).start();
     }
@@ -121,6 +127,9 @@ public class Result extends Activity
             Cursor[] cursors = { extras, cursor };
             cursor = new MergeCursor(cursors);
         }
+        prevQuery = query;
+        prevBooks = books;
+        prevVersion = version;
         handler.sendMessage(handler.obtainMessage(SHOWRESULT, cursor));
     }
 

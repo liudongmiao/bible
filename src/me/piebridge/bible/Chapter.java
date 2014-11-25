@@ -1124,29 +1124,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 gridview.setNumColumns(5);
                 selected = chapter;
                 chapters = bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, book)).split(",");
-                Arrays.sort(chapters, new Comparator<String>() {
-                    @Override
-                    public int compare(String left, String right) {
-                        int l;
-                        int r;
-                        try {
-                            l = Integer.parseInt(left);
-                        } catch (NumberFormatException e) {
-                            l = 0;
-                        }
-                        try {
-                            r = Integer.parseInt(right);
-                        } catch (NumberFormatException e) {
-                            r = 0;
-                        }
-                        if (l == 0 && r == 0) {
-                            // shouldn't happend
-                            return left.compareTo(right);
-                        } else {
-                            return l - r;
-                        }
-                    }
-                });
                 for (String chapter : chapters) {
                     Log.d(TAG, "add chapter=" + chapter);
                     if ("int".equalsIgnoreCase(chapter)) {

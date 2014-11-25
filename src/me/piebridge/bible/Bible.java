@@ -26,6 +26,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -337,7 +338,7 @@ public class Bible
                             "reference_osis like ?", new String[] { osis + ".%" }, null, null, null);
                     if (cursor_chapter.moveToNext()) {
                         // we have only one column
-                        chapter = cursor_chapter.getString(0);
+                        chapter = sortChapter(cursor_chapter.getString(0));
                     }
                 } catch (Exception e) {
                 } finally {
@@ -359,6 +360,42 @@ public class Bible
         }
 
         css = getVersionMetadata("css", metadata, "");
+    }
+
+    private String sortChapter(String chapter) {
+        String[] chapters = chapter.split(",");
+        Arrays.sort(chapters, new Comparator<String>() {
+            @Override
+            public int compare(String left, String right) {
+                int l;
+                int r;
+                try {
+                    l = Integer.parseInt(left);
+                } catch (NumberFormatException e) {
+                    l = 0;
+                }
+                try {
+                    r = Integer.parseInt(right);
+                } catch (NumberFormatException e) {
+                    r = 0;
+                }
+                if (l == 0 && r == 0) {
+                    // shouldn't happend
+                    return left.compareTo(right);
+                } else {
+                    return l - r;
+                }
+            }
+        });
+        StringBuilder sb = new StringBuilder(chapter.length());
+        int length = chapters.length;
+        for (int i = 0; i < length; ++i) {
+            sb.append(chapters[i]);
+            if (i < length - 1) {
+                sb.append(",");
+            }
+        }
+        return sb.toString();
     }
 
     public String getCSS() {
