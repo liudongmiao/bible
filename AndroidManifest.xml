@@ -19,7 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PassageChapter" android:theme="@style/chapter" android:configChanges="orientation|screenSize|keyboardHidden" android:exported="false" android:launchMode="singleInstance" />
         <activity android:name=".Search" android:theme="@style/theme" android:windowSoftInputMode="stateHidden" android:exported="false" />
         <activity android:name=".Settings" android:configChanges="orientation|screenSize|keyboardHidden" android:exported="false" />
         <activity android:name=".Versions" android:configChanges="orientation|screenSize|keyboardHidden" android:windowSoftInputMode="stateHidden" android:exported="false">
