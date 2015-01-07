@@ -1706,7 +1706,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             showSharing(false);
         } else {
             setRefresh(true);
-            super.onBackPressed();
+            moveTaskToBack(true);
         }
     }
 
