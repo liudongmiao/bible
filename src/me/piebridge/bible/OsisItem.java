@@ -142,7 +142,7 @@ public class OsisItem implements Parcelable {
                     start_verse = start_chapter;
                     start_chapter = prevchap;
                 }
-            } else if (book.length() < 2) {
+            } else if (!Bible.isCJK(book) && book.length() < 2) {
                 start_chapter = book + start_chapter;
                 book = prevbook;
             }
