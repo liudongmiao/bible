@@ -18,7 +18,6 @@ import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
@@ -582,6 +581,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                         }
                     } catch (Exception e) {
                     }
+                    selectcontent = content;
                     text = selectverse + " " + content;
                     copytext = bible.getVersionFullname(version).replace("(" + getString(R.string.demo) + ")", "") + " ";
                     copytext += bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, book)) + " " + chapter + ":" + text;
@@ -1535,6 +1535,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     boolean fullscreen = false;
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected void toggleFullScreen() {
         android.util.Log.d(TAG, "toggleFullScreen");
         int flag;
@@ -1706,7 +1707,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             showSharing(false);
         } else {
             setRefresh(true);
-            moveTaskToBack(true);
+            super.onBackPressed();
         }
     }
 
@@ -1831,6 +1832,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     String highlighted = "";
     String selectverse = "";
+    String selectcontent = "";
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int pos, long id) {
