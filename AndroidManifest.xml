@@ -4,53 +4,125 @@
     android:sharedUserId="me.piebridge.bible"
     android:versionCode="83"
     android:versionName="0.11.14">
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="21" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="23" />
+
+    <permission
+        android:name="me.piebridge.bible.permission.ACCESS"
+        android:protectionLevel="signature" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <application android:label="@string/app_name" android:icon="@drawable/bible"
+    <uses-permission android:name="me.piebridge.bible.permission.ACCESS" />
+
+    <application
         android:allowBackup="true"
+        android:fullBackupContent="true"
+        android:icon="@drawable/bible"
+        android:label="@string/app_name"
         android:theme="@style/theme.light">
-        <activity android:name=".Chapter" android:theme="@style/chapter"
+        <activity
+            android:name=".Chapter"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            >
+            android:theme="@style/chapter">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Search" android:theme="@style/theme" android:windowSoftInputMode="stateHidden" android:exported="false" />
-        <activity android:name=".Settings" android:configChanges="orientation|screenSize|keyboardHidden" android:exported="false" />
-        <activity android:name=".Versions" android:configChanges="orientation|screenSize|keyboardHidden" android:windowSoftInputMode="stateHidden" android:exported="false">
+        <activity
+            android:name=".Search"
+            android:theme="@style/theme"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".Settings"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".Versions"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="file" />
-                <data android:mimeType="application/zip" />
-                <data android:pathPattern=".*/bibledata-.*\\.zip" />
+
+                <data
+                    android:host="*"
+                    android:mimeType="application/zip"
+                    android:pathPattern=".*\/bibledata-.*\\.zip"
+                    android:scheme="file" />
             </intent-filter>
         </activity>
-        <activity android:name=".Result" android:configChanges="orientation|screenSize|keyboardHidden" android:exported="false" />
-        <activity android:name=".Passage" android:label="@string/searchinbible" android:launchMode="singleTask"
-            >
+        <activity
+            android:name=".Result"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".Passage"
+            android:label="@string/searchinbible"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="bible" android:host="search" android:path="" />
-                <data android:scheme="http" android:host="piebridge.me" android:path="/search" />
-                <data android:scheme="http" android:host="*.piebridge.me" android:path="/search" />
-                <data android:scheme="https" android:host="piebridge.me" android:path="/search" />
-                <data android:scheme="https" android:host="www.piebridge.me" android:path="/search" />
-                <data android:scheme="http" android:host="*.biblegateway.com" android:pathPrefix="/passage" />
-                <data android:scheme="https" android:host="*.biblegateway.com" android:pathPrefix="/passage" />
-                <data android:scheme="http" android:host="*.biblica.com" android:pathPrefix="/bibles/chapter" />
-                <data android:scheme="https" android:host="*.biblica.com" android:pathPrefix="/bibles/chapter" />
-                <data android:scheme="http" android:host="bibles.org" android:pathPrefix="/search/" />
-                <data android:scheme="https" android:host="bibles.org" android:pathPrefix="/search/" />
-                <data android:scheme="http" android:host="*.bibles.org" android:pathPrefix="/search/" />
-                <data android:scheme="https" android:host="*.bibles.org" android:pathPrefix="/search/" />
+
+                <data
+                    android:host="search"
+                    android:path=""
+                    android:scheme="bible" />
+                <data
+                    android:host="piebridge.me"
+                    android:path="/search"
+                    android:scheme="http" />
+                <data
+                    android:host="*.piebridge.me"
+                    android:path="/search"
+                    android:scheme="http" />
+                <data
+                    android:host="piebridge.me"
+                    android:path="/search"
+                    android:scheme="https" />
+                <data
+                    android:host="www.piebridge.me"
+                    android:path="/search"
+                    android:scheme="https" />
+                <data
+                    android:host="*.biblegateway.com"
+                    android:pathPrefix="/passage"
+                    android:scheme="http" />
+                <data
+                    android:host="*.biblegateway.com"
+                    android:pathPrefix="/passage"
+                    android:scheme="https" />
+                <data
+                    android:host="*.biblica.com"
+                    android:pathPrefix="/bibles/chapter"
+                    android:scheme="http" />
+                <data
+                    android:host="*.biblica.com"
+                    android:pathPrefix="/bibles/chapter"
+                    android:scheme="https" />
+                <data
+                    android:host="bibles.org"
+                    android:pathPrefix="/search/"
+                    android:scheme="http" />
+                <data
+                    android:host="bibles.org"
+                    android:pathPrefix="/search/"
+                    android:scheme="https" />
+                <data
+                    android:host="*.bibles.org"
+                    android:pathPrefix="/search/"
+                    android:scheme="http" />
+                <data
+                    android:host="*.bibles.org"
+                    android:pathPrefix="/search/"
+                    android:scheme="https" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -61,14 +133,21 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
+
+            <meta-data
+                android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <provider android:name=".Provider" android:exported="false"
-            android:authorities="me.piebridge.bible.provider" />
-        <provider android:name=".Suggestion"
+
+        <provider
+            android:name=".Provider"
+            android:authorities="me.piebridge.bible.provider"
+            android:permission="me.piebridge.bible.permission.ACCESS" />
+        <provider
+            android:name=".Suggestion"
             android:authorities="me.piebridge.bible"
             android:permission="android.permission.GLOBAL_SEARCH" />
+
         <receiver android:name=".Receiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
@@ -76,7 +155,9 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.provider.Telephony.SECRET_CODE" />
-                <data android:host="24253" android:scheme="android_secret_code" />
+                <data
+                    android:host="24253"
+                    android:scheme="android_secret_code" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
@@ -87,4 +168,3 @@
         </receiver>
     </application>
 </manifest>
-<!-- vim: set sta sw=4 et: -->

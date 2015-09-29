@@ -94,8 +94,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public static final int FONTSIZE_MAX = 72;
     private int fontsize = FONTSIZE_MED;
 
-    private ZoomButtonsController mZoomButtonsController = null;
-
     private GridView gridview;
     private TextView bibledata;
     private EditText addnote;
@@ -130,7 +128,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected static final int EDITNOTE = 15;
     protected static final int INIT = 16;
 
-    private boolean showzoom = true;
     private boolean red = true;
     private boolean shangti = false;
     private boolean xlink = false;
@@ -187,12 +184,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     showHeader(!fullscreen);
                     showView(R.id.progress, false);
                     showView(R.id.webview, true);
-                    break;
-                case SHOWZOOM:
-                    if (mZoomButtonsController != null) {
-                        mZoomButtonsController.setZoomOutEnabled(fontsize > FONTSIZE_MIN);
-                        mZoomButtonsController.setZoomInEnabled(fontsize < FONTSIZE_MAX);
-                    }
                     break;
                 case CHECKBIBLEDATA:
                     showHeader(false);
@@ -290,33 +281,33 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         title.append(")");
         new AlertDialog.Builder(Chapter.this).setTitle(title)
-            .setMessage(Html.fromHtml(note.content))
-            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (webview != null) {
-                        webview.loadUrl("javascript:select('" + note.verses + "');");
+                .setMessage(Html.fromHtml(note.content))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (webview != null) {
+                            webview.loadUrl("javascript:select('" + note.verses + "');");
+                        }
                     }
-                }
-            })
-            .setNeutralButton(R.string.editnote, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    noteverses = note.verses;
-                    handler.sendMessage(handler.obtainMessage(EDITNOTE, note.content));
-                }
-            })
-            .setNegativeButton(R.string.deletenote, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // dont pop up a new note
-                    bible.deleteNote(note);
-                    if (webview != null) {
-                        webview.loadUrl("javascript:addnote('" + note.verse + "', false);");
+                })
+                .setNeutralButton(R.string.editnote, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        noteverses = note.verses;
+                        handler.sendMessage(handler.obtainMessage(EDITNOTE, note.content));
                     }
-                }
-            })
-            .show();
+                })
+                .setNegativeButton(R.string.deletenote, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // dont pop up a new note
+                        bible.deleteNote(note);
+                        if (webview != null) {
+                            webview.loadUrl("javascript:addnote('" + note.verse + "', false);");
+                        }
+                    }
+                })
+                .show();
     }
 
     private String noteverses = null;
@@ -362,12 +353,12 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         String body = "";
         String osis = item.book + "." + item.chapter;
         Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
-        Cursor cursor = getContentResolver().query(uri, new String[] { Provider.COLUMN_CONTENT }, null, null, null);
+        Cursor cursor = getContentResolver().query(uri, new String[]{Provider.COLUMN_CONTENT}, null, null, null);
         if (cursor != null) {
             String content = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CONTENT));
             cursor.close();
-            android.util.Log.d(TAG, String.format("verse: %s, end: %s", verse, end));
-            body =  getBody(null, content, item.verse, item.end, false);
+            Log.d(TAG, String.format("verse: %s, end: %s", verse, end));
+            body = getBody(null, content, item.verse, item.end, false);
         }
         return body;
     }
@@ -405,7 +396,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
 
         ArrayList<String> texts = new ArrayList<String>();
-        android.util.Log.d(TAG, "search: " + search);
+        Log.d(TAG, "search: " + search);
         for (OsisItem item : items) {
             String end = item.end;
             if (end != null && end.length() > 0) {
@@ -461,6 +452,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     private volatile boolean initialized = false;
+
     @SuppressLint("SetJavaScriptEnabled")
     private synchronized void init() {
         if (initialized) {
@@ -552,7 +544,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         webview.addJavascriptInterface(new Object() {
             @JavascriptInterface
             public void setVerse(String string) {
-                synchronized(verseLock) {
+                synchronized (verseLock) {
                     verse = string;
                     Log.d(TAG, "verse from javascript: " + verse);
                     verseLock.notifyAll();
@@ -612,7 +604,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 Log.d(TAG, "link: " + link);
                 String annotation = bible.getAnnotation(link);
                 if (annotation != null) {
-                    handler.sendMessage(handler.obtainMessage(SHOWANNOTATION, new String[] {link, annotation}));
+                    handler.sendMessage(handler.obtainMessage(SHOWANNOTATION, new String[]{link, annotation}));
                 }
             }
 
@@ -626,8 +618,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             }
         }, "android");
         webview.getSettings().setBuiltInZoomControls(true);
-        if (!setZoomButtonsController(webview)) {
-            webview.getSettings().setBuiltInZoomControls(false);
+        ZoomButtonsController controller = getZoomButtonsController(webview);
+        if (controller != null) {
+            controller.getContainer().setVisibility(View.GONE);
         }
 
         osis = PreferenceManager.getDefaultSharedPreferences(this).getString("osis", "null");
@@ -649,7 +642,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         if (webview != null && webview.getScrollY() != 0) {
             verse = "";
             webview.loadUrl("javascript:getFirstVisibleVerse();");
-            synchronized(verseLock) {
+            synchronized (verseLock) {
                 if (verse.equals("")) {
                     try {
                         verseLock.wait(3000);
@@ -681,7 +674,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         try {
             cursor = getContentResolver().query(uri, null, null, null, null);
         } catch (SQLiteException e) {
-            handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[] {"", getString(R.string.queryerror) }));
+            handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[]{"", getString(R.string.queryerror)}));
             return;
         } catch (Exception e) {
         } catch (Error e) {
@@ -703,7 +696,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 bible.loadNotes(osis);
             }
 
-            handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[] {human + " | " + version, content}));
+            handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[]{human + " | " + version, content}));
         } else {
             changeVersion = false;
             Log.d(TAG, "no such chapter, try first chapter");
@@ -712,7 +705,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 uri = nulluri;
                 showUri();
             } else {
-                handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[] {"", getString(R.string.queryerror) }));
+                handler.sendMessage(handler.obtainMessage(SHOWCONTENT, new String[]{"", getString(R.string.queryerror)}));
             }
         }
     }
@@ -812,7 +805,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
         Log.d(TAG, "will update fontsize " + fontsize + ", scale: " + scale + ", defaultScale: " + defaultScale);
         if (pinch && defaultScale != 0.0f) {
-            fontsize = (int)(fontsize * scale / defaultScale);
+            fontsize = (int) (fontsize * scale / defaultScale);
         }
         if (fontsize < FONTSIZE_MIN) {
             fontsize = FONTSIZE_MIN;
@@ -978,31 +971,31 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                         unhighlight = selectverse;
                     }
                     areYouSure(getString(R.string.deletehighlight, unhighlight), null,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                copytext = "";
-                                v.setSelected(false);
-                                if ("".equals(selectverse)) {
-                                    if (highlighted != null && highlighted.length() > 0) {
-                                        webview.loadUrl("javascript:highlight('" + highlighted + "', false);");
-                                    }
-                                } else {
-                                    webview.loadUrl("javascript:highlight('" + selectverse + "', false);");
-                                }
-                            }
-                        });
-                } else if (!v.isSelected() && !"".equals(selectverse)) {
-                    if (!annotation_local_noticed) {
-                        areYouSure(getString(R.string.annotation), getString(R.string.annotation_local),
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    annotation_local_noticed = true;
-                                    final Editor editor = PreferenceManager.getDefaultSharedPreferences(Chapter.this).edit();
-                                    editor.putBoolean("annotation_local_noticed", true).commit();
+                                    copytext = "";
+                                    v.setSelected(false);
+                                    if ("".equals(selectverse)) {
+                                        if (highlighted != null && highlighted.length() > 0) {
+                                            webview.loadUrl("javascript:highlight('" + highlighted + "', false);");
+                                        }
+                                    } else {
+                                        webview.loadUrl("javascript:highlight('" + selectverse + "', false);");
+                                    }
                                 }
-                            }
+                            });
+                } else if (!v.isSelected() && !"".equals(selectverse)) {
+                    if (!annotation_local_noticed) {
+                        areYouSure(getString(R.string.annotation), getString(R.string.annotation_local),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        annotation_local_noticed = true;
+                                        final Editor editor = PreferenceManager.getDefaultSharedPreferences(Chapter.this).edit();
+                                        editor.putBoolean("annotation_local_noticed", true).commit();
+                                    }
+                                }
                         );
                     }
                     v.setSelected(true);
@@ -1037,6 +1030,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     /**
      * get single verse from possible verses
+     *
      * @param verses
      * @return verse
      */
@@ -1080,13 +1074,14 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     private int getMatt() {
         int matt = bible.getPosition(Bible.TYPE.OSIS, "Matt");
         if (matt > 0 && matt * 2 > bible.getCount(Bible.TYPE.OSIS)) {
-                return matt;
+            return matt;
         } else {
-                return -1;
+            return -1;
         }
     }
 
     private static final String splitter = "!";
+
     private String getBook(int pos) {
         if (pos == -1) {
             return "";
@@ -1138,7 +1133,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 version = bible.getVersion();
                 Log.d(TAG, "version=" + version);
                 selected = version + splitter + bible.getVersionFullname(version);
-                for (String string: bible.get(Bible.TYPE.VERSION)) {
+                for (String string : bible.get(Bible.TYPE.VERSION)) {
                     Log.d(TAG, "add version " + string);
                     adapter.add(string + splitter + bible.getVersionFullname(string));
                 }
@@ -1147,7 +1142,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             case R.id.items:
                 gridview.setNumColumns(1);
                 Log.d(TAG, "version=" + version);
-                for (OsisItem item: items) {
+                for (OsisItem item : items) {
                     adapter.add(formatOsisItem(item));
                 }
                 adapter.add(getString(R.string.otherbook));
@@ -1212,7 +1207,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                             bible.setVersion(version);
                             fontsize = sp.getInt("fontsize-" + version, fontsize);
                             uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).fragment(version).build();
-                            showzoom = true;
                             changeVersion = true;
                             showUri();
                         }
@@ -1242,6 +1236,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
 
     private static volatile boolean synced = false;
     private static volatile boolean notifySync = false;
+
     private void resume() {
         String wanted = "";
         String current = null;
@@ -1308,7 +1303,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         justify = sp.getBoolean(Settings.JUSTIFY, true);
         pinch = sp.getBoolean(Settings.PINCH, true);
         fontsize = sp.getInt(Settings.FONTSIZE + "-" + version, 0);
-        annotation_local_noticed = sp.getBoolean("annotation_local_noticed",  false);
+        annotation_local_noticed = sp.getBoolean("annotation_local_noticed", false);
         if (fontsize == 0) {
             fontsize = sp.getInt(Settings.FONTSIZE, FONTSIZE_MED);
         }
@@ -1320,7 +1315,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         showView(R.id.version, true);
         if (items == null || items.size() == 0) {
-            android.util.Log.d(TAG, "items: " + sp.getString("items", null));
+            Log.d(TAG, "items: " + sp.getString("items", null));
             items = OsisItem.parseSearch(sp.getString("items", null), this);
             this.index = sp.getInt("index", 0);
         }
@@ -1351,17 +1346,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent e){
-        boolean bottom = false;
-        if (showzoom && webview.getScrollY() * 3 / 2 >= webview.getContentHeight() * getScale(webview) - webview.getHeight()) {
-            bottom = true;
-        }
-        if (showzoom && !bottom) {
-            setDisplayZoomControls(true);
-        } else {
-            setDisplayZoomControls(false);
-        }
-
+    public boolean dispatchTouchEvent(MotionEvent e) {
         // getActionMasked since api-8
         switch (e.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_CANCEL:
@@ -1395,7 +1380,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         return false;
     }
 
-   ZoomButtonsController getZoomButtonsController(WebView webview) {
+    ZoomButtonsController getZoomButtonsController(WebView webview) {
         Object mZoomManager;
         Object mProvider = Bible.getField(webview, "mProvider");
         // since api-16
@@ -1437,65 +1422,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         return null;
     }
 
-    private class ZoomListener implements ZoomButtonsController.OnZoomListener {
-
-        @Override
-        public void onVisibilityChanged(boolean visible) {
-            if (visible) {
-                handler.sendEmptyMessageDelayed(SHOWZOOM, 0);
-            } else {
-                showzoom = false;
-            }
-        }
-
-        @Override
-        public void onZoom(boolean zoomIn) {
-            if (!showzoom) {
-                return;
-            }
-            if (fontsize == FONTSIZE_MIN && !zoomIn) {
-                return;
-            }
-            if (fontsize == FONTSIZE_MAX && zoomIn) {
-                return;
-            }
-            fontsize += (zoomIn ? 1 : -1);
-            Log.d(TAG, "update fontsize to " + fontsize + ", zoomIn: " + zoomIn);
-            uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
-            showUri();
-            handler.sendEmptyMessageDelayed(SHOWZOOM, 250);
-        }
-    }
-
-    private boolean setZoomButtonsController(WebView webview) {
-        if (mZoomButtonsController == null) {
-            setListener = false;
-            mZoomButtonsController = getZoomButtonsController(webview);
-            Log.d(TAG, "mZoomButtonsController: " + mZoomButtonsController);
-        }
-
-        if (mZoomButtonsController != null) {
-            if (!setListener) {
-                mZoomButtonsController.setOnZoomListener(new ZoomListener());
-                setListener = true;
-            }
-            mZoomButtonsController.setZoomOutEnabled(fontsize > FONTSIZE_MIN);
-            mZoomButtonsController.setZoomInEnabled(fontsize < FONTSIZE_MAX);
-            return true;
-        }
-
-        return false;
-    }
-
-    private void setDisplayZoomControls(boolean enable) {
-        if (mZoomButtonsController != null) {
-            mZoomButtonsController.getContainer().setVisibility(enable ? View.VISIBLE : View.GONE);
-            if (enable) {
-                handler.sendEmptyMessageDelayed(SHOWZOOM, 250);
-            }
-        }
-    }
-
     private void setGestureDetector() {
         mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -1518,9 +1444,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
                 if (gridviewid != 0 && !isInside(R.id.items, e)
-                    && !isInside(R.id.book, e)
-                    && !isInside(R.id.chapter, e)
-                    && !isInside(R.id.version, e)) {
+                        && !isInside(R.id.book, e)
+                        && !isInside(R.id.chapter, e)
+                        && !isInside(R.id.version, e)) {
                     handler.sendEmptyMessage(HIDEGRID);
                 }
                 return false;
@@ -1535,9 +1461,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     }
 
     boolean fullscreen = false;
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected void toggleFullScreen() {
-        android.util.Log.d(TAG, "toggleFullScreen");
+        Log.d(TAG, "toggleFullScreen");
         int flag;
         Window window = getWindow();
         if (Build.VERSION.SDK_INT < 16) {
@@ -1569,7 +1496,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         View view = header.findViewById(viewId);
         view.getLocationOnScreen(position);
         if (rawX < position[0] || rawX > position[0] + view.getWidth() ||
-            rawY < position[1] || rawY > position[1] + view.getHeight()) {
+                rawY < position[1] || rawY > position[1] + view.getHeight()) {
             return false;
         }
         return true;
@@ -1838,38 +1765,38 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     public boolean onItemLongClick(AdapterView<?> parent, View view, int pos, long id) {
         gridview.setVisibility(View.GONE);
         switch (gridviewid) {
-        case R.id.version:
-            if (bible.getCount(Bible.TYPE.VERSION) == 1) {
+            case R.id.version:
+                if (bible.getCount(Bible.TYPE.VERSION) == 1) {
+                    return false;
+                }
+                if (bible.isDemoVersion(version)) {
+                    return false;
+                }
+                if (pos >= bible.getCount(Bible.TYPE.VERSION)) {
+                    return false;
+                }
+                if (bible.get(Bible.TYPE.VERSION, pos).equals(bible.getVersion())) {
+                    return false;
+                }
+                final String delete = bible.get(Bible.TYPE.VERSION, pos);
+                areYouSure(getString(R.string.deleteversion, bible.getVersionName(delete)),
+                        getString(R.string.deleteversiondetail, bible.getVersionFullname(delete)),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                bible.deleteVersion(delete);
+                                versionView.performClick();
+                            }
+                        });
+                return true;
+            default:
                 return false;
-            }
-            if (bible.isDemoVersion(version)) {
-                return false;
-            }
-            if (pos >= bible.getCount(Bible.TYPE.VERSION)) {
-                return false;
-            }
-            if (bible.get(Bible.TYPE.VERSION, pos).equals(bible.getVersion())) {
-                return false;
-            }
-            final String delete = bible.get(Bible.TYPE.VERSION, pos);
-            areYouSure(getString(R.string.deleteversion, bible.getVersionName(delete)),
-                    getString(R.string.deleteversiondetail, bible.getVersionFullname(delete)),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            bible.deleteVersion(delete);
-                            versionView.performClick();
-                        }
-                    });
-            return true;
-        default:
-            return false;
         }
     }
 
     private void setFont(TextView textView) {
         if (font == null) {
-            android.util.Log.d(TAG, "font is null");
+            Log.d(TAG, "font is null");
             font = new File(new File(new File(new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data"), getPackageName()), "files"), "custom.ttf");
         }
         if (font.exists()) {

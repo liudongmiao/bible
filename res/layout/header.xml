@@ -3,62 +3,59 @@
     android:id="@+id/header"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/reading"
         android:layout_width="fill_parent"
         android:layout_height="48dp"
         android:orientation="horizontal"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/items"
             style="@style/button"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:ellipsize="middle"
             android:singleLine="true"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/book"
             style="@style/button"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:ellipsize="middle"
             android:singleLine="true"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/chapter"
             style="@style/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            />
+            android:layout_gravity="center_vertical"
+            android:visibility="gone" />
 
         <View
             android:id="@+id/extra"
             android:layout_width="0dp"
-            android:layout_weight="100"
             android:layout_height="wrap_content"
-            />
+            android:layout_weight="100" />
 
         <TextView
             android:id="@+id/version"
             style="@style/button"
-            android:textAllCaps="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            />
+            android:layout_gravity="center_vertical"
+            android:textAllCaps="true"
+            android:visibility="visible" />
     </LinearLayout>
 
     <LinearLayout
@@ -66,8 +63,7 @@
         android:layout_width="fill_parent"
         android:layout_height="48dp"
         android:orientation="horizontal"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/back"
@@ -76,8 +72,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:contentDescription="@android:string/cancel"
-            android:src="@drawable/ic_menu_back"
-            />
+            android:src="@drawable/ic_menu_back" />
 
         <TextView
             android:id="@+id/selected"
@@ -85,10 +80,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:gravity="center"
             android:ellipsize="middle"
-            android:singleLine="true"
-            />
+            android:gravity="center"
+            android:singleLine="true" />
 
         <ImageView
             android:id="@+id/bookmark"
@@ -97,8 +91,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:contentDescription="@string/bookmark"
-            android:src="@drawable/star"
-            />
+            android:src="@drawable/star" />
 
         <ImageView
             android:id="@+id/note"
@@ -107,8 +100,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:contentDescription="@string/note"
-            android:src="@drawable/ic_menu_note"
-            />
+            android:src="@drawable/ic_menu_note" />
 
         <ImageView
             android:id="@+id/share"
@@ -117,8 +109,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:contentDescription="@string/share"
-            android:src="@drawable/ic_menu_share"
-            />
+            android:src="@drawable/ic_menu_share" />
 
     </LinearLayout>
 

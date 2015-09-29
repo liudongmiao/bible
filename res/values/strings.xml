@@ -66,10 +66,8 @@
     <string name="checkversion">Auto-refresh version list?</string>
     <string name="checkversion_detail">It\'s recommended to choose <b>%1$s</b>, which will cost you little data usage every time. You can change it on Settings page.</string>
     <string name="download">Download</string>
-    <string name="download_yes">Dismiss warning</string>
-    <string name="download_no">Warning</string>
-    <string name="download_detail">Download will cost you data usage.\n\nDismiss warning?</string>
     <string name="update">Update</string>
     <string name="about_source">Source code: %s</string>
     <string name="about_libraries">Use libraries: %s</string>
+    <string name="new_version">Added new version: %s</string>
 </resources>

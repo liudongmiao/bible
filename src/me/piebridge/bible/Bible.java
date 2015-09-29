@@ -13,41 +13,6 @@
 
 package me.piebridge.bible;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
@@ -70,9 +35,37 @@ import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
+import android.widget.Toast;
 
-public class Bible
-{
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+public class Bible {
 
     private final static String TAG = "me.piebridge.bible$Bible";
 
@@ -108,8 +101,8 @@ public class Bible
 
     private LinkedHashMap<String, String> allhuman = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> allosis = new LinkedHashMap<String, String>();
-    private LinkedHashMap<String, String> searchfull = new LinkedHashMap<String, String>();;
-    private LinkedHashMap<String, String> searchshort = new LinkedHashMap<String, String>();;
+    private LinkedHashMap<String, String> searchfull = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> searchshort = new LinkedHashMap<String, String>();
 
     private Collator collator;
     private Locale lastLocale;
@@ -123,7 +116,7 @@ public class Bible
     private Bible(Context context) {
         Log.d(TAG, "init bible");
         mContext = context;
-        SharedPreferences preferences = mContext.getSharedPreferences(HUMAN_PREFERENCE, Context.MODE_MULTI_PROCESS);
+        SharedPreferences preferences = mContext.getSharedPreferences(HUMAN_PREFERENCE, 0);
         for (Entry<String, ?> entry : preferences.getAll().entrySet()) {
             allhuman.put(entry.getKey(), String.valueOf(entry.getValue()));
         }
@@ -164,14 +157,23 @@ public class Bible
         }
         int chapter = value / 1000;
         int verse = value - chapter * 1000;
-        return new int[] {chapter, verse};
+        return new int[]{chapter, verse};
+    }
+
+    private File getPath(File[] dirs) {
+        File path = dirs[dirs.length - 1];
+        if (path == null) {
+            return dirs[0];
+        } else {
+            return path;
+        }
     }
 
     private int checkVersionsSync(boolean all) {
         List<String> newVersions = new ArrayList<String>();
         Map<String, String> newVersionpaths = new HashMap<String, String>();
-        File path = getExternalFilesDirWrapper();
-        if (path == null) {
+        File[] dirs = getExternalFilesDirWrapper();
+        if (dirs.length == 0) {
             checkInternalVersions(newVersions, newVersionpaths, all);
             synchronized (versionsLock) {
                 mtime.clear();
@@ -182,6 +184,7 @@ public class Bible
             }
             return versions.size();
         }
+        File path = getPath(dirs);
         File oldpath = new File(Environment.getExternalStorageDirectory(), ".piebridge");
         Long oldmtime = mtime.get(path.getAbsolutePath());
         if (oldmtime == null) {
@@ -192,7 +195,11 @@ public class Bible
             return versions.size();
         }
         checkVersion(oldpath, newVersions, newVersionpaths, all);
-        checkVersion(path, newVersions, newVersionpaths, all);
+        for (File dir : dirs) {
+            if (dir != null) {
+                checkVersion(dir, newVersions, newVersionpaths, all);
+            }
+        }
         Collections.sort(newVersions, new Comparator<String>() {
             @Override
             public int compare(String item1, String item2) {
@@ -256,7 +263,7 @@ public class Bible
             int oldsize = allhuman.size();
             setMetadata(database, databaseVersion, true);
             if (allhuman.size() > oldsize) {
-                SharedPreferences.Editor editor = mContext.getSharedPreferences(HUMAN_PREFERENCE, Context.MODE_MULTI_PROCESS).edit();
+                SharedPreferences.Editor editor = mContext.getSharedPreferences(HUMAN_PREFERENCE, 0).edit();
                 for (Entry<String, String> entry : allhuman.entrySet()) {
                     editor.putString(entry.getKey(), entry.getValue());
                 }
@@ -294,11 +301,13 @@ public class Bible
             return new File(path);
         } else {
             File file;
-            file = getFile(getExternalFilesDirWrapper(), version);
-            Log.d(TAG, "version: " + version);
-            if (file != null) {
-                versionpaths.put(version, file.getAbsolutePath());
-                return file;
+            for (File dir : getExternalFilesDirWrapper()) {
+                file = getFile(dir, version);
+                Log.d(TAG, "version: " + version);
+                if (file != null) {
+                    versionpaths.put(version, file.getAbsolutePath());
+                    return file;
+                }
             }
             file = getFile(new File(Environment.getExternalStorageDirectory(), ".piebridge"), version);
             if (file != null) {
@@ -334,8 +343,8 @@ public class Bible
                 // select group_concat(replace(reference_osis, "Gen.", "")) as osis from chapters where reference_osis like 'Gen.%';
                 try {
                     cursor_chapter = metadata.query(Provider.TABLE_CHAPTERS,
-                            new String[] { "group_concat(replace(reference_osis, \"" + osis + ".\", \"\")) as osis" },
-                            "reference_osis like ?", new String[] { osis + ".%" }, null, null, null);
+                            new String[]{"group_concat(replace(reference_osis, \"" + osis + ".\", \"\")) as osis"},
+                            "reference_osis like ?", new String[]{osis + ".%"}, null, null, null);
                     if (cursor_chapter.moveToNext()) {
                         // we have only one column
                         chapter = sortChapter(cursor_chapter.getString(0));
@@ -413,23 +422,26 @@ public class Bible
             }
             try {
                 (new File(file, ".nomedia")).createNewFile();
-            } catch (java.io.IOException ioe) {
+            } catch (IOException ioe) {
             }
         }
         return file;
     }
 
-    private File getExternalFilesDirWrapper() {
+    private File[] getExternalFilesDirWrapper() {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) || mContext == null) {
             Log.d(TAG, "not mounted, mContext = " + mContext);
-            return null;
+            return new File[0];
         }
         try {
-            Method method = Context.class.getMethod("getExternalFilesDir", new Class[] {String.class});
-            return (File) method.invoke(mContext, new Object[] {null});
-        } catch (Exception e) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                return mContext.getExternalFilesDirs(null);
+            } else {
+                return new File[]{mContext.getExternalFilesDir(null)};
+            }
+        } catch (NoSuchMethodError e) {
             Log.d(TAG, "internal getExternalFilesDir");
-            return getExternalFilesDir();
+            return new File[]{getExternalFilesDir()};
         }
     }
 
@@ -495,8 +507,8 @@ public class Bible
 
     private String getVersionMetadata(String name, SQLiteDatabase metadata, String defaultValue) {
         String value = defaultValue;
-        Cursor cursor = metadata.query("metadata", new String[] { "value" },
-                "name = ? or name = ?", new String[] { name, name + "_" + Locale.getDefault().toString() },
+        Cursor cursor = metadata.query("metadata", new String[]{"value"},
+                "name = ? or name = ?", new String[]{name, name + "_" + Locale.getDefault().toString()},
                 null, null, "name desc", "1");
         while (cursor != null && cursor.moveToNext()) {
             value = cursor.getString(cursor.getColumnIndexOrThrow("value"));
@@ -528,14 +540,14 @@ public class Bible
 
     private void setResourceValues(HashMap<String, String> map, int resId) {
         map.clear();
-        for (String entry: mContext.getResources().getStringArray(resId)) {
+        for (String entry : mContext.getResources().getStringArray(resId)) {
             String[] strings = entry.split("\\|", 2);
             map.put(strings[0], strings[1]);
         }
     }
 
     private void setResourceValuesReverse(HashMap<String, String> map, int resId) {
-        for (String entry: mContext.getResources().getStringArray(resId)) {
+        for (String entry : mContext.getResources().getStringArray(resId)) {
             String[] strings = entry.split("\\|", 2);
             if (strings.length > 1) {
                 map.put(strings[1], strings[0]);
@@ -606,10 +618,10 @@ public class Bible
 
         try {
             int length;
-            byte [] buffer = new byte[8192];
+            byte[] buffer = new byte[8192];
             OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
             InputStream is = mContext.getResources().openRawResource(resId);
-            while((length = is.read(buffer)) >= 0) {
+            while ((length = is.read(buffer)) >= 0) {
                 os.write(buffer, 0, length);
             }
             is.close();
@@ -635,8 +647,8 @@ public class Bible
 
         book = book.toLowerCase(Locale.US).replace(" ", "");
         // prefer fullname
-        for (LinkedHashMap<String, String> map: maps) {
-            for (Entry<String, String> entry: map.entrySet()) {
+        for (LinkedHashMap<String, String> map : maps) {
+            for (Entry<String, String> entry : map.entrySet()) {
                 if (entry.getKey().toLowerCase(Locale.US).replace(" ", "").equals(book)) {
                     return entry.getValue();
                 }
@@ -644,8 +656,8 @@ public class Bible
         }
 
         // prefer startswith
-        for (LinkedHashMap<String, String> map: maps) {
-            for (Entry<String, String> entry: map.entrySet()) {
+        for (LinkedHashMap<String, String> map : maps) {
+            for (Entry<String, String> entry : map.entrySet()) {
                 if (entry.getKey().toLowerCase(Locale.US).replace(" ", "").startsWith(book)) {
                     return entry.getValue();
                 }
@@ -653,8 +665,8 @@ public class Bible
         }
 
         // prefer contains
-        for (LinkedHashMap<String, String> map: maps) {
-            for (Entry<String, String> entry: map.entrySet()) {
+        for (LinkedHashMap<String, String> map : maps) {
+            for (Entry<String, String> entry : map.entrySet()) {
                 if (entry.getKey().toLowerCase(Locale.US).replace(" ", "").contains(book)) {
                     return entry.getValue();
                 }
@@ -676,6 +688,7 @@ public class Bible
         }
         return maps;
     }
+
     /*
      * 根据book获取osis，用于查询
      *
@@ -747,6 +760,7 @@ public class Bible
         }
         return false;
     }
+
     /*
      * 根据book获取多个osiss，可能用于查询
      *
@@ -766,22 +780,22 @@ public class Bible
 
         ArrayList<Entry<String, String>> maps = new ArrayList<Entry<String, String>>();
 
-        for (Entry<String, String> entry: searchshort.entrySet()) {
+        for (Entry<String, String> entry : searchshort.entrySet()) {
             maps.add(entry);
         }
 
-        for (Entry<String, String> entry: searchfull.entrySet()) {
+        for (Entry<String, String> entry : searchfull.entrySet()) {
             maps.add(entry);
         }
 
-        for (LinkedHashMap<String, String> map: getMaps(TYPE.HUMAN)) {
-            for (Entry<String, String> entry: map.entrySet()) {
+        for (LinkedHashMap<String, String> map : getMaps(TYPE.HUMAN)) {
+            for (Entry<String, String> entry : map.entrySet()) {
                 maps.add(entry);
             }
         }
 
-        for (LinkedHashMap<String, String> map: getMaps(TYPE.OSIS)) {
-            for (Entry<String, String> entry: map.entrySet()) {
+        for (LinkedHashMap<String, String> map : getMaps(TYPE.OSIS)) {
+            for (Entry<String, String> entry : map.entrySet()) {
                 maps.add(entry);
             }
         }
@@ -793,25 +807,25 @@ public class Bible
             return osiss;
         }
 
-        for (Entry<String, String> entry: maps) {
+        for (Entry<String, String> entry : maps) {
             if (checkStartSuggest(osiss, entry.getValue(), entry.getValue(), book, limit)) {
                 return osiss;
             }
         }
 
-        for (Entry<String, String> entry: maps) {
+        for (Entry<String, String> entry : maps) {
             if (checkContainSuggest(osiss, entry.getValue(), entry.getValue(), book, limit)) {
                 return osiss;
             }
         }
 
-        for (Entry<String, String> entry: maps) {
+        for (Entry<String, String> entry : maps) {
             if (checkStartSuggest(osiss, entry.getKey(), entry.getValue(), book, limit)) {
                 return osiss;
             }
         }
 
-        for (Entry<String, String> entry: maps) {
+        for (Entry<String, String> entry : maps) {
             if (checkContainSuggest(osiss, entry.getKey(), entry.getValue(), book, limit)) {
                 return osiss;
             }
@@ -827,7 +841,7 @@ public class Bible
                 chapter = item.chapter;
             }
         } else if (osiss.size() == 1) {
-            for (Entry<String, String> entry: osiss.entrySet()) {
+            for (Entry<String, String> entry : osiss.entrySet()) {
                 osis = entry.getValue();
                 chapter = "0";
             }
@@ -942,6 +956,7 @@ public class Bible
 
     private volatile boolean checking = false;
     private volatile boolean checked = false;
+
     public void checkBibleData(boolean block, final Runnable run) {
         checking = true;
         if (block && !checked) {
@@ -972,15 +987,19 @@ public class Bible
         Log.d(TAG, "checking zipdata " + path.getAbsolutePath());
         for (String name : path.list()) {
             if (name.startsWith("bibledata-") && name.endsWith("zip")) {
-                try {
-                    unpackZip(new File(path, name));
-                } catch (IOException e) {
-                } catch (Exception e) {
-                    Log.e(TAG, "unpackZip", e);
-                }
+                checkZipPath(new File(path, name));
             }
         }
         return true;
+    }
+
+    public void checkZipPath(File path) {
+        try {
+            unpackZip(path);
+        } catch (IOException e) {
+        } catch (Exception e) {
+            Log.e(TAG, "unpackZip", e);
+        }
     }
 
     private boolean unpackZip(File path) throws IOException {
@@ -988,15 +1007,8 @@ public class Bible
             return false;
         }
 
-        File dirpath = getExternalFilesDirWrapper();
-
-        // bibledata-zh-cn-version.zip
-        String filename = path.getAbsolutePath();
-        int sep = filename.lastIndexOf("-");
-        if (sep != -1) {
-            filename = filename.substring(sep + 1, filename.length() - 4);
-        }
-        filename += ".sqlite3";
+        File[] dirs = getExternalFilesDirWrapper();
+        File dirpath = getPath(dirs);
 
         InputStream is = new FileInputStream(path);
         long fileSize = path.length();
@@ -1013,7 +1025,7 @@ public class Bible
                 if (zename == null || !zename.endsWith((".sqlite3"))) {
                     continue;
                 }
-                sep = zename.lastIndexOf(File.separator);
+                int sep = zename.lastIndexOf(File.separator);
                 if (sep != -1) {
                     zename = zename.substring(sep + 1);
                 }
@@ -1050,6 +1062,10 @@ public class Bible
                 } else {
                     tmpfile.renameTo(file);
                     path.delete();
+                    if (!versionpaths.containsKey(version)) {
+                        String text = mContext.getString(R.string.new_version, version.toUpperCase(Locale.US));
+                        Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
+                    }
                     return true;
                 }
             }
@@ -1097,7 +1113,8 @@ public class Bible
                 if (versionpaths.containsKey(version)) {
                     file = new File(versionpaths.get(version));
                 } else {
-                    file = new File(getExternalFilesDirWrapper(), version + ".sqlite3");
+                    File[] dirs = getExternalFilesDirWrapper();
+                    file = new File(getPath(dirs), version + ".sqlite3");
                 }
                 if (file.exists() && !file.isFile()) {
                     file.delete();
@@ -1114,7 +1131,7 @@ public class Bible
     }
 
     private boolean unpackRaw(Resources resources, boolean newVersion, int resid, File file) {
-        if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             return false;
         }
 
@@ -1129,12 +1146,12 @@ public class Bible
 
         try {
             int length;
-            byte [] buffer = new byte[8192];
+            byte[] buffer = new byte[8192];
             File tmpfile = new File(file.getAbsolutePath() + ".tmp");
             OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpfile));
-            for (int i=0; i<20; i++) {
+            for (int i = 0; i < 20; i++) {
                 InputStream is = resources.openRawResource(resid + i);
-                while((length = is.read(buffer)) >= 0) {
+                while ((length = is.read(buffer)) >= 0) {
                     os.write(buffer, 0, length);
                 }
                 is.close();
@@ -1193,7 +1210,7 @@ public class Bible
         SQLiteDatabase metadata = null;
         try {
             metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
-                SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+                    SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
             String dataversion = version.replace("demo", "");
             if (!versionFullnames.containsKey(version)) {
                 versionFullnames.put(version, getVersionMetadata("fullname", metadata, dataversion));
@@ -1263,41 +1280,50 @@ public class Bible
         return json;
     }
 
-    String getRemoteVersions() throws ClientProtocolException, IOException {
-        HttpClient client = new DefaultHttpClient();
-        SharedPreferences sp = mContext.getSharedPreferences("json", Context.MODE_MULTI_PROCESS);
+    @SuppressWarnings("deprecation")
+    String getRemoteVersions() throws IOException {
+        org.apache.http.client.HttpClient client = new org.apache.http.impl.client.DefaultHttpClient();
+
+        SharedPreferences sp = mContext.getSharedPreferences("json", 0);
         String etag = sp.getString(JSON + "_etag", null);
-        HttpGet get = new HttpGet(Bible.BIBLEDATA_PREFIX + JSON);
+
+        org.apache.http.client.methods.HttpGet get = new org.apache.http.client.methods.HttpGet(Bible.BIBLEDATA_PREFIX + JSON);
         if (etag != null) {
             get.addHeader("If-None-Match", etag);
         }
-        HttpResponse response = client.execute(get);
+        org.apache.http.HttpResponse response = client.execute(get);
         if (response.getStatusLine().getStatusCode() == 304) {
             Log.d(TAG, JSON + " not modified");
             return null;
         }
+
         InputStream is = response.getEntity().getContent();
         String json = getStringFromInputStream(is);
         is.close();
+
         try {
             new JSONObject(json);
         } catch (JSONException e) {
             Log.d(TAG, "json: " + json);
             return null;
         }
-        try {
-            Header header = response.getFirstHeader("ETag");
-            if (header != null) {
-                sp.edit().putString(JSON + "_etag", header.getValue()).commit();
-            }
-            File tmpfile = new File(mContext.getFilesDir(), JSON + ".tmp");
-            OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpfile));
-            os.write(json.getBytes("UTF-8"));
-            os.close();
-            tmpfile.renameTo(new File(mContext.getFilesDir(), JSON));
-        } catch (IOException e) {
+
+        org.apache.http.Header header = response.getFirstHeader("ETag");
+        if (header != null) {
+            saveJson(sp, header.getValue(), json);
         }
         return json;
+    }
+
+    private void saveJson(SharedPreferences sp, String header, String json) throws IOException {
+        if (header != null) {
+            sp.edit().putString(JSON + "_etag", header).commit();
+        }
+        File file = new File(mContext.getFilesDir(), JSON + ".tmp");
+        OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+        os.write(json.getBytes("UTF-8"));
+        os.close();
+        file.renameTo(new File(mContext.getFilesDir(), JSON));
     }
 
     String getStringFromInputStream(InputStream is) throws IOException {
@@ -1344,8 +1370,8 @@ public class Bible
         }
         Cursor cursor = null;
         try {
-            cursor = database.query("annotations", new String[] { "link", "content" }, "osis = ?",
-                    new String[] { osis }, null, null, null, null);
+            cursor = database.query("annotations", new String[]{"link", "content"}, "osis = ?",
+                    new String[]{osis}, null, null, null, null);
             while (cursor.moveToNext()) {
                 String link = cursor.getString(0);
                 String content = cursor.getString(1);
@@ -1369,6 +1395,7 @@ public class Bible
 
     /**
      * load notes, called when osis is changed
+     *
      * @param osis book.chapter
      */
     public void loadNotes(String osis) {
@@ -1390,8 +1417,8 @@ public class Bible
 
         Cursor cursor = null;
         try {
-            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, "osis = ? and type = ?", new String[] {
-                    osis, "note" }, null, null, null);
+            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, "osis = ? and type = ?", new String[]{
+                    osis, "note"}, null, null, null);
             while (cursor != null && cursor.moveToNext()) {
                 long id = cursor.getInt(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_ID));
                 String verse = cursor.getString(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_VERSE));
@@ -1477,6 +1504,7 @@ public class Bible
 
     /**
      * get a list of verse for osis, called when the reading page refresh.
+     *
      * @param osis book.chapter
      * @return
      */
@@ -1492,7 +1520,8 @@ public class Bible
 
     /**
      * get notes for book.cpater.verse
-     * @param osis book.chapter
+     *
+     * @param osis  book.chapter
      * @param verse the verse is one of the result in {@link #getNoteVerses(String)}
      * @return note
      * @see {@link #getNoteVerses(String)}
@@ -1509,8 +1538,9 @@ public class Bible
 
     /**
      * save the note for book.chapter.verse
-     * @param osis book.chapter
-     * @param verse verse, normally number
+     *
+     * @param osis    book.chapter
+     * @param verse   verse, normally number
      * @param content note content
      * @return true if saved, false if not
      */
@@ -1524,7 +1554,7 @@ public class Bible
         } else if (!note.update(verses, content)) {
             return false;
         }
-        notes.put(verse,  note);
+        notes.put(verse, note);
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         if (!isDatabaseIntegrityOk(db)) {
             File path = mContext.getDatabasePath(AnnotationsDatabaseHelper.DATABASE_NAME);
@@ -1541,7 +1571,7 @@ public class Bible
             note.setId(id);
         } else {
             db.update(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, values,
-                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?", new String[] { String.valueOf(id) });
+                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
         }
         return true;
     }
@@ -1555,13 +1585,14 @@ public class Bible
             return true;
         }
         db.delete(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, AnnotationsDatabaseHelper.COLUMN_ID + " = ?",
-                new String[] { String.valueOf(note.getId()) });
+                new String[]{String.valueOf(note.getId())});
         notes.remove(note.verse);
         return true;
     }
 
     Long highlightId = null;
     String highlighted = "";
+
     public String getHighlight(String osis) {
         highlightId = null;
         highlighted = "";
@@ -1571,9 +1602,9 @@ public class Bible
         }
         Cursor cursor = null;
         try {
-            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, new String[] {
-                    AnnotationsDatabaseHelper.COLUMN_ID, AnnotationsDatabaseHelper.COLUMN_VERSES },
-                    AnnotationsDatabaseHelper.COLUMN_OSIS + " = ? and " + AnnotationsDatabaseHelper.COLUMN_TYPE + " = ?", new String[] { osis, "highlight" }, null, null, null);
+            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, new String[]{
+                            AnnotationsDatabaseHelper.COLUMN_ID, AnnotationsDatabaseHelper.COLUMN_VERSES},
+                    AnnotationsDatabaseHelper.COLUMN_OSIS + " = ? and " + AnnotationsDatabaseHelper.COLUMN_TYPE + " = ?", new String[]{osis, "highlight"}, null, null, null);
             while (cursor != null && cursor.moveToNext()) {
                 highlightId = cursor.getLong(0);
                 highlighted = cursor.getString(1);
@@ -1608,12 +1639,13 @@ public class Bible
             highlightId = db.insert(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, values);
         } else {
             db.update(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, values,
-                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?", new String[] { String.valueOf(highlightId) });
+                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(highlightId)});
         }
         return true;
     }
 
     private SQLiteOpenHelper mOpenHelper = null;
+
     private class AnnotationsDatabaseHelper extends SQLiteOpenHelper {
 
         private static final int DATABASE_VERSION = 2;
@@ -1645,11 +1677,11 @@ public class Bible
                     COLUMN_CONTENT + " TEXT," +
                     COLUMN_CREATETIME + " DATETIME," +
                     COLUMN_UPDATETIME + " DATETIME" +
-            ");");
+                    ");");
 
             db.execSQL("CREATE INDEX osis_tye ON " + TABLE_ANNOTATIONS + " (" +
                     COLUMN_OSIS + ", " + COLUMN_TYPE +
-            ");");
+                    ");");
         }
 
         @Override

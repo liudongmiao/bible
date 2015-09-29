@@ -1,5 +1,6 @@
 package me.piebridge.bible;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +47,6 @@ import com.emilsjolander.components.stickylistheaders.StickyListHeadersAdapter;
 public class Versions extends Activity {
 
     private static long mtime = 0;
-    private static boolean download = false;
 
     private Bible bible;
     private ListView list;
@@ -141,7 +142,7 @@ public class Versions extends Activity {
             Uri uri = intent.getData();
             final String path = uri.getLastPathSegment();
             if ("file".equals(uri.getScheme()) && path != null && path.startsWith("bibledata")) {
-                handler.sendMessage(handler.obtainMessage(CHECKZIP, path));
+                handler.sendMessage(handler.obtainMessage(CHECKZIP, new File(uri.getPath())));
             }
         }
     }
@@ -150,7 +151,7 @@ public class Versions extends Activity {
 
     @SuppressLint("InlinedApi")
     private void readQueue() {
-        SharedPreferences sp = getSharedPreferences(QUEUE, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS);
+        SharedPreferences sp = getSharedPreferences(QUEUE, Context.MODE_PRIVATE);
         Map<String, ?> map = sp.getAll();
         if (map == null || map.size() == 0) {
             return;
@@ -168,29 +169,27 @@ public class Versions extends Activity {
                 continue;
             }
             switch (info.status) {
-            case DownloadManager.STATUS_PAUSED:
-            case DownloadManager.STATUS_PENDING:
-            case DownloadManager.STATUS_RUNNING:
-                queue.put(key, String.valueOf(value));
-                queue.put(String.valueOf(value), key);
-                break;
-            case DownloadManager.STATUS_FAILED:
-            case DownloadManager.STATUS_SUCCESSFUL:
-            default:
-                break;
+                case DownloadManager.STATUS_PAUSED:
+                case DownloadManager.STATUS_PENDING:
+                case DownloadManager.STATUS_RUNNING:
+                    queue.put(key, String.valueOf(value));
+                    queue.put(String.valueOf(value), key);
+                    break;
+                case DownloadManager.STATUS_FAILED:
+                case DownloadManager.STATUS_SUCCESSFUL:
+                default:
+                    break;
             }
         }
     }
 
-    @SuppressLint("InlinedApi")
     private void saveQueue() {
-        final Editor editor = getSharedPreferences(QUEUE, Context.MODE_PRIVATE | Context.MODE_MULTI_PROCESS).edit();
+        final Editor editor = getSharedPreferences(QUEUE, Context.MODE_PRIVATE).edit();
         editor.clear();
         for (Entry<String, String> entry : queue.entrySet()) {
-            try {
-                long key = Long.parseLong(entry.getKey());
-                editor.putLong(entry.getValue(), key);
-            } catch (NumberFormatException e) {
+            String key = entry.getKey();
+            if (!TextUtils.isEmpty(key) && TextUtils.isDigitsOnly(key)) {
+                editor.putLong(entry.getValue(), Long.parseLong(key));
             }
         }
         editor.commit();
@@ -324,79 +323,80 @@ public class Versions extends Activity {
         @Override
         public boolean handleMessage(final Message msg) {
             switch (msg.what) {
-            case STOP:
-                if (msg.obj != null) {
-                    setVersions((String) msg.obj);
-                }
-                refreshing = false;
-                ((AnimationDrawable) refresh.getDrawable()).stop();
-                return false;
-            case START:
-                Log.d(TAG, "start refresh versions");
-                refreshVersions();
-                refreshing = true;
-                ((AnimationDrawable) refresh.getDrawable()).start();
-                return false;
-            case DELETE:
-                if (bible == null) {
-                    return false;
-                }
-                final String code = (String) msg.obj;
-                Log.d(TAG, "delete " + code);
-                bible.deleteVersion(code);
-                handler.sendMessage(handler.obtainMessage(DELETED, code));
-                return false;
-            case DELETED:
-                Log.d(TAG, "deleted " + msg.obj);
-                final String install = getString(R.string.install);
-                synchronized (versions) {
-                    for (Map<String, String> map : versions) {
-                        if (map.get("code").equalsIgnoreCase((String) msg.obj)) {
-                            map.put("text", install);
-                            map.put("action", install);
-                        }
+                case STOP:
+                    if (msg.obj != null) {
+                        setVersions((String) msg.obj);
                     }
-                }
-                filterVersion(query.getText().toString());
-                adapter.notifyDataSetChanged();
-                return false;
-            case COMPLETE:
-                String uninstall = getString(R.string.uninstall);
-                synchronized (versions) {
-                    for (Map<String, String> map : versions) {
-                        if (completed.size() == 0) {
-                            break;
-                        }
-                        synchronized (completed) {
-                            String version = map.get("code").toUpperCase(Locale.US);
-                            if (completed.containsKey(version)) {
-                                String action;
-                                if (DownloadManager.STATUS_SUCCESSFUL !=  completed.get(version)) {
-                                    action = getString(R.string.install);
-                                } else {
-                                    action = uninstall;
-                                }
-                                map.put("text", action);
-                                map.put("action", action);
-                                completed.remove(version);
+                    refreshing = false;
+                    ((AnimationDrawable) refresh.getDrawable()).stop();
+                    return false;
+                case START:
+                    Log.d(TAG, "start refresh versions");
+                    refreshVersions();
+                    refreshing = true;
+                    ((AnimationDrawable) refresh.getDrawable()).start();
+                    return false;
+                case DELETE:
+                    if (bible == null) {
+                        return false;
+                    }
+                    final String code = (String) msg.obj;
+                    Log.d(TAG, "delete " + code);
+                    bible.deleteVersion(code);
+                    handler.sendMessage(handler.obtainMessage(DELETED, code));
+                    return false;
+                case DELETED:
+                    Log.d(TAG, "deleted " + msg.obj);
+                    final String install = getString(R.string.install);
+                    synchronized (versions) {
+                        for (Map<String, String> map : versions) {
+                            if (map.get("code").equalsIgnoreCase((String) msg.obj)) {
+                                map.put("text", install);
+                                map.put("action", install);
                             }
                         }
                     }
-                }
-                filterVersion(query.getText().toString());
-                adapter.notifyDataSetChanged();
-                return false;
-            case CHECKZIP:
-                final String path = (String) msg.obj;
-                bible.checkBibleData(false, new Runnable() {
-                    @Override
-                    public void run() {
-                        onDownloadComplete(path);
+                    filterVersion(query.getText().toString());
+                    adapter.notifyDataSetChanged();
+                    return false;
+                case COMPLETE:
+                    String uninstall = getString(R.string.uninstall);
+                    synchronized (versions) {
+                        for (Map<String, String> map : versions) {
+                            if (completed.size() == 0) {
+                                break;
+                            }
+                            synchronized (completed) {
+                                String version = map.get("code").toUpperCase(Locale.US);
+                                if (completed.containsKey(version)) {
+                                    String action;
+                                    if (DownloadManager.STATUS_SUCCESSFUL != completed.get(version)) {
+                                        action = getString(R.string.install);
+                                    } else {
+                                        action = uninstall;
+                                    }
+                                    map.put("text", action);
+                                    map.put("action", action);
+                                    completed.remove(version);
+                                }
+                            }
+                        }
                     }
-                });
-                return false;
-            default:
-                return false;
+                    filterVersion(query.getText().toString());
+                    adapter.notifyDataSetChanged();
+                    return false;
+                case CHECKZIP:
+                    final File path = (File) msg.obj;
+                    bible.checkZipPath(path);
+                    bible.checkBibleData(false, new Runnable() {
+                        @Override
+                        public void run() {
+                            onDownloadComplete(path.getPath());
+                        }
+                    });
+                    return false;
+                default:
+                    return false;
             }
         }
     });
@@ -429,8 +429,8 @@ public class Versions extends Activity {
             versions.add(request);
         }
         if (adapter == null) {
-            String[] from = { "code", "name", "text", "lang" };
-            int[] to = {R.id.code, R.id.name, R.id.action, 0 };
+            String[] from = {"code", "name", "text", "lang"};
+            int[] to = {R.id.code, R.id.name, R.id.action, 0};
             adapter = new Adapter(this, data, R.layout.version, from, to);
             list.setAdapter(adapter);
         }
@@ -505,23 +505,7 @@ public class Versions extends Activity {
             String content = code.toUpperCase(Locale.US) + ", " + name;
             bible.email(this, content);
         } else if (text.equals(getString(R.string.install)) || text.equals(getString(R.string.update))) {
-            if (download) {
-                download(map);
-            } else {
-                new AlertDialog.Builder(this).setTitle(R.string.download).setMessage(R.string.download_detail)
-                        .setPositiveButton(R.string.download_yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                download = true;
-                                download(map);
-                            }
-                        }).setNeutralButton(R.string.download_no, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                download(map);
-                            }
-                        }).setNegativeButton(android.R.string.cancel, null).create().show();
-            }
+            download(map);
         } else if (text.equals(getString(R.string.cancel_install))) {
             if (queue.containsKey(code) && queue.get(code) != null) {
                 long id = Long.parseLong(queue.get(code));
@@ -543,13 +527,13 @@ public class Versions extends Activity {
                 startActivity(intent);
             } else {
                 areYouSure(getString(R.string.deleteversion, code.toUpperCase(Locale.US)),
-                    getString(R.string.deleteversiondetail, name),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            handler.sendMessage(handler.obtainMessage(DELETE, code));
-                        }
-                    });
+                        getString(R.string.deleteversiondetail, name),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                handler.sendMessage(handler.obtainMessage(DELETE, code));
+                            }
+                        });
             }
         }
     }
@@ -606,6 +590,7 @@ public class Versions extends Activity {
         }
 
         Filter mFilter;
+
         public Filter getFilter() {
             if (mFilter == null) {
                 mFilter = new SimpleFilter();
@@ -676,6 +661,7 @@ public class Versions extends Activity {
     }
 
     volatile boolean filtering = false;
+
     void filterVersion(String filter) {
         final Locale locale = Locale.getDefault();
         final String lang = locale.getLanguage().toLowerCase(Locale.US);
