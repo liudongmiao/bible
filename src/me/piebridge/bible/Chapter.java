@@ -44,6 +44,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -600,9 +601,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             }
 
             @JavascriptInterface
-            public void showAnnotation(String link) {
+            public void showAnnotation(String link, String annotation) {
                 Log.d(TAG, "link: " + link);
-                String annotation = bible.getAnnotation(link);
+                if (TextUtils.isEmpty(annotation)) {
+                    annotation = bible.getAnnotation(link);
+                }
                 if (annotation != null) {
                     handler.sendMessage(handler.obtainMessage(SHOWANNOTATION, new String[]{link, annotation}));
                 }
