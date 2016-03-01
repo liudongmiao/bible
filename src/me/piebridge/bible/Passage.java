@@ -13,29 +13,31 @@
 
 package me.piebridge.bible;
 
-import android.net.Uri;
-import android.os.Bundle;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
+import me.piebridge.bible.utils.ChooserUtils;
+import me.piebridge.bible.utils.LogUtils;
+
 public class Passage extends Activity {
 
+    private static final String TAG = "bible";
+
+    private String action = null;
+    private String search = null;
+    private String osisfrom = null;
+    private String osisto = null;
+    private String version = null;
+    private Uri uri = null;
     private Bible bible;
-    private final String TAG = "me.piebridge.bible$Passage";
-
-    String action = null;
-    String search = null;
-    String osisfrom = null;
-    String osisto = null;
-    String version = null;
-    ProgressDialog dialog = null;
-
-    Uri uri = null;
+    private boolean hasVersion = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,17 +55,15 @@ public class Passage extends Activity {
             }
             version = uri.getQueryParameter("version");
             search = uri.getQueryParameter("search");
-            if (search == null || search.equals("")) {
+            if (TextUtils.isEmpty(search)) {
                 search = uri.getQueryParameter("q");
             }
-            Log.d(TAG, "search: " + search);
-            if (search == null || search.equals("")) {
+            if (TextUtils.isEmpty(search)) {
                 search = uri.getPath().replaceAll("^/search/([^/]*).*$", "$1");
-                Log.d(TAG, "search: " + search + ", path: " + uri.getPath());
             }
             osisfrom = uri.getQueryParameter("from");
             osisto = uri.getQueryParameter("to");
-            Log.d(TAG, "uri: " + uri);
+            LogUtils.d("uri: " + uri + ", search: " + search);
         } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             search = intent.getStringExtra(SearchManager.QUERY);
             osisfrom = intent.getStringExtra("osisfrom");
@@ -76,18 +76,27 @@ public class Passage extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        if (search == null) {
+        if (TextUtils.isEmpty(search)) {
             finish();
-            return;
+        } else {
+            routeInThread();
         }
+    }
+
+    private void routeInThread() {
         new Thread(new Runnable() {
             public void run() {
                 if (bible == null) {
                     bible = Bible.getBible(getBaseContext());
                     bible.checkBibleData(true, null);
                 }
-                if (version != null && version.length() > 0) {
-                    bible.setVersion(version);
+                hasVersion = true;
+                if (!TextUtils.isEmpty(version)) {
+                    if (!bible.get(Bible.TYPE.VERSION).contains(version.toLowerCase(Locale.US))) {
+                        hasVersion = false;
+                    } else {
+                        bible.setVersion(version);
+                    }
                 }
                 route();
             }
@@ -97,20 +106,21 @@ public class Passage extends Activity {
     private void route() {
         Intent intent;
         ArrayList<OsisItem> items = OsisItem.parseSearch(search, getBaseContext());
-        if (items.size() > 0 && !"".equals(items.get(0).chapter)) {
+        if (!items.isEmpty() && !TextUtils.isEmpty(items.get(0).chapter)) {
             intent = new Intent(this, Chapter.class);
             intent.putExtra("search", search);
             intent.putParcelableArrayListExtra("osiss", items);
             startActivity(intent);
-        } else if (search != null && Intent.ACTION_SEND.equals(action)) {
+        } else if (!TextUtils.isEmpty(search) && Intent.ACTION_SEND.equals(action)) {
             intent = new Intent(this, Search.class);
             intent.setAction(Intent.ACTION_SEND);
             intent.putExtra(SearchManager.QUERY, search);
             startActivity(intent);
-        } else if (uri != null && version != null && bible.get(Bible.TYPE.VERSION).indexOf(version.toLowerCase(Locale.US)) == -1) {
+        } else if (uri != null && !hasVersion) {
             intent = new Intent(Intent.ACTION_VIEW, uri);
-            startActivity(Intent.createChooser(intent, version));
-        } else if (search != null) {
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            ChooserUtils.startActivityExcludeSelf(this, intent, version);
+        } else if (!TextUtils.isEmpty(search)) {
             intent = new Intent(this, Result.class);
             intent.setAction(Intent.ACTION_SEARCH);
             intent.putExtra(SearchManager.QUERY, search);
