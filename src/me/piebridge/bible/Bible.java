@@ -35,6 +35,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -87,9 +88,9 @@ public class Bible {
     private ArrayList<String> osiss = new ArrayList<String>();
     private ArrayList<String> chapters = new ArrayList<String>();
     private ArrayList<String> versions = new ArrayList<String>();
-    private Object versionsLock = new Object();
-    private Object versionsCheckingLock = new Object();
-    private HashMap<String, String> versionpaths = new HashMap<String, String>();
+    private final Object versionsLock = new Object();
+    private final Object versionsCheckingLock = new Object();
+    private final HashMap<String, String> versionpaths = new HashMap<String, String>();
     private ArrayList<String> humans = new ArrayList<String>();
 
     private static Bible bible = null;
@@ -97,6 +98,10 @@ public class Bible {
     private HashMap<String, String> versionNames = new HashMap<String, String>();
     private HashMap<String, String> versionDates = new HashMap<String, String>();
     private HashMap<String, String> versionFullnames = new HashMap<String, String>();
+
+    private String annotationOsis = null;
+    private String noteOsis = null;
+    private HashMap<String, Note> notes = new HashMap<String, Note>();
     private HashMap<String, String> annotations = new HashMap<String, String>();
 
     private LinkedHashMap<String, String> allhuman = new LinkedHashMap<String, String>();
@@ -124,26 +129,26 @@ public class Bible {
             versionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (NameNotFoundException e) {
         }
-        checkLocale();
+        updateLocale();
         setDefaultVersion();
     }
 
-    public void checkLocale() {
+    public void updateLocale() {
         Locale locale = Locale.getDefault();
-        collator = Collator.getInstance(Locale.getDefault());
+        collator = Collator.getInstance(locale);
         if (!locale.equals(lastLocale)) {
             lastLocale = locale;
-            setResources();
+            updateResources();
         }
     }
 
-    public synchronized static Bible getBible(Context context) {
+    public synchronized static Bible getInstance(Context context) {
         if (bible == null) {
             bible = new Bible(context);
         }
         if (context != null) {
             mContext = context;
-            bible.checkLocale();
+            bible.updateLocale();
         }
         return bible;
     }
@@ -214,9 +219,16 @@ public class Bible {
             versions.clear();
             versionpaths.clear();
             versions.addAll(newVersions);
-            versionpaths.putAll(newVersionpaths);
+            versions.retainAll(newVersions);
         }
         return versions.size();
+    }
+
+    private void showNewVersion(String version) {
+        if (!versionpaths.containsKey(version)) {
+            String text = mContext.getString(R.string.new_version, version.toUpperCase(Locale.US));
+            Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void checkInternalVersions(List<String> versions, Map<String, String> versionpaths, boolean all) {
@@ -555,8 +567,8 @@ public class Bible {
         }
     }
 
-    private void setResources() {
-        Log.d(TAG, "setResources");
+    private void updateResources() {
+        Log.d(TAG, "updateResources");
         setResourceValues(versionNames, R.array.versionname);
         setResourceValues(versionFullnames, R.array.versionfullname);
         setResourceValuesReverse(allosis, R.array.osiszhcn);
@@ -677,7 +689,7 @@ public class Bible {
     }
 
     private ArrayList<LinkedHashMap<String, String>> getMaps(TYPE type) {
-        checkLocale();
+        updateLocale();
         ArrayList<LinkedHashMap<String, String>> maps = new ArrayList<LinkedHashMap<String, String>>();
         if (type == TYPE.HUMAN) {
             maps.add(allhuman);
@@ -945,11 +957,7 @@ public class Bible {
             }
             checkApkData();
             checkZipData(Environment.getExternalStorageDirectory());
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR_MR1) {
-                checkZipData(new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS));
-            } else {
-                checkZipData(new File(Environment.getExternalStorageDirectory(), "Download"));
-            }
+            checkZipData(new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS));
             checkVersionsSync(true);
         }
     }
@@ -1062,10 +1070,6 @@ public class Bible {
                 } else {
                     tmpfile.renameTo(file);
                     path.delete();
-                    if (!versionpaths.containsKey(version)) {
-                        String text = mContext.getString(R.string.new_version, version.toUpperCase(Locale.US));
-                        Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
-                    }
                     return true;
                 }
             }
@@ -1364,10 +1368,14 @@ public class Bible {
     }
 
     public void loadAnnotations(String osis, boolean load) {
+        if (TextUtils.isEmpty(osis) || osis.equals(annotationOsis)) {
+            return;
+        }
         annotations.clear();
         if (!load) {
             return;
         }
+        annotationOsis = osis;
         Cursor cursor = null;
         try {
             cursor = database.query("annotations", new String[]{"link", "content"}, "osis = ?",
@@ -1390,9 +1398,6 @@ public class Bible {
         return annotations.get(link);
     }
 
-    private String osis = null;
-    private HashMap<String, Note> notes = new HashMap<String, Note>();
-
     /**
      * load notes, called when osis is changed
      *
@@ -1402,10 +1407,10 @@ public class Bible {
         if (osis == null) {
             return;
         }
-        if (this.osis != null && this.osis.equals(osis)) {
+        if (this.noteOsis != null && this.noteOsis.equals(osis)) {
             return;
         }
-        this.osis = osis;
+        this.noteOsis = osis;
         notes.clear();
         if (mOpenHelper == null) {
             mOpenHelper = new AnnotationsDatabaseHelper(mContext);
@@ -1512,10 +1517,10 @@ public class Bible {
         if (osis == null) {
             return null;
         }
-        if (!osis.equals(this.osis)) {
+        if (!osis.equals(this.noteOsis)) {
             loadNotes(osis);
         }
-        return notes.keySet().toArray(new String[0]);
+        return notes.keySet().toArray(new String[notes.size()]);
     }
 
     /**
@@ -1530,7 +1535,7 @@ public class Bible {
         if (osis == null) {
             return null;
         }
-        if (!osis.equals(this.osis)) {
+        if (!osis.equals(this.noteOsis)) {
             loadNotes(osis);
         }
         return notes.get(verse);

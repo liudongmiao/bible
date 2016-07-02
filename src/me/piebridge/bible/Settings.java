@@ -81,7 +81,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         switch (title) {
             case R.string.fontsize:
                 if (bible == null) {
-                    bible = Bible.getBible(getBaseContext());
+                    bible = Bible.getInstance(getBaseContext());
                 }
                 preference.setSummary(getString(R.string.fontsummary, bible.getVersionName(bible.getVersion())));
                 break;
@@ -207,7 +207,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         if (FONTSIZE.equals(key)) {
             if (bible == null) {
-                bible = Bible.getBible(getBaseContext());
+                bible = Bible.getInstance(getBaseContext());
             }
             String version = bible.getVersion();
             int fontsize = sp.getInt(FONTSIZE + "-" + version, 0);
@@ -224,7 +224,7 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         editor.putInt(key, value);
         if (FONTSIZE.equals(key)) {
             if (bible == null) {
-                bible = Bible.getBible(getBaseContext());
+                bible = Bible.getInstance(getBaseContext());
             }
             String version = bible.getVersion();
             editor.putInt(key + "-" + version, value);

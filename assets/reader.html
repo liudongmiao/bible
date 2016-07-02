@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=5.0"/>
+    <style type="text/css">
+        body {
+            font-family: serif;
+            line-height: 1.4em;
+            font-weight: 100;
+            font-size: %dpt;
+        }
+
+        body {
+            text-align: justify;
+        }
+
+        body {
+            text-justify: distribute;
+        }
+
+        .wordsofchrist, .woj, .wj {
+            color: #ff4444;
+        }
+
+        a.x-link, sup.crossreference {
+            display: none
+        }
+
+        h1 {
+            font-size: 2em;
+        }
+
+        h2 {
+            font-size: 1.5em;
+        }
+
+        %s
+    </style>
+    <link rel="stylesheet" type="text/css" href="reader.css"/>
+    <script>
+        var verse_start = %d, verse_end = %d, search = "%s",
+            selected = "%s", highlighted = "%s", notes = %s;
+    </script>
+    <script type="text/javascript" src="reader.js"></script>
+    <title>%s</title>
+</head>
+<body>
+<div id="content">
+%s
+</div>
+</body>
+</html>

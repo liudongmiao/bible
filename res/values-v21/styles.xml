@@ -18,4 +18,11 @@
     </style>
     <style name="progress" parent="@android:style/Widget.Material.ProgressBar">
     </style>
+
+    <style name="dark" parent="@android:style/Theme.Material">
+    </style>
+
+    <style name="light" parent="@android:style/Theme.Material.Light">
+    </style>
+
 </resources>

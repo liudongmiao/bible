@@ -21,19 +21,22 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
+
+import org.w3c.dom.Text;
 
 public class OsisItem implements Parcelable {
 
     public String book;
     public String chapter = "";
-    public String verse = "";
-    public String end = "";
+    public String verseStart = "";
+    public String verseEnd = "";
 
     OsisItem(Parcel parcel) {
         this.book = parcel.readString();
         this.chapter = parcel.readString();
-        this.verse = parcel.readString();
-        this.end = parcel.readString();
+        this.verseStart = parcel.readString();
+        this.verseEnd = parcel.readString();
     }
 
     OsisItem(String book) {
@@ -45,29 +48,43 @@ public class OsisItem implements Parcelable {
         this.chapter = String.valueOf(chapter);
     }
 
-    OsisItem(String book, String chapter, String verse) {
+    OsisItem(String book, String chapter, String verseStart) {
         this.book = book;
         this.chapter = chapter;
-        if (verse != "0") {
-            this.verse = verse;
+        if (isValidVerse(verseStart)) {
+            this.verseStart = verseStart;
         }
     }
 
-    OsisItem(String book, int chapter, int verse) {
+    OsisItem(String book, int chapter, int verseStart) {
         this.book = book;
         this.chapter = String.valueOf(chapter);
-        this.verse = String.valueOf(verse);
+        if (verseStart > 0) {
+            this.verseStart = String.valueOf(verseStart);
+        }
     }
 
-    OsisItem(String book, String chapter, String start, String end) {
+    OsisItem(String book, String chapter, String verseStart, String verseEnd) {
         this.book = book;
         this.chapter = chapter;
-        this.verse = start;
-        this.end = end;
+        if (isValidVerse(verseStart)) {
+            this.verseStart = verseStart;
+            if (isValidVerse(verseEnd)) {
+                this.verseEnd = verseEnd;
+            }
+        }
+    }
+
+    private boolean isValidVerse(String verse) {
+        return !TextUtils.isEmpty(verse) && TextUtils.isDigitsOnly(verse) && Integer.parseInt(verse) > 0;
     }
 
     public String toString() {
-        return String.format("%s %s:%s-%s", book, chapter, verse, end);
+        return String.format("%s %s:%s-%s", book, chapter, verseStart, verseEnd);
+    }
+
+    public String toOsis() {
+        return String.format("%s.%s", book, chapter);
     }
 
     public static ArrayList<OsisItem> parseSearch(String s, Context context) {
@@ -179,7 +196,7 @@ public class OsisItem implements Parcelable {
                     continue;
                 }
             } else {
-                osis = Bible.getBible(context).getOsis(book);
+                osis = Bible.getInstance(context).getOsis(book);
             }
             if (osis == null) {
                 continue;
@@ -220,8 +237,8 @@ public class OsisItem implements Parcelable {
     public void writeToParcel(Parcel parcel, int falgs) {
         parcel.writeString(book);
         parcel.writeString(chapter);
-        parcel.writeString(verse);
-        parcel.writeString(end);
+        parcel.writeString(verseStart);
+        parcel.writeString(verseEnd);
     }
 
     public static final Parcelable.Creator<OsisItem> CREATOR = new Parcelable.Creator<OsisItem>() {

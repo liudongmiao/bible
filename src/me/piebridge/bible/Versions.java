@@ -74,8 +74,8 @@ public class Versions extends Activity {
     public static final String TAG = "me.piebridge.bible$Versions";
 
     private static Handler resume = null;
-    private static Map<String, Integer> completed = new HashMap<String, Integer>();
-    private static Map<String, String> queue = new HashMap<String, String>();
+    private static final Map<String, Integer> completed = new HashMap<String, Integer>();
+    private static final Map<String, String> queue = new HashMap<String, String>();
 
     private boolean checkversion;
     private boolean showing = false;
@@ -83,7 +83,7 @@ public class Versions extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.versions);
-        bible = Bible.getBible(this);
+        bible = Bible.getInstance(this);
 
         list = (ListView) findViewById(android.R.id.list);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

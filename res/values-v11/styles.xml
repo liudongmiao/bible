@@ -18,5 +18,12 @@
     </style>
     <style name="progress" parent="@android:style/Widget.Holo.ProgressBar">
     </style>
+
+    <style name="dark" parent="@android:style/Theme.Holo">
+    </style>
+
+    <style name="light" parent="@android:style/Theme.Holo.Light">
+    </style>
+
 </resources>
 <!-- vim: set sta sw=4 et: -->

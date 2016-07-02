@@ -359,7 +359,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             String content = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CONTENT));
             cursor.close();
             Log.d(TAG, String.format("verse: %s, end: %s", verse, end));
-            body = getBody(null, content, item.verse, item.end, false);
+            body = getBody(null, content, item.verseStart, item.verseEnd, false);
         }
         return body;
     }
@@ -399,7 +399,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         ArrayList<String> texts = new ArrayList<String>();
         Log.d(TAG, "search: " + search);
         for (OsisItem item : items) {
-            String end = item.end;
+            String end = item.verseEnd;
             if (end != null && end.length() > 0) {
                 end = "-" + end;
             } else {
@@ -412,7 +412,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             } else {
                 book = bible.get(Bible.TYPE.HUMAN, pos);
             }
-            texts.add(String.format("%s %s:%s%s", book, item.chapter, item.verse, end));
+            texts.add(String.format("%s %s:%s%s", book, item.chapter, item.verseStart, end));
         }
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.reference, null);
@@ -1165,7 +1165,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
     protected String formatOsisItem(OsisItem item) {
         String book = bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, item.book));
         // FIXME: replace item.chapter
-        return book + " " + item.chapter + (item.verse.equals("") ? "" : ":" + item.verse) + (item.end.equals("") ? "" : "-" + item.end);
+        return book + " " + item.chapter + (item.verseStart.equals("") ? "" : ":" + item.verseStart) + (item.verseEnd.equals("") ? "" : "-" + item.verseEnd);
     }
 
     @Override
@@ -1255,9 +1255,9 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             refresh = false;
             handler.sendEmptyMessage(CHECKBIBLEDATA);
             if (bible == null) {
-                bible = Bible.getBible(getBaseContext());
+                bible = Bible.getInstance(getBaseContext());
             } else {
-                bible.checkLocale();
+                bible.updateLocale();
             }
             Log.d(TAG, "will set version: " + version);
             if ("".equals(version)) {
@@ -1539,10 +1539,10 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 book += " ";
             }
             book += item.chapter;
-            if (!item.verse.equals("") && !item.end.equals("")) {
-                book += ":" + item.verse + "-" + item.end;
-            } else if (!item.verse.equals("") || !item.end.equals("")) {
-                book += ":" + item.verse + item.end;
+            if (!item.verseStart.equals("") && !item.verseEnd.equals("")) {
+                book += ":" + item.verseStart + "-" + item.verseEnd;
+            } else if (!item.verseStart.equals("") || !item.verseEnd.equals("")) {
+                book += ":" + item.verseStart + item.verseEnd;
             }
             showView(R.id.items, true);
             showView(R.id.book, false);
@@ -1567,7 +1567,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                     item.chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(item.book, "1");
                 }
                 Log.d(TAG, "item.book: " + item.book + ", item.chapter: " + item.chapter);
-                openOsis(item.book + "." + item.chapter, item.verse, item.end);
+                openOsis(item.book + "." + item.chapter, item.verseStart, item.verseEnd);
             }
         } else if (index >= 0 && index < items.size()) {
             showView(R.id.items, true);
@@ -1576,11 +1576,11 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             this.index = index;
             setItemText(index);
             OsisItem item = items.get(index);
-            Log.d(TAG, String.format("book: %s, chapter: %s, verse: %s, end: %s", item.book, item.chapter, item.verse, item.end));
+            Log.d(TAG, String.format("book: %s, chapter: %s, verse: %s, end: %s", item.book, item.chapter, item.verseStart, item.verseEnd));
             if (item.chapter.equals("")) {
                 item.chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(item.book, "1");
             }
-            openOsis(item.book + "." + item.chapter, item.verse, item.end);
+            openOsis(item.book + "." + item.chapter, item.verseStart, item.verseEnd);
         }
     }
 

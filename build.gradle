@@ -4,20 +4,21 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.3.1'
+        classpath 'com.android.tools.build:gradle:2.1.2'
     }
 }
 
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "24"
+    useLibrary 'org.apache.http.legacy'
 
     buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+             minifyEnabled true
+             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
         }
     }
 
@@ -57,20 +58,13 @@ android {
         }
     }
 
-    /*
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
     }
-    */
 
 }
 
 dependencies {
-    provided fileTree(dir: 'lib', include: ['*.jar'])
     compile fileTree(dir: 'libs', include: ['*.jar'])
-}
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs << '-Xbootclasspath/p:' + fileTree(dir: 'lib', include: ['*.jar']).files.join(':')
 }

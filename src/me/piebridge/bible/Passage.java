@@ -26,9 +26,10 @@ import java.util.Locale;
 import me.piebridge.bible.utils.ChooserUtils;
 import me.piebridge.bible.utils.LogUtils;
 
-public class Passage extends Activity {
+import static me.piebridge.bible.ResultActivity.ITEMS;
+import static me.piebridge.bible.ResultActivity.SEARCH;
 
-    private static final String TAG = "bible";
+public class Passage extends Activity {
 
     private String action = null;
     private String search = null;
@@ -36,7 +37,6 @@ public class Passage extends Activity {
     private String osisto = null;
     private String version = null;
     private Uri uri = null;
-    private Bible bible;
     private boolean hasVersion = true;
 
     @Override
@@ -86,10 +86,7 @@ public class Passage extends Activity {
     private void routeInThread() {
         new Thread(new Runnable() {
             public void run() {
-                if (bible == null) {
-                    bible = Bible.getBible(getBaseContext());
-                    bible.checkBibleData(true, null);
-                }
+                Bible bible = Bible.getInstance(getBaseContext());
                 hasVersion = true;
                 if (!TextUtils.isEmpty(version)) {
                     if (!bible.get(Bible.TYPE.VERSION).contains(version.toLowerCase(Locale.US))) {
@@ -107,9 +104,9 @@ public class Passage extends Activity {
         Intent intent;
         ArrayList<OsisItem> items = OsisItem.parseSearch(search, getBaseContext());
         if (!items.isEmpty() && !TextUtils.isEmpty(items.get(0).chapter)) {
-            intent = new Intent(this, Chapter.class);
-            intent.putExtra("search", search);
-            intent.putParcelableArrayListExtra("osiss", items);
+            intent = new Intent(this, ResultActivity.class);
+            intent.putExtra(SEARCH, search);
+            intent.putParcelableArrayListExtra(ITEMS, items);
             startActivity(intent);
         } else if (!TextUtils.isEmpty(search) && Intent.ACTION_SEND.equals(action)) {
             intent = new Intent(this, Search.class);

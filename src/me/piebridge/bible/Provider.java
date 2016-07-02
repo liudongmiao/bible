@@ -13,17 +13,15 @@
 
 package me.piebridge.bible;
 
-import android.content.UriMatcher;
-import android.content.ContentValues;
 import android.content.ContentProvider;
-
+import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
 import android.net.Uri;
 
-public class Provider extends ContentProvider
-{
+public class Provider extends ContentProvider {
+
     private static final String TAG = "me.piebridge.bible$Provider";
 
     public static final String COLUMN_BOOK = "book";
@@ -36,16 +34,12 @@ public class Provider extends ContentProvider
     public static final String COLUMN_OSIS = "osis";
     public static final String COLUMN_CHAPTERS = "chapters";
 
-    private static final String TABLE_VERSES = "verses left outer join books on (verses.book = books.osis)";
-    private static final String[] COLUMNS_VERSE = {"id as _id", "book", "human", "verse * 1000 as verse", "unformatted"};
+    public static final String TABLE_VERSES = "verses left outer join books on (verses.book = books.osis)";
+    public static final String[] COLUMNS_VERSE = {"id as _id", "book", "human", "verse * 1000 as verse", "unformatted"};
 
-    static final String TABLE_CHAPTERS = "chapters";
-    private static final String[] COLUMNS_CHAPTER = {
-        "reference_osis as osis",
-        "reference_human as human",
-        "content",
-        "previous_reference_osis as previous",
-        "next_reference_osis as next"};
+    public static final String TABLE_CHAPTERS = "chapters";
+    public static final String[] COLUMNS_CHAPTER = {"id as _id", "reference_osis as osis", "reference_human as human", "content", "previous_reference_osis as previous", "next_reference_osis as next"};
+    public static final String[] COLUMNS_CHAPTERS = {"count(id) as _count"};
 
     public static final String TABLE_BOOKS = "books";
     public static final String[] COLUMNS_BOOKS = {"number as _id", "osis", "human", "chapters"};
@@ -54,29 +48,23 @@ public class Provider extends ContentProvider
     public static final Uri CONTENT_URI_SEARCH = Uri.parse("content://" + AUTHORITY + "/search");
     public static final Uri CONTENT_URI_VERSE = Uri.parse("content://" + AUTHORITY + "/verse");
     public static final Uri CONTENT_URI_CHAPTER = Uri.parse("content://" + AUTHORITY + "/chapter");
+    public static final Uri CONTENT_URI_CHAPTERS = Uri.parse("content://" + AUTHORITY + "/chapters");
 
     private static final int URI_SEARCH = 0;
     private static final int URI_VERSE = 1;
     private static final int URI_CHAPTER = 2;
+    private static final int URI_CHAPTERS = 3;
 
     private Bible bible;
 
     private final UriMatcher uriMatcher = buildUriMatcher();
 
     private UriMatcher buildUriMatcher() {
-        UriMatcher matcher =  new UriMatcher(UriMatcher.NO_MATCH);
+        UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         matcher.addURI(AUTHORITY, "search/*", URI_SEARCH);
         matcher.addURI(AUTHORITY, "verse/#", URI_VERSE);
         matcher.addURI(AUTHORITY, "chapter/*", URI_CHAPTER);
-
-        // TODO: support suggestion
-        /*
-           matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH_SUGGEST);
-           matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH_SUGGEST);
-           matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_SHORTCUT, REFRESH_SHORTCUT);
-           matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_SHORTCUT + "/*", REFRESH_SHORTCUT);
-           */
-
+        matcher.addURI(AUTHORITY, "chapters", URI_CHAPTERS);
         return matcher;
     }
 
@@ -86,15 +74,9 @@ public class Provider extends ContentProvider
             return null;
         }
 
-        Cursor cursor = database.query(
-                TABLE_VERSES,
-                COLUMNS_VERSE,
+        Cursor cursor = database.query(TABLE_VERSES, COLUMNS_VERSE,
                 books == null ? "unformatted like ?" : "unformatted like ? and book in (" + books + ")",
-                new String[] { "%" + query + "%"},
-                null,
-                null,
-                "id ASC"
-                );
+                new String[] {"%" + query + "%"}, null, null, "id ASC");
 
         if (cursor == null) {
             return null;
@@ -113,15 +95,8 @@ public class Provider extends ContentProvider
             return null;
         }
 
-        Cursor cursor = database.query(
-                TABLE_VERSES,
-                COLUMNS_VERSE,
-                "_id = ?",
-                new String[] {id},
-                null,
-                null,
-                null
-                );
+        Cursor cursor = database.query(TABLE_VERSES, COLUMNS_VERSE,
+                "_id = ?", new String[] {id}, null, null, null);
 
         if (cursor == null) {
             return null;
@@ -141,33 +116,41 @@ public class Provider extends ContentProvider
             return null;
         }
 
-        Cursor cursor = null;
+        Cursor cursor;
 
         if (!osis.equals("null")) {
-            cursor = database.query(
-                TABLE_CHAPTERS,
-                COLUMNS_CHAPTER,
-                "reference_osis = ? or reference_osis = ?",
-                new String[] {osis, osis.replaceFirst("int", "1")},
-                null,
-                null,
-                "reference_osis desc", // Gen.int, then Gen.1
-                "1");
+            cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTER,
+                    "reference_osis = ? or reference_osis = ?", new String[] {osis, osis.replaceFirst("int", "1")},
+                    null, null, "reference_osis desc", "1");
         } else {
-            cursor = database.query(
-                TABLE_CHAPTERS,
-                COLUMNS_CHAPTER,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "1");
+            cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTER,
+                    null, null, null, null, null, "1");
         }
 
         if (cursor == null) {
             return null;
-        } else if (cursor.getCount() != 1 || !cursor.moveToFirst()) {
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+
+        return cursor;
+    }
+
+    private Cursor getChapters() {
+        SQLiteDatabase database = bible.getDatabase();
+
+        if (database == null) {
+            Log.e(TAG, "database is null");
+            return null;
+        }
+
+        Cursor cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTERS,
+                null, null, null, null, null);
+
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
             cursor.close();
             return null;
         }
@@ -184,10 +167,7 @@ public class Provider extends ContentProvider
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         if (bible == null) {
-            bible = Bible.getBible(getContext());
-        }
-        if (uri == null) {
-            return null;
+            bible = Bible.getInstance(getContext());
         }
         String version = uri.getFragment();
         Log.d(TAG, "query uri: " + uri + ", version: " + version);
@@ -213,6 +193,8 @@ public class Provider extends ContentProvider
             case URI_CHAPTER:
                 String osis = uri.getLastPathSegment();
                 return getChapter(osis);
+            case URI_CHAPTERS:
+                return getChapters();
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
         }
