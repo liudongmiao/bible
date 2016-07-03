@@ -326,7 +326,7 @@ public class Bible {
                 versionpaths.put(version, file.getAbsolutePath());
                 return file;
             }
-            return null;
+            return getFile(mContext.getFilesDir(), version);
         }
     }
 
@@ -445,15 +445,10 @@ public class Bible {
             Log.d(TAG, "not mounted, mContext = " + mContext);
             return new File[0];
         }
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                return mContext.getExternalFilesDirs(null);
-            } else {
-                return new File[]{mContext.getExternalFilesDir(null)};
-            }
-        } catch (NoSuchMethodError e) {
-            Log.d(TAG, "internal getExternalFilesDir");
-            return new File[]{getExternalFilesDir()};
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return mContext.getExternalFilesDirs(null);
+        } else {
+            return new File[] {mContext.getExternalFilesDir(null)};
         }
     }
 
@@ -609,11 +604,9 @@ public class Bible {
             return setVersion(version);
         }
         PreferenceManager.getDefaultSharedPreferences(mContext).edit().remove("version").commit();
-        if (versions.size() == 0) {
+        if (TextUtils.isEmpty(version) || version.endsWith("demo")) {
             checkBibleData(false);
-        }
-        if (versions.size() > 0) {
-            return setDefaultVersion();
+            setDefaultVersion();
         }
         return false;
     }
@@ -955,7 +948,6 @@ public class Bible {
                     return;
                 }
             }
-            checkApkData();
             checkZipData(Environment.getExternalStorageDirectory());
             checkZipData(new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS));
             checkVersionsSync(true);
@@ -1078,96 +1070,6 @@ public class Bible {
             zis.close();
         }
         return false;
-    }
-
-    private void checkApkData() {
-        Log.d(TAG, "checking apkdata");
-        try {
-            String packageName = mContext.getPackageName();
-            PackageManager pm = mContext.getPackageManager();
-            SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(mContext);
-            ApplicationInfo ai = pm.getApplicationInfo(packageName, 0);
-            for (String applicationName : pm.getPackagesForUid(ai.uid)) {
-                if (packageName.equals(applicationName)) {
-                    continue;
-                }
-
-                // version
-                String version = applicationName.replace(packageName + ".", "");
-
-                // resources
-                Resources resources = mContext.createPackageContext(applicationName, Context.CONTEXT_IGNORE_SECURITY).getResources();
-
-                // newVersion
-                int versionCode = pm.getPackageInfo(applicationName, 0).versionCode;
-                boolean newVersion = (preference.getInt(version, 0) != versionCode);
-
-                // resid
-                int resid = resources.getIdentifier("a", "raw", applicationName);
-                if (resid == 0) {
-                    resid = resources.getIdentifier("xa", "raw", applicationName);
-                }
-                if (resid == 0) {
-                    Log.d(TAG, "package " + applicationName + " has no R.raw.a nor R.raw.xa");
-                    continue;
-                }
-
-                // file
-                File file;
-                if (versionpaths.containsKey(version)) {
-                    file = new File(versionpaths.get(version));
-                } else {
-                    File[] dirs = getExternalFilesDirWrapper();
-                    file = new File(getPath(dirs), version + ".sqlite3");
-                }
-                if (file.exists() && !file.isFile()) {
-                    file.delete();
-                }
-
-                boolean unpack = unpackRaw(resources, newVersion, resid, file);
-                if (newVersion && unpack) {
-                    preference.edit().putInt(version, versionCode).commit();
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "", e);
-        }
-    }
-
-    private boolean unpackRaw(Resources resources, boolean newVersion, int resid, File file) {
-        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            return false;
-        }
-
-        if (file.exists()) {
-            if (!newVersion) {
-                return true;
-            }
-            file.delete();
-        }
-
-        Log.d(TAG, "unpacking " + file.getAbsolutePath());
-
-        try {
-            int length;
-            byte[] buffer = new byte[8192];
-            File tmpfile = new File(file.getAbsolutePath() + ".tmp");
-            OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpfile));
-            for (int i = 0; i < 20; i++) {
-                InputStream is = resources.openRawResource(resid + i);
-                while ((length = is.read(buffer)) >= 0) {
-                    os.write(buffer, 0, length);
-                }
-                is.close();
-            }
-            os.close();
-            tmpfile.renameTo(file);
-        } catch (Exception e) {
-            Log.e(TAG, "unpacked " + file.getAbsolutePath(), e);
-            return false;
-        }
-
-        return true;
     }
 
     int checkVersion(File path, List<String> versions, Map<String, String> versionpaths, boolean all) {
