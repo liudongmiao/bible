@@ -20,6 +20,13 @@ import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.WebViewUtils;
 
+import static me.piebridge.bible.BaseReadingActivity.COLOR_BACKGROUND;
+import static me.piebridge.bible.BaseReadingActivity.COLOR_HIGHLIGHT;
+import static me.piebridge.bible.BaseReadingActivity.COLOR_HIGHLIGHT_SELECTED;
+import static me.piebridge.bible.BaseReadingActivity.COLOR_LINK;
+import static me.piebridge.bible.BaseReadingActivity.COLOR_RED;
+import static me.piebridge.bible.BaseReadingActivity.COLOR_SELECTED;
+import static me.piebridge.bible.BaseReadingActivity.COLOR_TEXT;
 import static me.piebridge.bible.BaseReadingActivity.CONTENT;
 import static me.piebridge.bible.BaseReadingActivity.CROSS;
 import static me.piebridge.bible.BaseReadingActivity.CSS;
@@ -27,7 +34,6 @@ import static me.piebridge.bible.BaseReadingActivity.CURR;
 import static me.piebridge.bible.BaseReadingActivity.FONT_SIZE;
 import static me.piebridge.bible.BaseReadingActivity.HIGHLIGHTED;
 import static me.piebridge.bible.BaseReadingActivity.HUMAN;
-import static me.piebridge.bible.BaseReadingActivity.NIGHT;
 import static me.piebridge.bible.BaseReadingActivity.NOTES;
 import static me.piebridge.bible.BaseReadingActivity.OSIS;
 import static me.piebridge.bible.BaseReadingActivity.POSITION;
@@ -140,7 +146,15 @@ public class ReadingFragment extends Fragment {
         String search = getString(bundle, SEARCH);
         String selected = getString(bundle, SELECTED);
         String highlighted = getString(bundle, HIGHLIGHTED);
+        String backgroundColor = getString(bundle, COLOR_BACKGROUND);
+        String textColor = getString(bundle, COLOR_TEXT);
+        String linkColor = getString(bundle, COLOR_LINK);
+        String selectedColor = getString(bundle, COLOR_SELECTED);
+        String highlightColor = getString(bundle, COLOR_HIGHLIGHT);
+        String highlightSelectedColor = getString(bundle, COLOR_HIGHLIGHT_SELECTED);
         return String.format(template, fontSize, css,
+                backgroundColor, textColor, linkColor,
+                selectedColor, highlightColor, highlightSelectedColor,
                 verseStart, verseEnd, search, selected, highlighted,
                 Arrays.toString(notes), title, body);
     }
@@ -166,12 +180,7 @@ public class ReadingFragment extends Fragment {
         }
         if (bundle.getBoolean(RED, true)) {
             css.append(".wordsofchrist, .woj, .wj { color: ");
-            // http://mdbootstrap.com/css/colors/
-            if (bundle.getBoolean(NIGHT, false)) {
-                css.append("#CC0000");
-            } else {
-                css.append("#ff4444");
-            }
+            css.append(bundle.get(COLOR_RED));
             css.append("; }");
 
         }

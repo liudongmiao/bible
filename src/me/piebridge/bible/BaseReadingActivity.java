@@ -15,10 +15,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
 import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.utils.ColorUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ThemeUtils;
 
@@ -48,6 +50,13 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
     public static final String HIGHLIGHTED = "highlighted";
     public static final String RED = "red";
     public static final String NIGHT = "night";
+    public static final String COLOR_BACKGROUND = "colorBackground";
+    public static final String COLOR_TEXT = "colorText";
+    public static final String COLOR_LINK = "colorLink";
+    public static final String COLOR_RED = "colorRed";
+    public static final String COLOR_SELECTED = "colorSelected";
+    public static final String COLOR_HIGHLIGHT = "colorHighlight";
+    public static final String COLOR_HIGHLIGHT_SELECTED = "colorHighlightSelected";
 
     protected static final int POSITION_UNKNOWN = -1;
 
@@ -59,9 +68,26 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
 
     private Handler handler = new ReadingHandler(this);
 
+    private String colorBackground;
+    private String colorText;
+    private String colorLink;
+    private String colorRed;
+    private String colorSelected;
+    private String colorHighlight;
+    private String colorHighLightSelected;
+
+    // https://material.google.com/style/color.html
+    private static final int RED_200 = 0xffef9a9a;
+    private static final int RED_500 = 0xfff44336;
+
+    // yellow
+    private static final int HIGHLIGHT_200 = 0xfffff59d;
+    private static final int HIGHLIGHT_500 = 0xffffeb3b;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         updateTheme();
+        resolveColors();
         super.onCreate(savedInstanceState);
         setContentView(getContentLayout());
         header = findHeader();
@@ -75,6 +101,23 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
             }
         });
         initialize();
+    }
+
+    private void resolveColors() {
+        colorBackground = ColorUtils.rgba(resolveColor(android.R.attr.colorBackground));
+        colorText = ColorUtils.rgba(resolveColor(android.R.attr.textColorPrimary));
+        colorLink = ColorUtils.rgba(resolveColor(android.R.attr.textColorLink));
+        int selected = resolveColor(android.R.attr.textColorHighlight);
+        colorSelected = ColorUtils.rgba(selected);
+        if (ThemeUtils.isDark(this)) {
+            colorRed = ColorUtils.rgba(RED_200);
+            colorHighlight = ColorUtils.rgba(HIGHLIGHT_200);
+            colorHighLightSelected = ColorUtils.blend(HIGHLIGHT_200, selected);
+        } else {
+            colorRed = ColorUtils.rgba(RED_500);
+            colorHighlight = ColorUtils.rgba(HIGHLIGHT_500);
+            colorHighLightSelected = ColorUtils.blend(HIGHLIGHT_500, selected);
+        }
     }
 
     protected View findHeader() {
@@ -203,6 +246,13 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
         bundle.putString(VERSION, bible.getVersion());
         bundle.putBoolean(RED, sp.getBoolean(Settings.RED, true));
         bundle.putBoolean(NIGHT, ThemeUtils.isDark(this));
+        bundle.putString(COLOR_BACKGROUND, colorBackground);
+        bundle.putString(COLOR_TEXT, colorText);
+        bundle.putString(COLOR_LINK, colorLink);
+        bundle.putString(COLOR_RED, colorRed);
+        bundle.putString(COLOR_HIGHLIGHT, colorHighlight);
+        bundle.putString(COLOR_SELECTED, colorSelected);
+        bundle.putString(COLOR_HIGHLIGHT_SELECTED, colorHighLightSelected);
         return bundle;
     }
 
@@ -241,6 +291,13 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
         ReadingFragment fragment = getFragment(position);
         fragment.getArguments().putString(OSIS, osis);
         fragment.reloadIfNeeded();
+    }
+
+    private int resolveColor(int resId) {
+        TypedValue tv = new TypedValue();
+        getTheme().resolveAttribute(resId, tv, true);
+        int colorId = tv.resourceId;
+        return getResources().getColor(colorId);
     }
 
     @Override

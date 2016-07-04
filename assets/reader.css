@@ -21,19 +21,25 @@ span.para { display: block; padding: 0; padding-bottom: 10px; }
 sup, .chapternum { line-height: 0;  font-weight: bold; }
 sup.footnote, sup.crossreference { font-weight: normal }
 #pb-demo { display: none; background: #ffff00; border: 1px solid #999; padding: 5px }
-.highlight { background: #ffff00 }
-.selected { background: rgba(51, 181, 229, 0.40); }
-.selected.highlight { background: rgba(173, 225, 91, 0.60); }
 .introduction .iot { border-bottom: 1px solid #b2b2b2; text-transform: uppercase; }
 .introduction .io1 { background-color: #f2f2f2; font-size: 0.8em; margin: 0; padding: 8px 5px 8px 20px; }
-a.notelink, .footnote a, .crossreference a { text-decoration: none; color: #2c96dd; }
+a.notelink, .footnote a, .crossreference a { text-decoration: none; }
 @font-face { font-family: 'annotation'; src: url('annotation.ttf') format('truetype'); }
 .icon-footnote:before { font-family: "annotation"; content: '\e800'; } 
 .icon-crossreference:before { font-family: "annotation"; content: '\e801'; }
 a.notelink { padding: 0 0.2em }
 img.note { height: 1em }
+
+/*
 body { background-color: white; color: black; }
-.nightmode { background-color: black; color: white; }
+a.notelink, .footnote a, .crossreference a { color: #2c96dd; }
+.highlight { background: #ffff00 }
+.selected { background: rgba(51, 181, 229, 0.40); }
+.selected.highlight { background: rgba(173, 225, 91, 0.60); }
+
+body.nightmode { background-color: black; color: white; }
 .nightmode .highlight { background: #ff8800 }
 .nightmode .selected { background: rgba(0, 153, 204, 0.60); }
 .nightmode .selected.highlight { background: rgba(102, 146, 122, 0.9); }
+.nightmode a.notelink, .nightmode .footnote a, .nightmode .crossreference a { color: #2c96dd; }
+*/
