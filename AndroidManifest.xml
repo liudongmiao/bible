@@ -144,6 +144,11 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/light" />
 
+        <activity
+            android:name=".CrossActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/light.dialog" />
+
         <provider
             android:name=".Provider"
             android:authorities="me.piebridge.bible.provider"

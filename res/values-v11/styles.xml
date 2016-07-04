@@ -25,5 +25,13 @@
     <style name="light" parent="@android:style/Theme.Holo.Light">
     </style>
 
+    <style name="dark.dialog" parent="@android:style/Theme.Holo.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="light.dialog" parent="@android:style/Theme.Holo.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 </resources>
 <!-- vim: set sta sw=4 et: -->

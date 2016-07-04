@@ -1,5 +1,6 @@
 package me.piebridge.bible;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import java.util.ArrayList;
@@ -12,11 +13,14 @@ public class ResultActivity extends BaseReadingActivity {
     public static final String ITEMS = "items";
     public static final String SEARCH = "search";
 
+    private String search;
     private ArrayList<OsisItem> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        items = getIntent().getParcelableArrayListExtra(ITEMS);
+        Intent intent = getIntent();
+        search = intent.getStringExtra(SEARCH);
+        items = intent.getParcelableArrayListExtra(ITEMS);
         super.onCreate(savedInstanceState);
     }
 
@@ -43,6 +47,7 @@ public class ResultActivity extends BaseReadingActivity {
         bundle.putString(VERSE_END, item.verseEnd);
         bundle.putString(PREV, getOsis(position - 1));
         bundle.putString(NEXT, getOsis(position + 1));
+        bundle.putString(SEARCH, search);
         return bundle;
     }
 

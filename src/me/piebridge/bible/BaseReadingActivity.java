@@ -2,12 +2,14 @@ package me.piebridge.bible;
 
 import android.app.ActionBar;
 import android.app.ActivityManager;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -35,8 +37,17 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
     public static final String CONTENT = "content";
     public static final String POSITION = "position";
     public static final String NOTES = "notes";
-    public static final String VERSE_START = "start";
-    public static final String VERSE_END = "end";
+    public static final String VERSE_START = "verseStart";
+    public static final String VERSE_END = "verseEnd";
+    public static final String FONT_SIZE = "fontSize";
+    public static final String CROSS = "cross";
+    public static final String SHANGTI = "shangti";
+    public static final String VERSION = "version";
+    public static final String SEARCH = "search";
+    public static final String SELECTED = "selected";
+    public static final String HIGHLIGHTED = "highlighted";
+    public static final String RED = "red";
+    public static final String NIGHT = "night";
 
     protected static final int POSITION_UNKNOWN = -1;
 
@@ -50,9 +61,9 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeUtils.setTheme(this);
+        updateTheme();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.reading);
+        setContentView(getContentLayout());
         header = findHeader();
         mPager = (ViewPager) findViewById(R.id.pager);
         mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount());
@@ -76,7 +87,6 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
                 actionBar.setCustomView(R.layout.header);
                 return actionBar.getCustomView();
             } else {
-                LogUtils.w("cannot find actionbar");
                 return findViewById(R.id.header);
             }
         }
@@ -106,6 +116,10 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
 
         header.findViewById(R.id.reading).setVisibility(View.VISIBLE);
 
+        updateTaskDescription(bookName, chapterVerse);
+    }
+
+    protected void updateTaskDescription(String bookName, String chapterVerse) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             StringBuilder sb = new StringBuilder(bookName);
             if (!Bible.isCJK(bookName)) {
@@ -126,6 +140,14 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
         mPager.setCurrentItem(position);
         mAdapter.getItem(position).getArguments().putAll(bundle);
         prepare(position);
+    }
+
+    protected int getContentLayout() {
+        return R.layout.reading;
+    }
+
+    protected void updateTheme() {
+        ThemeUtils.setTheme(this);
     }
 
     protected abstract int retrieveOsisCount();
@@ -173,6 +195,14 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
                 cursor.close();
             }
         }
+        String version = bible.getVersion();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        bundle.putInt(FONT_SIZE, sp.getInt(Settings.FONTSIZE + "-" + version, 0xf));
+        bundle.putBoolean(CROSS, sp.getBoolean(Settings.XLINK, false));
+        bundle.putBoolean(SHANGTI, sp.getBoolean(Settings.SHANGTI, false));
+        bundle.putString(VERSION, bible.getVersion());
+        bundle.putBoolean(RED, sp.getBoolean(Settings.RED, true));
+        bundle.putBoolean(NIGHT, ThemeUtils.isDark(this));
         return bundle;
     }
 

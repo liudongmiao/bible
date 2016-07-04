@@ -21,14 +21,23 @@ import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.WebViewUtils;
 
 import static me.piebridge.bible.BaseReadingActivity.CONTENT;
+import static me.piebridge.bible.BaseReadingActivity.CROSS;
 import static me.piebridge.bible.BaseReadingActivity.CSS;
 import static me.piebridge.bible.BaseReadingActivity.CURR;
+import static me.piebridge.bible.BaseReadingActivity.FONT_SIZE;
+import static me.piebridge.bible.BaseReadingActivity.HIGHLIGHTED;
 import static me.piebridge.bible.BaseReadingActivity.HUMAN;
+import static me.piebridge.bible.BaseReadingActivity.NIGHT;
 import static me.piebridge.bible.BaseReadingActivity.NOTES;
 import static me.piebridge.bible.BaseReadingActivity.OSIS;
 import static me.piebridge.bible.BaseReadingActivity.POSITION;
+import static me.piebridge.bible.BaseReadingActivity.RED;
+import static me.piebridge.bible.BaseReadingActivity.SEARCH;
+import static me.piebridge.bible.BaseReadingActivity.SELECTED;
+import static me.piebridge.bible.BaseReadingActivity.SHANGTI;
 import static me.piebridge.bible.BaseReadingActivity.VERSE_END;
 import static me.piebridge.bible.BaseReadingActivity.VERSE_START;
+import static me.piebridge.bible.BaseReadingActivity.VERSION;
 
 /**
  * Created by thom on 15/10/18.
@@ -40,12 +49,6 @@ public class ReadingFragment extends Fragment {
     private BaseReadingActivity mActivity;
 
     private WebView webView;
-    private int fontSize = 15;
-    private String version = "";
-    private String search = "";
-    private String selected = "";
-    private String highlighted = "";
-    private boolean shangti = false;
 
     @Override
     public void onAttach(Activity activity) {
@@ -127,16 +130,27 @@ public class ReadingFragment extends Fragment {
     }
 
     private String getBody(String title, String content) {
-        String body = content;
-        if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE) || "CCB".equalsIgnoreCase(version) || version.endsWith("ss")) {
-            body = body.replaceAll("「", "“").replaceAll("」", "”").replaceAll("『", "‘").replaceAll("』", "’");
-        }
-        if (shangti) {
-            body = body.replace("　神", "上帝");
-        } else {
-            body = body.replace("上帝", "　神");
-        }
         Bundle bundle = getArguments();
+        String body = fixIfNeeded(bundle, content);
+        String[] notes = bundle.getStringArray(NOTES);
+        int fontSize = bundle.getInt(FONT_SIZE);
+        String css = fixCSS(bundle);
+        int verseStart = BibleUtils.getNumber(bundle, VERSE_START);
+        int verseEnd = BibleUtils.getNumber(bundle, VERSE_END);
+        String search = getString(bundle, SEARCH);
+        String selected = getString(bundle, SELECTED);
+        String highlighted = getString(bundle, HIGHLIGHTED);
+        return String.format(template, fontSize, css,
+                verseStart, verseEnd, search, selected, highlighted,
+                Arrays.toString(notes), title, body);
+    }
+
+    private String getString(Bundle bundle, String key) {
+        String value = bundle.getString(key);
+        return value == null ? "" : value;
+    }
+
+    private String fixCSS(Bundle bundle) {
         StringBuilder css = new StringBuilder();
         if (bundle.containsKey(CSS)) {
             css.append(bundle.getString(CSS));
@@ -147,12 +161,37 @@ public class ReadingFragment extends Fragment {
             css.append(fontPath);
             css.append("');}");
         }
-        String[] notes = bundle.getStringArray(NOTES);
-        int verseStart = BibleUtils.getNumber(bundle, VERSE_START);
-        int verseEnd = BibleUtils.getNumber(bundle, VERSE_END);
-        return String.format(template, fontSize, css.toString(),
-                verseStart, verseEnd, search, selected, highlighted,
-                Arrays.toString(notes), title, body);
+        if (!bundle.getBoolean(CROSS, false)) {
+            css.append("a.x-link, sup.crossreference { display: none }");
+        }
+        if (bundle.getBoolean(RED, true)) {
+            css.append(".wordsofchrist, .woj, .wj { color: ");
+            // http://mdbootstrap.com/css/colors/
+            if (bundle.getBoolean(NIGHT, false)) {
+                css.append("#CC0000");
+            } else {
+                css.append("#ff4444");
+            }
+            css.append("; }");
+
+        }
+        return css.toString();
+    }
+
+    private String fixIfNeeded(Bundle bundle, String content) {
+        String body = content;
+        String version = bundle.getString(VERSION);
+        if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE)
+                || "CCB".equalsIgnoreCase(version)
+                || (!TextUtils.isEmpty(version) && version.endsWith("ss"))) {
+            body = body.replaceAll("「", "“").replaceAll("」", "”").replaceAll("『", "‘").replaceAll("』", "’");
+        }
+        if (bundle.getBoolean(SHANGTI, false)) {
+            body = body.replace("　神", "上帝");
+        } else {
+            body = body.replace("上帝", "　神");
+        }
+        return body;
     }
 
     private String getFontPath() {

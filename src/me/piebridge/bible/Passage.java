@@ -36,8 +36,11 @@ public class Passage extends Activity {
     private String osisfrom = null;
     private String osisto = null;
     private String version = null;
+    private boolean cross;
     private Uri uri = null;
     private boolean hasVersion = true;
+
+    public static final String CROSS = "cross";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,7 @@ public class Passage extends Activity {
             LogUtils.d("uri: " + uri + ", search: " + search);
         } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             search = intent.getStringExtra(SearchManager.QUERY);
+            cross = intent.getBooleanExtra(CROSS, false);
             osisfrom = intent.getStringExtra("osisfrom");
             osisto = intent.getStringExtra("osisto");
         } else if ("text/plain".equals(intent.getType()) && Intent.ACTION_SEND.equals(intent.getAction())) {
@@ -104,7 +108,7 @@ public class Passage extends Activity {
         Intent intent;
         ArrayList<OsisItem> items = OsisItem.parseSearch(search, getBaseContext());
         if (!items.isEmpty() && !TextUtils.isEmpty(items.get(0).chapter)) {
-            intent = new Intent(this, ResultActivity.class);
+            intent = new Intent(this, cross ? CrossActivity.class : ResultActivity.class);
             intent.putExtra(SEARCH, search);
             intent.putParcelableArrayListExtra(ITEMS, items);
             startActivity(intent);

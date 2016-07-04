@@ -96,8 +96,9 @@ public class ReadingHandler extends Handler {
     }
 
     private void showReference(Context context, String search) {
-        Intent intent = new Intent(context, Search.class);
-        intent.setAction(Intent.ACTION_SEND);
+        Intent intent = new Intent(context, Passage.class);
+        intent.setAction(Intent.ACTION_SEARCH);
+        intent.putExtra(Passage.CROSS, true);
         intent.putExtra(SearchManager.QUERY, search);
         context.startActivity(intent);
     }

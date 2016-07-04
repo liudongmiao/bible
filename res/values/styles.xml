@@ -24,5 +24,13 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="dark.dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="light.dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 </resources>
 <!-- vim: set sta sw=4 et: -->
