@@ -70,4 +70,5 @@
     <string name="about_source">Source code: %s</string>
     <string name="about_libraries">Use libraries: %s</string>
     <string name="new_version">Added new version: %s</string>
+    <string name="switch_theme">Switch Theme</string>
 </resources>

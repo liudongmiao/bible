@@ -66,6 +66,8 @@ import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import me.piebridge.bible.utils.LogUtils;
+
 public class Bible {
 
     private final static String TAG = "me.piebridge.bible$Bible";
@@ -1497,12 +1499,11 @@ public class Bible {
         return true;
     }
 
-    Long highlightId = null;
-    String highlighted = "";
-
     public String getHighlight(String osis) {
-        highlightId = null;
-        highlighted = "";
+        String highlighted = "";
+        if (mOpenHelper == null) {
+            mOpenHelper = new AnnotationsDatabaseHelper(mContext);
+        }
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
         if (!isDatabaseIntegrityOk(db)) {
             return highlighted;
@@ -1513,11 +1514,10 @@ public class Bible {
                             AnnotationsDatabaseHelper.COLUMN_ID, AnnotationsDatabaseHelper.COLUMN_VERSES},
                     AnnotationsDatabaseHelper.COLUMN_OSIS + " = ? and " + AnnotationsDatabaseHelper.COLUMN_TYPE + " = ?", new String[]{osis, "highlight"}, null, null, null);
             while (cursor != null && cursor.moveToNext()) {
-                highlightId = cursor.getLong(0);
                 highlighted = cursor.getString(1);
             }
         } catch (SQLiteException e) {
-            e.printStackTrace();
+            LogUtils.d("sqlite", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1526,24 +1526,43 @@ public class Bible {
         return highlighted;
     }
 
-    public boolean saveHighlight(String osis, String verses) {
-        if (highlighted.equals(verses)) {
-            return false;
+    public Long getHighlightId(String osis) {
+        Long highlightId = null;
+        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        if (!isDatabaseIntegrityOk(db)) {
+            return null;
         }
+        Cursor cursor = null;
+        try {
+            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, new String[]{
+                            AnnotationsDatabaseHelper.COLUMN_ID, AnnotationsDatabaseHelper.COLUMN_VERSES},
+                    AnnotationsDatabaseHelper.COLUMN_OSIS + " = ? and " + AnnotationsDatabaseHelper.COLUMN_TYPE + " = ?", new String[]{osis, "highlight"}, null, null, null);
+            while (cursor != null && cursor.moveToNext()) {
+                highlightId = cursor.getLong(0);
+            }
+        } catch (SQLiteException e) {
+            LogUtils.d("sqlite", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return highlightId;
+    }
+
+    public boolean saveHighlight(String osis, String verses) {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         if (!isDatabaseIntegrityOk(db)) {
             File path = mContext.getDatabasePath(AnnotationsDatabaseHelper.DATABASE_NAME);
-            if (path != null && path.delete()) {
-                return saveHighlight(osis, verses);
-            }
-            return false;
+            return path != null && path.delete() && saveHighlight(osis, verses);
         }
         ContentValues values = new ContentValues();
         values.put(AnnotationsDatabaseHelper.COLUMN_OSIS, osis);
         values.put(AnnotationsDatabaseHelper.COLUMN_TYPE, "highlight");
         values.put(AnnotationsDatabaseHelper.COLUMN_VERSES, verses);
+        Long highlightId = getHighlightId(osis);
         if (highlightId == null) {
-            highlightId = db.insert(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, values);
+            db.insert(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, values);
         } else {
             db.update(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, values,
                     AnnotationsDatabaseHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(highlightId)});

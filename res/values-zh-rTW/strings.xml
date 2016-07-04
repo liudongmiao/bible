@@ -69,4 +69,5 @@
     <string name="about_source">項目網站: %s</string>
     <string name="about_libraries">第三方庫: %s</string>
     <string name="new_version">成功添加新版本: %s</string>
+    <string name="switch_theme">切換主題</string>
 </resources>

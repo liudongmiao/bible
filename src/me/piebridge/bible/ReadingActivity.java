@@ -6,8 +6,13 @@ import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.RecreateUtils;
+import me.piebridge.bible.utils.ThemeUtils;
 
 /**
  * Created by thom on 15/10/18.
@@ -44,11 +49,41 @@ public class ReadingActivity extends BaseReadingActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.clear();
+        menu.add(Menu.NONE, R.string.switch_theme, Menu.NONE, R.string.switch_theme);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.string.switch_theme) {
+            return switchTheme();
+        }
+        return true;
+    }
+
+    protected boolean switchTheme() {
+        saveOsis();
+        ThemeUtils.switchTheme(this);
+        RecreateUtils.recreate(this);
+        return true;
+    }
+
+    @Override
     protected void onPause() {
-        final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString("osis", getCurrentOsis());
-        editor.commit();
+        saveOsis();
         super.onPause();
+    }
+
+    private void saveOsis() {
+        String osis = getCurrentOsis();
+        if (!TextUtils.isEmpty(osis)) {
+            final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+            editor.putString(OSIS, getCurrentOsis());
+            editor.commit();
+        }
     }
 
 }

@@ -49,7 +49,6 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
     public static final String SELECTED = "selected";
     public static final String HIGHLIGHTED = "highlighted";
     public static final String RED = "red";
-    public static final String NIGHT = "night";
     public static final String COLOR_BACKGROUND = "colorBackground";
     public static final String COLOR_TEXT = "colorText";
     public static final String COLOR_LINK = "colorLink";
@@ -60,13 +59,15 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
 
     protected static final int POSITION_UNKNOWN = -1;
 
-    private ViewPager mPager;
+    protected ViewPager mPager;
 
     protected ReadingAdapter mAdapter;
 
     private View header;
 
     private Handler handler = new ReadingHandler(this);
+
+    private int background;
 
     private String colorBackground;
     private String colorText;
@@ -81,8 +82,8 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
     private static final int RED_500 = 0xfff44336;
 
     // yellow
-    private static final int HIGHLIGHT_200 = 0xfffff59d;
-    private static final int HIGHLIGHT_500 = 0xffffeb3b;
+    private static final int HIGHLIGHT_A700 = 0xffffd600;
+    private static final int HIGHLIGHT_A400 = 0xffffea00;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,31 +94,39 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
         header = findHeader();
         mPager = (ViewPager) findViewById(R.id.pager);
         mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount());
-        mPager.setAdapter(mAdapter);
-        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                prepare(position);
-            }
-        });
         initialize();
     }
 
     private void resolveColors() {
-        colorBackground = ColorUtils.rgba(resolveColor(android.R.attr.colorBackground));
-        colorText = ColorUtils.rgba(resolveColor(android.R.attr.textColorPrimary));
+        background = resolveColor(android.R.attr.colorBackground);
+        colorBackground = ColorUtils.rgba(background);
+        colorText = ColorUtils.rgba(resolveColor(android.R.attr.textColorSecondary));
         colorLink = ColorUtils.rgba(resolveColor(android.R.attr.textColorLink));
         int selected = resolveColor(android.R.attr.textColorHighlight);
         colorSelected = ColorUtils.rgba(selected);
         if (ThemeUtils.isDark(this)) {
             colorRed = ColorUtils.rgba(RED_200);
-            colorHighlight = ColorUtils.rgba(HIGHLIGHT_200);
-            colorHighLightSelected = ColorUtils.blend(HIGHLIGHT_200, selected);
+            colorHighlight = ColorUtils.rgba(HIGHLIGHT_A700);
+            colorHighLightSelected = ColorUtils.blend(HIGHLIGHT_A700, selected);
         } else {
             colorRed = ColorUtils.rgba(RED_500);
-            colorHighlight = ColorUtils.rgba(HIGHLIGHT_500);
-            colorHighLightSelected = ColorUtils.blend(HIGHLIGHT_500, selected);
+            colorHighlight = ColorUtils.rgba(HIGHLIGHT_A400);
+            colorHighLightSelected = ColorUtils.blend(HIGHLIGHT_A400, selected);
         }
+    }
+
+    public int getBackground() {
+        return background;
+    }
+
+    protected void updateColor(Bundle bundle) {
+        bundle.putString(COLOR_BACKGROUND, colorBackground);
+        bundle.putString(COLOR_TEXT, colorText);
+        bundle.putString(COLOR_LINK, colorLink);
+        bundle.putString(COLOR_RED, colorRed);
+        bundle.putString(COLOR_HIGHLIGHT, colorHighlight);
+        bundle.putString(COLOR_SELECTED, colorSelected);
+        bundle.putString(COLOR_HIGHLIGHT_SELECTED, colorHighLightSelected);
     }
 
     protected View findHeader() {
@@ -137,7 +146,7 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
 
     protected void updateHeader(Bundle bundle) {
         String osis = bundle.getString(OSIS);
-        if (TextUtils.isEmpty(osis)) {
+        if (header == null || TextUtils.isEmpty(osis)) {
             return;
         }
 
@@ -180,7 +189,14 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
         if (position == POSITION_UNKNOWN) {
             position = bundle.getInt(ID) - 1;
         }
+        mPager.setAdapter(mAdapter);
         mPager.setCurrentItem(position);
+        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                prepare(position);
+            }
+        });
         mAdapter.getItem(position).getArguments().putAll(bundle);
         prepare(position);
     }
@@ -229,6 +245,7 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
                 bundle.putString(HUMAN, cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN)));
                 bundle.putString(CONTENT, cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CONTENT)));
                 bundle.putString(OSIS, curr);
+                bundle.putString(HIGHLIGHTED,  bible.getHighlight(osis));
                 bundle.putStringArray(NOTES, bible.getNoteVerses(curr));
             }
         } catch (SQLiteException e) {
@@ -245,22 +262,7 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
         bundle.putBoolean(SHANGTI, sp.getBoolean(Settings.SHANGTI, false));
         bundle.putString(VERSION, bible.getVersion());
         bundle.putBoolean(RED, sp.getBoolean(Settings.RED, true));
-        bundle.putBoolean(NIGHT, ThemeUtils.isDark(this));
-        bundle.putString(COLOR_BACKGROUND, colorBackground);
-        bundle.putString(COLOR_TEXT, colorText);
-        bundle.putString(COLOR_LINK, colorLink);
-        bundle.putString(COLOR_RED, colorRed);
-        bundle.putString(COLOR_HIGHLIGHT, colorHighlight);
-        bundle.putString(COLOR_SELECTED, colorSelected);
-        bundle.putString(COLOR_HIGHLIGHT_SELECTED, colorHighLightSelected);
         return bundle;
-    }
-
-    public void onOpenedOsis(Fragment fragment) {
-        int position = fragment.getArguments().getInt(POSITION);
-        if (position == getCurrentPosition()) {
-            prepare(position);
-        }
     }
 
     private void prepare(int position) {
@@ -289,10 +291,14 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
 
     private void prepare(int position, String osis) {
         ReadingFragment fragment = getFragment(position);
-        fragment.getArguments().putString(OSIS, osis);
-        fragment.reloadIfNeeded();
+        Bundle bundle = fragment.getArguments();
+        if (!bundle.containsKey(ID)) {
+            bundle.putString(OSIS, osis);
+            bundle.putAll(retrieveOsis(position, osis));
+        }
     }
 
+    @SuppressWarnings("deprecation")
     private int resolveColor(int resId) {
         TypedValue tv = new TypedValue();
         getTheme().resolveAttribute(resId, tv, true);

@@ -35,13 +35,8 @@ public class ThemeUtils {
     public static void switchTheme(Context context) {
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         String theme = sp.getString(ThemeUtils.THEME, ThemeUtils.THEME_LIGHT);
-        SharedPreferences.Editor editor = sp.edit().putString(ThemeUtils.THEME,
-                ThemeUtils.THEME_LIGHT.equals(theme) ? ThemeUtils.THEME_DARK : ThemeUtils.THEME_LIGHT);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
-            editor.apply();
-        } else {
-            editor.commit();
-        }
+        sp.edit().putString(ThemeUtils.THEME,
+                ThemeUtils.THEME_LIGHT.equals(theme) ? ThemeUtils.THEME_DARK : ThemeUtils.THEME_LIGHT).commit();
     }
 
     public static boolean isDark(Activity activity) {

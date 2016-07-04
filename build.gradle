@@ -13,7 +13,6 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 23
     buildToolsVersion "24"
-    useLibrary 'org.apache.http.legacy'
 
     buildTypes {
         release {
@@ -67,4 +66,9 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
+    options.compilerArgs << '-Xbootclasspath/p:' + fileTree(dir: 'lib', include: ['*.jar']).asPath
 }

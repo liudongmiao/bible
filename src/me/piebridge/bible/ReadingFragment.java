@@ -30,13 +30,10 @@ import static me.piebridge.bible.BaseReadingActivity.COLOR_TEXT;
 import static me.piebridge.bible.BaseReadingActivity.CONTENT;
 import static me.piebridge.bible.BaseReadingActivity.CROSS;
 import static me.piebridge.bible.BaseReadingActivity.CSS;
-import static me.piebridge.bible.BaseReadingActivity.CURR;
 import static me.piebridge.bible.BaseReadingActivity.FONT_SIZE;
 import static me.piebridge.bible.BaseReadingActivity.HIGHLIGHTED;
 import static me.piebridge.bible.BaseReadingActivity.HUMAN;
 import static me.piebridge.bible.BaseReadingActivity.NOTES;
-import static me.piebridge.bible.BaseReadingActivity.OSIS;
-import static me.piebridge.bible.BaseReadingActivity.POSITION;
 import static me.piebridge.bible.BaseReadingActivity.RED;
 import static me.piebridge.bible.BaseReadingActivity.SEARCH;
 import static me.piebridge.bible.BaseReadingActivity.SELECTED;
@@ -83,7 +80,9 @@ public class ReadingFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        reloadIfNeeded();
+        if (webView != null) {
+            reloadData();
+        }
     }
 
     @Override
@@ -98,35 +97,17 @@ public class ReadingFragment extends Fragment {
         WebViewUtils.hideDisplayZoomControls(webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new ReadingBridge(mActivity), "android");
-        reloadData();
+        if (mActivity != null) {
+            webView.setBackgroundColor(mActivity.getBackground());
+        }
         return view;
-    }
-
-    public void reloadIfNeeded() {
-        Bundle bundle = getArguments();
-        String osis = bundle.getString(OSIS);
-        if (mActivity != null && shouldUpdate(bundle)) {
-            int position = bundle.getInt(POSITION);
-            getArguments().putAll(mActivity.retrieveOsis(position, osis));
-            mActivity.onOpenedOsis(this);
-            if (webView != null) {
-                reloadData();
-            }
-        }
-    }
-
-    private boolean shouldUpdate(Bundle bundle) {
-        String osis = bundle.getString(OSIS);
-        String current = bundle.getString(CURR);
-        if (current == null) {
-            return !"".equals(osis);
-        } else {
-            return !current.equals(osis);
-        }
     }
 
     private void reloadData() {
         Bundle bundle = getArguments();
+        if (mActivity != null) {
+            mActivity.updateColor(bundle);
+        }
         String content = (String) bundle.get(CONTENT);
         if (!TextUtils.isEmpty(content)) {
             String human = (String) bundle.get(HUMAN);
