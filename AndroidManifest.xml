@@ -22,7 +22,7 @@
         android:fullBackupContent="true"
         android:icon="@drawable/bible"
         android:label="@string/app_name"
-        android:theme="@style/theme.light">
+        android:theme="@style/light">
         <activity
             android:name=".ReadingActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
