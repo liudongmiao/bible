@@ -53,10 +53,15 @@ public class ReadingFragment extends Fragment {
 
     private WebView webView;
 
+    private ReadingBridge readingBridge;
+
+    private int verse;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mActivity = (BaseActivity) activity;
+        readingBridge = new ReadingBridge(mActivity);
         if (TextUtils.isEmpty(template)) {
             template = retrieveTemplate();
         }
@@ -80,6 +85,9 @@ public class ReadingFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            verse = savedInstanceState.getInt(VERSE_START);
+        }
         if (webView != null) {
             reloadData();
         }
@@ -96,7 +104,7 @@ public class ReadingFragment extends Fragment {
         webView.getSettings().setUseWideViewPort(true);
         WebViewUtils.hideDisplayZoomControls(webView);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new ReadingBridge(mActivity), "android");
+        webView.addJavascriptInterface(readingBridge, "android");
         if (mActivity != null) {
             webView.setBackgroundColor(mActivity.getBackground());
         }
@@ -136,6 +144,7 @@ public class ReadingFragment extends Fragment {
         return String.format(template, fontSize, css,
                 backgroundColor, textColor, linkColor,
                 selectedColor, highlightColor, highlightSelectedColor,
+                verse > 0 ? verse : verseStart,
                 verseStart, verseEnd, search, selected, highlighted,
                 Arrays.toString(notes), title, body);
     }
@@ -194,6 +203,12 @@ public class ReadingFragment extends Fragment {
             }
         }
         return null;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(VERSE_START, readingBridge.getVerse(webView));
+        super.onSaveInstanceState(outState);
     }
 
 }

@@ -335,11 +335,6 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     }
 
     @Override
-    public void setVerse(String verse) {
-        // TODO
-    }
-
-    @Override
     public void setHighlighted(String highlighted) {
         // TODO
     }

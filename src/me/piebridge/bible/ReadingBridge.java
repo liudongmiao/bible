@@ -1,8 +1,12 @@
 package me.piebridge.bible;
 
+import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
 
 import java.lang.ref.WeakReference;
+
+import me.piebridge.bible.utils.LogUtils;
 
 /**
  * Created by thom on 15/10/19.
@@ -10,6 +14,10 @@ import java.lang.ref.WeakReference;
 public class ReadingBridge {
 
     private final WeakReference<Bridge> wr;
+
+    private int verse;
+
+    private final Object verseLock = new Object();
 
     public ReadingBridge(Bridge bridge) {
         wr = new WeakReference<Bridge>(bridge);
@@ -19,7 +27,12 @@ public class ReadingBridge {
     public void setVerse(String verse) {
         Bridge bridge = wr.get();
         if (bridge != null) {
-            bridge.setVerse(verse);
+            synchronized (verseLock) {
+                if (!TextUtils.isEmpty(verse) && TextUtils.isDigitsOnly(verse)) {
+                    this.verse = Integer.parseInt(verse);
+                }
+                verseLock.notifyAll();
+            }
         }
     }
 
@@ -55,9 +68,21 @@ public class ReadingBridge {
         }
     }
 
-    interface Bridge {
+    public int getVerse(WebView webview) {
+        if (webview != null && webview.getScrollY() != 0) {
+            synchronized (verseLock) {
+                webview.loadUrl("javascript:getFirstVisibleVerse();");
+                try {
+                    verseLock.wait(3000);
+                } catch (InterruptedException e) {
+                    LogUtils.d("interrupted", e);
+                }
+            }
+        }
+        return verse;
+    }
 
-        void setVerse(String verse);
+    interface Bridge {
 
         void setHighlighted(String highlighted);
 
