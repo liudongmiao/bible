@@ -78,12 +78,12 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
     private String colorHighLightSelected;
 
     // https://material.google.com/style/color.html
-    private static final int RED_200 = 0xffef9a9a;
-    private static final int RED_500 = 0xfff44336;
+    private static final int RED_200 = 0x8aef9a9a;
+    private static final int RED_500 = 0xb3f44336;
 
     // yellow
-    private static final int HIGHLIGHT_A700 = 0xffffd600;
-    private static final int HIGHLIGHT_A400 = 0xffffea00;
+    private static final int HIGHLIGHT_200 = 0x66fff59d;
+    private static final int HIGHLIGHT_500 = 0x66ffeb3b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,12 +106,12 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
         colorSelected = ColorUtils.rgba(selected);
         if (ThemeUtils.isDark(this)) {
             colorRed = ColorUtils.rgba(RED_200);
-            colorHighlight = ColorUtils.rgba(HIGHLIGHT_A700);
-            colorHighLightSelected = ColorUtils.blend(HIGHLIGHT_A700, selected);
+            colorHighlight = ColorUtils.rgba(HIGHLIGHT_200);
+            colorHighLightSelected = ColorUtils.blend(HIGHLIGHT_200, selected);
         } else {
             colorRed = ColorUtils.rgba(RED_500);
-            colorHighlight = ColorUtils.rgba(HIGHLIGHT_A400);
-            colorHighLightSelected = ColorUtils.blend(HIGHLIGHT_A400, selected);
+            colorHighlight = ColorUtils.rgba(HIGHLIGHT_500);
+            colorHighLightSelected = ColorUtils.blend(HIGHLIGHT_500, selected);
         }
     }
 

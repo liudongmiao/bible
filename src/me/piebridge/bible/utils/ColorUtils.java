@@ -36,11 +36,10 @@ public class ColorUtils {
 
         // blend: WebKit/Source/platform/graphics/Color.cpp
         int d = 255 * (sourceA + dropA) - sourceA * dropA;
+        int targetA = d / 255;
         int targetR = (sourceR * sourceA * (255 - dropA) + 255 * dropA * dropR) / d;
         int targetG = (sourceG * sourceA * (255 - dropA) + 255 * dropA * dropG) / d;
         int targetB = (sourceB * sourceA * (255 - dropA) + 255 * dropA * dropB) / d;
-        // webkit let targetA = d / 255
-        int targetA = (sourceA * sourceA * (255 - dropA) + 255 * dropA * dropA) / d;
 
         return String.format(Locale.US, "rgba(%d, %d, %d, %s)", targetR, targetG, targetB,
                 DF.format(targetA / 255.0));
