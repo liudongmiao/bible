@@ -49,26 +49,9 @@ public class ReadingActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.clear();
-        menu.add(Menu.NONE, R.string.switch_theme, Menu.NONE, R.string.switch_theme);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.string.switch_theme) {
-            return switchTheme();
-        }
-        return true;
-    }
-
     protected boolean switchTheme() {
         saveOsis();
-        ThemeUtils.switchTheme(this);
-        RecreateUtils.recreate(this);
-        return true;
+        return super.switchTheme();
     }
 
     @Override

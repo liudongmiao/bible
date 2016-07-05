@@ -16,12 +16,15 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ColorUtils;
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.RecreateUtils;
 import me.piebridge.bible.utils.ThemeUtils;
 
 /**
@@ -308,6 +311,27 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         getTheme().resolveAttribute(resId, tv, true);
         int colorId = tv.resourceId;
         return getResources().getColor(colorId);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, R.string.switch_theme, Menu.NONE, R.string.switch_theme);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.string.switch_theme) {
+            return switchTheme();
+        }
+        return true;
+    }
+
+    protected boolean switchTheme() {
+        ThemeUtils.switchTheme(this);
+        RecreateUtils.recreate(this);
+        return true;
     }
 
     @Override
