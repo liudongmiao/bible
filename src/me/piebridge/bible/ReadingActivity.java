@@ -17,7 +17,7 @@ import me.piebridge.bible.utils.ThemeUtils;
 /**
  * Created by thom on 15/10/18.
  */
-public class ReadingActivity extends BaseReadingActivity {
+public class ReadingActivity extends BaseActivity {
 
     private static final int SIZE = 0x4a5;
 

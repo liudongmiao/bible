@@ -20,27 +20,27 @@ import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.WebViewUtils;
 
-import static me.piebridge.bible.BaseReadingActivity.COLOR_BACKGROUND;
-import static me.piebridge.bible.BaseReadingActivity.COLOR_HIGHLIGHT;
-import static me.piebridge.bible.BaseReadingActivity.COLOR_HIGHLIGHT_SELECTED;
-import static me.piebridge.bible.BaseReadingActivity.COLOR_LINK;
-import static me.piebridge.bible.BaseReadingActivity.COLOR_RED;
-import static me.piebridge.bible.BaseReadingActivity.COLOR_SELECTED;
-import static me.piebridge.bible.BaseReadingActivity.COLOR_TEXT;
-import static me.piebridge.bible.BaseReadingActivity.CONTENT;
-import static me.piebridge.bible.BaseReadingActivity.CROSS;
-import static me.piebridge.bible.BaseReadingActivity.CSS;
-import static me.piebridge.bible.BaseReadingActivity.FONT_SIZE;
-import static me.piebridge.bible.BaseReadingActivity.HIGHLIGHTED;
-import static me.piebridge.bible.BaseReadingActivity.HUMAN;
-import static me.piebridge.bible.BaseReadingActivity.NOTES;
-import static me.piebridge.bible.BaseReadingActivity.RED;
-import static me.piebridge.bible.BaseReadingActivity.SEARCH;
-import static me.piebridge.bible.BaseReadingActivity.SELECTED;
-import static me.piebridge.bible.BaseReadingActivity.SHANGTI;
-import static me.piebridge.bible.BaseReadingActivity.VERSE_END;
-import static me.piebridge.bible.BaseReadingActivity.VERSE_START;
-import static me.piebridge.bible.BaseReadingActivity.VERSION;
+import static me.piebridge.bible.BaseActivity.COLOR_BACKGROUND;
+import static me.piebridge.bible.BaseActivity.COLOR_HIGHLIGHT;
+import static me.piebridge.bible.BaseActivity.COLOR_HIGHLIGHT_SELECTED;
+import static me.piebridge.bible.BaseActivity.COLOR_LINK;
+import static me.piebridge.bible.BaseActivity.COLOR_RED;
+import static me.piebridge.bible.BaseActivity.COLOR_SELECTED;
+import static me.piebridge.bible.BaseActivity.COLOR_TEXT;
+import static me.piebridge.bible.BaseActivity.CONTENT;
+import static me.piebridge.bible.BaseActivity.CROSS;
+import static me.piebridge.bible.BaseActivity.CSS;
+import static me.piebridge.bible.BaseActivity.FONT_SIZE;
+import static me.piebridge.bible.BaseActivity.HIGHLIGHTED;
+import static me.piebridge.bible.BaseActivity.HUMAN;
+import static me.piebridge.bible.BaseActivity.NOTES;
+import static me.piebridge.bible.BaseActivity.RED;
+import static me.piebridge.bible.BaseActivity.SEARCH;
+import static me.piebridge.bible.BaseActivity.SELECTED;
+import static me.piebridge.bible.BaseActivity.SHANGTI;
+import static me.piebridge.bible.BaseActivity.VERSE_END;
+import static me.piebridge.bible.BaseActivity.VERSE_START;
+import static me.piebridge.bible.BaseActivity.VERSION;
 
 /**
  * Created by thom on 15/10/18.
@@ -49,14 +49,14 @@ public class ReadingFragment extends Fragment {
 
     private static String template;
 
-    private BaseReadingActivity mActivity;
+    private BaseActivity mActivity;
 
     private WebView webView;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivity = (BaseReadingActivity) activity;
+        mActivity = (BaseActivity) activity;
         if (TextUtils.isEmpty(template)) {
             template = retrieveTemplate();
         }

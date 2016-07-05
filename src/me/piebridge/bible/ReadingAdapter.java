@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
-import static me.piebridge.bible.BaseReadingActivity.POSITION;
+import static me.piebridge.bible.BaseActivity.POSITION;
 
 /**
  * Created by thom on 16/7/2.

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Created by thom on 16/7/1.
  */
-public class ResultActivity extends BaseReadingActivity {
+public class ResultActivity extends BaseActivity {
 
     public static final String ITEMS = "items";
     public static final String SEARCH = "search";

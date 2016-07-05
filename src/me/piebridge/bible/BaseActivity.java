@@ -27,7 +27,7 @@ import me.piebridge.bible.utils.ThemeUtils;
 /**
  * Created by thom on 15/10/18.
  */
-public abstract class BaseReadingActivity extends FragmentActivity implements ReadingBridge.Bridge {
+public abstract class BaseActivity extends FragmentActivity implements ReadingBridge.Bridge {
 
     public static final String CSS = "css";
     public static final String OSIS = "osis";

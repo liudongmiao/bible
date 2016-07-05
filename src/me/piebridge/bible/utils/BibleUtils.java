@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import me.piebridge.bible.BaseReadingActivity;
+import me.piebridge.bible.BaseActivity;
 import me.piebridge.bible.R;
 
 /**
@@ -51,10 +51,10 @@ public class BibleUtils {
     }
 
     public static String getChapterVerse(Context context, Bundle bundle) {
-        String osis = bundle.getString(BaseReadingActivity.OSIS);
+        String osis = bundle.getString(BaseActivity.OSIS);
         String chapter = getChapter(osis, context);
-        int verseStart = BibleUtils.getNumber(bundle, BaseReadingActivity.VERSE_START);
-        int verseEnd = BibleUtils.getNumber(bundle, BaseReadingActivity.VERSE_END);
+        int verseStart = BibleUtils.getNumber(bundle, BaseActivity.VERSE_START);
+        int verseEnd = BibleUtils.getNumber(bundle, BaseActivity.VERSE_END);
         if (verseStart > 0) {
             StringBuilder sb = new StringBuilder(chapter);
             sb.append(":");
