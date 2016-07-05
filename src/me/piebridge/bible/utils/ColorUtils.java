@@ -45,4 +45,8 @@ public class ColorUtils {
                 DF.format(targetA / 255.0));
     }
 
+    public static int replaceAlpha(int source, int alpha) {
+        return (source & 0xffffff) | (alpha & 0xff000000);
+    }
+
 }

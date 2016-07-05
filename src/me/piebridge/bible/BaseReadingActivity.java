@@ -78,12 +78,12 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
     private String colorHighLightSelected;
 
     // https://material.google.com/style/color.html
-    private static final int RED_200 = 0x8aef9a9a;
-    private static final int RED_500 = 0xb3f44336;
+    private static final int RED_200 = 0xef9a9a;
+    private static final int RED_500 = 0xf44336;
 
     // yellow
-    private static final int HIGHLIGHT_200 = 0x66fff59d;
-    private static final int HIGHLIGHT_500 = 0x66ffeb3b;
+    private static final int YELLOW_200 = 0xfff59d;
+    private static final int YELLOW_500 = 0xffeb3b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,19 +100,23 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
     private void resolveColors() {
         background = resolveColor(android.R.attr.colorBackground);
         colorBackground = ColorUtils.rgba(background);
-        colorText = ColorUtils.rgba(resolveColor(android.R.attr.textColorSecondary));
         colorLink = ColorUtils.rgba(resolveColor(android.R.attr.textColorLink));
-        int selected = resolveColor(android.R.attr.textColorHighlight);
-        colorSelected = ColorUtils.rgba(selected);
+        int textColorHighlight = resolveColor(android.R.attr.textColorHighlight);
+        int textColorPrimary = resolveColor(android.R.attr.textColorPrimary);
+        int red;
+        int highlight;
         if (ThemeUtils.isDark(this)) {
-            colorRed = ColorUtils.rgba(RED_200);
-            colorHighlight = ColorUtils.rgba(HIGHLIGHT_200);
-            colorHighLightSelected = ColorUtils.blend(HIGHLIGHT_200, selected);
+            red = ColorUtils.replaceAlpha(RED_200, textColorPrimary);
+            highlight = ColorUtils.replaceAlpha(YELLOW_200, textColorHighlight);
         } else {
-            colorRed = ColorUtils.rgba(RED_500);
-            colorHighlight = ColorUtils.rgba(HIGHLIGHT_500);
-            colorHighLightSelected = ColorUtils.blend(HIGHLIGHT_500, selected);
+            red = ColorUtils.replaceAlpha(RED_500, textColorPrimary);
+            highlight = ColorUtils.replaceAlpha(YELLOW_500, textColorHighlight);
         }
+        colorText = ColorUtils.rgba(textColorPrimary);
+        colorSelected = ColorUtils.rgba(textColorHighlight);
+        colorRed = ColorUtils.rgba(red);
+        colorHighlight = ColorUtils.rgba(highlight);
+        colorHighLightSelected = ColorUtils.blend(highlight, textColorHighlight);
     }
 
     public int getBackground() {
@@ -245,7 +249,7 @@ public abstract class BaseReadingActivity extends FragmentActivity implements Re
                 bundle.putString(HUMAN, cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN)));
                 bundle.putString(CONTENT, cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CONTENT)));
                 bundle.putString(OSIS, curr);
-                bundle.putString(HIGHLIGHTED,  bible.getHighlight(osis));
+                bundle.putString(HIGHLIGHTED, bible.getHighlight(osis));
                 bundle.putStringArray(NOTES, bible.getNoteVerses(curr));
             }
         } catch (SQLiteException e) {
