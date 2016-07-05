@@ -854,6 +854,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             body += "<title>" + title + "</title>\n";
         }
         body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"reader.css\"/>\n";
+        body += "<link rel=\"stylesheet\" type=\"text/css\" href=\"color.css\"/>\n";
         body += "<script type=\"text/javascript\">\n";
         verse = (verse == null || verse.trim().length() == 0) ? "-1" : verse;
         end = (end == null || end.trim().length() == 0) ? "-1" : end;

@@ -28,18 +28,3 @@ a.notelink, .footnote a, .crossreference a { text-decoration: none; }
 .icon-crossreference:before { font-family: "annotation"; content: '\e801'; }
 a.notelink { padding: 0 0.2em }
 img.note { height: 1em }
-
-/*
-#pb-demo { display: none; background: #ffff00; border: 1px solid #999; padding: 5px }
-body { background-color: white; color: black; }
-a.notelink, .footnote a, .crossreference a { color: #2c96dd; }
-.highlight { background: #ffff00 }
-.selected { background: rgba(51, 181, 229, 0.40); }
-.selected.highlight { background: rgba(173, 225, 91, 0.60); }
-
-body.nightmode { background-color: black; color: white; }
-.nightmode .highlight { background: #ff8800 }
-.nightmode .selected { background: rgba(0, 153, 204, 0.60); }
-.nightmode .selected.highlight { background: rgba(102, 146, 122, 0.9); }
-.nightmode a.notelink, .nightmode .footnote a, .nightmode .crossreference a { color: #2c96dd; }
-*/
