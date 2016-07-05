@@ -1,9 +1,9 @@
+.pn { border-bottom: 1px solid; }
 .add { border-bottom: 1px dotted; }
 .addpn { border-bottom: 1px dotted; text-decoration: underline; }
 .b { font-size: 1em; }
 .d { font-style: italic; margin-bottom: 4pt; margin-top: 4pt; }
 .ms { font-size: 1.2em; font-weight: bold; text-align: center; margin-bottom: 4pt; margin-top: 16pt; }
-.pn { text-decoration: underline; }
 .p { text-indent: 0em; }
 .q1 { margin-left: 1em; margin-top: 0em; margin-bottom: 0.1em; line-height: 1.2em; }
 .qs { font-style: italic; margin-bottom: 0px; }
@@ -20,9 +20,8 @@ span.para { display: block; padding: 0; padding-bottom: 10px; }
 .title-passage { display: block; font-weight: bold; padding-bottom: 10px; }
 sup, .chapternum { line-height: 0;  font-weight: bold; }
 sup.footnote, sup.crossreference { font-weight: normal }
-#pb-demo { display: none; background: #ffff00; border: 1px solid #999; padding: 5px }
-.introduction .iot { border-bottom: 1px solid #b2b2b2; text-transform: uppercase; }
-.introduction .io1 { background-color: #f2f2f2; font-size: 0.8em; margin: 0; padding: 8px 5px 8px 20px; }
+.introduction .iot { border-bottom: 1px solid; text-transform: uppercase; }
+.introduction .io1 { font-size: 0.8em; margin: 0; padding: 8px 5px 8px 20px; }
 a.notelink, .footnote a, .crossreference a { text-decoration: none; }
 @font-face { font-family: 'annotation'; src: url('annotation.ttf') format('truetype'); }
 .icon-footnote:before { font-family: "annotation"; content: '\e800'; } 
@@ -31,6 +30,7 @@ a.notelink { padding: 0 0.2em }
 img.note { height: 1em }
 
 /*
+#pb-demo { display: none; background: #ffff00; border: 1px solid #999; padding: 5px }
 body { background-color: white; color: black; }
 a.notelink, .footnote a, .crossreference a { color: #2c96dd; }
 .highlight { background: #ffff00 }
