@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 
-import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.WebViewUtils;
 
 import static me.piebridge.bible.BaseActivity.COLOR_BACKGROUND;
@@ -36,7 +36,6 @@ import static me.piebridge.bible.BaseActivity.HUMAN;
 import static me.piebridge.bible.BaseActivity.NOTES;
 import static me.piebridge.bible.BaseActivity.RED;
 import static me.piebridge.bible.BaseActivity.SEARCH;
-import static me.piebridge.bible.BaseActivity.SELECTED;
 import static me.piebridge.bible.BaseActivity.SHANGTI;
 import static me.piebridge.bible.BaseActivity.VERSE_END;
 import static me.piebridge.bible.BaseActivity.VERSE_START;
@@ -47,15 +46,20 @@ import static me.piebridge.bible.BaseActivity.VERSION;
  */
 public class ReadingFragment extends Fragment {
 
+    private static final String VERSE = "verse";
+    private static final String SELECTED_VERSES = "selectedVerses";
+    private static final String SELECTED_CONTENT = "selectedContent";
+    private static final String HIGHLIGHT_SELECTED = "highlightSelected";
+
     private static String template;
-
     private BaseActivity mActivity;
-
     private WebView webView;
-
     private ReadingBridge readingBridge;
 
     private int verse;
+    private boolean highlightSelected;
+    private String selectedVerses = "";
+    private String selectedContent = "";
 
     @Override
     public void onAttach(Activity activity) {
@@ -86,7 +90,10 @@ public class ReadingFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
-            verse = savedInstanceState.getInt(VERSE_START);
+            verse = savedInstanceState.getInt(VERSE);
+            selectedVerses = savedInstanceState.getString(SELECTED_VERSES);
+            selectedContent = savedInstanceState.getString(SELECTED_CONTENT);
+            highlightSelected = savedInstanceState.getBoolean(HIGHLIGHT_SELECTED);
         }
         if (webView != null) {
             reloadData();
@@ -130,10 +137,9 @@ public class ReadingFragment extends Fragment {
         String[] notes = bundle.getStringArray(NOTES);
         int fontSize = bundle.getInt(FONT_SIZE);
         String css = fixCSS(bundle);
-        int verseStart = BibleUtils.getNumber(bundle, VERSE_START);
-        int verseEnd = BibleUtils.getNumber(bundle, VERSE_END);
+        int verseStart = NumberUtils.parseInt(getString(bundle, VERSE_START));
+        int verseEnd = NumberUtils.parseInt(getString(bundle, VERSE_END));
         String search = getString(bundle, SEARCH);
-        String selected = getString(bundle, SELECTED);
         String highlighted = getString(bundle, HIGHLIGHTED);
         String backgroundColor = getString(bundle, COLOR_BACKGROUND);
         String textColor = getString(bundle, COLOR_TEXT);
@@ -145,7 +151,7 @@ public class ReadingFragment extends Fragment {
                 backgroundColor, textColor, linkColor,
                 selectedColor, highlightColor, highlightSelectedColor,
                 verse > 0 ? verse : verseStart,
-                verseStart, verseEnd, search, selected, highlighted,
+                verseStart, verseEnd, search, selectedVerses, highlighted,
                 Arrays.toString(notes), title, body);
     }
 
@@ -207,7 +213,10 @@ public class ReadingFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(VERSE_START, readingBridge.getVerse(webView));
+        outState.putInt(VERSE, readingBridge.getVerse(webView));
+        outState.putString(SELECTED_VERSES, readingBridge.getSelectedVerses(selectedVerses));
+        outState.putString(SELECTED_CONTENT, readingBridge.getSelectedContent(selectedContent));
+        outState.putBoolean(HIGHLIGHT_SELECTED, readingBridge.isHighlightSelected(highlightSelected));
         super.onSaveInstanceState(outState);
     }
 

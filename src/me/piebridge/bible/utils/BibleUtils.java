@@ -16,15 +16,6 @@ public class BibleUtils {
 
     }
 
-    public static int getNumber(Bundle bundle, String key) {
-        String s = bundle.getString(key);
-        if (!TextUtils.isEmpty(s) && TextUtils.isDigitsOnly(s)) {
-            return Integer.parseInt(s);
-        } else {
-            return -1;
-        }
-    }
-
     public static String getBook(String osis) {
         int index = osis.indexOf('.');
         if (index > 0) {
@@ -53,8 +44,8 @@ public class BibleUtils {
     public static String getChapterVerse(Context context, Bundle bundle) {
         String osis = bundle.getString(BaseActivity.OSIS);
         String chapter = getChapter(osis, context);
-        int verseStart = BibleUtils.getNumber(bundle, BaseActivity.VERSE_START);
-        int verseEnd = BibleUtils.getNumber(bundle, BaseActivity.VERSE_END);
+        int verseStart = NumberUtils.parseInt(bundle.getString(BaseActivity.VERSE_START));
+        int verseEnd = NumberUtils.parseInt(bundle.getString(BaseActivity.VERSE_END));
         if (verseStart > 0) {
             StringBuilder sb = new StringBuilder(chapter);
             sb.append(":");

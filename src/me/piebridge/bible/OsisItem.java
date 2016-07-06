@@ -25,6 +25,8 @@ import android.text.TextUtils;
 
 import org.w3c.dom.Text;
 
+import me.piebridge.bible.utils.NumberUtils;
+
 public class OsisItem implements Parcelable {
 
     public String book;
@@ -76,7 +78,7 @@ public class OsisItem implements Parcelable {
     }
 
     private boolean isValidVerse(String verse) {
-        return !TextUtils.isEmpty(verse) && TextUtils.isDigitsOnly(verse) && Integer.parseInt(verse) > 0;
+        return NumberUtils.parseInt(verse) > 0;
     }
 
     public String toString() {
@@ -215,8 +217,8 @@ public class OsisItem implements Parcelable {
                 items.add(new OsisItem(osis, start_chapter, start_verse, end_chapter));
             // 3-4, 3-4:5, 3:16-4:6
             } else if ("".equals(start_verse) || (!"".equals(start_verse) && !"".equals(end_verse))) {
-                int start = Integer.parseInt(start_chapter);
-                int end = Integer.parseInt(end_chapter);
+                int start = NumberUtils.parseInt(start_chapter);
+                int end = NumberUtils.parseInt(end_chapter);
                 items.add(new OsisItem(osis, start_chapter, start_verse));
                 for (int i = start + 1; i < end; i++) {
                     items.add(new OsisItem(osis, i));

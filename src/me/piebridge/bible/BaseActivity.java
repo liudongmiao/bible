@@ -49,7 +49,6 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     public static final String SHANGTI = "shangti";
     public static final String VERSION = "version";
     public static final String SEARCH = "search";
-    public static final String SELECTED = "selected";
     public static final String HIGHLIGHTED = "highlighted";
     public static final String RED = "red";
     public static final String COLOR_BACKGROUND = "colorBackground";
@@ -335,11 +334,6 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     }
 
     @Override
-    public void setHighlighted(String highlighted) {
-        // TODO
-    }
-
-    @Override
     public void showAnnotation(String link, String annotation) {
         LogUtils.d("link: " + link + ", annotation: " + annotation);
         handler.sendMessage(handler.obtainMessage(ReadingHandler.SHOW_ANNOTATION, new String[] {link, annotation, getCurrentOsis()}));
@@ -347,11 +341,6 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
 
     @Override
     public void showNote(String versenum) {
-        // TODO
-    }
-
-    @Override
-    public void setCopyText(String text) {
         // TODO
     }
 
