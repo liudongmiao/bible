@@ -7,7 +7,7 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="23" />
+        android:targetSdkVersion="22" />
 
     <permission
         android:name="me.piebridge.bible.permission.ACCESS"
