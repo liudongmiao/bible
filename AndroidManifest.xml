@@ -152,7 +152,7 @@
         <activity
             android:name=".SelectActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@style/light" />
+            android:theme="@android:style/Theme.Light" />
 
         <provider
             android:name=".Provider"

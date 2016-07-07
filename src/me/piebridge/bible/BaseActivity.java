@@ -25,7 +25,6 @@ import android.widget.TextView;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ColorUtils;
 import me.piebridge.bible.utils.LogUtils;
-import me.piebridge.bible.utils.RecreateUtils;
 import me.piebridge.bible.utils.ThemeUtils;
 
 /**
@@ -304,10 +303,30 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
 
     @SuppressWarnings("deprecation")
     private int resolveColor(int resId) {
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(resId, tv, true);
-        int colorId = tv.resourceId;
-        return getResources().getColor(colorId);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+            TypedValue tv = new TypedValue();
+            getTheme().resolveAttribute(resId, tv, true);
+            int colorId = tv.resourceId;
+            return getResources().getColor(colorId);
+        } else {
+            return getDefaultColor(resId);
+        }
+    }
+
+    private int getDefaultColor(int resId) {
+        // for gingerbread
+        switch (resId) {
+            case android.R.attr.colorBackground:
+                return 0xffffffff;
+            case android.R.attr.textColorLink:
+                return 0xff5c5cff;
+            case android.R.attr.textColorHighlight:
+                return 0x66ff9200;
+            case android.R.attr.textColorPrimary:
+                return 0xde000000;
+            default:
+                return 0;
+        }
     }
 
     @Override
@@ -327,7 +346,9 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, R.string.switch_theme, Menu.NONE, R.string.switch_theme);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+            menu.add(Menu.NONE, R.string.switch_theme, Menu.NONE, R.string.switch_theme);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -341,8 +362,10 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     }
 
     protected boolean switchTheme() {
-        ThemeUtils.switchTheme(this);
-        RecreateUtils.recreate(this);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+            ThemeUtils.switchTheme(this);
+            recreate();
+        }
         return true;
     }
 

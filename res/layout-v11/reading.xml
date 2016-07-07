@@ -5,8 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/header" />
-
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
@@ -15,5 +13,6 @@
         android:paddingBottom="2dp">
 
     </android.support.v4.view.ViewPager>
+
 
 </LinearLayout>

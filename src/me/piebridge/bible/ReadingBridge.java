@@ -41,9 +41,11 @@ public class ReadingBridge {
     public void setCopyText(String text) {
         String[] fields = text.split("\n", 0x3);
         // highlight selected's length
-        highlightSelected = NumberUtils.parseInt(fields[0]) > 0;
-        selectedVerses = fields[0x1];
-        selectedContent = fields[0x2];
+        if (fields.length == 0x3) {
+            highlightSelected = NumberUtils.parseInt(fields[0]) > 0;
+            selectedVerses = fields[0x1];
+            selectedContent = fields[0x2];
+        }
     }
 
     @JavascriptInterface

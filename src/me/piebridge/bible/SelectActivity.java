@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
+import android.view.Window;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -50,6 +51,7 @@ public class SelectActivity extends FragmentActivity implements ViewPager.OnPage
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.setTheme(this);
         super.onCreate(savedInstanceState);
+        requestWindowFeature(0);
         setContentView(R.layout.select);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
             ActionBar actionBar = getActionBar();

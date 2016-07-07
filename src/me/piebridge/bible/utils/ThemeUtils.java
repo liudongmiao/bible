@@ -3,6 +3,7 @@ package me.piebridge.bible.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 
 import me.piebridge.bible.R;
@@ -21,13 +22,17 @@ public class ThemeUtils {
     }
 
     public static void setTheme(Activity activity) {
-        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
-        activity.setTheme(THEME_LIGHT.equals(sp.getString(THEME, THEME_LIGHT)) ? R.style.light : R.style.dark);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+            final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
+            activity.setTheme(THEME_LIGHT.equals(sp.getString(THEME, THEME_LIGHT)) ? R.style.light : R.style.dark);
+        }
     }
 
     public static void setDialogTheme(Activity activity) {
-        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
-        activity.setTheme(THEME_LIGHT.equals(sp.getString(THEME, THEME_LIGHT)) ? R.style.light_dialog : R.style.dark_dialog);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+            final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
+            activity.setTheme(THEME_LIGHT.equals(sp.getString(THEME, THEME_LIGHT)) ? R.style.light_dialog : R.style.dark_dialog);
+        }
     }
 
     public static void switchTheme(Context context) {
@@ -38,8 +43,12 @@ public class ThemeUtils {
     }
 
     public static boolean isDark(Activity activity) {
-        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
-        return THEME_DARK.equals(sp.getString(THEME, THEME_LIGHT));
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+            final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
+            return THEME_DARK.equals(sp.getString(THEME, THEME_LIGHT));
+        } else {
+            return false;
+        }
     }
 
 }
