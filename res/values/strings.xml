@@ -11,7 +11,7 @@
     </plurals>
     <string name="noversion">This version is only for demo, please navigate to "Manage Versions" to install Bible Data. Note: Bible Reader only supports Bible Data on external storage (i.e., sdcard).</string>
     <string name="manageversion">Manage Versions</string>
-    <string name="chooseversion">Choose Version</string>
+    <string name="choose_version">Choose Version</string>
     <string name="searchall">Search Entire Bible</string>
     <string name="searchold">Search Old Testament</string>
     <string name="searchnew">Search New Testament</string>

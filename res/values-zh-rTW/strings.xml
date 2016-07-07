@@ -9,7 +9,7 @@
     </plurals>
     <string name="noversion">此版本僅供演示，請轉到“管理版本”安裝聖經數據。提示：聖經閱讀器僅支持外部存儲(如SDCARD)。</string>
     <string name="manageversion">管理版本</string>
-    <string name="chooseversion">選擇版本</string>
+    <string name="choose_version">選擇版本</string>
     <string name="searchall">搜尋整本聖經</string>
     <string name="searchold">搜尋舊約聖經</string>
     <string name="searchnew">搜尋新約聖經</string>

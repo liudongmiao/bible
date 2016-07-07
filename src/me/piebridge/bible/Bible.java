@@ -132,6 +132,7 @@ public class Bible {
         } catch (NameNotFoundException e) {
         }
         updateLocale();
+        checkVersionsSync(true);
         setDefaultVersion();
     }
 

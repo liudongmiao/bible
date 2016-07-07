@@ -154,6 +154,12 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@android:style/Theme.Light" />
 
+        <activity
+            android:name=".SelectVersionActivity"
+            android:label="@string/choose_version"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@android:style/Theme.Light" />
+
         <provider
             android:name=".Provider"
             android:authorities="me.piebridge.bible.provider"

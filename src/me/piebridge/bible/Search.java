@@ -215,7 +215,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         String[] osiss = (String []) bible.get(Bible.TYPE.OSIS).toArray(new String[0]);
         String[] humans = (String []) bible.get(Bible.TYPE.HUMAN).toArray(new String[0]);
 
-        version = addList(VERSION, R.string.chooseversion, String.valueOf(bible.getVersion()).toUpperCase(Locale.US), humanversions, versions);
+        version = addList(VERSION, R.string.choose_version, String.valueOf(bible.getVersion()).toUpperCase(Locale.US), humanversions, versions);
         version.setOnPreferenceClickListener(this);
         searchall = addCheckBox(ALL, R.string.searchall);
         searchold = addCheckBox(OLD, R.string.searchold);

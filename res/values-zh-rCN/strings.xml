@@ -9,7 +9,7 @@
     </plurals>
     <string name="noversion">此版本仅供演示，请转到“管理版本”获取圣经数据。提示：圣经阅读器仅支持外部存储(如SDCARD)。</string>
     <string name="manageversion">管理版本</string>
-    <string name="chooseversion">选择版本</string>
+    <string name="choose_version">选择版本</string>
     <string name="searchall">搜索整本圣经</string>
     <string name="searchold">搜索旧约圣经</string>
     <string name="searchnew">搜索新约圣经</string>

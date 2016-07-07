@@ -30,6 +30,7 @@ import static me.piebridge.bible.BaseActivity.COLOR_TEXT;
 import static me.piebridge.bible.BaseActivity.CONTENT;
 import static me.piebridge.bible.BaseActivity.CROSS;
 import static me.piebridge.bible.BaseActivity.CSS;
+import static me.piebridge.bible.BaseActivity.CURR;
 import static me.piebridge.bible.BaseActivity.FONT_SIZE;
 import static me.piebridge.bible.BaseActivity.HIGHLIGHTED;
 import static me.piebridge.bible.BaseActivity.HUMAN;
@@ -56,6 +57,7 @@ public class ReadingFragment extends Fragment {
     private WebView webView;
     private ReadingBridge readingBridge;
 
+    private String osis;
     private int verse;
     private boolean highlightSelected;
     private String selectedVerses = "";
@@ -123,6 +125,9 @@ public class ReadingFragment extends Fragment {
             return;
         }
         Bundle bundle = getArguments();
+        if (!TextUtils.isEmpty(osis) && osis.equals(bundle.getString(CURR))) {
+            saveState();
+        }
         mActivity.updateColor(bundle);
         String content = (String) bundle.get(CONTENT);
         if (!TextUtils.isEmpty(content)) {
@@ -134,6 +139,7 @@ public class ReadingFragment extends Fragment {
 
     private String getBody(String title, String content) {
         Bundle bundle = getArguments();
+        osis = bundle.getString(CURR);
         String body = fixIfNeeded(bundle, content);
         String[] notes = bundle.getStringArray(NOTES);
         int fontSize = bundle.getInt(FONT_SIZE);
@@ -207,6 +213,13 @@ public class ReadingFragment extends Fragment {
         outState.putString(SELECTED_CONTENT, readingBridge.getSelectedContent(selectedContent));
         outState.putBoolean(HIGHLIGHT_SELECTED, readingBridge.isHighlightSelected(highlightSelected));
         super.onSaveInstanceState(outState);
+    }
+
+    private void saveState() {
+        verse = readingBridge.getVerse(webView);
+        selectedVerses = readingBridge.getSelectedVerses(selectedVerses);
+        selectedContent = readingBridge.getSelectedContent(selectedContent);
+        highlightSelected = readingBridge.isHighlightSelected(highlightSelected);
     }
 
 }

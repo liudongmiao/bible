@@ -77,7 +77,7 @@ public class GridAdapter extends ArrayAdapter<String> {
         notifyDataSetChanged();
     }
 
-    interface GridChecker {
+    public interface GridChecker {
 
         String getGridName(String key);
 

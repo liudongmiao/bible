@@ -75,11 +75,14 @@ public class ResultActivity extends BaseActivity {
     @Override
     protected void initializeHeader(View header) {
         header.findViewById(R.id.items).setBackgroundResource(0);
+        View versionView = header.findViewById(R.id.version);
+        if (versionView != null) {
+            versionView.setOnClickListener(this);
+        }
     }
 
     @Override
     protected void updateHeader(Bundle bundle, String osis, View header) {
-        Bible bible = Bible.getInstance(this);
         String book = BibleUtils.getBook(osis);
         int osisPosition = bible.getPosition(Bible.TYPE.OSIS, book);
         String bookName = bible.get(Bible.TYPE.BOOK, osisPosition);

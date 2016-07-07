@@ -63,6 +63,7 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     protected static final int POSITION_UNKNOWN = -1;
 
     private static final int REQUEST_CODE_SELECT = 1001;
+    private static final int REQUEST_CODE_VERSION = 1002;
 
     protected ViewPager mPager;
 
@@ -90,8 +91,11 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     private static final int YELLOW_200 = 0xfff59d;
     private static final int YELLOW_500 = 0xffeb3b;
 
+    protected Bible bible;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        bible = Bible.getInstance(this);
         updateTheme();
         resolveColors();
         super.onCreate(savedInstanceState);
@@ -154,7 +158,6 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     }
 
     protected void updateHeader(Bundle bundle, String osis, View header) {
-        Bible bible = Bible.getInstance(this);
         String book = BibleUtils.getBook(osis);
         int osisPosition = bible.getPosition(Bible.TYPE.OSIS, book);
         String bookName = bible.get(Bible.TYPE.BOOK, osisPosition);
@@ -198,10 +201,9 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     }
 
     protected void initializeHeader(View header) {
-        TextView bookView = (TextView) header.findViewById(R.id.book);
-        TextView chapterView = (TextView) header.findViewById(R.id.chapter);
-        bookView.setOnClickListener(this);
-        chapterView.setOnClickListener(this);
+        header.findViewById(R.id.book).setOnClickListener(this);
+        header.findViewById(R.id.chapter).setOnClickListener(this);
+        header.findViewById(R.id.version).setOnClickListener(this);
     }
 
     protected int getContentLayout() {
@@ -231,7 +233,6 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     }
 
     public Bundle retrieveOsis(int position, String osis) {
-        Bible bible = Bible.getInstance(this);
         Bundle bundle = new Bundle();
         bundle.putString(OSIS, osis);
         Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
@@ -387,7 +388,14 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
             select(SelectActivity.BOOK);
         } else if (id == R.id.chapter) {
             select(SelectActivity.CHAPTER);
+        } else if (id == R.id.version) {
+            selectVersion();
         }
+    }
+
+    private void selectVersion() {
+        Intent intent = new Intent(this, SelectVersionActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_VERSION);
     }
 
     private void select(int position) {
@@ -402,6 +410,12 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_SELECT && data != null) {
             refresh(data.getStringExtra(OSIS), data.getStringExtra(VERSE));
+        } else if (requestCode == REQUEST_CODE_VERSION && data != null) {
+            String version = data.getStringExtra(VERSION);
+            if (!version.equals(bible.getVersion())) {
+                bible.setVersion(version);
+                refresh(getCurrentOsis(), "0");
+            }
         }
     }
 
