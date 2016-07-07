@@ -16,11 +16,13 @@ import java.lang.ref.WeakReference;
 /**
  * Created by thom on 16/6/21.
  */
-public class ReadingHandler extends Handler {
+public class ReadingHandler extends Handler implements View.OnClickListener {
 
     public static final int SHOW_ANNOTATION = 0;
 
     private final WeakReference<Context> wr;
+
+    private AlertDialog dialog;
 
     public ReadingHandler(Context context) {
         wr = new WeakReference<Context>(context);
@@ -67,32 +69,16 @@ public class ReadingHandler extends Handler {
         }
         message = message.replaceAll("<span class=\"fr\">(.*?)</span>", "<strong>$1&nbsp;</strong>");
         message = message.replaceAll("<span class=\"xo\">(.*?)</span>", "");
-        AlertDialog dialog = new AlertDialog.Builder(context)
+        dialog = new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(Html.fromHtml(message))
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
         if (isCross && !TextUtils.isEmpty(cross)) {
-            showReference(context, dialog, cross);
+            TextView messageView = (TextView) dialog.findViewById(android.R.id.message);
+            messageView.setTag(cross.contains("<") ? messageView.getText().toString() : cross);
+            messageView.setOnClickListener(this);
         }
-    }
-
-    private void showReference(final Context context, final AlertDialog dialog, final String cross) {
-        final TextView messageView = (TextView) dialog.findViewById(android.R.id.message);
-        String reference;
-        if (cross.contains("<")) {
-            reference = messageView.getText().toString();
-        } else {
-            reference = cross;
-        }
-        final String search = reference;
-        messageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                showReference(context, search);
-            }
-        });
     }
 
     private void showReference(Context context, String search) {
@@ -101,6 +87,18 @@ public class ReadingHandler extends Handler {
         intent.putExtra(Passage.CROSS, true);
         intent.putExtra(SearchManager.QUERY, search);
         context.startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Context context = wr.get();
+        if (context != null) {
+            if (dialog != null) {
+                dialog.dismiss();
+                dialog = null;
+            }
+            showReference(context, String.valueOf(v.getTag()));
+        }
     }
 
 }

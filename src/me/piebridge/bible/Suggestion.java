@@ -59,7 +59,7 @@ public class Suggestion extends ContentProvider {
                 i++;
             }
             if (!SearchManager.SUGGEST_URI_PATH_QUERY.equals(query)) {
-                String[] row = {String.valueOf(i), getContext().getString(R.string.search, new Object[] {query}), "bible://passage?search=" + query };
+                String[] row = {String.valueOf(i), getContext().getString(R.string.search, query), "bible://passage?search=" + query };
                 cursor.addRow(row);
             }
             return cursor;

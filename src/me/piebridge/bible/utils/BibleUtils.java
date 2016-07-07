@@ -2,7 +2,6 @@ package me.piebridge.bible.utils;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
 
 import java.io.File;
 
@@ -41,7 +40,7 @@ public class BibleUtils {
 
     public static String getChapter(String osis, Context context) {
         String chapter = getChapter(osis);
-        if ("int".equalsIgnoreCase(chapter)) {
+        if (Bible.INTRO.equalsIgnoreCase(chapter)) {
             return context.getString(R.string.intro);
         } else {
             return chapter;

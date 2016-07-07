@@ -8,5 +8,4 @@
     android:clickable="false"
     android:focusable="false"
     android:focusableInTouchMode="false"
-    android:gravity="center|center_vertical"
-    android:textAllCaps="false" />
+    android:gravity="center|center_vertical" />

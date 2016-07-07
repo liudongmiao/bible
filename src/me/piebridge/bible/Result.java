@@ -39,7 +39,7 @@ public class Result extends Activity
     private final String TAG = "me.piebridge.bible$Search";
 
     private TextView textView = null;
-    private ListView listView = null;;
+    private ListView listView = null;
 
     private String humanfrom;
     private String humanto;

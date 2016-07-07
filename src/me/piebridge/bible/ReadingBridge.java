@@ -1,6 +1,5 @@
 package me.piebridge.bible;
 
-import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 

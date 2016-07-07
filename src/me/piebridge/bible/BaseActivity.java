@@ -31,7 +31,7 @@ import me.piebridge.bible.utils.ThemeUtils;
 /**
  * Created by thom on 15/10/18.
  */
-public abstract class BaseActivity extends FragmentActivity implements ReadingBridge.Bridge, View.OnClickListener {
+public abstract class BaseActivity extends FragmentActivity implements ReadingBridge.Bridge, View.OnClickListener, ViewPager.OnPageChangeListener {
 
     public static final String CSS = "css";
     public static final String OSIS = "osis";
@@ -154,12 +154,7 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         }
     }
 
-    protected void updateHeader(Bundle bundle, View header) {
-        String osis = bundle.getString(OSIS);
-        if (header == null || TextUtils.isEmpty(osis)) {
-            return;
-        }
-
+    protected void updateHeader(Bundle bundle, String osis, View header) {
         Bible bible = Bible.getInstance(this);
         String book = BibleUtils.getBook(osis);
         int osisPosition = bible.getPosition(Bible.TYPE.OSIS, book);
@@ -196,12 +191,7 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         }
         mPager.setAdapter(mAdapter);
         mPager.setCurrentItem(position);
-        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                prepare(position);
-            }
-        });
+        mPager.setOnPageChangeListener(this);
         getFragment(position).getArguments().putAll(bundle);
         prepare(position);
 
@@ -282,8 +272,9 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     private void prepare(int position) {
         Fragment fragment = getFragment(position);
         Bundle bundle = fragment.getArguments();
-        updateHeader(bundle, mHeader);
-        if (bundle.containsKey(OSIS)) {
+        String osis = bundle.getString(OSIS);
+        if (!TextUtils.isEmpty(osis)) {
+            updateHeader(bundle, osis, mHeader);
             prepareNext(position, bundle.getString(NEXT));
             preparePrev(position, bundle.getString(PREV));
         }
@@ -317,6 +308,21 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         getTheme().resolveAttribute(resId, tv, true);
         int colorId = tv.resourceId;
         return getResources().getColor(colorId);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int position) {
+        // do nothing
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        // do nothing
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        prepare(position);
     }
 
     @Override

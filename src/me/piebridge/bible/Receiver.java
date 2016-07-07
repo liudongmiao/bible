@@ -5,8 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import me.piebridge.bible.utils.LogUtils;
-
 public class Receiver extends BroadcastReceiver {
 
     @Override

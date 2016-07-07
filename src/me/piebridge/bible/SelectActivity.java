@@ -29,14 +29,12 @@ public class SelectActivity extends FragmentActivity implements ViewPager.OnPage
 
     public static final int BOOK = 0;
     public static final int CHAPTER = 1;
-    private static final int VERSE = 2;
+    public static final int VERSE = 2;
 
     public static final String POSITION = "position";
 
-    private String[] mPageTitles;
-
     private ViewPager mPager;
-    private ScreenSlidePagerAdapter mAdapter;
+    private SelectAdapter mAdapter;
 
     private SelectBook selectBook;
     private SelectChapter selectChapter;
@@ -62,19 +60,17 @@ public class SelectActivity extends FragmentActivity implements ViewPager.OnPage
 
         bible = Bible.getInstance(this);
 
-        mPageTitles = new String[] {
-                getString(R.string.book), getString(R.string.chapter), getString(R.string.verse)
-        };
-
         mPager = (ViewPager) findViewById(R.id.pager);
 
-        mAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        mAdapter = new SelectAdapter(getSupportFragmentManager(), new String[] {
+                getString(R.string.book), getString(R.string.chapter), getString(R.string.verse)
+        });
         mPager.setOnPageChangeListener(this);
         mPager.setAdapter(mAdapter);
 
-        selectBook = new SelectBook();
-        selectChapter = new SelectChapter();
-        selectVerse = new SelectVerse();
+        selectBook = (SelectBook) mAdapter.getItem(BOOK);
+        selectChapter = (SelectChapter) mAdapter.getItem(CHAPTER);
+        selectVerse = (SelectVerse) mAdapter.getItem(VERSE);
 
         Intent intent = getIntent();
         int position = intent.getIntExtra(POSITION, 0);
@@ -83,6 +79,7 @@ public class SelectActivity extends FragmentActivity implements ViewPager.OnPage
         String osis = intent.getStringExtra(BaseActivity.OSIS);
         book = BibleUtils.getBook(osis);
         chapter = BibleUtils.getChapter(osis);
+
         selectBook.setBooks(prepareBooks(), book);
         selectChapter.setData(prepareChapters(book), chapter);
         selectVerse.setVerses(prepareVerses(book, chapter));
@@ -144,18 +141,18 @@ public class SelectActivity extends FragmentActivity implements ViewPager.OnPage
         int position = bible.getPosition(Bible.TYPE.OSIS, book);
         Map<String, String> chapters = new LinkedHashMap<String, String>();
         for (String chapter : bible.get(Bible.TYPE.CHAPTER, position).split(",")) {
-            String human = "int".equalsIgnoreCase(chapter) ? getString(R.string.intro) : chapter;
+            String human = Bible.INTRO.equals(chapter) ? getString(R.string.intro) : chapter;
             chapters.put(chapter, human);
         }
         return chapters;
     }
 
     private Map<String, Boolean> prepareVerses(String book, String chapter) {
-        if ("int".equals(chapter)) {
+        if (Bible.INTRO.equals(chapter)) {
             return Collections.emptyMap();
         }
         int position = bible.getPosition(Bible.TYPE.OSIS, book);
-        boolean hasInt = bible.get(Bible.TYPE.CHAPTER, position).startsWith("int");
+        boolean hasInt = bible.get(Bible.TYPE.CHAPTER, position).startsWith(Bible.INTRO);
         List<Integer> bibleVerses = bible.getVerses(book, NumberUtils.parseInt(chapter) + (hasInt ? 1 : 0));
         if (bibleVerses.isEmpty()) {
             return Collections.emptyMap();
@@ -220,10 +217,17 @@ public class SelectActivity extends FragmentActivity implements ViewPager.OnPage
         return true;
     }
 
-    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+    private static class SelectAdapter extends FragmentStatePagerAdapter {
 
-        public ScreenSlidePagerAdapter(FragmentManager fm) {
+        private String[] pageTitles;
+
+        private SelectBook selectBook = new SelectBook();
+        private SelectChapter selectChapter = new SelectChapter();
+        private SelectVerse selectVerse = new SelectVerse();
+
+        public SelectAdapter(FragmentManager fm, String[] pageTitles) {
             super(fm);
+            this.pageTitles = pageTitles;
         }
 
         @Override
@@ -242,12 +246,12 @@ public class SelectActivity extends FragmentActivity implements ViewPager.OnPage
 
         @Override
         public int getCount() {
-            return mPageTitles.length;
+            return pageTitles.length;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return mPageTitles[position];
+            return pageTitles[position];
         }
 
     }

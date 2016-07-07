@@ -70,6 +70,8 @@ public class Bible {
 
     private final static String TAG = "me.piebridge.bible$Bible";
 
+    public static final String INTRO = "int";
+
     public enum TYPE {
         VERSION,
         CHAPTER,
@@ -315,7 +317,7 @@ public class Bible {
             return null;
         }
         File path = new File(dir, version + ".sqlite3");
-        if (path == null || !path.isFile()) {
+        if (!path.isFile()) {
             return null;
         }
         return path;
@@ -895,7 +897,7 @@ public class Bible {
         if (chapternum != 0) {
             osiss.put(bookname + " " + chapternum, osis + chapternum);
         }
-        for (int i = 0 + chapternum * 10; i <= maxchapter && i < 10 * chapternum + 10; i++) {
+        for (int i = chapternum * 10; i <= maxchapter && i < 10 * chapternum + 10; i++) {
             if (i != 0) {
                 osiss.put(bookname + " " + i, osis + i);
             }

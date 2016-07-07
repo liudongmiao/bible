@@ -64,7 +64,6 @@
     <string name="deletenote">刪除</string>
     <string name="checkversion">自動更新版本列表</string>
     <string name="checkversion_detail">建議選擇<b>%1$s</b>，但這需要您極少數據流量。您可以設置頁面更改。</string>
-    <string name="download">下載</string>
     <string name="update">更新</string>
     <string name="about_source">項目網站: %s</string>
     <string name="about_libraries">第三方庫: %s</string>

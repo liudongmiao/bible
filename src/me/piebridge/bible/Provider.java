@@ -125,8 +125,9 @@ public class Provider extends ContentProvider {
 
         if (!osis.equals("null")) {
             cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTER,
-                    "reference_osis = ? or reference_osis = ?", new String[] {osis, osis.replaceFirst("int", "1")},
-                    null, null, "reference_osis desc", "1");
+                    "reference_osis = ? or reference_osis = ?",
+                    new String[] {osis, osis.replace(Bible.INTRO, "1")},
+                    null, null, "id", "1");
         } else {
             cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTER,
                     null, null, null, null, null, "1");

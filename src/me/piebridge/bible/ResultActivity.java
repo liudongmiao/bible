@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -79,12 +78,7 @@ public class ResultActivity extends BaseActivity {
     }
 
     @Override
-    protected void updateHeader(Bundle bundle, View header) {
-        String osis = bundle.getString(OSIS);
-        if (header == null || TextUtils.isEmpty(osis)) {
-            return;
-        }
-
+    protected void updateHeader(Bundle bundle, String osis, View header) {
         Bible bible = Bible.getInstance(this);
         String book = BibleUtils.getBook(osis);
         int osisPosition = bible.getPosition(Bible.TYPE.OSIS, book);

@@ -13,17 +13,14 @@
 
 package me.piebridge.bible;
 
-import java.util.ArrayList;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 
-import org.w3c.dom.Text;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import me.piebridge.bible.utils.NumberUtils;
 
@@ -173,7 +170,7 @@ public class OsisItem implements Parcelable {
                 prevchap = "";
             }
 
-            String osis = null;
+            String osis;
             Log.d("OsisItem", String.format("book:%s, %s:%s-%s:%s", book, start_chapter, start_verse, end_chapter, end_verse));
             if (book.equalsIgnoreCase("ch")) {
                 if ("".equals(prevosis)) {

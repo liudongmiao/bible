@@ -691,15 +691,13 @@ public class Versions extends Activity {
                     list.add(map);
                     addIfUpdated(updated, map);
                 } else {
-                    if (language != null) {
-                        int index = languages.indexOf(language);
-                        if (index != -1 && names.size() > index) {
-                            String name = names.get(index);
-                            if (name.toLowerCase(Locale.US).contains(filter)) {
-                                list.add(map);
-                                addIfUpdated(updated, map);
-                                continue;
-                            }
+                    int index = languages.indexOf(language);
+                    if (index != -1 && names.size() > index) {
+                        String name = names.get(index);
+                        if (name.toLowerCase(Locale.US).contains(filter)) {
+                            list.add(map);
+                            addIfUpdated(updated, map);
+                            continue;
                         }
                     }
                     for (String value : map.values()) {

@@ -31,4 +31,4 @@ class DownloadInfo {
         String title = cursor.getString(columnTitle);
         return new DownloadInfo(id, status, title);
     }
-};
+}

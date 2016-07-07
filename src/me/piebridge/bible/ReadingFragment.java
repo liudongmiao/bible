@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;

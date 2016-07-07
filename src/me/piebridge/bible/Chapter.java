@@ -738,7 +738,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         book = osis.split("\\.")[0];
         if (osis.split("\\.").length > 1) {
             chapter = osis.split("\\.")[1];
-            if ("int".equalsIgnoreCase(chapter)) {
+            if (Bible.INTRO.equals(chapter)) {
                 chapter = getString(R.string.intro);
             }
         } else {
@@ -1120,7 +1120,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                 chapters = bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, book)).split(",");
                 for (String chapter : chapters) {
                     Log.d(TAG, "add chapter=" + chapter);
-                    if ("int".equalsIgnoreCase(chapter)) {
+                    if (Bible.INTRO.equals(chapter)) {
                         adapter.add(getString(R.string.intro));
                     } else {
                         adapter.add(chapter);
