@@ -71,15 +71,25 @@ public class SelectBook extends Fragment implements AdapterView.OnItemClickListe
             int gen = keys.indexOf("Gen");
             GridAdapter leftAdapter = (GridAdapter) left.getAdapter();
             GridAdapter rightAdapter = (GridAdapter) right.getAdapter();
+            int position = keys.indexOf(selected);
             if (gen > -1 && matt > -1) {
-                leftAdapter.setData(keys.subList(0, matt));
-                rightAdapter.setData(keys.subList(matt, keys.size()));
+                List<String> leftData = keys.subList(0, matt);
+                List<String> rightData = keys.subList(matt, keys.size());
+                leftAdapter.setData(leftData);
+                rightAdapter.setData(rightData);
+                if (position < matt) {
+                    left.smoothScrollToPosition(position);
+                } else {
+                    right.smoothScrollToPosition(position - matt);
+                }
             } else if (gen > -1) {
                 leftAdapter.setData(keys);
                 rightAdapter.setData(Collections.<String>emptyList());
+                left.smoothScrollToPosition(position);
             } else if (matt > -1) {
                 leftAdapter.setData(Collections.<String>emptyList());
                 rightAdapter.setData(keys);
+                right.smoothScrollToPosition(position);
             }
         }
     }

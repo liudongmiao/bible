@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import me.piebridge.bible.R;
@@ -44,7 +45,9 @@ public class SelectChapter extends Fragment implements AdapterView.OnItemClickLi
 
     private void updateIfNeeded() {
         if (gridView != null && items != null) {
-            ((GridAdapter) gridView.getAdapter()).setData(new ArrayList<String>(items.keySet()));
+            List<String> keys = new ArrayList<String>(items.keySet());
+            ((GridAdapter) gridView.getAdapter()).setData(keys);
+            gridView.smoothScrollToPosition(keys.indexOf(selected));
         }
     }
 
