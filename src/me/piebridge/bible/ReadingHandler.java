@@ -19,6 +19,7 @@ import java.lang.ref.WeakReference;
 public class ReadingHandler extends Handler implements View.OnClickListener {
 
     public static final int SHOW_ANNOTATION = 0;
+    public static final int SHOW_NOTE = 1;
 
     private final WeakReference<Context> wr;
 
@@ -35,9 +36,26 @@ public class ReadingHandler extends Handler implements View.OnClickListener {
                 String[] linkAnnotation = (String[]) message.obj;
                 showAnnotation(linkAnnotation[0x0], linkAnnotation[0x1], linkAnnotation[0x2]);
                 break;
+            case SHOW_NOTE:
+                String[] noteVerse = (String[]) message.obj;
+                showNote(noteVerse[0x00], noteVerse[0x1]);
             default:
                 break;
         }
+    }
+
+    private void showNote(String verse, String osis) {
+        final Context context = wr.get();
+        if (context == null) {
+            return;
+        }
+        Bible bible = Bible.getInstance(context);
+        Bible.Note note = bible.getNote(osis, verse);
+        dialog = new AlertDialog.Builder(context)
+                .setTitle(R.string.note)
+                .setMessage(note.content)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
     }
 
     private void showAnnotation(String link, String message, String osis) {

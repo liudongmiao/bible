@@ -377,8 +377,9 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     }
 
     @Override
-    public void showNote(String versenum) {
-        // TODO
+    public void showNote(String verse) {
+        LogUtils.d("show note, verse: " + verse);
+        handler.sendMessage(handler.obtainMessage(ReadingHandler.SHOW_NOTE, new String[] {verse, getCurrentOsis()}));
     }
 
     @Override
