@@ -149,6 +149,11 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/light.dialog" />
 
+        <activity
+            android:name=".SelectActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/light" />
+
         <provider
             android:name=".Provider"
             android:authorities="me.piebridge.bible.provider"

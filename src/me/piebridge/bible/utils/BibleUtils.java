@@ -4,7 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import java.io.File;
+
 import me.piebridge.bible.BaseActivity;
+import me.piebridge.bible.Bible;
 import me.piebridge.bible.R;
 
 /**
@@ -26,18 +29,22 @@ public class BibleUtils {
         }
     }
 
-    public static String getChapter(String osis, Context context) {
+    public static String getChapter(String osis) {
         int index = osis.indexOf('.');
         if (index > 0) {
-            String chapter = osis.substring(index + 1);
-            if ("int".equalsIgnoreCase(chapter)) {
-                return context.getString(R.string.intro);
-            } else {
-                return chapter;
-            }
+            return osis.substring(index + 1);
         } else {
             LogUtils.wtf("invalid osis: " + osis);
             return "1";
+        }
+    }
+
+    public static String getChapter(String osis, Context context) {
+        String chapter = getChapter(osis);
+        if ("int".equalsIgnoreCase(chapter)) {
+            return context.getString(R.string.intro);
+        } else {
+            return chapter;
         }
     }
 
@@ -58,6 +65,27 @@ public class BibleUtils {
         } else {
             return chapter;
         }
+    }
+
+    public static String getBookChapterVerse(String bookName, String chapterVerse) {
+        StringBuilder sb = new StringBuilder(bookName);
+        if (!Bible.isCJK(bookName)) {
+            sb.append(" ");
+        }
+        sb.append(chapterVerse);
+        return sb.toString();
+    }
+
+    public static String getFontPath(Context context) {
+        File font;
+        File dir = context.getExternalFilesDir(null);
+        if (dir != null) {
+            font = new File(dir, "custom.ttf");
+            if (font.isFile()) {
+                return font.getAbsolutePath();
+            }
+        }
+        return null;
     }
 
 }

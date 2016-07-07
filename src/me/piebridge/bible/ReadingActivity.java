@@ -7,12 +7,8 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import me.piebridge.bible.utils.LogUtils;
-import me.piebridge.bible.utils.RecreateUtils;
-import me.piebridge.bible.utils.ThemeUtils;
 
 /**
  * Created by thom on 15/10/18.

@@ -2,6 +2,7 @@ package me.piebridge.bible;
 
 import android.app.ActionBar;
 import android.app.ActivityManager;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -30,7 +31,7 @@ import me.piebridge.bible.utils.ThemeUtils;
 /**
  * Created by thom on 15/10/18.
  */
-public abstract class BaseActivity extends FragmentActivity implements ReadingBridge.Bridge {
+public abstract class BaseActivity extends FragmentActivity implements ReadingBridge.Bridge, View.OnClickListener {
 
     public static final String CSS = "css";
     public static final String OSIS = "osis";
@@ -42,6 +43,7 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     public static final String CONTENT = "content";
     public static final String POSITION = "position";
     public static final String NOTES = "notes";
+    public static final String VERSE = "verse";
     public static final String VERSE_START = "verseStart";
     public static final String VERSE_END = "verseEnd";
     public static final String FONT_SIZE = "fontSize";
@@ -61,11 +63,13 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
 
     protected static final int POSITION_UNKNOWN = -1;
 
+    private static final int REQUEST_CODE_SELECT = 1001;
+
     protected ViewPager mPager;
 
     protected ReadingAdapter mAdapter;
 
-    private View header;
+    private View mHeader;
 
     private Handler handler = new ReadingHandler(this);
 
@@ -93,7 +97,7 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         resolveColors();
         super.onCreate(savedInstanceState);
         setContentView(getContentLayout());
-        header = findHeader();
+        mHeader = findHeader();
         mPager = (ViewPager) findViewById(R.id.pager);
         mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount());
         initialize();
@@ -150,7 +154,7 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         }
     }
 
-    protected void updateHeader(Bundle bundle) {
+    protected void updateHeader(Bundle bundle, View header) {
         String osis = bundle.getString(OSIS);
         if (header == null || TextUtils.isEmpty(osis)) {
             return;
@@ -174,17 +178,12 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
 
         header.findViewById(R.id.reading).setVisibility(View.VISIBLE);
 
-        updateTaskDescription(bookName, chapterVerse);
+        updateTaskDescription(BibleUtils.getBookChapterVerse(bookName, chapterVerse));
     }
 
-    protected void updateTaskDescription(String bookName, String chapterVerse) {
+    protected void updateTaskDescription(String label) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            StringBuilder sb = new StringBuilder(bookName);
-            if (!Bible.isCJK(bookName)) {
-                sb.append(" ");
-            }
-            sb.append(chapterVerse);
-            setTaskDescription(new ActivityManager.TaskDescription(sb.toString()));
+            setTaskDescription(new ActivityManager.TaskDescription(label));
         }
     }
 
@@ -203,8 +202,17 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
                 prepare(position);
             }
         });
-        mAdapter.getItem(position).getArguments().putAll(bundle);
+        getFragment(position).getArguments().putAll(bundle);
         prepare(position);
+
+        initializeHeader(mHeader);
+    }
+
+    protected void initializeHeader(View header) {
+        TextView bookView = (TextView) header.findViewById(R.id.book);
+        TextView chapterView = (TextView) header.findViewById(R.id.chapter);
+        bookView.setOnClickListener(this);
+        chapterView.setOnClickListener(this);
     }
 
     protected int getContentLayout() {
@@ -251,7 +259,7 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
                 bundle.putString(HUMAN, cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN)));
                 bundle.putString(CONTENT, cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CONTENT)));
                 bundle.putString(OSIS, curr);
-                bundle.putString(HIGHLIGHTED, bible.getHighlight(osis));
+                bundle.putString(HIGHLIGHTED, bible.getHighlight(curr));
                 bundle.putStringArray(NOTES, bible.getNoteVerses(curr));
             }
         } catch (SQLiteException e) {
@@ -274,7 +282,7 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     private void prepare(int position) {
         Fragment fragment = getFragment(position);
         Bundle bundle = fragment.getArguments();
-        updateHeader(bundle);
+        updateHeader(bundle, mHeader);
         if (bundle.containsKey(OSIS)) {
             prepareNext(position, bundle.getString(NEXT));
             preparePrev(position, bundle.getString(PREV));
@@ -298,10 +306,9 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     private void prepare(int position, String osis) {
         ReadingFragment fragment = getFragment(position);
         Bundle bundle = fragment.getArguments();
-        if (!bundle.containsKey(ID)) {
-            bundle.putString(OSIS, osis);
-            bundle.putAll(retrieveOsis(position, osis));
-        }
+        bundle.putString(OSIS, osis);
+        bundle.putAll(retrieveOsis(position, osis));
+        fragment.reloadData();
     }
 
     @SuppressWarnings("deprecation")
@@ -342,6 +349,42 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     @Override
     public void showNote(String versenum) {
         // TODO
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.book) {
+            select(SelectActivity.BOOK);
+        } else if (id == R.id.chapter) {
+            select(SelectActivity.CHAPTER);
+        }
+    }
+
+    private void select(int position) {
+        Intent intent = new Intent(this, SelectActivity.class);
+        intent.putExtra(SelectActivity.POSITION, position);
+        intent.putExtra(OSIS, getCurrentOsis());
+        startActivityForResult(intent, REQUEST_CODE_SELECT);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_SELECT && data != null) {
+            refresh(data.getStringExtra(OSIS), data.getStringExtra(VERSE));
+        }
+    }
+
+    private void refresh(String osis, String verse) {
+        Bundle bundle = retrieveOsis(POSITION_UNKNOWN, osis);
+        bundle.putString(VERSE, verse);
+        int position = bundle.getInt(ID) - 1;
+        mPager.setCurrentItem(position);
+        ReadingFragment fragment = getFragment(position);
+        fragment.getArguments().putAll(bundle);
+        fragment.reloadData();
+        prepare(position);
     }
 
 }

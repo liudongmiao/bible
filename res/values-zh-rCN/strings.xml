@@ -70,4 +70,8 @@
     <string name="about_libraries">第三方库: %s</string>
     <string name="new_version">成功添加新版本: %s</string>
     <string name="switch_theme">切换主题</string>
+    <string name="book">书</string>
+    <string name="chapter">章</string>
+    <string name="verse">节</string>
+    <string name="books">目录</string>
 </resources>

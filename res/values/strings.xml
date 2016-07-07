@@ -71,4 +71,8 @@
     <string name="about_libraries">Use libraries: %s</string>
     <string name="new_version">Added new version: %s</string>
     <string name="switch_theme">Switch Theme</string>
+    <string name="book">Book</string>
+    <string name="chapter">Chapter</string>
+    <string name="verse">Verse</string>
+    <string name="books">Books</string>
 </resources>

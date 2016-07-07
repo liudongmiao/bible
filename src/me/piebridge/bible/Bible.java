@@ -22,10 +22,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -51,6 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -156,15 +154,33 @@ public class Bible {
     }
 
     public int[] getChapterVerse(String string) {
-        int value;
-        try {
-            value = Integer.parseInt(string);
-        } catch (Exception e) {
-            value = 0;
-        }
-        int chapter = value / 1000;
-        int verse = value - chapter * 1000;
+        int value = new BigDecimal(string).multiply(new BigDecimal(Provider.THOUSAND)).intValue();
+        int chapter = value / Provider.THOUSAND;
+        int verse = value % Provider.THOUSAND;
         return new int[]{chapter, verse};
+    }
+
+    public List<Integer> getVerses(String book, int chapter) {
+        Cursor cursor = null;
+        List<Integer> verses = new ArrayList<Integer>();
+        try {
+            cursor = database.query(Provider.TABLE_VERSE, Provider.COLUMNS_VERSE,
+                    "book = ? and verse > ? and verse < ?",
+                    new String[] {book, String.valueOf(chapter), String.valueOf(chapter + 1)},
+                    null, null, "id");
+            BigDecimal thousand = new BigDecimal(Provider.THOUSAND);
+            while (cursor.moveToNext()) {
+                String verse = cursor.getString(0);
+                LogUtils.d("verse: " + verse);
+                verses.add(new BigDecimal(verse).multiply(thousand).intValue() % Provider.THOUSAND);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        LogUtils.d(verses.toString());
+        return verses;
     }
 
     private File getPath(File[] dirs) {
@@ -361,7 +377,7 @@ public class Bible {
                             "reference_osis like ?", new String[]{osis + ".%"}, null, null, null);
                     if (cursor_chapter.moveToNext()) {
                         // we have only one column
-                        chapter = sortChapter(cursor_chapter.getString(0));
+                        chapter = sortChapter(cursor_chapter.getString(0)).toLowerCase(Locale.US);
                     }
                 } catch (Exception e) {
                 } finally {

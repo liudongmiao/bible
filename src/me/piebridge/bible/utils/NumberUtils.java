@@ -19,4 +19,12 @@ public class NumberUtils {
         }
     }
 
+    public static int parseInt(String s, int defaultValue) {
+        if (!TextUtils.isEmpty(s) && TextUtils.isDigitsOnly(s)) {
+            return Integer.parseInt(s);
+        } else {
+            return defaultValue;
+        }
+    }
+
 }

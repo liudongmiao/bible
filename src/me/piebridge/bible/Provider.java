@@ -24,6 +24,8 @@ public class Provider extends ContentProvider {
 
     private static final String TAG = "me.piebridge.bible$Provider";
 
+    public static final int THOUSAND = 1000;
+
     public static final String COLUMN_BOOK = "book";
     public static final String COLUMN_VERSE = "verse";
     public static final String COLUMN_HUMAN = "human";
@@ -35,7 +37,10 @@ public class Provider extends ContentProvider {
     public static final String COLUMN_CHAPTERS = "chapters";
 
     public static final String TABLE_VERSES = "verses left outer join books on (verses.book = books.osis)";
-    public static final String[] COLUMNS_VERSE = {"id as _id", "book", "human", "verse * 1000 as verse", "unformatted"};
+    public static final String[] COLUMNS_VERSES = {"id as _id", "book", "human", "verse", "unformatted"};
+
+    public static final String TABLE_VERSE = "verses";
+    public static final String[] COLUMNS_VERSE = {"verse"};
 
     public static final String TABLE_CHAPTERS = "chapters";
     public static final String[] COLUMNS_CHAPTER = {"id as _id", "reference_osis as osis", "reference_human as human", "content", "previous_reference_osis as previous", "next_reference_osis as next"};
@@ -74,7 +79,7 @@ public class Provider extends ContentProvider {
             return null;
         }
 
-        Cursor cursor = database.query(TABLE_VERSES, COLUMNS_VERSE,
+        Cursor cursor = database.query(TABLE_VERSES, COLUMNS_VERSES,
                 books == null ? "unformatted like ?" : "unformatted like ? and book in (" + books + ")",
                 new String[] {"%" + query + "%"}, null, null, "id ASC");
 
@@ -95,7 +100,7 @@ public class Provider extends ContentProvider {
             return null;
         }
 
-        Cursor cursor = database.query(TABLE_VERSES, COLUMNS_VERSE,
+        Cursor cursor = database.query(TABLE_VERSES, COLUMNS_VERSES,
                 "_id = ?", new String[] {id}, null, null, null);
 
         if (cursor == null) {

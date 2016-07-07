@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ToggleButton
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/grid"
     android:id="@+id/text1"
+    style="@style/grid"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:clickable="false"
     android:focusable="false"
     android:focusableInTouchMode="false"
-    android:clickable="false"
     android:gravity="center|center_vertical"
-    />
-<!-- vim: set sta sw=4 et: -->
+    android:textAllCaps="false" />

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
@@ -118,11 +119,12 @@ public class ReadingFragment extends Fragment {
         return view;
     }
 
-    private void reloadData() {
-        Bundle bundle = getArguments();
-        if (mActivity != null) {
-            mActivity.updateColor(bundle);
+    public void reloadData() {
+        if (mActivity == null) {
+            return;
         }
+        Bundle bundle = getArguments();
+        mActivity.updateColor(bundle);
         String content = (String) bundle.get(CONTENT);
         if (!TextUtils.isEmpty(content)) {
             String human = (String) bundle.get(HUMAN);
@@ -150,7 +152,7 @@ public class ReadingFragment extends Fragment {
         return String.format(template, fontSize, css,
                 backgroundColor, textColor, linkColor,
                 selectedColor, highlightColor, highlightSelectedColor,
-                verse > 0 ? verse : verseStart,
+                verse > 0 ? verse : NumberUtils.parseInt(getString(bundle, VERSE), verseStart),
                 verseStart, verseEnd, search, selectedVerses, highlighted,
                 Arrays.toString(notes), title, body);
     }
@@ -165,7 +167,7 @@ public class ReadingFragment extends Fragment {
         if (bundle.containsKey(CSS)) {
             css.append(bundle.getString(CSS));
         }
-        String fontPath = getFontPath();
+        String fontPath = BibleUtils.getFontPath(mActivity);
         if (!TextUtils.isEmpty(fontPath)) {
             css.append("@font-face { font-family: 'custom'; src: url('");
             css.append(fontPath);
@@ -197,18 +199,6 @@ public class ReadingFragment extends Fragment {
             body = body.replace("上帝", "　神");
         }
         return body;
-    }
-
-    private String getFontPath() {
-        File font;
-        File dir = mActivity.getExternalFilesDir(null);
-        if (dir != null) {
-            font = new File(dir, "custom.ttf");
-            if (font.isFile()) {
-                return font.getAbsolutePath();
-            }
-        }
-        return null;
     }
 
     @Override

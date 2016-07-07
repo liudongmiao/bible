@@ -20,7 +20,7 @@ public class CrossActivity extends ResultActivity {
     }
 
     @Override
-    protected void updateTaskDescription(String bookName, String chapterVerse) {
+    protected void updateTaskDescription(String label) {
         // for cross, don't update task description
     }
 
