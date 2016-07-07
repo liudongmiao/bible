@@ -594,13 +594,6 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
             }
 
             @JavascriptInterface
-            public void setHighlighted(String text) {
-                // some translation has no some verses
-                highlighted = text;
-                bible.saveHighlight(osis, highlighted);
-            }
-
-            @JavascriptInterface
             public void showAnnotation(String link, String annotation) {
                 Log.d(TAG, "link: " + link);
                 if (TextUtils.isEmpty(annotation)) {
@@ -1003,6 +996,8 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
                         );
                     }
                     v.setSelected(true);
+                    highlighted = selectverse;
+                    bible.saveHighlight(osis, highlighted);
                     webview.loadUrl("javascript:highlight('" + selectverse + "');");
                     webview.loadUrl("javascript:select('" + selectverse + "', false);");
                     selectverse = "";
