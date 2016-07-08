@@ -12,6 +12,7 @@
     </style>
     <style name="grid" parent="@android:style/Widget.Button.Toggle">
         <item name="android:textSize">15sp</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
     <style name="progress" parent="@android:style/Widget.ProgressBar">
     </style>
