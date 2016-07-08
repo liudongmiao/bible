@@ -971,6 +971,7 @@ public class Bible {
             }
             checkZipData(Environment.getExternalStorageDirectory());
             checkZipData(new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS));
+            checkZipData(mContext.getExternalCacheDir());
             checkVersionsSync(true);
         }
     }
@@ -1174,7 +1175,7 @@ public class Bible {
         String url = BIBLEDATA_PREFIX + filename;
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setTitle(filename);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+        request.setDestinationUri(Uri.fromFile(new File(mContext.getExternalCacheDir(), filename)));
         DownloadManager dm = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
         return DownloadInfo.getDownloadInfo(mContext, dm.enqueue(request));
     }
