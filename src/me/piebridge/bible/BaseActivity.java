@@ -412,11 +412,8 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         if (requestCode == REQUEST_CODE_SELECT && data != null) {
             refresh(data.getStringExtra(OSIS), data.getStringExtra(VERSE));
         } else if (requestCode == REQUEST_CODE_VERSION && data != null) {
-            String version = data.getStringExtra(VERSION);
-            if (!version.equals(bible.getVersion())) {
-                bible.setVersion(version);
-                refresh(getCurrentOsis(), "0");
-            }
+            bible.setVersion(data.getStringExtra(VERSION));
+            refresh(getCurrentOsis(), "0");
         }
     }
 

@@ -70,14 +70,16 @@ public class SelectVersionActivity extends Activity implements GridAdapter.GridC
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Adapter adapter = parent.getAdapter();
-        version = String.valueOf(adapter.getItem(position));
-        setResult();
+        String newVersion = String.valueOf(adapter.getItem(position));
+        if (!newVersion.equals(version)) {
+            setResult(newVersion);
+        }
         finish();
     }
 
-    private void setResult() {
-        Intent intent = new Intent();
-        intent.putExtra(BaseActivity.VERSION, version);
+    private void setResult(String newVersion) {
+        Intent intent = getIntent();
+        intent.putExtra(BaseActivity.VERSION, newVersion);
         setResult(Activity.RESULT_OK, intent);
     }
 
