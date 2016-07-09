@@ -117,7 +117,6 @@ public class ResultActivity extends BaseActivity {
     }
 
     private void startReading() {
-        // FIXME: check for activity stack
         Intent intent = new Intent(this, ReadingActivity.class);
         startActivity(intent);
         finish();
