@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -46,6 +45,7 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     public static final String VERSE_START = "verseStart";
     public static final String VERSE_END = "verseEnd";
     public static final String FONT_SIZE = "fontSize";
+    public static final String FONT_PATH = "fontPath";
     public static final String CROSS = "cross";
     public static final String SHANGTI = "shangti";
     public static final String VERSION = "version";
@@ -82,6 +82,7 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     private String colorSelected;
     private String colorHighlight;
     private String colorHighLightSelected;
+    private String fontPath;
 
     // https://material.google.com/style/color.html
     private static final int RED_200 = 0xef9a9a;
@@ -95,15 +96,26 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        bible = Bible.getInstance(this);
         updateTheme();
         resolveColors();
         super.onCreate(savedInstanceState);
         setContentView(getContentLayout());
+
         mHeader = findHeader();
         mPager = (ViewPager) findViewById(R.id.pager);
+        bible = Bible.getInstance(this);
+        fontPath = BibleUtils.getFontPath(this);
         mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount());
         initialize();
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        fontPath = BibleUtils.getFontPath(this);
+        if (!BibleUtils.equals(fontPath, mAdapter.getData(getCurrentPosition()).getString(FONT_PATH))) {
+            refresh();
+        }
     }
 
     private void resolveColors() {
@@ -130,16 +142,6 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
 
     public int getBackground() {
         return background;
-    }
-
-    protected void updateColor(Bundle bundle) {
-        bundle.putString(COLOR_BACKGROUND, colorBackground);
-        bundle.putString(COLOR_TEXT, colorText);
-        bundle.putString(COLOR_LINK, colorLink);
-        bundle.putString(COLOR_RED, colorRed);
-        bundle.putString(COLOR_HIGHLIGHT, colorHighlight);
-        bundle.putString(COLOR_SELECTED, colorSelected);
-        bundle.putString(COLOR_HIGHLIGHT_SELECTED, colorHighLightSelected);
     }
 
     protected View findHeader() {
@@ -185,19 +187,21 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     }
 
     public void initialize() {
+        initializeHeader(mHeader);
+
+        mPager.setAdapter(mAdapter);
+        mPager.setOnPageChangeListener(this);
+
         int position = getInitialPosition();
         String osis = getInitialOsis();
         Bundle bundle = retrieveOsis(position, osis);
         if (position == POSITION_UNKNOWN) {
             position = bundle.getInt(ID) - 1;
         }
-        mPager.setAdapter(mAdapter);
-        mPager.setCurrentItem(position);
-        mPager.setOnPageChangeListener(this);
-        getFragment(position).getArguments().putAll(bundle);
+        mAdapter.setData(position, bundle);
         prepare(position);
 
-        initializeHeader(mHeader);
+        mPager.setCurrentItem(position);
     }
 
     protected void initializeHeader(View header) {
@@ -225,11 +229,7 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     }
 
     protected String getCurrentOsis() {
-        return getFragment(getCurrentPosition()).getArguments().getString(OSIS);
-    }
-
-    private ReadingFragment getFragment(int position) {
-        return mAdapter.getItem(position);
+        return mAdapter.getData(getCurrentPosition()).getString(OSIS);
     }
 
     public Bundle retrieveOsis(int position, String osis) {
@@ -266,12 +266,22 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         bundle.putBoolean(SHANGTI, sp.getBoolean(Settings.SHANGTI, false));
         bundle.putString(VERSION, bible.getVersion());
         bundle.putBoolean(RED, sp.getBoolean(Settings.RED, true));
+        // for color
+        bundle.putString(COLOR_BACKGROUND, colorBackground);
+        bundle.putString(COLOR_TEXT, colorText);
+        bundle.putString(COLOR_LINK, colorLink);
+        bundle.putString(COLOR_RED, colorRed);
+        bundle.putString(COLOR_HIGHLIGHT, colorHighlight);
+        bundle.putString(COLOR_SELECTED, colorSelected);
+        bundle.putString(COLOR_HIGHLIGHT_SELECTED, colorHighLightSelected);
+        if (!TextUtils.isEmpty(fontPath)) {
+            bundle.putString(FONT_PATH, fontPath);
+        }
         return bundle;
     }
 
     private void prepare(int position) {
-        Fragment fragment = getFragment(position);
-        Bundle bundle = fragment.getArguments();
+        Bundle bundle = mAdapter.getData(position);
         String osis = bundle.getString(OSIS);
         if (!TextUtils.isEmpty(osis)) {
             updateHeader(bundle, osis, mHeader);
@@ -295,11 +305,9 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     }
 
     private void prepare(int position, String osis) {
-        ReadingFragment fragment = getFragment(position);
-        Bundle bundle = fragment.getArguments();
+        Bundle bundle = mAdapter.getData(position);
         bundle.putString(OSIS, osis);
         bundle.putAll(retrieveOsis(position, osis));
-        fragment.reloadData();
     }
 
     @SuppressWarnings("deprecation")
@@ -343,6 +351,20 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     @Override
     public void onPageSelected(int position) {
         prepare(position);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(COLOR_BACKGROUND, background);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState.containsKey(COLOR_BACKGROUND) && savedInstanceState.getInt(COLOR_BACKGROUND) != background) {
+            reload(getCurrentPosition());
+        }
     }
 
     @Override
@@ -410,22 +432,50 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_SELECT && data != null) {
-            refresh(data.getStringExtra(OSIS), data.getStringExtra(VERSE));
+            jump(data.getStringExtra(OSIS), data.getStringExtra(VERSE));
         } else if (requestCode == REQUEST_CODE_VERSION && data != null) {
             bible.setVersion(data.getStringExtra(VERSION));
-            refresh(getCurrentOsis(), "0");
+            refresh();
         }
     }
 
-    private void refresh(String osis, String verse) {
+    private void refresh() {
+        int position = getCurrentPosition();
+        String osis = getCurrentOsis();
+        mAdapter.setData(position, retrieveOsis(position, osis));
+        prepare(position);
+        reload(position);
+    }
+
+    private void reload(int position) {
+        reloadData(position);
+        if (position > 0) {
+            reloadData(position - 1);
+        }
+        if (position < mAdapter.getCount() - 1) {
+            reloadData(position + 1);
+        }
+    }
+
+    private void reloadData(int position) {
+        ReadingFragment fragment = (ReadingFragment) mAdapter.instantiateItem(mPager, position);
+        Bundle bundle = fragment.getArguments();
+        if (bundle != null) {
+            bundle.putAll(mAdapter.getData(position));
+            fragment.reloadData();
+        } else {
+            LogUtils.d("reloadData, bundle: null, position: " + position);
+        }
+    }
+
+    private void jump(String osis, String verse) {
         Bundle bundle = retrieveOsis(POSITION_UNKNOWN, osis);
         bundle.putString(VERSE, verse);
         int position = bundle.getInt(ID) - 1;
-        mPager.setCurrentItem(position);
-        ReadingFragment fragment = getFragment(position);
-        fragment.getArguments().putAll(bundle);
-        fragment.reloadData();
+        mAdapter.setData(position, bundle);
         prepare(position);
+
+        mPager.setCurrentItem(position);
     }
 
 }

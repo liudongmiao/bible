@@ -174,7 +174,6 @@ public class Bible {
             BigDecimal thousand = new BigDecimal(Provider.THOUSAND);
             while (cursor.moveToNext()) {
                 String verse = cursor.getString(0);
-                LogUtils.d("verse: " + verse);
                 verses.add(new BigDecimal(verse).multiply(thousand).intValue() % Provider.THOUSAND);
             }
         } finally {
@@ -182,7 +181,6 @@ public class Bible {
                 cursor.close();
             }
         }
-        LogUtils.d(verses.toString());
         return verses;
     }
 

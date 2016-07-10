@@ -1,6 +1,7 @@
 package me.piebridge.bible;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 
-import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
@@ -31,6 +31,7 @@ import static me.piebridge.bible.BaseActivity.CONTENT;
 import static me.piebridge.bible.BaseActivity.CROSS;
 import static me.piebridge.bible.BaseActivity.CSS;
 import static me.piebridge.bible.BaseActivity.CURR;
+import static me.piebridge.bible.BaseActivity.FONT_PATH;
 import static me.piebridge.bible.BaseActivity.FONT_SIZE;
 import static me.piebridge.bible.BaseActivity.HIGHLIGHTED;
 import static me.piebridge.bible.BaseActivity.HUMAN;
@@ -53,10 +54,10 @@ public class ReadingFragment extends Fragment {
     private static final String HIGHLIGHT_SELECTED = "highlightSelected";
 
     private static String template;
-    private BaseActivity mActivity;
     private WebView webView;
     private ReadingBridge readingBridge;
 
+    private int background;
     private String osis;
     private int verse;
     private boolean highlightSelected;
@@ -66,26 +67,15 @@ public class ReadingFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mActivity = (BaseActivity) activity;
-        readingBridge = new ReadingBridge(mActivity);
+        readingBridge = new ReadingBridge((BaseActivity) activity);
+        background = ((BaseActivity) activity).getBackground();
         if (TextUtils.isEmpty(template)) {
-            template = retrieveTemplate();
+            try {
+                template = FileUtils.readAsString(activity.getAssets().open("reader.html"));
+            } catch (IOException e) {
+                LogUtils.d("cannot get template", e);
+            }
         }
-    }
-
-    private String retrieveTemplate() {
-        try {
-            return FileUtils.readAsString(mActivity.getAssets().open("reader.html"));
-        } catch (IOException e) {
-            LogUtils.d("cannot get template", e);
-            return null;
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mActivity = null;
     }
 
     @Override
@@ -97,7 +87,7 @@ public class ReadingFragment extends Fragment {
             selectedContent = savedInstanceState.getString(SELECTED_CONTENT);
             highlightSelected = savedInstanceState.getBoolean(HIGHLIGHT_SELECTED);
         }
-        if (webView != null) {
+        if (webView != null && getArguments() != null) {
             reloadData();
         }
     }
@@ -114,21 +104,15 @@ public class ReadingFragment extends Fragment {
         WebViewUtils.hideDisplayZoomControls(webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(readingBridge, "android");
-        if (mActivity != null) {
-            webView.setBackgroundColor(mActivity.getBackground());
-        }
+        webView.setBackgroundColor(background);
         return view;
     }
 
     public void reloadData() {
-        if (mActivity == null) {
-            return;
-        }
         Bundle bundle = getArguments();
         if (!TextUtils.isEmpty(osis) && osis.equals(bundle.getString(CURR))) {
             saveState();
         }
-        mActivity.updateColor(bundle);
         String content = (String) bundle.get(CONTENT);
         if (!TextUtils.isEmpty(content)) {
             String human = (String) bundle.get(HUMAN);
@@ -172,10 +156,9 @@ public class ReadingFragment extends Fragment {
         if (bundle.containsKey(CSS)) {
             css.append(bundle.getString(CSS));
         }
-        String fontPath = BibleUtils.getFontPath(mActivity);
-        if (!TextUtils.isEmpty(fontPath)) {
+        if (bundle.containsKey(FONT_PATH)) {
             css.append("@font-face { font-family: 'custom'; src: url('");
-            css.append(fontPath);
+            css.append(bundle.getString(FONT_PATH));
             css.append("');}");
         }
         if (!bundle.getBoolean(CROSS, false)) {

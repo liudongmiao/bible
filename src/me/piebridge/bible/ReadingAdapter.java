@@ -15,12 +15,12 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
 
     private int mSize;
 
-    private final SparseArray<ReadingFragment> mFragments;
+    private final SparseArray<Bundle> mBundles;
 
     public ReadingAdapter(FragmentManager fm, int size) {
         super(fm);
         mSize = size;
-        mFragments = new SparseArray<ReadingFragment>();
+        mBundles = new SparseArray<Bundle>();
     }
 
     public void setSize(int size) {
@@ -29,14 +29,8 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public ReadingFragment getItem(int position) {
-        ReadingFragment fragment = mFragments.get(position);
-        if (fragment == null) {
-            fragment = new ReadingFragment();
-            Bundle bundle = new Bundle();
-            bundle.putInt(POSITION, position);
-            fragment.setArguments(bundle);
-            mFragments.put(position, fragment);
-        }
+        ReadingFragment fragment = new ReadingFragment();
+        fragment.setArguments(mBundles.get(position));
         return fragment;
     }
 
@@ -48,7 +42,21 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         super.destroyItem(container, position, object);
-        mFragments.remove(position);
+        mBundles.remove(position);
+    }
+
+    public synchronized void setData(int position, Bundle bundle) {
+        bundle.putInt(POSITION, position);
+        mBundles.put(position, bundle);
+    }
+
+    public synchronized Bundle getData(int position) {
+        Bundle bundle = mBundles.get(position);
+        if (bundle == null) {
+            bundle = new Bundle();
+            mBundles.put(position, bundle);
+        }
+        return bundle;
     }
 
 }
