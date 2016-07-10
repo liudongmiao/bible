@@ -19,8 +19,6 @@ public class GridAdapter extends ArrayAdapter<String> {
 
     private Typeface typeface;
 
-    private String selected;
-
     private GridChecker gridChecker;
 
     public GridAdapter(Context context, GridChecker gridChecker) {
@@ -33,14 +31,10 @@ public class GridAdapter extends ArrayAdapter<String> {
         this.typeface = typeface;
     }
 
-    public void setSelected(String selected) {
-        this.selected = selected;
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ToggleButton view = (ToggleButton) super.getView(position, convertView, parent);
-        String item = this.getItem(position);
+        String item = getItem(position);
         String human = gridChecker.getGridName(item);
         view.setTextOn(human);
         view.setTextOff(human);
@@ -60,7 +54,7 @@ public class GridAdapter extends ArrayAdapter<String> {
 
     @Override
     public boolean isEnabled(int position) {
-        String item = this.getItem(position);
+        String item = getItem(position);
         return gridChecker.isGridEnabled(item);
     }
 
