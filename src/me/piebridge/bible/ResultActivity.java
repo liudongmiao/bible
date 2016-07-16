@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import me.piebridge.bible.utils.BibleUtils;
 
@@ -21,7 +21,7 @@ public class ResultActivity extends BaseActivity {
     public static final String SEARCH = "search";
 
     private String search;
-    private ArrayList<OsisItem> items;
+    private List<OsisItem> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

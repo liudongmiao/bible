@@ -39,6 +39,7 @@ public class ReadingHandler extends Handler implements View.OnClickListener {
             case SHOW_NOTE:
                 String[] noteVerse = (String[]) message.obj;
                 showNote(noteVerse[0x00], noteVerse[0x1]);
+                break;
             default:
                 break;
         }

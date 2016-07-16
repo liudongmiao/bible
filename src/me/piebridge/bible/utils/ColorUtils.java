@@ -13,7 +13,7 @@ public class ColorUtils {
     private static final int A = 24;
     private static final int R = 16;
     private static final int G = 8;
-    private static final int MAX = 0xff;
+    private static final double MAX = 255.0;
 
     private ColorUtils() {
 
@@ -25,7 +25,7 @@ public class ColorUtils {
         int r = (color >>> R) & 0xff;
         int g = (color >>> G) & 0xff;
         int b = color & 0xff;
-        return String.format(Locale.US, "rgba(%d, %d, %d, %s)", r, g, b, DF.format(a / 255.0));
+        return String.format(Locale.US, "rgba(%d, %d, %d, %s)", r, g, b, DF.format(a / MAX));
     }
 
     public static String blend(int source, int drop) {
@@ -53,7 +53,7 @@ public class ColorUtils {
         int targetB = (sourceB * sourceA * (0xff - dropA) + 0xff * dropA * dropB) / d;
 
         return String.format(Locale.US, "rgba(%d, %d, %d, %s)", targetR, targetG, targetB,
-                DF.format(targetA / 255.0));
+                DF.format(targetA / MAX));
     }
 
     public static int replaceAlpha(int source, int alpha) {
