@@ -68,6 +68,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.ZoomButtonsController;
 
+import me.piebridge.bible.utils.DeprecationUtils;
+
 public class Chapter extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private final String TAG = "me.piebridge.bible$Chapter";
@@ -282,7 +284,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         }
         title.append(")");
         new AlertDialog.Builder(Chapter.this).setTitle(title)
-                .setMessage(Html.fromHtml(note.content))
+                .setMessage(DeprecationUtils.fromHtml(note.content))
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -331,7 +333,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         annotation = annotation.replaceAll("<span class=\"fr\">(.*?)</span>", "<strong>$1&nbsp;</strong>");
         annotation = annotation.replaceAll("<span class=\"xo\">(.*?)</span>", "");
         final AlertDialog dialog = new AlertDialog.Builder(Chapter.this).setTitle(title)
-                .setMessage(Html.fromHtml(annotation)).setPositiveButton(android.R.string.ok, null).show();
+                .setMessage(DeprecationUtils.fromHtml(annotation)).setPositiveButton(android.R.string.ok, null).show();
         if (!isCross || cross == null || cross.length() == 0) {
             return;
         }

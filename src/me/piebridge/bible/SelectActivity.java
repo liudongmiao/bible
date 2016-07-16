@@ -67,7 +67,7 @@ public class SelectActivity extends FragmentActivity implements ViewPager.OnPage
         mAdapter = new SelectAdapter(getSupportFragmentManager(), new String[] {
                 getString(R.string.book), getString(R.string.chapter), getString(R.string.verse)
         });
-        mPager.setOnPageChangeListener(this);
+        mPager.addOnPageChangeListener(this);
         mPager.setAdapter(mAdapter);
 
         selectBook = (SelectBook) mAdapter.getItem(BOOK);

@@ -11,13 +11,14 @@ buildscript {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion "24"
 
     buildTypes {
         release {
-             minifyEnabled true
-             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
         }
     }
 
@@ -65,7 +66,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(dir: 'libs', include: ['StickyListHeaders-29f254.jar'])
+    compile "com.android.support:support-v4:24.0.0"
 }
 
 tasks.withType(JavaCompile) {

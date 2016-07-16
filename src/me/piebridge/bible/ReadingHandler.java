@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 
+import me.piebridge.bible.utils.DeprecationUtils;
+
 /**
  * Created by thom on 16/6/21.
  */
@@ -90,7 +92,7 @@ public class ReadingHandler extends Handler implements View.OnClickListener {
         message = message.replaceAll("<span class=\"xo\">(.*?)</span>", "");
         dialog = new AlertDialog.Builder(context)
                 .setTitle(title)
-                .setMessage(Html.fromHtml(message))
+                .setMessage(DeprecationUtils.fromHtml(message))
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
         if (isCross && !TextUtils.isEmpty(cross)) {

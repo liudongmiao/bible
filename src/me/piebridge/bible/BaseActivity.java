@@ -190,7 +190,7 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         initializeHeader(mHeader);
 
         mPager.setAdapter(mAdapter);
-        mPager.setOnPageChangeListener(this);
+        mPager.addOnPageChangeListener(this);
 
         int position = getInitialPosition();
         String osis = getInitialOsis();

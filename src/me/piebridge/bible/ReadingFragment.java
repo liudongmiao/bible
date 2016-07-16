@@ -65,6 +65,7 @@ public class ReadingFragment extends Fragment {
     private String selectedContent = "";
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         readingBridge = new ReadingBridge((BaseActivity) activity);

@@ -35,6 +35,7 @@ public class SelectBook extends Fragment implements AdapterView.OnItemClickListe
     private Typeface typeface;
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         String font = BibleUtils.getFontPath(activity);

@@ -38,6 +38,7 @@ public class SelectChapter extends Fragment implements AdapterView.OnItemClickLi
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mActivity = (SelectActivity) activity;
