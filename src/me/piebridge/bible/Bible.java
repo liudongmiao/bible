@@ -64,6 +64,7 @@ import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import me.piebridge.bible.utils.HttpUtils;
 import me.piebridge.bible.utils.LogUtils;
 
 public class Bible {
@@ -1206,27 +1207,14 @@ public class Bible {
         return json;
     }
 
-    @SuppressWarnings("deprecation")
     String getRemoteVersions() throws IOException {
-        org.apache.http.client.HttpClient client = new org.apache.http.impl.client.DefaultHttpClient();
-
         SharedPreferences sp = mContext.getSharedPreferences("json", 0);
-        String etag = sp.getString(JSON + "_etag", null);
+        StringBuilder etag = new StringBuilder(sp.getString(JSON + "_etag", ""));
 
-        org.apache.http.client.methods.HttpGet get = new org.apache.http.client.methods.HttpGet(Bible.BIBLEDATA_PREFIX + JSON);
-        if (etag != null) {
-            get.addHeader("If-None-Match", etag);
-        }
-        org.apache.http.HttpResponse response = client.execute(get);
-        if (response.getStatusLine().getStatusCode() == 304) {
-            Log.d(TAG, JSON + " not modified");
+        String json = HttpUtils.retrieveContent(Bible.BIBLEDATA_PREFIX + JSON, etag);
+        if (json == null) {
             return null;
         }
-
-        InputStream is = response.getEntity().getContent();
-        String json = getStringFromInputStream(is);
-        is.close();
-
         try {
             new JSONObject(json);
         } catch (JSONException e) {
@@ -1234,9 +1222,8 @@ public class Bible {
             return null;
         }
 
-        org.apache.http.Header header = response.getFirstHeader("ETag");
-        if (header != null) {
-            saveJson(sp, header.getValue(), json);
+        if (etag.length() > 0) {
+            saveJson(sp, etag.toString(), json);
         }
         return json;
     }
