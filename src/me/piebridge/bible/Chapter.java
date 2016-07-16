@@ -267,7 +267,7 @@ public class Chapter extends Activity implements View.OnClickListener, AdapterVi
         DateFormat df = DateFormat.getDateInstance();
         String createtime = df.format(new Date(note.createtime * 1000));
         String updatetime = df.format(new Date(note.updatetime * 1000));
-        StringBuffer title = new StringBuffer(getString(R.string.note));
+        StringBuilder title = new StringBuilder(getString(R.string.note));
         title.append(" ");
         title.append(note.verses);
         title.append("(");

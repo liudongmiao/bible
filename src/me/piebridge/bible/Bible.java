@@ -1161,7 +1161,7 @@ public class Bible {
         }
     }
 
-    public static final String BIBLEDATA_PREFIX = "http://github.com/liudongmiao/bibledata/raw/master/";
+    public static final String BIBLEDATA_PREFIX = "https://github.com/liudongmiao/bibledata/raw/master/";
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     public DownloadInfo download(String filename) {
@@ -1254,7 +1254,7 @@ public class Bible {
     }
 
     public void email(Context context, String content) {
-        StringBuffer subject = new StringBuffer();
+        StringBuilder subject = new StringBuilder();
         subject.append(context.getString(R.string.app_name));
         if (versionName != null) {
             subject.append(" ");
