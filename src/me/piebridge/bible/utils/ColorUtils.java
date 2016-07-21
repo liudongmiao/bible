@@ -1,5 +1,9 @@
 package me.piebridge.bible.utils;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
+import android.util.TypedValue;
+
 import java.text.DecimalFormat;
 import java.util.Locale;
 
@@ -58,6 +62,30 @@ public class ColorUtils {
 
     public static int replaceAlpha(int source, int alpha) {
         return (source & 0xffffff) | (alpha & 0xff000000);
+    }
+
+    public static int fixOpacity(int color) {
+        int a = (color >>> A) & 0xff;
+        if (a == 0xff) {
+            // use 87% opacity
+            return replaceAlpha(color, 0xde000000);
+        } else {
+            return color;
+        }
+    }
+
+    public static int resolveColor(Context context, int resId) {
+        TypedValue tv = new TypedValue();
+        context.getTheme().resolveAttribute(resId, tv, true);
+        if (isColor(tv.type)) {
+            return tv.data;
+        } else {
+            return ContextCompat.getColor(context, tv.resourceId);
+        }
+    }
+
+    private static boolean isColor(int type) {
+        return type >= TypedValue.TYPE_FIRST_COLOR_INT && type <= TypedValue.TYPE_LAST_COLOR_INT;
     }
 
 }

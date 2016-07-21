@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
     package="me.piebridge.bible"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:sharedUserId="me.piebridge.bible"
     android:versionCode="86"
     android:versionName="0.12-snapshot">
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="7"
         android:targetSdkVersion="24" />
 
     <permission
@@ -23,25 +24,23 @@
         android:icon="@drawable/bible"
         android:label="@string/app_name"
         android:theme="@style/light">
+
         <activity
-            android:name=".ReadingActivity"
+            android:name=".activity.ReadingActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/app_name_ng"
-            android:theme="@style/light">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@style/light" />
+
+        <activity-alias
             android:name=".Chapter"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@style/chapter">
+            android:targetActivity=".activity.ReadingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity-alias>
+
         <activity
             android:name=".Search"
             android:theme="@style/theme"
@@ -140,25 +139,39 @@
         </activity>
 
         <activity
-            android:name=".ResultActivity"
+            android:name=".activity.ReadingItemsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@style/light" />
+            android:parentActivityName=".activity.ReadingActivity"
+            android:theme="@style/light.toolbar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.ReadingActivity" />
+        </activity>
 
         <activity
-            android:name=".CrossActivity"
+            android:name=".activity.ReadingCrossActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/light.dialog" />
 
         <activity
-            android:name=".SelectActivity"
+            android:name=".activity.SelectActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@android:style/Theme.Light" />
+            android:parentActivityName=".activity.ReadingActivity"
+            android:theme="@style/light">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.ReadingActivity" />
+        </activity>
 
         <activity
-            android:name=".SelectVersionActivity"
-            android:label="@string/choose_version"
+            android:name=".activity.SelectVersionActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@android:style/Theme.Light" />
+            android:label="@string/choose_version"
+            android:theme="@style/light">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.ReadingActivity" />
+        </activity>
 
         <provider
             android:name=".Provider"

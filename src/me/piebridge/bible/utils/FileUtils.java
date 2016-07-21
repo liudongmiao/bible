@@ -10,13 +10,15 @@ import java.io.InputStream;
  */
 public class FileUtils {
 
+    private static final int CACHE_SIZE = 8192;
+
     private FileUtils() {
 
     }
 
     public static String readAsString(InputStream is) throws IOException {
         int length;
-        byte[] bytes = new byte[0x2000];
+        byte[] bytes = new byte[CACHE_SIZE];
         BufferedInputStream bis = new BufferedInputStream(is);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         while ((length = bis.read(bytes)) != -1) {

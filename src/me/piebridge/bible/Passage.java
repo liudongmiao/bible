@@ -23,11 +23,13 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import me.piebridge.bible.activity.ReadingCrossActivity;
+import me.piebridge.bible.activity.ReadingItemsActivity;
 import me.piebridge.bible.utils.ChooserUtils;
 import me.piebridge.bible.utils.LogUtils;
 
-import static me.piebridge.bible.ResultActivity.ITEMS;
-import static me.piebridge.bible.ResultActivity.SEARCH;
+import static me.piebridge.bible.activity.ReadingItemsActivity.ITEMS;
+import static me.piebridge.bible.activity.ReadingItemsActivity.SEARCH;
 
 public class Passage extends Activity {
 
@@ -108,9 +110,10 @@ public class Passage extends Activity {
         Intent intent;
         ArrayList<OsisItem> items = OsisItem.parseSearch(search, getBaseContext());
         if (!items.isEmpty() && !TextUtils.isEmpty(items.get(0).chapter)) {
-            intent = new Intent(this, cross ? CrossActivity.class : ResultActivity.class);
+            intent = new Intent(this, cross ? ReadingCrossActivity.class : ReadingItemsActivity.class);
             intent.putExtra(SEARCH, search);
             intent.putParcelableArrayListExtra(ITEMS, items);
+            intent.putExtra(Intent.EXTRA_REFERRER, getIntent().getAction());
             startActivity(intent);
         } else if (!TextUtils.isEmpty(search) && Intent.ACTION_SEND.equals(action)) {
             intent = new Intent(this, Search.class);
@@ -129,7 +132,7 @@ public class Passage extends Activity {
             intent.putExtra("osisto", osisto);
             startActivity(intent);
         } else {
-            intent = new Intent(this, Chapter.class);
+            intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
             startActivity(intent);
         }
         finish();

@@ -1,21 +1,23 @@
-package me.piebridge.bible;
+package me.piebridge.bible.activity;
 
-import android.app.ActionBar;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import java.util.List;
 
+import me.piebridge.bible.Bible;
+import me.piebridge.bible.OsisItem;
+import me.piebridge.bible.R;
 import me.piebridge.bible.utils.BibleUtils;
 
 /**
  * Created by thom on 16/7/1.
  */
-public class ResultActivity extends BaseActivity {
+public class ReadingItemsActivity extends AbstractReadingActivity {
 
     public static final String ITEMS = "items";
     public static final String SEARCH = "search";
@@ -29,11 +31,9 @@ public class ResultActivity extends BaseActivity {
         search = intent.getStringExtra(SEARCH);
         items = intent.getParcelableArrayListExtra(ITEMS);
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            ActionBar actionBar = getActionBar();
-            if (actionBar != null) {
-                actionBar.setDisplayHomeAsUpEnabled(true);
-            }
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
@@ -108,18 +108,13 @@ public class ResultActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            startReading();
+        if (item.getItemId() == android.R.id.home && Intent.ACTION_VIEW.equals(getIntent().getStringExtra(Intent.EXTRA_REFERRER))) {
+            Intent launchIntent = getPackageManager().getLaunchIntentForPackage(getPackageName());
+            startActivity(launchIntent);
+            finish();
             return true;
-        } else {
-            return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void startReading() {
-        Intent intent = new Intent(this, ReadingActivity.class);
-        startActivity(intent);
-        finish();
+        return super.onOptionsItemSelected(item);
     }
 
 }

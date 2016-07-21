@@ -3,22 +3,22 @@ package me.piebridge.bible.fragment;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import me.piebridge.bible.SelectActivity;
+import me.piebridge.bible.activity.SelectActivity;
 
 /**
  * Created by thom on 16/7/6.
  */
-public class SelectVerse extends SelectChapter {
+public class SelectVerseFragment extends AbstractSelectFragment {
 
     private Map<String, Boolean> verses;
 
-    public void setVerses(Map<String, Boolean> verses) {
+    public void selectItems(Map<String, Boolean> verses) {
         this.verses = verses;
         Map<String, String> grids = new LinkedHashMap<String, String>();
         for (String verse : verses.keySet()) {
             grids.put(verse, verse);
         }
-        setData(grids, null);
+        super.setItems(grids, null);
     }
 
     @Override

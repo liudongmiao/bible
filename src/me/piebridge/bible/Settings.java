@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -12,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
@@ -21,26 +19,23 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class Settings extends PreferenceActivity implements OnPreferenceChangeListener {
+public class Settings extends PreferenceActivity {
 
     public static final String RED = "red";
     public static final String FLINK = "xlink";
     public static final String XLINK = "flink";
     public static final String FONTSIZE = "fontsize";
-    public static final String NIGHTMODE = "nightmode";
-    public static final String JUSTIFY = "justify";
-    public static final String LOG = "log";
-    public static final String PINCH = "pinch";
     public static final String VERSION = "version";
     public static final String SHANGTI = "shangti";
-    public static final String CHECKVERSION = Versions.CHECKVERSION;
+
+    public static final int FONTSIZE_MIN = 1;
+    public static final int FONTSIZE_MED = 14;
+    public static final int FONTSIZE_MAX = 72;
 
     private Bible bible = null;
-    private String body;
     private String versionName = null;
 
     @SuppressWarnings("deprecation")
@@ -52,8 +47,6 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         }
         PreferenceScreen root = getPreferenceManager().createPreferenceScreen(this);
         setPreferenceScreen(createPreferenceHierarchy(root));
-        Intent intent = getIntent();
-        body = intent.getStringExtra("body");
     }
 
     private PreferenceScreen createPreferenceHierarchy(PreferenceScreen root) {
@@ -61,15 +54,8 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         root.addPreference(addBooleanPreference(RED, R.string.red, R.string.wojinred));
         root.addPreference(addBooleanPreference(FLINK, R.string.flink, 0));
         root.addPreference(addBooleanPreference(XLINK, R.string.xlink, 0));
-        root.addPreference(addBooleanPreference(NIGHTMODE, R.string.nightmode, 0));
-        root.addPreference(addBooleanPreference(JUSTIFY, R.string.justify, 0));
-        root.addPreference(addBooleanPreference(PINCH, R.string.pinch, R.string.pinch_not_work));
         root.addPreference(addBooleanPreference(SHANGTI, R.string.shangti, R.string.shangti_or_shen));
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sp.getAll().containsKey(CHECKVERSION)) {
-            root.addPreference(addBooleanPreference(CHECKVERSION, R.string.checkversion, 0));
-        }
-        root.addPreference(addBooleanPreference(LOG, R.string.log, 0));
         root.addPreference(addPreference(VERSION, R.string.version));
         return root;
     }
@@ -104,7 +90,6 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         if (summary != 0) {
             preference.setSummary(summary);
         }
-        preference.setOnPreferenceChangeListener(this);
         switch (title) {
         case R.string.log:
         case R.string.nightmode:
@@ -114,7 +99,6 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
             break;
         case R.string.red:
         case R.string.flink:
-        case R.string.justify:
         case R.string.pinch:
             preference.setDefaultValue(true);
             break;
@@ -129,15 +113,6 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
     @SuppressLint("NewApi")
     Preference getBooleanPreference() {
         return new SwitchPreference(this);
-    }
-
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-        String key = preference.getKey();
-        if (LOG.equals(key)) {
-            Log.setOn((Boolean) newValue);
-        }
-        return true;
     }
 
     @Override
@@ -161,31 +136,9 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
         View view = inflater.inflate(R.layout.dialog, null);
 
         final SeekBar seekbar = (SeekBar) view.findViewById(R.id.seekbar);
-        final WebView webview = (WebView) view.findViewById(R.id.webview);
 
-        seekbar.setMax(Chapter.FONTSIZE_MAX);
-        seekbar.setProgress(getInt(FONTSIZE, Chapter.FONTSIZE_MED));
-
-        body = body.replaceFirst("font-size:\\s*\\d+pt", "font-size: " + seekbar.getProgress() + "pt");
-        webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
-        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress < Chapter.FONTSIZE_MIN) {
-                    progress = Chapter.FONTSIZE_MIN;
-                }
-                body = body.replaceFirst("font-size:\\s*\\d+pt", "font-size: " + progress + "pt");
-                webview.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
-            }
-        });
+        seekbar.setMax(FONTSIZE_MAX);
+        seekbar.setProgress(getInt(FONTSIZE, FONTSIZE_MED));
 
         new AlertDialog.Builder(this)
             .setTitle(R.string.fontsize)
@@ -194,8 +147,8 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     int fontsize = seekbar.getProgress();
-                    if (fontsize < Chapter.FONTSIZE_MIN) {
-                        fontsize = Chapter.FONTSIZE_MIN;
+                    if (fontsize < FONTSIZE_MIN) {
+                        fontsize = FONTSIZE_MIN;
                     }
                     setInt(FONTSIZE, fontsize);
                     preference.setSummary(getString(R.string.fontsummary, bible.getVersionName(bible.getVersion())));
@@ -230,12 +183,6 @@ public class Settings extends PreferenceActivity implements OnPreferenceChangeLi
             editor.putInt(key + "-" + version, value);
         }
         editor.commit();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Chapter.setRefresh(true);
     }
 
 }

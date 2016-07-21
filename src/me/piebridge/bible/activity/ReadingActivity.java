@@ -1,5 +1,6 @@
-package me.piebridge.bible;
+package me.piebridge.bible.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -7,15 +8,26 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import me.piebridge.bible.Provider;
+import me.piebridge.bible.R;
+import me.piebridge.bible.Search;
+import me.piebridge.bible.Settings;
+import me.piebridge.bible.Versions;
 import me.piebridge.bible.utils.LogUtils;
 
 /**
  * Created by thom on 15/10/18.
  */
-public class ReadingActivity extends BaseActivity {
+public class ReadingActivity extends AbstractReadingActivity {
 
-    private static final int SIZE = 0x4a5;
+    private static final int SIZE = 1189;
+
+    private static final int MENU_SEARCH = 2;
+    private static final int MENU_SETTINGS = 3;
+    private static final int MENU_VERSIONS = 4;
 
     @Override
     protected int retrieveOsisCount() {
@@ -62,6 +74,31 @@ public class ReadingActivity extends BaseActivity {
             final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
             editor.putString(OSIS, getCurrentOsis());
             editor.commit();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, android.R.string.search_go, MENU_SEARCH, android.R.string.search_go).setIcon(android.R.drawable.ic_menu_search);
+        menu.add(Menu.NONE, R.string.settings, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
+        menu.add(Menu.NONE, R.string.manageversion, MENU_VERSIONS, R.string.manageversion).setIcon(android.R.drawable.ic_menu_more);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getOrder()) {
+            case MENU_SEARCH:
+                startActivity(new Intent(this, Search.class));
+                return true;
+            case MENU_SETTINGS:
+                startActivity(new Intent(this, Settings.class));
+                return true;
+            case MENU_VERSIONS:
+                startActivity(new Intent(this, Versions.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

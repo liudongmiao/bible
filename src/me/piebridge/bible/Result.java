@@ -34,6 +34,8 @@ import android.database.MergeCursor;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import me.piebridge.bible.activity.ReadingItemsActivity;
+
 public class Result extends Activity
 {
     private final String TAG = "me.piebridge.bible$Search";
@@ -244,16 +246,16 @@ public class Result extends Activity
     }
 
     private void showChapter(String book, String chapter, int verse) {
-        Intent intent = new Intent(this, Chapter.class);
+        Intent intent = new Intent(this, ReadingItemsActivity.class);
         ArrayList<OsisItem> items = new ArrayList<OsisItem>();
-        Log.d(TAG, String.format("book: %s, chapter: %s, verse: %d", book, chapter, verse));
+        Log.d(TAG, String.format(Locale.US, "book: %s, chapter: %s, verse: %d", book, chapter, verse));
         if (chapter.equals("0")) {
             items.add(new OsisItem(book, 1));
         } else {
             items.add(new OsisItem(book, chapter, verse > 0 ? String.valueOf(verse) : ""));
         }
-        intent.putParcelableArrayListExtra("osiss", items);
-        intent.putExtra("search", query);
+        intent.putParcelableArrayListExtra(ReadingItemsActivity.ITEMS, items);
+        intent.putExtra(ReadingItemsActivity.SEARCH, query);
         startActivity(intent);
     }
 

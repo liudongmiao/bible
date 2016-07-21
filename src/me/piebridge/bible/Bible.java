@@ -32,6 +32,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -197,7 +198,7 @@ public class Bible {
     private int checkVersionsSync(boolean all) {
         List<String> newVersions = new ArrayList<String>();
         Map<String, String> newVersionpaths = new HashMap<String, String>();
-        File[] dirs = getExternalFilesDirWrapper();
+        File[] dirs = getExternalFilesDirs();
         if (dirs.length == 0) {
             checkInternalVersions(newVersions, newVersionpaths, all);
             synchronized (versionsLock) {
@@ -333,7 +334,7 @@ public class Bible {
             return new File(path);
         } else {
             File file;
-            for (File dir : getExternalFilesDirWrapper()) {
+            for (File dir : getExternalFilesDirs()) {
                 file = getFile(dir, version);
                 Log.d(TAG, "version: " + version);
                 if (file != null) {
@@ -460,15 +461,12 @@ public class Bible {
         return file;
     }
 
-    private File[] getExternalFilesDirWrapper() {
+    private File[] getExternalFilesDirs() {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) || mContext == null) {
             Log.d(TAG, "not mounted, mContext = " + mContext);
             return new File[0];
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return mContext.getExternalFilesDirs(null);
         } else {
-            return new File[] {mContext.getExternalFilesDir(null)};
+            return ContextCompat.getExternalFilesDirs(mContext, null);
         }
     }
 
@@ -1028,7 +1026,7 @@ public class Bible {
             return false;
         }
 
-        File[] dirs = getExternalFilesDirWrapper();
+        File[] dirs = getExternalFilesDirs();
         File dirpath = getPath(dirs);
 
         InputStream is = new FileInputStream(path);
@@ -1168,7 +1166,7 @@ public class Bible {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
             return null;
         }
-        if (getExternalFilesDirWrapper() == null) {
+        if (getExternalFilesDirs() == null) {
             return null;
         }
         String url = BIBLEDATA_PREFIX + filename;
@@ -1351,11 +1349,11 @@ public class Bible {
         }
     }
 
-    class Note {
+    public static class Note {
         Long id = null;
         String verse;
         String verses;
-        String content;
+        public String content;
         long createtime;
         long updatetime;
         ContentValues values = null;

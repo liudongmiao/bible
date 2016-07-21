@@ -1,4 +1,4 @@
-package me.piebridge.bible;
+package me.piebridge.bible.adapter;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -6,7 +6,9 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
-import static me.piebridge.bible.BaseActivity.POSITION;
+import me.piebridge.bible.fragment.ReadingFragment;
+
+import static me.piebridge.bible.activity.AbstractReadingActivity.POSITION;
 
 /**
  * Created by thom on 16/7/2.

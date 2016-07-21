@@ -3,7 +3,6 @@ package me.piebridge.bible.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.preference.PreferenceManager;
 
 import me.piebridge.bible.R;
@@ -22,33 +21,26 @@ public class ThemeUtils {
     }
 
     public static void setTheme(Activity activity) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
-            activity.setTheme(THEME_LIGHT.equals(sp.getString(THEME, THEME_LIGHT)) ? R.style.light : R.style.dark);
-        }
+        activity.setTheme(isDark(activity) ? R.style.dark : R.style.light);
     }
 
     public static void setDialogTheme(Activity activity) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
-            activity.setTheme(THEME_LIGHT.equals(sp.getString(THEME, THEME_LIGHT)) ? R.style.light_dialog : R.style.dark_dialog);
-        }
+        activity.setTheme(isDark(activity) ? R.style.dark_dialog : R.style.light_dialog);
+    }
+
+    public static void setToolbarTheme(Activity activity) {
+        activity.setTheme(isDark(activity) ? R.style.dark_toolbar : R.style.light_toolbar);
+    }
+
+    public static boolean isDark(Activity activity) {
+        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
+        return THEME_DARK.equals(sp.getString(THEME, THEME_LIGHT));
     }
 
     public static void switchTheme(Context context) {
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        String theme = sp.getString(ThemeUtils.THEME, ThemeUtils.THEME_LIGHT);
-        sp.edit().putString(ThemeUtils.THEME,
-                ThemeUtils.THEME_LIGHT.equals(theme) ? ThemeUtils.THEME_DARK : ThemeUtils.THEME_LIGHT).commit();
-    }
-
-    public static boolean isDark(Activity activity) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
-            return THEME_DARK.equals(sp.getString(THEME, THEME_LIGHT));
-        } else {
-            return false;
-        }
+        String theme = sp.getString(THEME, THEME_LIGHT);
+        sp.edit().putString(THEME, THEME_LIGHT.equals(theme) ? THEME_DARK : THEME_LIGHT).commit();
     }
 
 }

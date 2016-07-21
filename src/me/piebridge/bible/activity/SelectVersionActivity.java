@@ -1,26 +1,26 @@
-package me.piebridge.bible;
+package me.piebridge.bible.activity;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import me.piebridge.bible.fragment.GridAdapter;
+import me.piebridge.bible.Bible;
+import me.piebridge.bible.R;
+import me.piebridge.bible.adapter.GridAdapter;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ThemeUtils;
 
-public class SelectVersionActivity extends Activity implements GridAdapter.GridChecker, AdapterView.OnItemClickListener {
+public class SelectVersionActivity extends AppCompatActivity implements GridAdapter.GridChecker, AdapterView.OnItemClickListener {
 
     private Bible bible;
     private String version;
@@ -29,12 +29,10 @@ public class SelectVersionActivity extends Activity implements GridAdapter.GridC
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.setTheme(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.select_version);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            ActionBar actionBar = getActionBar();
-            if (actionBar != null) {
-                actionBar.setDisplayHomeAsUpEnabled(true);
-            }
+        setContentView(R.layout.activity_select_version);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         bible = Bible.getInstance(this);
@@ -49,7 +47,7 @@ public class SelectVersionActivity extends Activity implements GridAdapter.GridC
         GridView gridView = (GridView) findViewById(R.id.gridView);
         gridView.setAdapter(versionAdapter);
         gridView.setOnItemClickListener(this);
-        gridView.smoothScrollToPosition(versions.indexOf(version));
+        gridView.setSelection(versions.indexOf(version));
     }
 
     @Override
@@ -79,16 +77,8 @@ public class SelectVersionActivity extends Activity implements GridAdapter.GridC
 
     private void setResult(String newVersion) {
         Intent intent = getIntent();
-        intent.putExtra(BaseActivity.VERSION, newVersion);
+        intent.putExtra(AbstractReadingActivity.VERSION, newVersion);
         setResult(Activity.RESULT_OK, intent);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return true;
     }
 
 }

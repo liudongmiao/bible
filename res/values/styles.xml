@@ -1,37 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="theme" parent="@android:style/Theme.NoTitleBar">
+
+    <style name="theme" parent="Theme.AppCompat">
     </style>
-    <style name="chapter" parent="@android:style/Theme.NoTitleBar">
+
+    <style name="chapter" parent="Theme.AppCompat">
     </style>
-    <style name="theme.light" parent="@android:style/Theme.Light.NoTitleBar">
+
+    <style name="theme.light" parent="Theme.AppCompat.Light">
     </style>
-    <!-- spinner in android 2.X is waste screen space -->
-    <style name="button" parent="@android:style/Widget.Button">
+
+    <style name="button" parent="Widget.AppCompat.Spinner">
         <item name="android:textSize">18sp</item>
     </style>
-    <style name="grid" parent="@android:style/Widget.Button.Toggle">
+
+    <style name="grid" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
-    <style name="progress" parent="@android:style/Widget.ProgressBar">
+
+    <style name="progress" parent="Widget.AppCompat.ProgressBar">
     </style>
 
-    <style name="dark" parent="@android:style/Theme">
-        <item name="android:windowNoTitle">true</item>
+    <style name="dark" parent="@style/Theme.AppCompat">
+        <item name="colorPrimary">@color/grey_900</item>
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="android:colorBackground">@color/grey_850</item>
+        <item name="colorRed">#ffef9a9a</item>
+        <item name="colorYellow">@color/yellow_200</item>
     </style>
 
-    <style name="light" parent="@android:style/Theme.Light">
-        <item name="android:windowNoTitle">true</item>
+    <style name="light" parent="@style/Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/grey_100</item>
+        <item name="colorPrimaryDark">@color/grey_600</item>
+        <item name="android:colorBackground">@color/grey_50</item>
+        <item name="colorRed">#fff44336</item>
+        <item name="colorYellow">@color/yellow_500</item>
     </style>
 
-    <style name="dark.dialog" parent="@android:style/Theme.Dialog">
-        <item name="android:windowNoTitle">true</item>
+    <style name="dark.dialog" parent="@style/Theme.AppCompat.Dialog">
+        <item name="windowNoTitle">true</item>
+        <item name="colorRed">#ffef9a9a</item>
+        <item name="colorYellow">@color/yellow_200</item>
     </style>
 
-    <style name="light.dialog" parent="@android:style/Theme.Dialog">
-        <item name="android:windowNoTitle">true</item>
+    <style name="light.dialog" parent="@style/Theme.AppCompat.Light.Dialog">
+        <item name="windowNoTitle">true</item>
+        <item name="colorRed">#fff44336</item>
+        <item name="colorYellow">@color/yellow_500</item>
+    </style>
+
+    <style name="dark.toolbar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="light.toolbar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
     </style>
 
 </resources>
-<!-- vim: set sta sw=4 et: -->
+    <!-- vim: set sta sw=4 et: -->

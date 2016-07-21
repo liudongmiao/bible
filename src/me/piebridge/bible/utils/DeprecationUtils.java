@@ -17,10 +17,13 @@ public class DeprecationUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return Html.fromHtml(source, Html.FROM_HTML_MODE_COMPACT);
         } else {
-            @SuppressWarnings("deprecation")
-            Spanned spanned = Html.fromHtml(source);
-            return spanned;
+            return fromHtmlDeprecatedN(source);
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static Spanned fromHtmlDeprecatedN(String source) {
+        return Html.fromHtml(source);
     }
 
 }

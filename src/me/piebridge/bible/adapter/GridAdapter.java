@@ -1,16 +1,19 @@
-package me.piebridge.bible.fragment;
+package me.piebridge.bible.adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ToggleButton;
+import android.widget.TextView;
 
 import java.util.List;
 
 import me.piebridge.bible.R;
+import me.piebridge.bible.utils.ColorUtils;
 
 /**
  * Created by thom on 16/7/7.
@@ -21,9 +24,13 @@ public class GridAdapter extends ArrayAdapter<String> {
 
     private GridChecker gridChecker;
 
+    private ColorStateList textColor;
+    private int textColorSelected;
+
     public GridAdapter(Context context, GridChecker gridChecker) {
-        super(context, R.layout.grid);
+        super(context, R.layout.view_cell, R.id.text);
         this.gridChecker = gridChecker;
+        this.textColorSelected = ColorUtils.resolveColor(context, R.attr.colorAccent);
     }
 
     public GridAdapter(Context context, GridChecker gridChecker, Typeface typeface) {
@@ -33,16 +40,27 @@ public class GridAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ToggleButton view = (ToggleButton) super.getView(position, convertView, parent);
+        View view = super.getView(position, convertView, parent);
+        TextView textView = (TextView) view.findViewById(R.id.text);
         String item = getItem(position);
         String human = gridChecker.getGridName(item);
-        view.setTextOn(human);
-        view.setTextOff(human);
-        view.setChecked(gridChecker.isGridChecked(item));
-        view.setEnabled(gridChecker.isGridEnabled(item));
-        view.setTransformationMethod(null);
+        if (textColor == null) {
+            textColor = textView.getTextColors();
+        }
+        if (TextUtils.isEmpty(human)) {
+            view.setVisibility(View.INVISIBLE);
+        } else {
+            textView.setText(human);
+            view.setVisibility(View.VISIBLE);
+        }
+        textView.setEnabled(gridChecker.isGridEnabled(item));
+        if (!gridChecker.isGridChecked(item)) {
+            textView.setTextColor(textColor);
+        } else {
+            textView.setTextColor(textColorSelected);
+        }
         if (typeface != null) {
-            view.setTypeface(typeface);
+            textView.setTypeface(typeface);
         }
         return view;
     }

@@ -25,7 +25,4 @@ public class LogUtils {
         Log.w(TAG, msg);
     }
 
-    public static void wtf(String msg) {
-        Log.wtf(TAG, msg);
-    }
 }

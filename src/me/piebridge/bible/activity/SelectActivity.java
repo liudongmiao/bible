@@ -1,32 +1,32 @@
-package me.piebridge.bible;
+package me.piebridge.bible.activity;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.MenuItem;
-import android.view.Window;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import me.piebridge.bible.fragment.SelectBook;
-import me.piebridge.bible.fragment.SelectChapter;
-import me.piebridge.bible.fragment.SelectVerse;
+import me.piebridge.bible.Bible;
+import me.piebridge.bible.R;
+import me.piebridge.bible.fragment.SelectBookFragment;
+import me.piebridge.bible.fragment.SelectChapterFragment;
+import me.piebridge.bible.fragment.SelectVerseFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ThemeUtils;
 
-public class SelectActivity extends FragmentActivity implements ViewPager.OnPageChangeListener {
+public class SelectActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
     public static final int BOOK = 0;
     public static final int CHAPTER = 1;
@@ -37,9 +37,9 @@ public class SelectActivity extends FragmentActivity implements ViewPager.OnPage
     private ViewPager mPager;
     private SelectAdapter mAdapter;
 
-    private SelectBook selectBook;
-    private SelectChapter selectChapter;
-    private SelectVerse selectVerse;
+    private SelectBookFragment selectBook;
+    private SelectChapterFragment selectChapter;
+    private SelectVerseFragment selectVerse;
 
     private String book;
     private String chapter;
@@ -51,41 +51,40 @@ public class SelectActivity extends FragmentActivity implements ViewPager.OnPage
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.setTheme(this);
         super.onCreate(savedInstanceState);
-        requestWindowFeature(0);
-        setContentView(R.layout.select);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            ActionBar actionBar = getActionBar();
-            if (actionBar != null) {
-                actionBar.setDisplayHomeAsUpEnabled(true);
-            }
+        setContentView(R.layout.activity_select);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        Intent intent = getIntent();
         bible = Bible.getInstance(this);
 
+        String osis = intent.getStringExtra(AbstractReadingActivity.OSIS);
+        book = BibleUtils.getBook(osis);
+        chapter = BibleUtils.getChapter(osis);
+
+        selectBook = new SelectBookFragment();
+        selectChapter = new SelectChapterFragment();
+        selectVerse = new SelectVerseFragment();
+
+        selectBook.setItems(prepareBooks(), book);
+        selectChapter.setItems(prepareChapters(book), chapter);
+        selectVerse.selectItems(prepareVerses(book, chapter));
+
         mPager = (ViewPager) findViewById(R.id.pager);
+        ((TabLayout) findViewById(R.id.tabs)).setupWithViewPager(mPager);
 
         mAdapter = new SelectAdapter(getSupportFragmentManager(), new String[] {
                 getString(R.string.book), getString(R.string.chapter), getString(R.string.verse)
+        }, new Fragment[] {
+                selectBook, selectChapter, selectVerse
         });
         mPager.addOnPageChangeListener(this);
         mPager.setAdapter(mAdapter);
 
-        selectBook = (SelectBook) mAdapter.getItem(BOOK);
-        selectChapter = (SelectChapter) mAdapter.getItem(CHAPTER);
-        selectVerse = (SelectVerse) mAdapter.getItem(VERSE);
-
-        Intent intent = getIntent();
-        int position = intent.getIntExtra(POSITION, 0);
+        int position = intent.getIntExtra(POSITION, BOOK);
         mPager.setCurrentItem(position);
-
-        String osis = intent.getStringExtra(BaseActivity.OSIS);
-        book = BibleUtils.getBook(osis);
-        chapter = BibleUtils.getChapter(osis);
-
-        selectBook.setBooks(prepareBooks(), book);
-        selectChapter.setData(prepareChapters(book), chapter);
-        selectVerse.setVerses(prepareVerses(book, chapter));
-
         updateTitle(position);
     }
 
@@ -180,7 +179,7 @@ public class SelectActivity extends FragmentActivity implements ViewPager.OnPage
     public void setBook(String book) {
         this.book = book;
         this.chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(chapter, "1");
-        selectChapter.setData(prepareChapters(book), chapter);
+        selectChapter.setItems(prepareChapters(book), chapter);
         updateTitle(CHAPTER);
         mPager.setCurrentItem(CHAPTER);
     }
@@ -189,7 +188,7 @@ public class SelectActivity extends FragmentActivity implements ViewPager.OnPage
         this.chapter = chapter;
         Map<String, Boolean> verses = prepareVerses(book, chapter);
         if (mAdapter.getCount() >= VERSE && !verses.isEmpty()) {
-            selectVerse.setVerses(verses);
+            selectVerse.selectItems(verses);
             updateTitle(VERSE);
             mPager.setCurrentItem(VERSE);
         } else {
@@ -206,44 +205,25 @@ public class SelectActivity extends FragmentActivity implements ViewPager.OnPage
 
     private void setResult() {
         Intent intent = new Intent();
-        intent.putExtra(BaseActivity.OSIS, book + "." + chapter);
-        intent.putExtra(BaseActivity.VERSE, verse);
+        intent.putExtra(AbstractReadingActivity.OSIS, book + "." + chapter);
+        intent.putExtra(AbstractReadingActivity.VERSE, verse);
         setResult(Activity.RESULT_OK, intent);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return true;
     }
 
     private static class SelectAdapter extends FragmentStatePagerAdapter {
 
-        private String[] pageTitles;
+        private final String[] pageTitles;
+        private final Fragment[] fragments;
 
-        private SelectBook selectBook = new SelectBook();
-        private SelectChapter selectChapter = new SelectChapter();
-        private SelectVerse selectVerse = new SelectVerse();
-
-        public SelectAdapter(FragmentManager fm, String[] pageTitles) {
+        public SelectAdapter(FragmentManager fm, String[] pageTitles, Fragment[] fragments) {
             super(fm);
             this.pageTitles = pageTitles;
+            this.fragments = fragments;
         }
 
         @Override
         public Fragment getItem(int position) {
-            switch (position) {
-                case BOOK:
-                    return selectBook;
-                case CHAPTER:
-                    return selectChapter;
-                case VERSE:
-                    return selectVerse;
-                default:
-                    return null;
-            }
+            return fragments[position];
         }
 
         @Override

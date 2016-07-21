@@ -1,6 +1,5 @@
-package me.piebridge.bible;
+package me.piebridge.bible.activity;
 
-import android.app.ActionBar;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,24 +11,35 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
-import android.support.v4.app.FragmentActivity;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import me.piebridge.bible.Bible;
+import me.piebridge.bible.Provider;
+import me.piebridge.bible.R;
+import me.piebridge.bible.adapter.ReadingAdapter;
+import me.piebridge.bible.bridge.ReadingBridge;
+import me.piebridge.bible.fragment.ReadingFragment;
+import me.piebridge.bible.bridge.ReadingHandler;
+import me.piebridge.bible.Settings;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ColorUtils;
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.ObjectUtils;
+import me.piebridge.bible.utils.RecreateUtils;
 import me.piebridge.bible.utils.ThemeUtils;
 
 /**
  * Created by thom on 15/10/18.
  */
-public abstract class BaseActivity extends FragmentActivity implements ReadingBridge.Bridge, View.OnClickListener, ViewPager.OnPageChangeListener {
+public abstract class AbstractReadingActivity extends AppCompatActivity implements ReadingBridge.Bridge, View.OnClickListener, ViewPager.OnPageChangeListener {
 
     public static final String CSS = "css";
     public static final String OSIS = "osis";
@@ -66,14 +76,13 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     private static final int REQUEST_CODE_VERSION = 1002;
 
     protected ViewPager mPager;
+    private AppBarLayout mAppBar;
 
     protected ReadingAdapter mAdapter;
 
     private View mHeader;
 
     private Handler handler = new ReadingHandler(this);
-
-    private int background;
 
     private String colorBackground;
     private String colorText;
@@ -83,14 +92,6 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     private String colorHighlight;
     private String colorHighLightSelected;
     private String fontPath;
-
-    // https://material.google.com/style/color.html
-    private static final int RED_200 = 0xef9a9a;
-    private static final int RED_500 = 0xf44336;
-
-    // yellow
-    private static final int YELLOW_200 = 0xfff59d;
-    private static final int YELLOW_500 = 0xffeb3b;
 
     protected Bible bible;
 
@@ -113,50 +114,30 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     public void onRestart() {
         super.onRestart();
         fontPath = BibleUtils.getFontPath(this);
-        if (!BibleUtils.equals(fontPath, mAdapter.getData(getCurrentPosition()).getString(FONT_PATH))) {
+        if (!ObjectUtils.isIdentical(fontPath, mAdapter.getData(getCurrentPosition()).getString(FONT_PATH))) {
             refresh();
         }
     }
 
     private void resolveColors() {
-        background = resolveColor(android.R.attr.colorBackground);
-        colorBackground = ColorUtils.rgba(background);
-        colorLink = ColorUtils.rgba(resolveColor(android.R.attr.textColorLink));
-        int textColorHighlight = resolveColor(android.R.attr.textColorHighlight);
-        int textColorPrimary = resolveColor(android.R.attr.textColorPrimary);
-        int red;
-        int highlight;
-        if (ThemeUtils.isDark(this)) {
-            red = ColorUtils.replaceAlpha(RED_200, textColorPrimary);
-            highlight = ColorUtils.replaceAlpha(YELLOW_200, textColorHighlight);
-        } else {
-            red = ColorUtils.replaceAlpha(RED_500, textColorPrimary);
-            highlight = ColorUtils.replaceAlpha(YELLOW_500, textColorHighlight);
-        }
-        colorText = ColorUtils.rgba(textColorPrimary);
+        colorBackground = ColorUtils.rgba(ColorUtils.resolveColor(this, android.R.attr.colorBackground));
+        colorLink = ColorUtils.rgba(ColorUtils.resolveColor(this, android.R.attr.textColorLink));
+        int textColorHighlight = ColorUtils.resolveColor(this, android.R.attr.textColorHighlight);
+        int textColorPrimary = ColorUtils.resolveColor(this, android.R.attr.textColorPrimary);
+        int red = ColorUtils.replaceAlpha(ColorUtils.resolveColor(this, R.attr.colorRed), textColorPrimary);
+        int highlight = ColorUtils.replaceAlpha(ColorUtils.resolveColor(this, R.attr.colorYellow), textColorHighlight);
+        colorText = ColorUtils.rgba(ColorUtils.fixOpacity(textColorPrimary));
         colorSelected = ColorUtils.rgba(textColorHighlight);
         colorRed = ColorUtils.rgba(red);
         colorHighlight = ColorUtils.rgba(highlight);
         colorHighLightSelected = ColorUtils.blend(highlight, textColorHighlight);
     }
 
-    public int getBackground() {
-        return background;
-    }
-
     protected View findHeader() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            return findViewById(R.id.header);
-        } else {
-            ActionBar actionBar = getActionBar();
-            if (actionBar != null) {
-                actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-                actionBar.setCustomView(R.layout.header);
-                return actionBar.getCustomView();
-            } else {
-                return findViewById(R.id.header);
-            }
-        }
+        mAppBar = (AppBarLayout) findViewById(R.id.appbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.header);
+        setSupportActionBar(toolbar);
+        return toolbar;
     }
 
     protected void updateHeader(Bundle bundle, String osis, View header) {
@@ -180,7 +161,14 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         updateTaskDescription(BibleUtils.getBookChapterVerse(bookName, chapterVerse));
     }
 
+    protected void showAppBar() {
+        if (mAppBar != null) {
+            mAppBar.setExpanded(true);
+        }
+    }
+
     protected void updateTaskDescription(String label) {
+        showAppBar();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setTaskDescription(new ActivityManager.TaskDescription(label));
         }
@@ -211,11 +199,11 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     }
 
     protected int getContentLayout() {
-        return R.layout.reading;
+        return R.layout.activity_reading;
     }
 
     protected void updateTheme() {
-        ThemeUtils.setTheme(this);
+        ThemeUtils.setToolbarTheme(this);
     }
 
     protected abstract int retrieveOsisCount();
@@ -232,6 +220,7 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         return mAdapter.getData(getCurrentPosition()).getString(OSIS);
     }
 
+    @Override
     public Bundle retrieveOsis(int position, String osis) {
         Bundle bundle = new Bundle();
         bundle.putString(OSIS, osis);
@@ -261,22 +250,12 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         }
         String version = bible.getVersion();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        bundle.putInt(FONT_SIZE, sp.getInt(Settings.FONTSIZE + "-" + version, 0xf));
+        bundle.putInt(FONT_SIZE, sp.getInt(Settings.FONTSIZE + "-" + version, Settings.FONTSIZE_MED));
         bundle.putBoolean(CROSS, sp.getBoolean(Settings.XLINK, false));
         bundle.putBoolean(SHANGTI, sp.getBoolean(Settings.SHANGTI, false));
         bundle.putString(VERSION, bible.getVersion());
         bundle.putBoolean(RED, sp.getBoolean(Settings.RED, true));
-        // for color
-        bundle.putString(COLOR_BACKGROUND, colorBackground);
-        bundle.putString(COLOR_TEXT, colorText);
-        bundle.putString(COLOR_LINK, colorLink);
-        bundle.putString(COLOR_RED, colorRed);
-        bundle.putString(COLOR_HIGHLIGHT, colorHighlight);
-        bundle.putString(COLOR_SELECTED, colorSelected);
-        bundle.putString(COLOR_HIGHLIGHT_SELECTED, colorHighLightSelected);
-        if (!TextUtils.isEmpty(fontPath)) {
-            bundle.putString(FONT_PATH, fontPath);
-        }
+        updateBundle(bundle);
         return bundle;
     }
 
@@ -310,34 +289,6 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         bundle.putAll(retrieveOsis(position, osis));
     }
 
-    @SuppressWarnings("deprecation")
-    private int resolveColor(int resId) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            TypedValue tv = new TypedValue();
-            getTheme().resolveAttribute(resId, tv, true);
-            int colorId = tv.resourceId;
-            return getResources().getColor(colorId);
-        } else {
-            return getDefaultColor(resId);
-        }
-    }
-
-    private int getDefaultColor(int resId) {
-        // for gingerbread
-        switch (resId) {
-            case android.R.attr.colorBackground:
-                return 0xffffffff;
-            case android.R.attr.textColorLink:
-                return 0xff5c5cff;
-            case android.R.attr.textColorHighlight:
-                return 0x66ff9200;
-            case android.R.attr.textColorPrimary:
-                return 0xde000000;
-            default:
-                return 0;
-        }
-    }
-
     @Override
     public void onPageScrollStateChanged(int position) {
         // do nothing
@@ -354,24 +305,8 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(COLOR_BACKGROUND, background);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState.containsKey(COLOR_BACKGROUND) && savedInstanceState.getInt(COLOR_BACKGROUND) != background) {
-            reload(getCurrentPosition());
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            menu.add(Menu.NONE, R.string.switch_theme, Menu.NONE, R.string.switch_theme);
-        }
+        menu.add(Menu.NONE, R.string.switch_theme, Menu.FIRST, R.string.switch_theme);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -381,27 +316,39 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         if (id == R.string.switch_theme) {
             return switchTheme();
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     protected boolean switchTheme() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            ThemeUtils.switchTheme(this);
-            recreate();
-        }
+        ThemeUtils.switchTheme(this);
+        RecreateUtils.recreate(this);
         return true;
     }
 
     @Override
     public void showAnnotation(String link, String annotation) {
         LogUtils.d("link: " + link + ", annotation: " + annotation);
-        handler.sendMessage(handler.obtainMessage(ReadingHandler.SHOW_ANNOTATION, new String[] {link, annotation, getCurrentOsis()}));
+        handler.sendMessage(handler.obtainMessage(ReadingHandler.SHOW_ANNOTATION, new ReadingHandler.Annotation(link, annotation, getCurrentOsis())));
     }
 
     @Override
     public void showNote(String verse) {
         LogUtils.d("show note, verse: " + verse);
-        handler.sendMessage(handler.obtainMessage(ReadingHandler.SHOW_NOTE, new String[] {verse, getCurrentOsis()}));
+        handler.sendMessage(handler.obtainMessage(ReadingHandler.SHOW_NOTE, new ReadingHandler.Note(verse, getCurrentOsis())));
+    }
+
+    @Override
+    public void updateBundle(Bundle bundle) {
+        bundle.putString(COLOR_BACKGROUND, colorBackground);
+        bundle.putString(COLOR_TEXT, colorText);
+        bundle.putString(COLOR_LINK, colorLink);
+        bundle.putString(COLOR_RED, colorRed);
+        bundle.putString(COLOR_HIGHLIGHT, colorHighlight);
+        bundle.putString(COLOR_SELECTED, colorSelected);
+        bundle.putString(COLOR_HIGHLIGHT_SELECTED, colorHighLightSelected);
+        if (!TextUtils.isEmpty(fontPath)) {
+            bundle.putString(FONT_PATH, fontPath);
+        }
     }
 
     @Override
@@ -463,8 +410,6 @@ public abstract class BaseActivity extends FragmentActivity implements ReadingBr
         if (bundle != null) {
             bundle.putAll(mAdapter.getData(position));
             fragment.reloadData();
-        } else {
-            LogUtils.d("reloadData, bundle: null, position: " + position);
         }
     }
 

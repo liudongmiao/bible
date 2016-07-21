@@ -1,18 +1,5 @@
 package me.piebridge.bible;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -43,6 +30,19 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.emilsjolander.components.stickylistheaders.StickyListHeadersAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class Versions extends Activity {
 
@@ -522,7 +522,7 @@ public class Versions extends Activity {
         } else if (text.equals(getString(R.string.uninstall))) {
             if (!button) {
                 bible.setVersion(code.toLowerCase(Locale.US));
-                Intent intent = new Intent(this, Chapter.class);
+                Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
                 intent.putExtra("version", code.toLowerCase(Locale.US));
                 startActivity(intent);
             } else {

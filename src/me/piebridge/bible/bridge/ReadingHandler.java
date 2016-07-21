@@ -1,4 +1,4 @@
-package me.piebridge.bible;
+package me.piebridge.bible.bridge;
 
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -6,13 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 
+import me.piebridge.bible.Bible;
+import me.piebridge.bible.Passage;
+import me.piebridge.bible.R;
 import me.piebridge.bible.utils.DeprecationUtils;
 
 /**
@@ -35,45 +37,43 @@ public class ReadingHandler extends Handler implements View.OnClickListener {
     public void handleMessage(Message message) {
         switch (message.what) {
             case SHOW_ANNOTATION:
-                String[] linkAnnotation = (String[]) message.obj;
-                showAnnotation(linkAnnotation[0x0], linkAnnotation[0x1], linkAnnotation[0x2]);
+                showAnnotation((Annotation) message.obj);
                 break;
             case SHOW_NOTE:
-                String[] noteVerse = (String[]) message.obj;
-                showNote(noteVerse[0x00], noteVerse[0x1]);
+                showNote((Note) message.obj);
                 break;
             default:
                 break;
         }
     }
 
-    private void showNote(String verse, String osis) {
+    private void showNote(Note note) {
         final Context context = wr.get();
         if (context == null) {
             return;
         }
         Bible bible = Bible.getInstance(context);
-        Bible.Note note = bible.getNote(osis, verse);
+        Bible.Note bibleNote = bible.getNote(note.osis, note.verse);
         dialog = new AlertDialog.Builder(context)
                 .setTitle(R.string.note)
-                .setMessage(note.content)
+                .setMessage(bibleNote.content)
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
     }
 
-    private void showAnnotation(String link, String message, String osis) {
+    private void showAnnotation(Annotation annotation) {
         final Context context = wr.get();
         if (context == null) {
             return;
         }
-        String annotation = message;
-        if (TextUtils.isEmpty(annotation)) {
+        String message = annotation.message;
+        if (TextUtils.isEmpty(message)) {
             Bible bible = Bible.getInstance(context);
-            bible.loadAnnotations(osis, true);
-            annotation = bible.getAnnotation(link);
+            bible.loadAnnotations(annotation.osis, true);
+            message = bible.getAnnotation(annotation.link);
         }
-        if (annotation != null) {
-            setShowAnnotation(context, link, annotation);
+        if (message != null) {
+            setShowAnnotation(context, annotation.link, message);
         }
     }
 
@@ -119,6 +119,28 @@ public class ReadingHandler extends Handler implements View.OnClickListener {
                 dialog = null;
             }
             showReference(context, String.valueOf(v.getTag()));
+        }
+    }
+
+    public static class Note {
+        private final String verse;
+        private final String osis;
+
+        public Note(String verse, String osis) {
+            this.verse = verse;
+            this.osis = osis;
+        }
+    }
+
+    public static class Annotation {
+        private final String link;
+        private final String message;
+        private final String osis;
+
+        public Annotation(String link, String message, String osis) {
+            this.link = link;
+            this.message = message;
+            this.osis = osis;
         }
     }
 

@@ -1,10 +1,11 @@
-package me.piebridge.bible;
+package me.piebridge.bible.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,33 +16,37 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 
+import me.piebridge.bible.R;
+import me.piebridge.bible.bridge.ReadingBridge;
+import me.piebridge.bible.activity.AbstractReadingActivity;
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.WebViewUtils;
 
-import static me.piebridge.bible.BaseActivity.COLOR_BACKGROUND;
-import static me.piebridge.bible.BaseActivity.COLOR_HIGHLIGHT;
-import static me.piebridge.bible.BaseActivity.COLOR_HIGHLIGHT_SELECTED;
-import static me.piebridge.bible.BaseActivity.COLOR_LINK;
-import static me.piebridge.bible.BaseActivity.COLOR_RED;
-import static me.piebridge.bible.BaseActivity.COLOR_SELECTED;
-import static me.piebridge.bible.BaseActivity.COLOR_TEXT;
-import static me.piebridge.bible.BaseActivity.CONTENT;
-import static me.piebridge.bible.BaseActivity.CROSS;
-import static me.piebridge.bible.BaseActivity.CSS;
-import static me.piebridge.bible.BaseActivity.CURR;
-import static me.piebridge.bible.BaseActivity.FONT_PATH;
-import static me.piebridge.bible.BaseActivity.FONT_SIZE;
-import static me.piebridge.bible.BaseActivity.HIGHLIGHTED;
-import static me.piebridge.bible.BaseActivity.HUMAN;
-import static me.piebridge.bible.BaseActivity.NOTES;
-import static me.piebridge.bible.BaseActivity.RED;
-import static me.piebridge.bible.BaseActivity.SEARCH;
-import static me.piebridge.bible.BaseActivity.SHANGTI;
-import static me.piebridge.bible.BaseActivity.VERSE_END;
-import static me.piebridge.bible.BaseActivity.VERSE_START;
-import static me.piebridge.bible.BaseActivity.VERSION;
+import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_BACKGROUND;
+import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_HIGHLIGHT;
+import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_HIGHLIGHT_SELECTED;
+import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_LINK;
+import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_RED;
+import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_SELECTED;
+import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_TEXT;
+import static me.piebridge.bible.activity.AbstractReadingActivity.CONTENT;
+import static me.piebridge.bible.activity.AbstractReadingActivity.CROSS;
+import static me.piebridge.bible.activity.AbstractReadingActivity.CSS;
+import static me.piebridge.bible.activity.AbstractReadingActivity.CURR;
+import static me.piebridge.bible.activity.AbstractReadingActivity.FONT_PATH;
+import static me.piebridge.bible.activity.AbstractReadingActivity.FONT_SIZE;
+import static me.piebridge.bible.activity.AbstractReadingActivity.HIGHLIGHTED;
+import static me.piebridge.bible.activity.AbstractReadingActivity.HUMAN;
+import static me.piebridge.bible.activity.AbstractReadingActivity.NOTES;
+import static me.piebridge.bible.activity.AbstractReadingActivity.RED;
+import static me.piebridge.bible.activity.AbstractReadingActivity.SEARCH;
+import static me.piebridge.bible.activity.AbstractReadingActivity.SHANGTI;
+import static me.piebridge.bible.activity.AbstractReadingActivity.VERSE_END;
+import static me.piebridge.bible.activity.AbstractReadingActivity.VERSE_START;
+import static me.piebridge.bible.activity.AbstractReadingActivity.VERSION;
 
 /**
  * Created by thom on 15/10/18.
@@ -55,9 +60,9 @@ public class ReadingFragment extends Fragment {
 
     private static String template;
     private WebView webView;
+    private NestedScrollView nestedView;
     private ReadingBridge readingBridge;
 
-    private int background;
     private String osis;
     private int verse;
     private boolean highlightSelected;
@@ -68,8 +73,7 @@ public class ReadingFragment extends Fragment {
     @SuppressWarnings("deprecation")
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        readingBridge = new ReadingBridge((BaseActivity) activity);
-        background = ((BaseActivity) activity).getBackground();
+        readingBridge = new ReadingBridge((AbstractReadingActivity) activity, this);
         if (TextUtils.isEmpty(template)) {
             try {
                 template = FileUtils.readAsString(activity.getAssets().open("reader.html"));
@@ -82,20 +86,25 @@ public class ReadingFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Bundle bundle = getArguments();
         if (savedInstanceState != null) {
             verse = savedInstanceState.getInt(VERSE);
             selectedVerses = savedInstanceState.getString(SELECTED_VERSES);
             selectedContent = savedInstanceState.getString(SELECTED_CONTENT);
             highlightSelected = savedInstanceState.getBoolean(HIGHLIGHT_SELECTED);
+            if (readingBridge != null && bundle != null) {
+                readingBridge.updateBundle(bundle);
+            }
         }
-        if (webView != null && getArguments() != null) {
+        if (webView != null && bundle != null) {
             reloadData();
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.pager, container, false);
+        View view = inflater.inflate(R.layout.fragment_reading, container, false);
+        nestedView = (NestedScrollView) view.findViewById(R.id.nested);
         webView = (WebView) view.findViewById(R.id.webview);
         webView.setFocusableInTouchMode(false);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
@@ -105,7 +114,6 @@ public class ReadingFragment extends Fragment {
         WebViewUtils.hideDisplayZoomControls(webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(readingBridge, "android");
-        webView.setBackgroundColor(background);
         return view;
     }
 
@@ -114,10 +122,10 @@ public class ReadingFragment extends Fragment {
         if (!TextUtils.isEmpty(osis) && osis.equals(bundle.getString(CURR))) {
             saveState();
         }
-        String content = (String) bundle.get(CONTENT);
+        String content = bundle.getString(CONTENT);
         if (!TextUtils.isEmpty(content)) {
-            String human = (String) bundle.get(HUMAN);
-            String body = getBody(human, content);
+            String title = BibleUtils.getBookChapterVerse(bundle.getString(HUMAN), BibleUtils.getChapter(bundle.getString(CURR)));
+            String body = getBody(title, content);
             webView.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
         }
     }
@@ -131,6 +139,8 @@ public class ReadingFragment extends Fragment {
         String css = fixCSS(bundle);
         int verseStart = NumberUtils.parseInt(getString(bundle, VERSE_START));
         int verseEnd = NumberUtils.parseInt(getString(bundle, VERSE_END));
+        int verseBegin = verse > 0 ? verse : NumberUtils.parseInt(getString(bundle, VERSE), verseStart);
+        LogUtils.d("title: " + title + ", verse: " + verseBegin);
         String search = getString(bundle, SEARCH);
         String highlighted = getString(bundle, HIGHLIGHTED);
         String backgroundColor = getString(bundle, COLOR_BACKGROUND);
@@ -142,8 +152,8 @@ public class ReadingFragment extends Fragment {
         return String.format(template, fontSize, css,
                 backgroundColor, textColor, linkColor,
                 selectedColor, highlightColor, highlightSelectedColor,
-                verse > 0 ? verse : NumberUtils.parseInt(getString(bundle, VERSE), verseStart),
-                verseStart, verseEnd, search, selectedVerses, highlighted,
+                verseBegin, verseStart, verseEnd,
+                search, selectedVerses, highlighted,
                 Arrays.toString(notes), title, body);
     }
 
@@ -192,7 +202,7 @@ public class ReadingFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(VERSE, readingBridge.getVerse(webView));
+        outState.putInt(VERSE, readingBridge.getVerse(webView, currentPos()));
         outState.putString(SELECTED_VERSES, readingBridge.getSelectedVerses(selectedVerses));
         outState.putString(SELECTED_CONTENT, readingBridge.getSelectedContent(selectedContent));
         outState.putBoolean(HIGHLIGHT_SELECTED, readingBridge.isHighlightSelected(highlightSelected));
@@ -200,11 +210,27 @@ public class ReadingFragment extends Fragment {
     }
 
     private void saveState() {
-        verse = readingBridge.getVerse(webView);
+        verse = readingBridge.getVerse(webView, currentPos());
         selectedVerses = readingBridge.getSelectedVerses(selectedVerses);
         selectedContent = readingBridge.getSelectedContent(selectedContent);
         highlightSelected = readingBridge.isHighlightSelected(highlightSelected);
     }
 
-}
+    public void scrollTo(int top) {
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        LogUtils.d("scroll to " + top + ", density: " + metrics.density);
+        final int y = (int) (top * metrics.density);
+        nestedView.post(new Runnable() {
+            @Override
+            public void run() {
+                nestedView.smoothScrollTo(0, y);
+            }
+        });
+    }
 
+    private int currentPos() {
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        return (int) (nestedView.getScrollY() / metrics.density);
+    }
+
+}

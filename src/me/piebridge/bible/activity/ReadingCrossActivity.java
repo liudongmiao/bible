@@ -1,13 +1,15 @@
-package me.piebridge.bible;
+package me.piebridge.bible.activity;
 
 import android.os.Bundle;
+import android.view.View;
 
+import me.piebridge.bible.R;
 import me.piebridge.bible.utils.ThemeUtils;
 
 /**
  * Created by thom on 16/7/4.
  */
-public class CrossActivity extends ResultActivity {
+public class ReadingCrossActivity extends ReadingItemsActivity {
 
     @Override
     protected void updateTheme() {
@@ -16,7 +18,7 @@ public class CrossActivity extends ResultActivity {
 
     @Override
     protected int getContentLayout() {
-        return R.layout.cross;
+        return R.layout.activity_reading_cross;
     }
 
     @Override
@@ -32,6 +34,11 @@ public class CrossActivity extends ResultActivity {
         // don't allow cross in cross
         bundle.putBoolean(CROSS, false);
         return bundle;
+    }
+
+    @Override
+    protected View findHeader() {
+        return findViewById(R.id.header);
     }
 
 }

@@ -15,6 +15,7 @@ public class HttpUtils {
     private static final int STATUS_304 = HttpURLConnection.HTTP_NOT_MODIFIED;
     private static final int STATUS_307 = 307;
 
+    private static final int MAX_REDIRECT = 5;
 
     private HttpUtils() {
 
@@ -25,11 +26,11 @@ public class HttpUtils {
     }
 
     public static String retrieveContent(String url, StringBuilder eTag) throws IOException {
-        return retrieveContent(url, eTag, 0x1);
+        return retrieveContent(url, eTag, 1);
     }
 
     private static String retrieveContent(String url, StringBuilder eTag, int count) throws IOException {
-        if (count > 0x5) {
+        if (count > MAX_REDIRECT) {
             return null;
         }
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
