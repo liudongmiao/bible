@@ -82,9 +82,6 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
     protected ReadingAdapter mAdapter;
 
     private View mHeader;
-    private TextView bookView;
-    private TextView chapterView;
-    private TextView versionView;
 
     private Handler handler = new ReadingHandler(this);
 
@@ -98,6 +95,7 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
     private String fontPath;
 
     protected Bible bible;
+    private TextView versionView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,38 +137,49 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
 
     protected View findHeader() {
         mAppBar = (AppBarLayout) findViewById(R.id.appbar);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_reading);
+        Toolbar toolbar = (Toolbar) findViewById(getToolbarLayout());
         setSupportActionBar(toolbar);
         return toolbar;
     }
 
-    protected void updateHeader(Bundle bundle, String osis) {
-        String book = BibleUtils.getBook(osis);
-        int osisPosition = bible.getPosition(Bible.TYPE.OSIS, book);
-        String bookName = bible.get(Bible.TYPE.BOOK, osisPosition);
-        String chapterVerse = BibleUtils.getChapterVerse(this, bundle);
-        String title = BibleUtils.getBookChapterVerse(bookName, chapterVerse);
-
-        bookView.setText(bookName);
-        chapterView.setText(chapterVerse);
-        versionView.setText(bible.getVersionName(bible.getVersion()));
-        updateTaskDescription(title);
+    protected final int getCurrentPosition() {
+        return mPager.getCurrentItem();
     }
 
-    protected void showAppBar() {
-        if (mAppBar != null) {
-            mAppBar.setExpanded(true);
+    protected final String getCurrentOsis() {
+        return mAdapter.getData(getCurrentPosition()).getString(OSIS);
+    }
+
+    protected final void prepare(int position) {
+        Bundle bundle = mAdapter.getData(position);
+        String osis = bundle.getString(OSIS);
+        if (!TextUtils.isEmpty(osis)) {
+            updateHeader(bundle, osis);
+            prepareNext(position, bundle.getString(NEXT));
+            preparePrev(position, bundle.getString(PREV));
         }
     }
 
+    protected void setTheme() {
+        ThemeUtils.setTheme(this);
+    }
+
+    protected boolean switchTheme() {
+        ThemeUtils.switchTheme(this);
+        RecreateUtils.recreate(this);
+        return true;
+    }
+
     protected void updateTaskDescription(String label) {
-        showAppBar();
+        if (mAppBar != null) {
+            mAppBar.setExpanded(true);
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setTaskDescription(new ActivityManager.TaskDescription(label));
         }
     }
 
-    public void initialize() {
+    protected final void initialize() {
         initializeHeader(mHeader);
 
         mPager.setAdapter(mAdapter);
@@ -183,45 +192,39 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
             position = bundle.getInt(ID) - 1;
         }
         mAdapter.setData(position, bundle);
+        updateVersion();
         prepare(position);
 
         mPager.setCurrentItem(position);
     }
 
-    protected void initializeHeader(View header) {
-        bookView = (TextView) header.findViewById(R.id.book);
-        bookView.setVisibility(View.VISIBLE);
-        bookView.setOnClickListener(this);
+    protected final void updateVersion() {
+        if (versionView != null) {
+            versionView.setText(bible.getVersionName(bible.getVersion()));
+        }
+    }
 
-        chapterView = (TextView) header.findViewById(R.id.chapter);
-        chapterView.setVisibility(View.VISIBLE);
-        chapterView.setOnClickListener(this);
-
+    protected final void initializeVersion(View header) {
         versionView = (TextView) header.findViewById(R.id.version);
-        versionView.setOnClickListener(this);
+        View versionButton = header.findViewById(R.id.version_button);
+        if (versionButton != null) {
+            versionButton.setOnClickListener(this);
+        }
     }
 
-    protected int getContentLayout() {
-        return R.layout.activity_reading;
-    }
+    protected abstract int getContentLayout();
 
-    protected void setTheme() {
-        ThemeUtils.setTheme(this);
-    }
+    protected abstract int getToolbarLayout();
+
+    protected abstract void initializeHeader(View header);
+
+    protected abstract void updateHeader(Bundle bundle, String osis);
 
     protected abstract int retrieveOsisCount();
 
     protected abstract String getInitialOsis();
 
     protected abstract int getInitialPosition();
-
-    protected int getCurrentPosition() {
-        return mPager.getCurrentItem();
-    }
-
-    protected String getCurrentOsis() {
-        return mAdapter.getData(getCurrentPosition()).getString(OSIS);
-    }
 
     @Override
     public Bundle retrieveOsis(int position, String osis) {
@@ -260,16 +263,6 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
         bundle.putBoolean(RED, sp.getBoolean(Settings.RED, true));
         updateBundle(bundle);
         return bundle;
-    }
-
-    private void prepare(int position) {
-        Bundle bundle = mAdapter.getData(position);
-        String osis = bundle.getString(OSIS);
-        if (!TextUtils.isEmpty(osis)) {
-            updateHeader(bundle, osis);
-            prepareNext(position, bundle.getString(NEXT));
-            preparePrev(position, bundle.getString(PREV));
-        }
     }
 
     private void prepareNext(int position, String osis) {
@@ -322,12 +315,6 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
         return super.onOptionsItemSelected(item);
     }
 
-    protected boolean switchTheme() {
-        ThemeUtils.switchTheme(this);
-        RecreateUtils.recreate(this);
-        return true;
-    }
-
     @Override
     public void showAnnotation(String link, String annotation) {
         LogUtils.d("link: " + link + ", annotation: " + annotation);
@@ -357,11 +344,11 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.book) {
+        if (id == R.id.book_button) {
             select(SelectActivity.BOOK);
-        } else if (id == R.id.chapter) {
+        } else if (id == R.id.chapter_button) {
             select(SelectActivity.CHAPTER);
-        } else if (id == R.id.version) {
+        } else if (id == R.id.version_button) {
             selectVersion();
         }
     }
@@ -393,6 +380,7 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
         int position = getCurrentPosition();
         String osis = getCurrentOsis();
         mAdapter.setData(position, retrieveOsis(position, osis));
+        updateVersion();
         prepare(position);
         reload(position);
     }

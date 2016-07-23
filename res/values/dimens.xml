@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="text_size_toolbar">18sp</dimen>
+    <dimen name="text_size_menu">16sp</dimen>
+    <dimen name="text_size_cell">15sp</dimen>
+
+    <dimen name="content_padding">16dp</dimen>
+
+</resources>

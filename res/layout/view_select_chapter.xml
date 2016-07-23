@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/chapter_button"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:background="?attr/selectableItemBackgroundBorderless"
+    android:clickable="true"
+    tools:showIn="@layout/activity_reading">
+
+    <TextView
+        android:id="@+id/chapter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_horizontal|center_vertical"
+        android:minEms="1"
+        android:singleLine="true"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="@dimen/text_size_toolbar"
+        tools:text="3:16" />
+
+    <TextView
+        style="@style/spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical" />
+
+</LinearLayout>

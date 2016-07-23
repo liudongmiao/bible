@@ -14,6 +14,7 @@
 package me.piebridge.bible;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.utils.NumberUtils;
 
 public class OsisItem implements Parcelable {
@@ -84,6 +86,14 @@ public class OsisItem implements Parcelable {
 
     public String toOsis() {
         return String.format("%s.%s", book, chapter);
+    }
+
+    public Bundle toBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putString(AbstractReadingActivity.OSIS, toOsis());
+        bundle.putString(AbstractReadingActivity.VERSE_START, verseStart);
+        bundle.putString(AbstractReadingActivity.VERSE_END, verseEnd);
+        return bundle;
     }
 
     public static ArrayList<OsisItem> parseSearch(String s, Context context) {

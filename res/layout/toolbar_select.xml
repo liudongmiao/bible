@@ -9,14 +9,16 @@
     android:background="?attr/colorPrimary"
     android:elevation="4dp"
     app:contentInsetStartWithNavigation="?attr/actionBarSize"
-    app:layout_scrollFlags="scroll|enterAlways">
+    app:layout_scrollFlags="scroll|enterAlways"
+    tools:showIn="@layout/activity_select">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:paddingEnd="16dp"
-        android:paddingRight="16dp">
+        android:paddingEnd="@dimen/content_padding"
+        android:paddingRight="@dimen/content_padding"
+        tools:ignore="RtlSymmetry">
 
         <TextView
             android:id="@+id/toolbar_title"
@@ -26,7 +28,7 @@
             android:gravity="center_vertical"
             android:singleLine="true"
             android:textColor="?android:attr/textColorPrimary"
-            android:textSize="18sp"
+            android:textSize="@dimen/text_size_toolbar"
             tools:text="Title" />
 
         <TextView
@@ -35,7 +37,8 @@
             android:layout_toLeftOf="@+id/verse_switch"
             android:layout_toStartOf="@+id/verse_switch"
             android:gravity="center_vertical"
-            android:text="@string/show_verses" />
+            android:text="@string/show_verses"
+            android:textSize="@dimen/text_size_menu" />
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/verse_switch"

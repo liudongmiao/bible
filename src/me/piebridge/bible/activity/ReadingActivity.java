@@ -5,18 +5,23 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.support.v4.content.SharedPreferencesCompat;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
+import me.piebridge.bible.Bible;
 import me.piebridge.bible.Provider;
 import me.piebridge.bible.R;
 import me.piebridge.bible.Search;
 import me.piebridge.bible.Settings;
 import me.piebridge.bible.Versions;
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
 
 /**
@@ -29,6 +34,43 @@ public class ReadingActivity extends AbstractReadingActivity {
     private static final int MENU_SEARCH = 2;
     private static final int MENU_SETTINGS = 3;
     private static final int MENU_VERSIONS = 4;
+
+    private TextView bookView;
+    private TextView chapterView;
+
+    @Override
+    protected void initializeHeader(View header) {
+        bookView = (TextView) header.findViewById(R.id.book);
+        header.findViewById(R.id.book_button).setOnClickListener(this);
+
+        chapterView = (TextView) header.findViewById(R.id.chapter);
+        header.findViewById(R.id.chapter_button).setOnClickListener(this);
+
+        initializeVersion(header);
+    }
+
+    @Override
+    protected void updateHeader(Bundle bundle, String osis) {
+        String book = BibleUtils.getBook(osis);
+        int osisPosition = bible.getPosition(Bible.TYPE.OSIS, book);
+        String bookName = bible.get(Bible.TYPE.BOOK, osisPosition);
+        String chapterVerse = BibleUtils.getChapterVerse(this, bundle);
+        String title = BibleUtils.getBookChapterVerse(bookName, chapterVerse);
+
+        bookView.setText(bookName);
+        chapterView.setText(chapterVerse);
+        updateTaskDescription(title);
+    }
+
+    @Override
+    protected int getToolbarLayout() {
+        return R.id.toolbar_reading;
+    }
+
+    @Override
+    protected int getContentLayout() {
+        return R.layout.activity_reading;
+    }
 
     @Override
     protected int retrieveOsisCount() {

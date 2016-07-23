@@ -36,4 +36,9 @@ public class ReadingCrossActivity extends ReadingItemsActivity {
         return findViewById(R.id.header);
     }
 
+    @Override
+    protected void updateTaskDescription(String label) {
+        // no need to update
+    }
+
 }

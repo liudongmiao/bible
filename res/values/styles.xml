@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="button" parent="Widget.AppCompat.Spinner">
-        <item name="android:textSize">18sp</item>
+    <style name="spinner" parent="Widget.AppCompat.Spinner">
+        <item name="backgroundTint">?attr/colorControlNormal</item>
     </style>
 
-    <style name="grid" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    <style name="tab" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">@dimen/text_size_menu</item>
     </style>
 
     <style name="progress" parent="Widget.AppCompat.ProgressBar">

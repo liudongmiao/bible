@@ -44,5 +44,6 @@
 
     <color name="yellow_200">#fffff59d</color>
     <color name="yellow_500">#ffffeb3b</color>
+    <color name="actionbar_title_text_color">#ff333333</color>
 
 </resources>

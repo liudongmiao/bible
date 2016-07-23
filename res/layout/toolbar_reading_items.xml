@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar
-    android:id="@+id/toolbar_reading"
+    android:id="@+id/toolbar_reading_items"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,16 +10,14 @@
     android:elevation="4dp"
     app:contentInsetStartWithNavigation="?attr/actionBarSize"
     app:layout_scrollFlags="scroll|enterAlways"
-    tools:showIn="@layout/activity_reading">
+    tools:showIn="@layout/activity_reading_items">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <include layout="@layout/view_select_book" />
-
-        <include layout="@layout/view_select_chapter" />
+        <include layout="@layout/view_select_items" />
 
         <View
             android:layout_width="0dp"
