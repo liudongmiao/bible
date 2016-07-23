@@ -2,14 +2,17 @@ package me.piebridge.bible.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.SharedPreferencesCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.widget.CompoundButton;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -25,16 +28,18 @@ import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ThemeUtils;
 
-public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageChangeListener {
+public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageChangeListener, CompoundButton.OnCheckedChangeListener {
 
     public static final int BOOK = 0;
     public static final int CHAPTER = 1;
     public static final int VERSE = 2;
 
     public static final String POSITION = "position";
+    private static final String SHOW_VERSES = "show_verses";
 
     private ViewPager mPager;
     private SelectAdapter mAdapter;
+    private CompoundButton mSwitch;
 
     private SelectBookFragment selectBook;
     private SelectChapterFragment selectChapter;
@@ -71,6 +76,10 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
         selectChapter.setItems(prepareChapters(book), chapter);
         selectVerse.selectItems(prepareVerses(book, chapter));
 
+        mSwitch = (CompoundButton) findViewById(R.id.verse_switch);
+        mSwitch.setChecked(PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SHOW_VERSES, true));
+        mSwitch.setOnCheckedChangeListener(this);
+
         mPager = (ViewPager) findViewById(R.id.pager);
         ((TabLayout) findViewById(R.id.tabs)).setupWithViewPager(mPager);
 
@@ -79,6 +88,7 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
         }, new Fragment[] {
                 selectBook, selectChapter, selectVerse
         });
+        mAdapter.setShowVerses(mSwitch.isChecked());
         mPager.addOnPageChangeListener(this);
         mPager.setAdapter(mAdapter);
 
@@ -186,7 +196,7 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
     public void setChapter(String chapter) {
         this.chapter = chapter;
         Map<String, Boolean> verses = prepareVerses(book, chapter);
-        if (mAdapter.getCount() >= VERSE && !verses.isEmpty()) {
+        if (mAdapter.getCount() > VERSE && !verses.isEmpty()) {
             selectVerse.selectItems(verses);
             updateTitle(VERSE);
             mPager.setCurrentItem(VERSE);
@@ -209,7 +219,18 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
         setResult(Activity.RESULT_OK, intent);
     }
 
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (buttonView.getId() == R.id.verse_switch) {
+            mAdapter.setShowVerses(isChecked);
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(SHOW_VERSES, isChecked);
+            SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
+        }
+    }
+
     private static class SelectAdapter extends FragmentStatePagerAdapter {
+
+        private boolean showVerses;
 
         private final String[] pageTitles;
         private final Fragment[] fragments;
@@ -227,12 +248,26 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
 
         @Override
         public int getCount() {
-            return pageTitles.length;
+            return showVerses ? pageTitles.length : pageTitles.length - 1;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             return pageTitles[position];
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            if (!showVerses && object == fragments[VERSE]) {
+                return POSITION_NONE;
+            } else {
+                return POSITION_UNCHANGED;
+            }
+        }
+
+        public void setShowVerses(boolean showVerses) {
+            this.showVerses = showVerses;
+            notifyDataSetChanged();
         }
 
     }

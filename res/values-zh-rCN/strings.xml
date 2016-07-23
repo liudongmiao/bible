@@ -72,5 +72,6 @@
     <string name="book">书</string>
     <string name="chapter">章</string>
     <string name="verse">节</string>
-    <string name="books">目录</string>
+    <string name="books">书</string>
+    <string name="show_verses">显示节</string>
 </resources>

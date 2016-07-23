@@ -11,22 +11,41 @@
     app:contentInsetStartWithNavigation="?attr/actionBarSize"
     app:layout_scrollFlags="scroll|enterAlways">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingEnd="16dp"
+        android:paddingRight="16dp">
 
         <TextView
             android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:singleLine="true"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="18sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:ellipsize="end"
-            android:singleLine="true"
             tools:text="Title" />
 
-    </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/verse_switch"
+            android:layout_toStartOf="@+id/verse_switch"
+            android:gravity="center_vertical"
+            android:text="@string/show_verses" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/verse_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            tools:checked="true" />
+
+    </RelativeLayout>
 
 </android.support.v7.widget.Toolbar>
