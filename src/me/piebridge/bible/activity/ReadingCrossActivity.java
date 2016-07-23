@@ -2,11 +2,8 @@ package me.piebridge.bible.activity;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
-import me.piebridge.bible.Bible;
 import me.piebridge.bible.R;
-import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ThemeUtils;
 
 /**

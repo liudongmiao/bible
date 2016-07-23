@@ -153,6 +153,8 @@ public class ReadingFragment extends Fragment {
         int verseStart = NumberUtils.parseInt(getString(bundle, VERSE_START));
         int verseEnd = NumberUtils.parseInt(getString(bundle, VERSE_END));
         int verseBegin = getVerseBegin(bundle);
+        LogUtils.d("title: " + title + ", forceVerse: " + forceVerse + ", verse: " + verse
+                + ", verseStart: " + verseStart + ", VERSE: " + getString(bundle, VERSE));
         String search = getString(bundle, SEARCH);
         String highlighted = getString(bundle, HIGHLIGHTED);
         String backgroundColor = getString(bundle, COLOR_BACKGROUND);
@@ -170,16 +172,12 @@ public class ReadingFragment extends Fragment {
     }
 
     private int getVerseBegin(Bundle bundle) {
-        String title = getTitle(bundle);
         if (forceVerse > 0) {
-            LogUtils.d("title: " + title + ", forceVerse: " + forceVerse);
             return forceVerse;
         } else if (verse > 0) {
-            LogUtils.d("title: " + title + ", verse: " + verse);
             return verse;
         } else {
             int verseStart = NumberUtils.parseInt(getString(bundle, VERSE_START));
-            LogUtils.d("title: " + title + ", verseStart: " + verseStart + ", VERSE: " + getString(bundle, VERSE));
             return NumberUtils.parseInt(getString(bundle, VERSE), verseStart);
         }
     }

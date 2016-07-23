@@ -144,7 +144,7 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
         return toolbar;
     }
 
-    protected void updateHeader(Bundle bundle, String osis, View header) {
+    protected void updateHeader(Bundle bundle, String osis) {
         String book = BibleUtils.getBook(osis);
         int osisPosition = bible.getPosition(Bible.TYPE.OSIS, book);
         String bookName = bible.get(Bible.TYPE.BOOK, osisPosition);
@@ -266,7 +266,7 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
         Bundle bundle = mAdapter.getData(position);
         String osis = bundle.getString(OSIS);
         if (!TextUtils.isEmpty(osis)) {
-            updateHeader(bundle, osis, mHeader);
+            updateHeader(bundle, osis);
             prepareNext(position, bundle.getString(NEXT));
             preparePrev(position, bundle.getString(PREV));
         }

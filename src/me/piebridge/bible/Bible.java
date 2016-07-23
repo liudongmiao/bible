@@ -595,7 +595,8 @@ public class Bible {
         int versionCode = 0;
         try {
             versionCode = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionCode;
-        } catch (Throwable t) {
+        } catch (NameNotFoundException e) {
+            LogUtils.d("cannot find self", e);
         }
         boolean newVersion = (demoVersion != versionCode);
         boolean unpack = unpackRaw(newVersion, R.raw.niv84demo, new File(mContext.getFilesDir(), "niv84demo.sqlite3"));
@@ -1340,8 +1341,8 @@ public class Bible {
                 Long update = cursor.getLong(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_UPDATETIME));
                 notes.put(verse, new Note(id, verse, verses, content, create, update));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            LogUtils.d("cannot load notes : " + osis, e);
         } finally {
             if (cursor != null) {
                 cursor.close();

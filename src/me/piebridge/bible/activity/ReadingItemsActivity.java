@@ -87,8 +87,7 @@ public class ReadingItemsActivity extends AbstractReadingActivity {
         }
     }
 
-    @Override
-    protected void updateHeader(Bundle bundle, String osis, View header) {
+    protected void updateHeader(Bundle bundle, String osis) {
         String title = getTitle(bundle, osis);
         itemsView.setText(title);
         if (versionView != null) {
