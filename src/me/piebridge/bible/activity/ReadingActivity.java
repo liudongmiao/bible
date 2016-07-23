@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
+import android.support.v4.content.SharedPreferencesCompat;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -71,9 +72,8 @@ public class ReadingActivity extends AbstractReadingActivity {
     private void saveOsis() {
         String osis = getCurrentOsis();
         if (!TextUtils.isEmpty(osis)) {
-            final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-            editor.putString(OSIS, getCurrentOsis());
-            editor.commit();
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit().putString(OSIS, getCurrentOsis());
+            SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
         }
     }
 
