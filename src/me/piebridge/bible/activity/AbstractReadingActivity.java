@@ -32,6 +32,7 @@ import me.piebridge.bible.Settings;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ColorUtils;
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 import me.piebridge.bible.utils.RecreateUtils;
 import me.piebridge.bible.utils.ThemeUtils;
@@ -404,8 +405,11 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
         }
     }
 
-    private void reloadData(int position) {
+    private void reloadData(int position, int verse) {
         ReadingFragment fragment = (ReadingFragment) mAdapter.instantiateItem(mPager, position);
+        if (verse > 0) {
+            fragment.setForceVerse(verse);
+        }
         Bundle bundle = fragment.getArguments();
         if (bundle != null) {
             bundle.putAll(mAdapter.getData(position));
@@ -413,14 +417,24 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
         }
     }
 
+    private void reloadData(int position) {
+        reloadData(position, 0);
+    }
+
     private void jump(String osis, String verse) {
         Bundle bundle = retrieveOsis(POSITION_UNKNOWN, osis);
         bundle.putString(VERSE, verse);
+        int oldPosition = getCurrentPosition();
         int position = bundle.getInt(ID) - 1;
         mAdapter.setData(position, bundle);
         prepare(position);
 
         mPager.setCurrentItem(position);
+
+        // if it's cached, then reloaded
+        if (Math.abs(oldPosition - position) <= mPager.getOffscreenPageLimit()) {
+            reloadData(position, NumberUtils.parseInt(verse));
+        }
     }
 
 }

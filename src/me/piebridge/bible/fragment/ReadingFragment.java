@@ -65,6 +65,7 @@ public class ReadingFragment extends Fragment {
 
     private String osis;
     private int verse;
+    private int forceVerse;
     private boolean highlightSelected;
     private String selectedVerses = "";
     private String selectedContent = "";
@@ -117,6 +118,10 @@ public class ReadingFragment extends Fragment {
         return view;
     }
 
+    public void setForceVerse(int verse) {
+        this.forceVerse = verse;
+    }
+
     public void reloadData() {
         Bundle bundle = getArguments();
         if (!TextUtils.isEmpty(osis) && osis.equals(bundle.getString(CURR))) {
@@ -124,9 +129,17 @@ public class ReadingFragment extends Fragment {
         }
         String content = bundle.getString(CONTENT);
         if (!TextUtils.isEmpty(content)) {
-            String title = BibleUtils.getBookChapterVerse(bundle.getString(HUMAN), BibleUtils.getChapter(bundle.getString(CURR)));
+            String title = getTitle(bundle);
             String body = getBody(title, content);
             webView.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
+        }
+    }
+
+    private String getTitle(Bundle bundle) {
+        if (bundle != null) {
+            return BibleUtils.getBookChapterVerse(bundle.getString(HUMAN), BibleUtils.getChapter(bundle.getString(CURR)));
+        } else {
+            return null;
         }
     }
 
@@ -139,8 +152,7 @@ public class ReadingFragment extends Fragment {
         String css = fixCSS(bundle);
         int verseStart = NumberUtils.parseInt(getString(bundle, VERSE_START));
         int verseEnd = NumberUtils.parseInt(getString(bundle, VERSE_END));
-        int verseBegin = verse > 0 ? verse : NumberUtils.parseInt(getString(bundle, VERSE), verseStart);
-        LogUtils.d("title: " + title + ", verse: " + verseBegin);
+        int verseBegin = getVerseBegin(bundle);
         String search = getString(bundle, SEARCH);
         String highlighted = getString(bundle, HIGHLIGHTED);
         String backgroundColor = getString(bundle, COLOR_BACKGROUND);
@@ -155,6 +167,21 @@ public class ReadingFragment extends Fragment {
                 verseBegin, verseStart, verseEnd,
                 search, selectedVerses, highlighted,
                 Arrays.toString(notes), title, body);
+    }
+
+    private int getVerseBegin(Bundle bundle) {
+        String title = getTitle(bundle);
+        if (forceVerse > 0) {
+            LogUtils.d("title: " + title + ", forceVerse: " + forceVerse);
+            return forceVerse;
+        } else if (verse > 0) {
+            LogUtils.d("title: " + title + ", verse: " + verse);
+            return verse;
+        } else {
+            int verseStart = NumberUtils.parseInt(getString(bundle, VERSE_START));
+            LogUtils.d("title: " + title + ", verseStart: " + verseStart + ", VERSE: " + getString(bundle, VERSE));
+            return NumberUtils.parseInt(getString(bundle, VERSE), verseStart);
+        }
     }
 
     private String getString(Bundle bundle, String key) {
@@ -218,12 +245,12 @@ public class ReadingFragment extends Fragment {
 
     public void scrollTo(int top) {
         DisplayMetrics metrics = getResources().getDisplayMetrics();
-        LogUtils.d("scroll to " + top + ", density: " + metrics.density);
-        final int y = (int) (top * metrics.density);
+        LogUtils.d("title: " + getTitle(getArguments()) + ", scroll to " + top + ", density: " + metrics.density);
+        final int scrollY = (int) (top * metrics.density);
         nestedView.post(new Runnable() {
             @Override
             public void run() {
-                nestedView.smoothScrollTo(0, y);
+                nestedView.smoothScrollTo(0, scrollY);
             }
         });
     }

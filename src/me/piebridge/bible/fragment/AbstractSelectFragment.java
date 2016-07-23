@@ -87,7 +87,7 @@ public abstract class AbstractSelectFragment extends Fragment implements Adapter
         adapter.notifyDataSetChanged();
     }
 
-    abstract protected void onSelected(SelectActivity activity, String selected);
+    protected abstract void onSelected(SelectActivity activity, String selected);
 
     @Override
     public String getGridName(String key) {

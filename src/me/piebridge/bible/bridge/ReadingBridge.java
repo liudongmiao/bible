@@ -95,6 +95,9 @@ public class ReadingBridge {
         if (!loaded) {
             return verse;
         }
+        if (top == 0) {
+            return 0;
+        }
         synchronized (verseLock) {
             webview.loadUrl("javascript:getFirstVisibleVerse(" + top + ");");
             try {
