@@ -2,8 +2,11 @@ package me.piebridge.bible.activity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
+import me.piebridge.bible.Bible;
 import me.piebridge.bible.R;
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ThemeUtils;
 
 /**
@@ -12,18 +15,13 @@ import me.piebridge.bible.utils.ThemeUtils;
 public class ReadingCrossActivity extends ReadingItemsActivity {
 
     @Override
-    protected void updateTheme() {
+    protected void setTheme() {
         ThemeUtils.setDialogTheme(this);
     }
 
     @Override
     protected int getContentLayout() {
         return R.layout.activity_reading_cross;
-    }
-
-    @Override
-    protected void updateTaskDescription(String label) {
-        // for cross, don't update task description
     }
 
     @Override

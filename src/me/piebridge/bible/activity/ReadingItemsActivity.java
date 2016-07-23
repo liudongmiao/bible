@@ -25,6 +25,9 @@ public class ReadingItemsActivity extends AbstractReadingActivity {
     private String search;
     private List<OsisItem> items;
 
+    private TextView itemsView;
+    private TextView versionView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
@@ -74,8 +77,11 @@ public class ReadingItemsActivity extends AbstractReadingActivity {
 
     @Override
     protected void initializeHeader(View header) {
-        header.findViewById(R.id.items).setBackgroundResource(0);
-        View versionView = header.findViewById(R.id.version);
+        itemsView = (TextView) header.findViewById(R.id.items);
+        itemsView.setVisibility(View.VISIBLE);
+        itemsView.setBackgroundResource(0);
+
+        versionView = (TextView) header.findViewById(R.id.version);
         if (versionView != null) {
             versionView.setOnClickListener(this);
         }
@@ -83,27 +89,20 @@ public class ReadingItemsActivity extends AbstractReadingActivity {
 
     @Override
     protected void updateHeader(Bundle bundle, String osis, View header) {
+        String title = getTitle(bundle, osis);
+        itemsView.setText(title);
+        if (versionView != null) {
+            versionView.setText(bible.getVersionName(bible.getVersion()));
+            updateTaskDescription(title);
+        }
+    }
+
+    protected String getTitle(Bundle bundle, String osis) {
         String book = BibleUtils.getBook(osis);
         int osisPosition = bible.getPosition(Bible.TYPE.OSIS, book);
         String bookName = bible.get(Bible.TYPE.BOOK, osisPosition);
         String chapterVerse = BibleUtils.getChapterVerse(this, bundle);
-        String title = BibleUtils.getBookChapterVerse(bookName, chapterVerse);
-
-        TextView itemsView = (TextView) header.findViewById(R.id.items);
-        itemsView.setText(title);
-        itemsView.setVisibility(View.VISIBLE);
-
-        TextView versionView = (TextView) header.findViewById(R.id.version);
-        if (versionView != null) {
-            versionView.setText(bible.getVersionName(bible.getVersion()));
-        }
-
-        View reading = header.findViewById(R.id.reading);
-        if (reading != null) {
-            reading.setVisibility(View.VISIBLE);
-        }
-
-        updateTaskDescription(title);
+        return BibleUtils.getBookChapterVerse(bookName, chapterVerse);
     }
 
     @Override

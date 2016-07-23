@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Adapter;
@@ -20,7 +19,7 @@ import me.piebridge.bible.adapter.GridAdapter;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ThemeUtils;
 
-public class SelectVersionActivity extends AppCompatActivity implements GridAdapter.GridChecker, AdapterView.OnItemClickListener {
+public class SelectVersionActivity extends ToolbarActivity implements GridAdapter.GridChecker, AdapterView.OnItemClickListener {
 
     private Bible bible;
     private String version;
@@ -45,6 +44,7 @@ public class SelectVersionActivity extends AppCompatActivity implements GridAdap
         versionAdapter.setData(versions);
 
         GridView gridView = (GridView) findViewById(R.id.gridView);
+        gridView.setNumColumns(1);
         gridView.setAdapter(versionAdapter);
         gridView.setOnItemClickListener(this);
         gridView.setSelection(versions.indexOf(version));

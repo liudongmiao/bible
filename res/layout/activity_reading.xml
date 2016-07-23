@@ -10,17 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/header"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp"
-            app:layout_scrollFlags="scroll|enterAlways">
-
-            <include layout="@layout/view_toolbar" />
-
-        </android.support.v7.widget.Toolbar>
+        <include layout="@layout/toolbar_reading" />
 
     </android.support.design.widget.AppBarLayout>
 

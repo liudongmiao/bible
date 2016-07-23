@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -26,7 +25,7 @@ import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ThemeUtils;
 
-public class SelectActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageChangeListener {
 
     public static final int BOOK = 0;
     public static final int CHAPTER = 1;

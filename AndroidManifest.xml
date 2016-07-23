@@ -43,7 +43,7 @@
 
         <activity
             android:name=".Search"
-            android:theme="@style/theme"
+            android:theme="@style/light"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Settings"
@@ -142,7 +142,7 @@
             android:name=".activity.ReadingItemsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:parentActivityName=".activity.ReadingActivity"
-            android:theme="@style/light.toolbar">
+            android:theme="@style/light">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.ReadingActivity" />

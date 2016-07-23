@@ -82,6 +82,9 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
     protected ReadingAdapter mAdapter;
 
     private View mHeader;
+    private TextView bookView;
+    private TextView chapterView;
+    private TextView versionView;
 
     private Handler handler = new ReadingHandler(this);
 
@@ -98,7 +101,7 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        updateTheme();
+        setTheme();
         resolveColors();
         super.onCreate(savedInstanceState);
         setContentView(getContentLayout());
@@ -136,7 +139,7 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
 
     protected View findHeader() {
         mAppBar = (AppBarLayout) findViewById(R.id.appbar);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.header);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_reading);
         setSupportActionBar(toolbar);
         return toolbar;
     }
@@ -145,21 +148,13 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
         String book = BibleUtils.getBook(osis);
         int osisPosition = bible.getPosition(Bible.TYPE.OSIS, book);
         String bookName = bible.get(Bible.TYPE.BOOK, osisPosition);
-        TextView bookView = (TextView) header.findViewById(R.id.book);
-        bookView.setVisibility(View.VISIBLE);
-        bookView.setText(bookName);
-
-        TextView chapterView = (TextView) header.findViewById(R.id.chapter);
         String chapterVerse = BibleUtils.getChapterVerse(this, bundle);
+        String title = BibleUtils.getBookChapterVerse(bookName, chapterVerse);
+
+        bookView.setText(bookName);
         chapterView.setText(chapterVerse);
-        chapterView.setVisibility(View.VISIBLE);
-
-        TextView versionView = (TextView) header.findViewById(R.id.version);
         versionView.setText(bible.getVersionName(bible.getVersion()));
-
-        header.findViewById(R.id.reading).setVisibility(View.VISIBLE);
-
-        updateTaskDescription(BibleUtils.getBookChapterVerse(bookName, chapterVerse));
+        updateTaskDescription(title);
     }
 
     protected void showAppBar() {
@@ -194,17 +189,24 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
     }
 
     protected void initializeHeader(View header) {
-        header.findViewById(R.id.book).setOnClickListener(this);
-        header.findViewById(R.id.chapter).setOnClickListener(this);
-        header.findViewById(R.id.version).setOnClickListener(this);
+        bookView = (TextView) header.findViewById(R.id.book);
+        bookView.setVisibility(View.VISIBLE);
+        bookView.setOnClickListener(this);
+
+        chapterView = (TextView) header.findViewById(R.id.chapter);
+        chapterView.setVisibility(View.VISIBLE);
+        chapterView.setOnClickListener(this);
+
+        versionView = (TextView) header.findViewById(R.id.version);
+        versionView.setOnClickListener(this);
     }
 
     protected int getContentLayout() {
         return R.layout.activity_reading;
     }
 
-    protected void updateTheme() {
-        ThemeUtils.setToolbarTheme(this);
+    protected void setTheme() {
+        ThemeUtils.setTheme(this);
     }
 
     protected abstract int retrieveOsisCount();

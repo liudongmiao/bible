@@ -28,10 +28,6 @@ public class ThemeUtils {
         activity.setTheme(isDark(activity) ? R.style.dark_dialog : R.style.light_dialog);
     }
 
-    public static void setToolbarTheme(Activity activity) {
-        activity.setTheme(isDark(activity) ? R.style.dark_toolbar : R.style.light_toolbar);
-    }
-
     public static boolean isDark(Activity activity) {
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
         return THEME_DARK.equals(sp.getString(THEME, THEME_LIGHT));
