@@ -1,32 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     android:id="@+id/version_button"
+    style="@style/SelectableButton"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical"
-    android:background="?attr/selectableItemBackgroundBorderless"
-    android:clickable="true"
     tools:showIn="@layout/activity_reading">
 
     <TextView
         android:id="@+id/version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_vertical"
-        android:singleLine="true"
+        style="@style/SelectableButtonText"
         android:textAllCaps="true"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="@dimen/text_size_toolbar"
         tools:text="niv" />
 
-    <TextView
-        style="@style/spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_vertical" />
+    <include layout="@layout/view_dropdown" />
 
 </LinearLayout>

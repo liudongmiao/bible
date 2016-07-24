@@ -18,6 +18,7 @@
         <item name="android:colorBackground">@color/grey_850</item>
         <item name="colorRed">@color/red_200</item>
         <item name="colorYellow">@color/yellow_200</item>
+        <item name="arrowDownStyle">@style/ArrowDownStyle.Dark</item>
     </style>
 
     <style name="light" parent="@style/Theme.AppCompat.Light.NoActionBar">
@@ -26,18 +27,49 @@
         <item name="android:colorBackground">@color/grey_50</item>
         <item name="colorRed">@color/red_500</item>
         <item name="colorYellow">@color/yellow_500</item>
+        <item name="arrowDownStyle">@style/ArrowDownStyle.Light</item>
     </style>
 
     <style name="dark.dialog" parent="@style/Theme.AppCompat.Dialog">
         <item name="windowNoTitle">true</item>
         <item name="colorRed">@color/red_200</item>
         <item name="colorYellow">@color/yellow_200</item>
+        <item name="arrowDownStyle">@style/ArrowDownStyle.Dark</item>
     </style>
 
     <style name="light.dialog" parent="@style/Theme.AppCompat.Light.Dialog">
         <item name="windowNoTitle">true</item>
         <item name="colorRed">@color/red_500</item>
         <item name="colorYellow">@color/yellow_500</item>
+        <item name="arrowDownStyle">@style/ArrowDownStyle.Light</item>
+    </style>
+
+    <style name="ArrowDownStyle">
+    </style>
+
+    <style name="ArrowDownStyle.Light">
+        <item name="android:src">@drawable/ic_arrow_drop_down_black_18dp</item>
+    </style>
+
+    <style name="ArrowDownStyle.Dark">
+        <item name="android:src">@drawable/ic_arrow_drop_down_white_18dp</item>
+    </style>
+
+    <style name="SelectableButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="SelectableButtonText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textSize">@dimen/text_size_toolbar</item>
     </style>
 
 </resources>

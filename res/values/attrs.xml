@@ -3,5 +3,6 @@
 
     <attr name="colorYellow" format="reference|color" />
     <attr name="colorRed" format="reference|color" />
+    <attr name="arrowDownStyle" format="reference" />
 
 </resources>

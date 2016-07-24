@@ -6,14 +6,16 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.util.List;
 
 import me.piebridge.bible.Bible;
 import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
-import me.piebridge.bible.adapter.ItemsAdapter;
+import me.piebridge.bible.adapter.HiddenArrayAdapter;
 import me.piebridge.bible.utils.BibleUtils;
 
 /**
@@ -27,7 +29,8 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
     private String search;
     private List<OsisItem> items;
 
-    private Spinner itemsView;
+    private Spinner spinner;
+    private TextView itemsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,15 +81,17 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
 
     @Override
     protected void initializeHeader(View header) {
-        itemsView = (Spinner) header.findViewById(R.id.items);
-        ItemsAdapter adapter = new ItemsAdapter(itemsView, this, R.layout.view_spinner_item, convertItems(items));
+        itemsView = (TextView) header.findViewById(R.id.items);
+        spinner = (Spinner) header.findViewById(R.id.spinner);
+        ArrayAdapter adapter = new HiddenArrayAdapter(this, R.layout.view_spinner_item, convertItems(items));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        itemsView.setAdapter(adapter);
-        itemsView.setSelection(0);
-        itemsView.setOnItemSelectedListener(this);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(0);
+        spinner.setOnItemSelectedListener(this);
         if (items.size() <= 1) {
             header.findViewById(R.id.dropdown).setVisibility(View.GONE);
-            itemsView.setEnabled(false);
+        } else {
+            header.findViewById(R.id.items_button).setOnClickListener(this);
         }
 
         initializeVersion(header);
@@ -110,7 +115,7 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
     @Override
     protected void updateHeader(Bundle bundle, String osis) {
         String title = getTitle(bundle, osis);
-        itemsView.setSelection(getCurrentPosition());
+        itemsView.setText(title);
         updateTaskDescription(title);
     }
 
@@ -149,6 +154,16 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         // do nothing
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.items_button) {
+            spinner.performClick();
+        } else {
+            super.onClick(v);
+        }
     }
 
 }
