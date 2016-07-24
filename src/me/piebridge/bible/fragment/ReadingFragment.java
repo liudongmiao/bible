@@ -1,6 +1,7 @@
 package me.piebridge.bible.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
@@ -242,20 +243,28 @@ public class ReadingFragment extends Fragment {
     }
 
     public void scrollTo(int top) {
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        LogUtils.d("title: " + getTitle(getArguments()) + ", scroll to " + top + ", density: " + metrics.density);
-        final int scrollY = (int) (top * metrics.density);
-        nestedView.post(new Runnable() {
-            @Override
-            public void run() {
-                nestedView.smoothScrollTo(0, scrollY);
-            }
-        });
+        Context context = getContext();
+        if (context != null) {
+            DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+            LogUtils.d("title: " + getTitle(getArguments()) + ", scroll to " + top + ", density: " + metrics.density);
+            final int scrollY = (int) (top * metrics.density);
+            nestedView.post(new Runnable() {
+                @Override
+                public void run() {
+                    nestedView.smoothScrollTo(0, scrollY);
+                }
+            });
+        }
     }
 
     private int currentPos() {
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        return (int) (nestedView.getScrollY() / metrics.density);
+        Context context = getContext();
+        if (context != null) {
+            DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+            return (int) (nestedView.getScrollY() / metrics.density);
+        } else {
+            return 0;
+        }
     }
 
 }
