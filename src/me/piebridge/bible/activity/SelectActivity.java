@@ -201,15 +201,18 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
             updateTitle(VERSE);
             mPager.setCurrentItem(VERSE);
         } else {
-            setResult();
-            finish();
+            finishSelect();
         }
+    }
+
+    private void finishSelect() {
+        setResult();
+        finish();
     }
 
     public void setVerse(String verse) {
         this.verse = verse;
-        setResult();
-        finish();
+        finishSelect();
     }
 
     private void setResult() {
@@ -222,9 +225,13 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (buttonView.getId() == R.id.verse_switch) {
-            mAdapter.setShowVerses(isChecked);
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(SHOW_VERSES, isChecked);
             SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
+            if (!isChecked && mPager.getCurrentItem() == VERSE) {
+                finishSelect();
+            } else {
+                mAdapter.setShowVerses(isChecked);
+            }
         }
     }
 
