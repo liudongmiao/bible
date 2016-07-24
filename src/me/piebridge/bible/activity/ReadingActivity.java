@@ -114,7 +114,12 @@ public class ReadingActivity extends AbstractReadingActivity {
     private void saveOsis() {
         String osis = getCurrentOsis();
         if (!TextUtils.isEmpty(osis)) {
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit().putString(OSIS, getCurrentOsis());
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+            editor.putString(OSIS, osis);
+            String book = BibleUtils.getBook(osis);
+            String chapter = BibleUtils.getChapter(osis);
+            editor.putString(book, chapter);
+            editor.putString("version", bible.getVersion());
             SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
         }
     }

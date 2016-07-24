@@ -414,6 +414,7 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
     private void jump(String osis, String verse) {
         Bundle bundle = retrieveOsis(POSITION_UNKNOWN, osis);
         bundle.putString(VERSE, verse);
+        bundle.putString(VERSE_START, verse);
         int oldPosition = getCurrentPosition();
         int position = bundle.getInt(ID) - 1;
         mAdapter.setData(position, bundle);
