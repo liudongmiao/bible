@@ -187,7 +187,7 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
 
     public void setBook(String book) {
         this.book = book;
-        this.chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(chapter, "1");
+        this.chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(book, "1");
         selectChapter.setItems(prepareChapters(book), chapter);
         updateTitle(CHAPTER);
         mPager.setCurrentItem(CHAPTER);

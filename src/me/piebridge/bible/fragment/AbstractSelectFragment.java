@@ -11,9 +11,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import me.piebridge.bible.R;
@@ -29,11 +28,12 @@ public abstract class AbstractSelectFragment extends Fragment implements Adapter
     private static final int COLUMN_5 = 5;
 
     private GridView gridView;
-    private Typeface typeface;
-    private SelectActivity mActivity;
 
-    private String selected;
-    private Map<String, String> items;
+    protected Typeface typeface;
+    protected WeakReference<SelectActivity> wr;
+
+    protected String selected;
+    protected Map<String, String> items;
 
     @Override
     @SuppressWarnings("deprecation")
@@ -43,32 +43,27 @@ public abstract class AbstractSelectFragment extends Fragment implements Adapter
         if (!TextUtils.isEmpty(font)) {
             typeface = Typeface.createFromFile(font);
         }
-        mActivity = (SelectActivity) activity;
+        wr = new WeakReference<SelectActivity>((SelectActivity) activity);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_select, container, false);
         gridView = (GridView) view.findViewById(R.id.gridView);
-        gridView.setNumColumns(getNumColumns());
-        gridView.setAdapter(new GridAdapter(mActivity, this, typeface));
+        gridView.setNumColumns(COLUMN_5);
+        SelectActivity selectActivity = wr.get();
+        if (selectActivity != null) {
+            gridView.setAdapter(new GridAdapter(selectActivity, this, typeface));
+        }
         gridView.setOnItemClickListener(this);
         updateAdapter();
         return view;
     }
 
-    protected int getNumColumns() {
-        return COLUMN_5;
-    }
-
-    protected List<String> convertItems(Collection<String> items) {
-        return new ArrayList<String>(items);
-    }
-
-    private void updateAdapter() {
+    protected void updateAdapter() {
         if (gridView != null && items != null) {
             GridAdapter gridAdapter = (GridAdapter) gridView.getAdapter();
-            gridAdapter.setData(convertItems(items.keySet()));
+            gridAdapter.setData(new ArrayList<String>(items.keySet()));
             gridView.setSelection(gridAdapter.getPosition(selected));
         }
     }
@@ -81,10 +76,17 @@ public abstract class AbstractSelectFragment extends Fragment implements Adapter
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        GridAdapter adapter = (GridAdapter) parent.getAdapter();
-        selected = String.valueOf(adapter.getItem(position));
-        onSelected(mActivity, selected);
-        adapter.notifyDataSetChanged();
+        SelectActivity selectActivity = wr.get();
+        if (selectActivity != null) {
+            GridAdapter adapter = (GridAdapter) parent.getAdapter();
+            selected = String.valueOf(adapter.getItem(position));
+            onSelected(selectActivity, selected);
+            notifyDataSetChanged();
+        }
+    }
+
+    protected void notifyDataSetChanged() {
+        ((GridAdapter) gridView.getAdapter()).notifyDataSetChanged();
     }
 
     protected abstract void onSelected(SelectActivity activity, String selected);
