@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="spinner" parent="Widget.AppCompat.Spinner">
-        <item name="backgroundTint">?attr/colorControlNormal</item>
-    </style>
-
     <style name="tab" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">@dimen/text_size_menu</item>
     </style>
@@ -15,14 +11,16 @@
     <style name="dark" parent="@style/Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/grey_900</item>
         <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat</item>
         <item name="android:colorBackground">@color/grey_850</item>
         <item name="colorRed">@color/red_200</item>
         <item name="colorYellow">@color/yellow_200</item>
     </style>
 
     <style name="light" parent="@style/Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/grey_100</item>
-        <item name="colorPrimaryDark">@color/grey_600</item>
+        <item name="colorPrimary">@color/indigo_500</item>
+        <item name="colorPrimaryDark">@color/indigo_700</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="android:colorBackground">@color/grey_50</item>
         <item name="colorRed">@color/red_500</item>
         <item name="colorYellow">@color/yellow_500</item>
@@ -30,12 +28,20 @@
 
     <style name="dark.dialog" parent="@style/Theme.AppCompat.Dialog">
         <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/grey_900</item>
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat</item>
+        <item name="android:colorBackground">@color/grey_850</item>
         <item name="colorRed">@color/red_200</item>
         <item name="colorYellow">@color/yellow_200</item>
     </style>
 
     <style name="light.dialog" parent="@style/Theme.AppCompat.Light.Dialog">
         <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/indigo_500</item>
+        <item name="colorPrimaryDark">@color/indigo_700</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="android:colorBackground">@color/grey_50</item>
         <item name="colorRed">@color/red_500</item>
         <item name="colorYellow">@color/yellow_500</item>
     </style>
