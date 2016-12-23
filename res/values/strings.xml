@@ -75,4 +75,11 @@
     <string name="verse">Verse</string>
     <string name="books">Books</string>
     <string name="show_verses">Verses</string>
+    <string name="menu_reading">Reading</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_highlight">Highlight</string>
+    <string name="menu_notes">Notes</string>
+    <string name="menu_download">Download</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
 </resources>

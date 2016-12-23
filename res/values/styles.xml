@@ -63,4 +63,10 @@
         <item name="android:textSize">@dimen/text_size_toolbar</item>
     </style>
 
+    <style name="NavigationStyle">
+        <item name="android:textSize">@dimen/navigation_text_size</item>
+        <item name="listPreferredItemHeightSmall">@dimen/navigation_item_height</item>
+        <item name="android:listPreferredItemHeightSmall">@dimen/navigation_item_height</item>
+    </style>
+
 </resources>

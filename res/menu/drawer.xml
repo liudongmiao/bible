@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@string/menu_reading"
+        android:icon="@drawable/ic_chrome_reader_mode_black_36dp"
+        android:title="@string/menu_reading"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@string/menu_search"
+        android:icon="@drawable/ic_search_black_36dp"
+        android:title="@string/menu_search"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@string/menu_highlight"
+        android:icon="@drawable/ic_star_black_36dp"
+        android:title="@string/menu_highlight"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@string/menu_notes"
+        android:icon="@drawable/ic_speaker_notes_black_36dp"
+        android:title="@string/menu_notes"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@string/menu_download"
+        android:icon="@drawable/ic_file_download_black_36dp"
+        android:title="@string/menu_download"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@string/menu_settings"
+        android:icon="@drawable/ic_settings_black_36dp"
+        android:title="@string/menu_settings"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@string/menu_about"
+        android:icon="@drawable/ic_info_outline_black_36dp"
+        android:title="@string/menu_about"
+        app:showAsAction="always" />
+
+</menu>

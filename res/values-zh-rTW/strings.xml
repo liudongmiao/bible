@@ -74,4 +74,11 @@
     <string name="verse">節</string>
     <string name="books">書</string>
     <string name="show_verses">顯示節</string>
+    <string name="menu_reading">閱讀</string>
+    <string name="menu_search">搜寻</string>
+    <string name="menu_highlight">明亮</string>
+    <string name="menu_notes">筆記</string>
+    <string name="menu_download">下載</string>
+    <string name="menu_settings">設置</string>
+    <string name="menu_about">關於</string>
 </resources>

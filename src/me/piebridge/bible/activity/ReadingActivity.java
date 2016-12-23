@@ -1,6 +1,5 @@
 package me.piebridge.bible.activity;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -10,17 +9,12 @@ import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.support.v4.content.SharedPreferencesCompat;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import me.piebridge.bible.Bible;
 import me.piebridge.bible.Provider;
 import me.piebridge.bible.R;
-import me.piebridge.bible.Search;
-import me.piebridge.bible.Settings;
-import me.piebridge.bible.Versions;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
 
@@ -31,15 +25,12 @@ public class ReadingActivity extends AbstractReadingActivity {
 
     private static final int SIZE = 1189;
 
-    private static final int MENU_SEARCH = 2;
-    private static final int MENU_SETTINGS = 3;
-    private static final int MENU_VERSIONS = 4;
-
     private TextView bookView;
     private TextView chapterView;
 
     @Override
     protected void initializeHeader(View header) {
+        setupDrawer();
         bookView = (TextView) header.findViewById(R.id.book);
         header.findViewById(R.id.book_button).setOnClickListener(this);
 
@@ -69,7 +60,7 @@ public class ReadingActivity extends AbstractReadingActivity {
 
     @Override
     protected int getContentLayout() {
-        return R.layout.activity_reading;
+        return R.layout.drawer_reading;
     }
 
     @Override
@@ -121,31 +112,6 @@ public class ReadingActivity extends AbstractReadingActivity {
             editor.putString(book, chapter);
             editor.putString("version", bible.getVersion());
             SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, android.R.string.search_go, MENU_SEARCH, android.R.string.search_go).setIcon(android.R.drawable.ic_menu_search);
-        menu.add(Menu.NONE, R.string.settings, MENU_SETTINGS, R.string.settings).setIcon(android.R.drawable.ic_menu_preferences);
-        menu.add(Menu.NONE, R.string.manageversion, MENU_VERSIONS, R.string.manageversion).setIcon(android.R.drawable.ic_menu_more);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getOrder()) {
-            case MENU_SEARCH:
-                startActivity(new Intent(this, Search.class));
-                return true;
-            case MENU_SETTINGS:
-                startActivity(new Intent(this, Settings.class));
-                return true;
-            case MENU_VERSIONS:
-                startActivity(new Intent(this, Versions.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
     }
 

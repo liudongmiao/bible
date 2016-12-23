@@ -14,7 +14,6 @@ import android.provider.BaseColumns;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -41,7 +40,7 @@ import me.piebridge.bible.utils.ThemeUtils;
 /**
  * Created by thom on 15/10/18.
  */
-public abstract class AbstractReadingActivity extends AppCompatActivity implements ReadingBridge.Bridge, View.OnClickListener, ViewPager.OnPageChangeListener, AppBarLayout.OnOffsetChangedListener {
+public abstract class AbstractReadingActivity extends DrawerActivity implements ReadingBridge.Bridge, View.OnClickListener, ViewPager.OnPageChangeListener, AppBarLayout.OnOffsetChangedListener {
 
     public static final String CSS = "css";
     public static final String OSIS = "osis";
