@@ -18,8 +18,8 @@
     </style>
 
     <style name="light" parent="@style/Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/indigo_500</item>
-        <item name="colorPrimaryDark">@color/indigo_700</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="android:colorBackground">@color/grey_50</item>
         <item name="colorRed">@color/red_500</item>
@@ -38,8 +38,8 @@
 
     <style name="light.dialog" parent="@style/Theme.AppCompat.Light.Dialog">
         <item name="windowNoTitle">true</item>
-        <item name="colorPrimary">@color/indigo_500</item>
-        <item name="colorPrimaryDark">@color/indigo_700</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="android:colorBackground">@color/grey_50</item>
         <item name="colorRed">@color/red_500</item>
