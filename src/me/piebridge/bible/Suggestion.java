@@ -13,9 +13,6 @@
 
 package me.piebridge.bible;
 
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
-
 import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -23,6 +20,9 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
+
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 public class Suggestion extends ContentProvider {
 

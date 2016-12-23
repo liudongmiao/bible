@@ -18,8 +18,8 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import me.piebridge.bible.R;
-import me.piebridge.bible.bridge.ReadingBridge;
 import me.piebridge.bible.activity.AbstractReadingActivity;
+import me.piebridge.bible.bridge.ReadingBridge;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;

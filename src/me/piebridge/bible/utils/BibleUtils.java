@@ -6,9 +6,9 @@ import android.support.v4.content.ContextCompat;
 
 import java.io.File;
 
-import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.Bible;
 import me.piebridge.bible.R;
+import me.piebridge.bible.activity.AbstractReadingActivity;
 
 /**
  * Created by thom on 16/7/1.

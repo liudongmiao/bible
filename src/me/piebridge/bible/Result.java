@@ -15,21 +15,21 @@ package me.piebridge.bible;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.MergeCursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Spannable;
 import android.text.style.BackgroundColorSpan;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.ListView;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.content.Intent;
-import android.net.Uri;
-import android.database.Cursor;
-import android.database.MatrixCursor;
-import android.database.MergeCursor;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Locale;
