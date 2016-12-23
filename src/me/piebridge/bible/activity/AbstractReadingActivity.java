@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -24,11 +25,11 @@ import android.widget.TextView;
 import me.piebridge.bible.Bible;
 import me.piebridge.bible.Provider;
 import me.piebridge.bible.R;
+import me.piebridge.bible.Settings;
 import me.piebridge.bible.adapter.ReadingAdapter;
 import me.piebridge.bible.bridge.ReadingBridge;
-import me.piebridge.bible.fragment.ReadingFragment;
 import me.piebridge.bible.bridge.ReadingHandler;
-import me.piebridge.bible.Settings;
+import me.piebridge.bible.fragment.ReadingFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ColorUtils;
 import me.piebridge.bible.utils.LogUtils;
@@ -40,7 +41,7 @@ import me.piebridge.bible.utils.ThemeUtils;
 /**
  * Created by thom on 15/10/18.
  */
-public abstract class AbstractReadingActivity extends AppCompatActivity implements ReadingBridge.Bridge, View.OnClickListener, ViewPager.OnPageChangeListener {
+public abstract class AbstractReadingActivity extends AppCompatActivity implements ReadingBridge.Bridge, View.OnClickListener, ViewPager.OnPageChangeListener, AppBarLayout.OnOffsetChangedListener {
 
     public static final String CSS = "css";
     public static final String OSIS = "osis";
@@ -110,6 +111,7 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
         fontPath = BibleUtils.getFontPath(this);
         mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount());
         initialize();
+        setLowProfileListenerIfNeeded();
     }
 
     @Override
@@ -425,6 +427,24 @@ public abstract class AbstractReadingActivity extends AppCompatActivity implemen
         // if it's cached, then reloaded
         if (Math.abs(oldPosition - position) <= mPager.getOffscreenPageLimit()) {
             reloadData(position, NumberUtils.parseInt(verse));
+        }
+    }
+
+    private void setLowProfileListenerIfNeeded() {
+        if (mAppBar != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            mAppBar.addOnOffsetChangedListener(this);
+        }
+    }
+
+    @Override
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public void onOffsetChanged(AppBarLayout appBar, int offset) {
+        View decorView = getWindow().getDecorView();
+        // http://stackoverflow.com/questions/31872653
+        if (appBar.getHeight() + offset == 0) {
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+        } else {
+            decorView.setSystemUiVisibility(0);
         }
     }
 
