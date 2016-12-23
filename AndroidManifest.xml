@@ -7,8 +7,8 @@
     android:versionName="0.12-snapshot">
 
     <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="24" />
+        android:minSdkVersion="9"
+        android:targetSdkVersion="25" />
 
     <permission
         android:name="me.piebridge.bible.permission.ACCESS"
