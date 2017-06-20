@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -24,7 +25,6 @@ import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
-import me.piebridge.bible.utils.WebViewUtils;
 
 import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_BACKGROUND;
 import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_HIGHLIGHT;
@@ -72,15 +72,19 @@ public class ReadingFragment extends Fragment {
     private String selectedContent = "";
 
     @Override
-    @SuppressWarnings("deprecation")
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        readingBridge = new ReadingBridge((AbstractReadingActivity) activity, this);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         if (TextUtils.isEmpty(template)) {
             try {
-                template = FileUtils.readAsString(activity.getAssets().open("reader.html"));
+                template = FileUtils.readAsString(context.getAssets().open("reader.html"));
             } catch (IOException e) {
                 LogUtils.d("cannot get template", e);
+            }
+        }
+        if (readingBridge == null) {
+            AbstractReadingActivity activity = (AbstractReadingActivity) getActivity();
+            if (activity != null) {
+                readingBridge = new ReadingBridge(activity, this);
             }
         }
     }
@@ -113,7 +117,7 @@ public class ReadingFragment extends Fragment {
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setUseWideViewPort(true);
-        WebViewUtils.hideDisplayZoomControls(webView);
+        webView.getSettings().setDisplayZoomControls(false);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(readingBridge, "android");
         return view;

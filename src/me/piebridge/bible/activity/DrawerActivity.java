@@ -2,6 +2,7 @@ package me.piebridge.bible.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -10,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import me.piebridge.bible.R;
 import me.piebridge.bible.Search;
@@ -19,7 +21,8 @@ import me.piebridge.bible.Versions;
 /**
  * Created by thom on 16/7/24.
  */
-public abstract class DrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public abstract class DrawerActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int DELAY = 250;
 
@@ -30,7 +33,8 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
     protected void setupDrawer() {
         drawer = (DrawerLayout) findViewById(R.id.drawer);
         if (drawerToggle == null) {
-            drawerToggle = new ActionBarDrawerToggle(this, drawer, R.string.install, R.string.uninstall);
+            drawerToggle = new ActionBarDrawerToggle(this, drawer, R.string.install,
+                    R.string.uninstall);
             drawer.addDrawerListener(drawerToggle);
         }
 
@@ -42,6 +46,11 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
 
         NavigationView navigation = (NavigationView) findViewById(R.id.navigation);
         navigation.setNavigationItemSelectedListener(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
     }
 
     @Override

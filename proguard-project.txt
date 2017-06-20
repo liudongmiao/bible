@@ -1,0 +1,9 @@
+-keepattributes SourceFile,LineNumberTable,EnclosingMethod
+
+-keep class android.webkit.JavascriptInterface { *; }
+
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+-dontwarn me.piebridge.bible.override.HideApiOverride

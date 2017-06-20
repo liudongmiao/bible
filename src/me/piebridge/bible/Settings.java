@@ -38,6 +38,7 @@ public class Settings extends PreferenceActivity {
     private Bible bible = null;
     private String versionName = null;
 
+    @Override
     @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +56,6 @@ public class Settings extends PreferenceActivity {
         root.addPreference(addBooleanPreference(FLINK, R.string.flink, 0));
         root.addPreference(addBooleanPreference(XLINK, R.string.xlink, 0));
         root.addPreference(addBooleanPreference(SHANGTI, R.string.shangti, R.string.shangti_or_shen));
-        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         root.addPreference(addPreference(VERSION, R.string.version));
         return root;
     }
@@ -79,12 +79,7 @@ public class Settings extends PreferenceActivity {
     }
 
     private Preference addBooleanPreference(String key, int title, int summary) {
-        Preference preference;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            preference = getBooleanPreference();
-        } else {
-            preference = getBooleanPreferenceGB();
-        }
+        Preference preference = new SwitchPreference(this);
         preference.setKey(key);
         preference.setTitle(title);
         if (summary != 0) {
@@ -104,15 +99,6 @@ public class Settings extends PreferenceActivity {
             break;
         }
         return preference;
-    }
-
-    Preference getBooleanPreferenceGB() {
-        return new CheckBoxPreference(this);
-    }
-
-    @SuppressLint("NewApi")
-    Preference getBooleanPreference() {
-        return new SwitchPreference(this);
     }
 
     @Override
@@ -182,7 +168,7 @@ public class Settings extends PreferenceActivity {
             String version = bible.getVersion();
             editor.putInt(key + "-" + version, value);
         }
-        editor.commit();
+        editor.apply();
     }
 
 }

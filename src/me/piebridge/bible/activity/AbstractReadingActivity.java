@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
@@ -34,7 +33,6 @@ import me.piebridge.bible.utils.ColorUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ObjectUtils;
-import me.piebridge.bible.utils.RecreateUtils;
 import me.piebridge.bible.utils.ThemeUtils;
 
 /**
@@ -110,7 +108,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
         fontPath = BibleUtils.getFontPath(this);
         mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount());
         initialize();
-        setLowProfileListenerIfNeeded();
     }
 
     @Override
@@ -138,6 +135,9 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
 
     protected View findHeader() {
         mAppBar = (AppBarLayout) findViewById(R.id.appbar);
+        if (mAppBar != null) {
+            mAppBar.addOnOffsetChangedListener(this);
+        }
         Toolbar toolbar = (Toolbar) findViewById(getToolbarLayout());
         setSupportActionBar(toolbar);
         return toolbar;
@@ -167,7 +167,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
 
     protected boolean switchTheme() {
         ThemeUtils.switchTheme(this);
-        RecreateUtils.recreate(this);
+        recreate();
         return true;
     }
 
@@ -429,14 +429,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
         }
     }
 
-    private void setLowProfileListenerIfNeeded() {
-        if (mAppBar != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            mAppBar.addOnOffsetChangedListener(this);
-        }
-    }
-
     @Override
-    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void onOffsetChanged(AppBarLayout appBar, int offset) {
         View decorView = getWindow().getDecorView();
         // http://stackoverflow.com/questions/31872653

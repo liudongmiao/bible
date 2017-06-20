@@ -79,13 +79,7 @@ public class GridAdapter extends ArrayAdapter<String> {
     public void setData(List<String> objects) {
         setNotifyOnChange(false);
         clear();
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            addAll(objects);
-        } else {
-            for (String object : objects) {
-                add(object);
-            }
-        }
+        addAll(objects);
         notifyDataSetChanged();
     }
 

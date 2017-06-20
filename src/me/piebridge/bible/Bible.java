@@ -130,7 +130,8 @@ public class Bible {
             allhuman.put(entry.getKey(), String.valueOf(entry.getValue()));
         }
         try {
-            versionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+            versionName = context.getPackageManager().getPackageInfo(context.getPackageName(),
+                    0).versionName;
         } catch (NameNotFoundException e) {
         }
         updateLocale();
@@ -162,7 +163,7 @@ public class Bible {
         int value = new BigDecimal(string).multiply(new BigDecimal(Provider.THOUSAND)).intValue();
         int chapter = value / Provider.THOUSAND;
         int verse = value % Provider.THOUSAND;
-        return new int[]{chapter, verse};
+        return new int[] {chapter, verse};
     }
 
     public List<Integer> getVerses(String book, int chapter) {
@@ -217,7 +218,8 @@ public class Bible {
             oldmtime = 0L;
         }
         if (versions.size() != 0 && path.lastModified() <= oldmtime
-                && (!oldpath.exists() || !oldpath.isDirectory() || oldpath.lastModified() <= oldmtime)) {
+                &&
+                (!oldpath.exists() || !oldpath.isDirectory() || oldpath.lastModified() <= oldmtime)) {
             return versions.size();
         }
         checkVersion(oldpath, newVersions, newVersionpaths, all);
@@ -252,7 +254,8 @@ public class Bible {
         }
     }
 
-    private void checkInternalVersions(List<String> versions, Map<String, String> versionpaths, boolean all) {
+    private void checkInternalVersions(List<String> versions, Map<String, String> versionpaths,
+                                       boolean all) {
         if (!unpacked) {
             setDemoVersions();
             unpacked = true;
@@ -296,7 +299,8 @@ public class Bible {
             int oldsize = allhuman.size();
             setMetadata(database, databaseVersion, true);
             if (allhuman.size() > oldsize) {
-                SharedPreferences.Editor editor = mContext.getSharedPreferences(HUMAN_PREFERENCE, 0).edit();
+                SharedPreferences.Editor editor =
+                        mContext.getSharedPreferences(HUMAN_PREFERENCE, 0).edit();
                 for (Entry<String, String> entry : allhuman.entrySet()) {
                     editor.putString(entry.getKey(), entry.getValue());
                 }
@@ -342,7 +346,8 @@ public class Bible {
                     return file;
                 }
             }
-            file = getFile(new File(Environment.getExternalStorageDirectory(), ".piebridge"), version);
+            file = getFile(new File(Environment.getExternalStorageDirectory(), ".piebridge"),
+                    version);
             if (file != null) {
                 versionpaths.put(version, file.getAbsolutePath());
                 return file;
@@ -352,7 +357,9 @@ public class Bible {
     }
 
     private void setMetadata(SQLiteDatabase metadata, String dataversion, boolean change) {
-        Cursor cursor = metadata.query(Provider.TABLE_BOOKS, Provider.COLUMNS_BOOKS, null, null, null, null, null);
+        Cursor cursor =
+                metadata.query(Provider.TABLE_BOOKS, Provider.COLUMNS_BOOKS, null, null, null, null,
+                        null);
         if (change) {
             osiss.clear();
             books.clear();
@@ -363,7 +370,8 @@ public class Bible {
             while (cursor.moveToNext()) {
                 String osis = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_OSIS));
                 String book = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN));
-                String chapter = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CHAPTERS));
+                String chapter =
+                        cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CHAPTERS));
 
                 if (book.endsWith(" 1")) {
                     book = book.substring(0, book.length() - 2);
@@ -376,8 +384,9 @@ public class Bible {
                 // select group_concat(replace(reference_osis, "Gen.", "")) as osis from chapters where reference_osis like 'Gen.%';
                 try {
                     cursor_chapter = metadata.query(Provider.TABLE_CHAPTERS,
-                            new String[]{"group_concat(replace(reference_osis, \"" + osis + ".\", \"\")) as osis"},
-                            "reference_osis like ?", new String[]{osis + ".%"}, null, null, null);
+                            new String[] {"group_concat(replace(reference_osis, \"" + osis +
+                                    ".\", \"\")) as osis"},
+                            "reference_osis like ?", new String[] {osis + ".%"}, null, null, null);
                     if (cursor_chapter.moveToNext()) {
                         // we have only one column
                         chapter = sortChapter(cursor_chapter.getString(0)).toLowerCase(Locale.US);
@@ -462,7 +471,8 @@ public class Bible {
     }
 
     private File[] getExternalFilesDirs() {
-        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) || mContext == null) {
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ||
+                mContext == null) {
             Log.d(TAG, "not mounted, mContext = " + mContext);
             return new File[0];
         } else {
@@ -532,8 +542,9 @@ public class Bible {
 
     private String getVersionMetadata(String name, SQLiteDatabase metadata, String defaultValue) {
         String value = defaultValue;
-        Cursor cursor = metadata.query("metadata", new String[]{"value"},
-                "name = ? or name = ?", new String[]{name, name + "_" + Locale.getDefault().toString()},
+        Cursor cursor = metadata.query("metadata", new String[] {"value"},
+                "name = ? or name = ?",
+                new String[] {name, name + "_" + Locale.getDefault().toString()},
                 null, null, "name desc", "1");
         while (cursor != null && cursor.moveToNext()) {
             value = cursor.getString(cursor.getColumnIndexOrThrow("value"));
@@ -547,7 +558,8 @@ public class Bible {
 
     public String getVersionFullname(String version) {
         version = version.toLowerCase(Locale.US);
-        String fullname = getResourceValue(versionFullnames, version.replace("demo", "").replace("niv84", "niv1984"));
+        String fullname = getResourceValue(versionFullnames,
+                version.replace("demo", "").replace("niv84", "niv1984"));
         if (version.endsWith("demo")) {
             fullname += "(" + mContext.getString(R.string.demo) + ")";
         }
@@ -556,7 +568,8 @@ public class Bible {
 
     public String getVersionName(String version) {
         version = version.toLowerCase(Locale.US);
-        return getResourceValue(versionNames, version.replace("demo", "").replace("niv84", "niv1984")).toUpperCase(Locale.US);
+        return getResourceValue(versionNames,
+                version.replace("demo", "").replace("niv84", "niv1984")).toUpperCase(Locale.US);
     }
 
     private String getResourceValue(HashMap<String, String> map, String key) {
@@ -591,20 +604,25 @@ public class Bible {
     }
 
     private void setDemoVersions() {
-        int demoVersion = PreferenceManager.getDefaultSharedPreferences(mContext).getInt("demoVersion", 0);
+        int demoVersion =
+                PreferenceManager.getDefaultSharedPreferences(mContext).getInt("demoVersion", 0);
         int versionCode = 0;
         try {
-            versionCode = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionCode;
+            versionCode = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(),
+                    0).versionCode;
         } catch (NameNotFoundException e) {
             LogUtils.d("cannot find self", e);
         }
         boolean newVersion = (demoVersion != versionCode);
-        boolean unpack = unpackRaw(newVersion, R.raw.niv84demo, new File(mContext.getFilesDir(), "niv84demo.sqlite3"));
+        boolean unpack = unpackRaw(newVersion, R.raw.niv84demo,
+                new File(mContext.getFilesDir(), "niv84demo.sqlite3"));
         if (unpack) {
-            unpack = unpackRaw(newVersion, R.raw.cunpssdemo, new File(mContext.getFilesDir(), "cunpssdemo.sqlite3"));
+            unpack = unpackRaw(newVersion, R.raw.cunpssdemo,
+                    new File(mContext.getFilesDir(), "cunpssdemo.sqlite3"));
         }
         if (newVersion && unpack) {
-            PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("demoVersion", versionCode).commit();
+            PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("demoVersion",
+                    versionCode).commit();
         }
     }
 
@@ -613,7 +631,8 @@ public class Bible {
         if (versions.size() > 0) {
             defaultVersion = get(TYPE.VERSION, 0);
         }
-        String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version", defaultVersion);
+        String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version",
+                defaultVersion);
         if ((version == null || version.length() == 0) && defaultVersion.length() > 0) {
             version = defaultVersion;
         }
@@ -702,7 +721,8 @@ public class Bible {
 
     private ArrayList<LinkedHashMap<String, String>> getMaps(TYPE type) {
         updateLocale();
-        ArrayList<LinkedHashMap<String, String>> maps = new ArrayList<LinkedHashMap<String, String>>();
+        ArrayList<LinkedHashMap<String, String>> maps =
+                new ArrayList<LinkedHashMap<String, String>>();
         if (type == TYPE.HUMAN) {
             maps.add(allhuman);
             maps.add(searchfull);
@@ -754,7 +774,8 @@ public class Bible {
         return null;
     }
 
-    private boolean checkStartSuggest(LinkedHashMap<String, String> osiss, String value, String key, String book, int limit) {
+    private boolean checkStartSuggest(LinkedHashMap<String, String> osiss, String value, String key,
+                                      String book, int limit) {
         if ("".equals(book) || value.replace(" ", "").toLowerCase(Locale.US).startsWith(book)) {
             if (addSuggest(osiss, value, key, limit)) {
                 return true;
@@ -763,7 +784,8 @@ public class Bible {
         return false;
     }
 
-    private boolean checkContainSuggest(LinkedHashMap<String, String> osiss, String value, String key, String book, int limit) {
+    private boolean checkContainSuggest(LinkedHashMap<String, String> osiss, String value, String key,
+                                        String book, int limit) {
         if (value.replace(" ", "").toLowerCase(Locale.US).contains(book)) {
             if (addSuggest(osiss, value, key, limit)) {
                 return true;
@@ -772,7 +794,8 @@ public class Bible {
         return false;
     }
 
-    private boolean addSuggest(LinkedHashMap<String, String> osiss, String value, String osis, int limit) {
+    private boolean addSuggest(LinkedHashMap<String, String> osiss, String value, String osis,
+                               int limit) {
         if (!osiss.values().contains(osis)) {
             String text = get(TYPE.HUMAN, bible.getPosition(TYPE.OSIS, osis));
             Log.d(TAG, "add suggest, text=" + text + ", data=" + osis);
@@ -797,7 +820,8 @@ public class Bible {
             book = book.replace("约一", "约壹");
             book = book.replace("约二", "约贰");
             book = book.replace("约三", "约叁");
-            book = book.replace(SearchManager.SUGGEST_URI_PATH_QUERY, "").replace(" ", "").toLowerCase(Locale.US);
+            book = book.replace(SearchManager.SUGGEST_URI_PATH_QUERY, "").replace(" ",
+                    "").toLowerCase(Locale.US);
         }
 
         Log.d(TAG, "book: " + book);
@@ -968,7 +992,8 @@ public class Bible {
                 }
             }
             checkZipData(Environment.getExternalStorageDirectory());
-            checkZipData(new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS));
+            checkZipData(new File(Environment.getExternalStorageDirectory(),
+                    Environment.DIRECTORY_DOWNLOADS));
             checkZipData(mContext.getExternalCacheDir());
             checkVersionsSync(true);
         }
@@ -1056,7 +1081,8 @@ public class Bible {
                 } else {
                     file = new File(dirpath, zename);
                 }
-                if (file.exists() && file.lastModified() > ze.getTime() && file.lastModified() > path.lastModified()) {
+                if (file.exists() && file.lastModified() > ze.getTime() &&
+                        file.lastModified() > path.lastModified()) {
                     continue;
                 }
                 Log.d(TAG, "unpacking " + file.getAbsoluteFile());
@@ -1092,7 +1118,8 @@ public class Bible {
         return false;
     }
 
-    int checkVersion(File path, List<String> versions, Map<String, String> versionpaths, boolean all) {
+    int checkVersion(File path, List<String> versions, Map<String, String> versionpaths,
+                     boolean all) {
         if (!path.exists() || !path.isDirectory() || path.list() == null) {
             return versions.size();
         }
@@ -1122,14 +1149,8 @@ public class Bible {
         return versions.size();
     }
 
-    @SuppressLint("NewApi")
     private boolean isDatabaseIntegrityOk(SQLiteDatabase database) {
-        // assume ok if the api is not available
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            return true;
-        } else {
-            return database.isDatabaseIntegrityOk();
-        }
+        return database.isDatabaseIntegrityOk();
     }
 
     private boolean checkVersionMeta(File file, String version) {
@@ -1160,13 +1181,10 @@ public class Bible {
         }
     }
 
-    public static final String BIBLEDATA_PREFIX = "https://github.com/liudongmiao/bibledata/raw/master/";
+    public static final String BIBLEDATA_PREFIX =
+            "https://github.com/liudongmiao/bibledata/raw/master/";
 
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     public DownloadInfo download(String filename) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            return null;
-        }
         if (getExternalFilesDirs() == null) {
             return null;
         }
@@ -1178,11 +1196,7 @@ public class Bible {
         return DownloadInfo.getDownloadInfo(mContext, dm.enqueue(request));
     }
 
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     public void cancel(long id) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            return;
-        }
         DownloadManager dm = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
         dm.remove(id);
     }
@@ -1286,8 +1300,8 @@ public class Bible {
         annotationOsis = osis;
         Cursor cursor = null;
         try {
-            cursor = database.query("annotations", new String[]{"link", "content"}, "osis = ?",
-                    new String[]{osis}, null, null, null, null);
+            cursor = database.query("annotations", new String[] {"link", "content"}, "osis = ?",
+                    new String[] {osis}, null, null, null, null);
             while (cursor.moveToNext()) {
                 String link = cursor.getString(0);
                 String content = cursor.getString(1);
@@ -1330,15 +1344,21 @@ public class Bible {
 
         Cursor cursor = null;
         try {
-            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, "osis = ? and type = ?", new String[]{
-                    osis, "note"}, null, null, null);
+            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null,
+                    "osis = ? and type = ?", new String[] {
+                            osis, "note"}, null, null, null);
             while (cursor != null && cursor.moveToNext()) {
                 long id = cursor.getInt(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_ID));
-                String verse = cursor.getString(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_VERSE));
-                String verses = cursor.getString(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_VERSES));
-                String content = cursor.getString(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
-                Long create = cursor.getLong(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
-                Long update = cursor.getLong(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_UPDATETIME));
+                String verse = cursor.getString(
+                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_VERSE));
+                String verses = cursor.getString(
+                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_VERSES));
+                String content = cursor.getString(
+                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
+                Long create = cursor.getLong(
+                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
+                Long update = cursor.getLong(
+                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_UPDATETIME));
                 notes.put(verse, new Note(id, verse, verses, content, create, update));
             }
         } catch (RuntimeException e) {
@@ -1484,7 +1504,7 @@ public class Bible {
             note.setId(id);
         } else {
             db.update(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, values,
-                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?", new String[] {String.valueOf(id)});
         }
         return true;
     }
@@ -1497,8 +1517,9 @@ public class Bible {
         if (!isDatabaseIntegrityOk(db)) {
             return true;
         }
-        db.delete(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, AnnotationsDatabaseHelper.COLUMN_ID + " = ?",
-                new String[]{String.valueOf(note.getId())});
+        db.delete(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS,
+                AnnotationsDatabaseHelper.COLUMN_ID + " = ?",
+                new String[] {String.valueOf(note.getId())});
         notes.remove(note.verse);
         return true;
     }
@@ -1514,9 +1535,11 @@ public class Bible {
         }
         Cursor cursor = null;
         try {
-            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, new String[]{
+            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, new String[] {
                             AnnotationsDatabaseHelper.COLUMN_ID, AnnotationsDatabaseHelper.COLUMN_VERSES},
-                    AnnotationsDatabaseHelper.COLUMN_OSIS + " = ? and " + AnnotationsDatabaseHelper.COLUMN_TYPE + " = ?", new String[]{osis, "highlight"}, null, null, null);
+                    AnnotationsDatabaseHelper.COLUMN_OSIS + " = ? and " +
+                            AnnotationsDatabaseHelper.COLUMN_TYPE + " = ?",
+                    new String[] {osis, "highlight"}, null, null, null);
             while (cursor != null && cursor.moveToNext()) {
                 highlighted = cursor.getString(1);
             }
@@ -1538,9 +1561,11 @@ public class Bible {
         }
         Cursor cursor = null;
         try {
-            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, new String[]{
+            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, new String[] {
                             AnnotationsDatabaseHelper.COLUMN_ID, AnnotationsDatabaseHelper.COLUMN_VERSES},
-                    AnnotationsDatabaseHelper.COLUMN_OSIS + " = ? and " + AnnotationsDatabaseHelper.COLUMN_TYPE + " = ?", new String[]{osis, "highlight"}, null, null, null);
+                    AnnotationsDatabaseHelper.COLUMN_OSIS + " = ? and " +
+                            AnnotationsDatabaseHelper.COLUMN_TYPE + " = ?",
+                    new String[] {osis, "highlight"}, null, null, null);
             while (cursor != null && cursor.moveToNext()) {
                 highlightId = cursor.getLong(0);
             }
@@ -1569,7 +1594,8 @@ public class Bible {
             db.insert(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, values);
         } else {
             db.update(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, values,
-                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(highlightId)});
+                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?",
+                    new String[] {String.valueOf(highlightId)});
         }
         return true;
     }
