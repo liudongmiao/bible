@@ -6,41 +6,41 @@
         android:id="@+id/main_items"
         android:checkableBehavior="single">
         <item
-            android:id="@string/menu_reading"
+            android:id="@+id/menu_reading"
             android:icon="@drawable/ic_chrome_reader_mode_black_24dp"
             android:title="@string/menu_reading" />
 
         <item
-            android:id="@string/menu_search"
+            android:id="@+id/menu_search"
             android:icon="@drawable/ic_search_black_24dp"
             android:title="@string/menu_search" />
 
         <item
-            android:id="@string/menu_highlight"
+            android:id="@+id/menu_highlight"
             android:icon="@drawable/ic_star_black_24dp"
             android:title="@string/menu_highlight" />
 
         <item
-            android:id="@string/menu_notes"
+            android:id="@+id/menu_notes"
             android:icon="@drawable/ic_speaker_notes_black_24dp"
             android:title="@string/menu_notes" />
 
         <item
-            android:id="@string/menu_download"
+            android:id="@+id/menu_download"
             android:icon="@drawable/ic_file_download_black_24dp"
             android:title="@string/menu_download" />
     </group>
 
     <group
         android:id="@+id/option_items"
-        android:checkableBehavior="all">
+        android:checkableBehavior="single">
         <item
-            android:id="@string/menu_settings"
+            android:id="@+id/menu_settings"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/menu_settings" />
 
         <item
-            android:id="@string/menu_about"
+            android:id="@+id/menu_about"
             android:icon="@drawable/ic_info_outline_black_24dp"
             android:title="@string/menu_about" />
     </group>

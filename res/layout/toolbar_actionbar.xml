@@ -6,7 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="?attr/colorPrimary"
     android:elevation="4dp"
     app:contentInsetStartWithNavigation="?attr/actionBarSize"
     app:layout_scrollFlags="scroll|enterAlways">
@@ -22,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:ellipsize="end"
-            android:singleLine="true"
+            android:maxLines="1"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="@dimen/text_size_toolbar"
             tools:text="Title" />

@@ -15,7 +15,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/searchbutton"
-            android:singleLine="true"
+            android:maxLines="1"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:hint="@string/search_hint"

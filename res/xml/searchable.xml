@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<searchable xmlns:android="http://schemas.android.com/apk/res/android"
-    android:label="@string/app_name"
-    android:icon="@drawable/bible"
+<searchable
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:hint="@string/search_hint"
+    android:icon="@mipmap/ic_launcher"
     android:includeInGlobalSearch="true"
-    android:searchSuggestAuthority="me.piebridge.bible"
-    android:searchSuggestIntentAction="android.intent.action.VIEW"
+    android:label="@string/app_name"
     android:searchSettingsDescription="@string/search_description"
-    >
-</searchable>
-<!-- vim: set sta sw=4 et: -->
+    android:searchSuggestAuthority="me.piebridge.bible"
+    android:searchSuggestIntentAction="android.intent.action.VIEW" />

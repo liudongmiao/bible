@@ -43,7 +43,7 @@ public abstract class AbstractSelectFragment extends Fragment implements Adapter
         if (!TextUtils.isEmpty(font)) {
             typeface = Typeface.createFromFile(font);
         }
-        wr = new WeakReference<SelectActivity>((SelectActivity) activity);
+        wr = new WeakReference<>((SelectActivity) activity);
     }
 
     @Override
@@ -63,7 +63,7 @@ public abstract class AbstractSelectFragment extends Fragment implements Adapter
     protected void updateAdapter() {
         if (gridView != null && items != null) {
             GridAdapter gridAdapter = (GridAdapter) gridView.getAdapter();
-            gridAdapter.setData(new ArrayList<String>(items.keySet()));
+            gridAdapter.setData(new ArrayList<>(items.keySet()));
             gridView.setSelection(gridAdapter.getPosition(selected));
         }
     }

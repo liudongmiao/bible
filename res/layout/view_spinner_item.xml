@@ -12,6 +12,6 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingStart="0dp"
-    android:singleLine="true"
+    android:maxLines="1"
     android:textSize="@dimen/text_size_toolbar"
     tools:text="John 3:16" />

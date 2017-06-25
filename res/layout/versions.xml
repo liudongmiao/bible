@@ -28,7 +28,7 @@
             android:hint="@string/version_hint"
             android:imeOptions="actionSearch"
             android:inputType="text"
-            android:singleLine="true"
+            android:maxLines="1"
 	    />
     </RelativeLayout>
 

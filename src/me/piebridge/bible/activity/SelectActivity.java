@@ -137,7 +137,7 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
     }
 
     private Map<String, String> prepareBooks() {
-        Map<String, String> books = new LinkedHashMap<String, String>();
+        Map<String, String> books = new LinkedHashMap<>();
         int count = bible.getCount(Bible.TYPE.OSIS);
         for (int index = 0; index < count; ++index) {
             String osis = bible.get(Bible.TYPE.OSIS, index);
@@ -149,7 +149,7 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
 
     private Map<String, String> prepareChapters(String book) {
         int position = bible.getPosition(Bible.TYPE.OSIS, book);
-        Map<String, String> chapters = new LinkedHashMap<String, String>();
+        Map<String, String> chapters = new LinkedHashMap<>();
         for (String chapter : bible.get(Bible.TYPE.CHAPTER, position).split(",")) {
             String human = Bible.INTRO.equals(chapter) ? getString(R.string.intro) : chapter;
             chapters.put(chapter, human);
@@ -168,7 +168,7 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
             return Collections.emptyMap();
         }
         int max = bibleVerses.get(bibleVerses.size() - 1);
-        Map<String, Boolean> verses = new LinkedHashMap<String, Boolean>();
+        Map<String, Boolean> verses = new LinkedHashMap<>();
         if (max == bibleVerses.size()) {
             for (int i = 1; i <= max; ++i) {
                 verses.put(String.valueOf(i), true);

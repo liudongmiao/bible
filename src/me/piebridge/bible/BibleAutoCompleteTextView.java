@@ -15,10 +15,10 @@ package me.piebridge.bible;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.util.AttributeSet;
-import android.widget.AutoCompleteTextView;
 
-public class BibleAutoCompleteTextView extends AutoCompleteTextView {
+public class BibleAutoCompleteTextView extends AppCompatAutoCompleteTextView {
 
     private boolean show = false;
 

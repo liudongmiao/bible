@@ -6,7 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="?attr/colorPrimary"
     android:elevation="4dp"
     app:contentInsetStart="@dimen/content_padding"
     tools:showIn="@layout/activity_reading_cross">

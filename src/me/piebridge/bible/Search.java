@@ -103,7 +103,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         edittext.setThreshold(1);
         edittext.setOnEditorActionListener(this);
         edittext.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line) {
-            private ArrayList<String> mStrings = new ArrayList<String>();
+            private ArrayList<String> mStrings = new ArrayList<>();
             private BibleFilter mFilter;
             private Bible bible = Bible.getInstance(getBaseContext());
 
@@ -140,7 +140,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
                     }
 
                     LinkedHashMap<String, String> suggestions = bible.getOsiss(prefix.toString(), 66);
-                    final ArrayList<String> values = new ArrayList<String>();
+                    final ArrayList<String> values = new ArrayList<>();
                     if (!"".equals(query) && "".equals(prefix.toString())) {
                         values.add(query);
                     }
@@ -293,25 +293,33 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         String key = preference.getKey();
         searchtype = SEARCH_CUSTOM;
-        if (key.equals(VERSION)) {
-            bible.setVersion((String)newValue);
-            updateVersion();
-        } else if (key.equals(ALL)) {
-            osisfrom = bible.get(Bible.TYPE.OSIS, 0);
-            osisto = bible.get(Bible.TYPE.OSIS, bible.getCount(Bible.TYPE.OSIS) - 1);
-        } else if (key.equals(OLD)) {
-            osisfrom = "Gen";
-            osisto = "Mal";
-        } else if (key.equals(NEW)) {
-            osisfrom = "Matt";
-            osisto = "Rev";
-        } else if (key.equals(GOSPEL)) {
-            osisfrom = "Matt";
-            osisto = "John";
-        } else if (key.equals(FROM)) {
-            osisfrom = (String)newValue;
-        } else if (key.equals(TO)) {
-            osisto = (String)newValue;
+        switch (key) {
+            case VERSION:
+                bible.setVersion((String) newValue);
+                updateVersion();
+                break;
+            case ALL:
+                osisfrom = bible.get(Bible.TYPE.OSIS, 0);
+                osisto = bible.get(Bible.TYPE.OSIS, bible.getCount(Bible.TYPE.OSIS) - 1);
+                break;
+            case OLD:
+                osisfrom = "Gen";
+                osisto = "Mal";
+                break;
+            case NEW:
+                osisfrom = "Matt";
+                osisto = "Rev";
+                break;
+            case GOSPEL:
+                osisfrom = "Matt";
+                osisto = "John";
+                break;
+            case FROM:
+                osisfrom = (String) newValue;
+                break;
+            case TO:
+                osisto = (String) newValue;
+                break;
         }
         Log.d("preference", "key: " + preference.getKey() + ", value=" + newValue);
         return updateSearch();
@@ -362,7 +370,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         editor.putInt("searchtype", searchtype);
         editor.putString("osisfrom", osisfrom);
         editor.putString("osisto", osisto);
-        editor.commit();
+        editor.apply();
         Log.d(TAG, "on pause");
         super.onPause();
     }

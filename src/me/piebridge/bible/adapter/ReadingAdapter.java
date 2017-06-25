@@ -22,7 +22,7 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
     public ReadingAdapter(FragmentManager fm, int size) {
         super(fm);
         mSize = size;
-        mBundles = new SparseArray<Bundle>();
+        mBundles = new SparseArray<>();
     }
 
     public void setSize(int size) {

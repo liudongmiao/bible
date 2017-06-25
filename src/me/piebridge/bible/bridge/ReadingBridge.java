@@ -34,7 +34,7 @@ public class ReadingBridge {
     private String selectedContent = null;
 
     public ReadingBridge(Bridge bridge, ReadingFragment fragment) {
-        wr = new WeakReference<Bridge>(bridge);
+        wr = new WeakReference<>(bridge);
         this.fragment = fragment;
     }
 

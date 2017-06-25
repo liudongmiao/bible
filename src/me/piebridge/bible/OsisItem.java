@@ -102,7 +102,7 @@ public class OsisItem implements Parcelable {
     }
 
     public static ArrayList<OsisItem> parseSearch(String s, Context context, String previous) {
-        ArrayList<OsisItem> items = new ArrayList<OsisItem>();
+        ArrayList<OsisItem> items = new ArrayList<>();
         if (s == null) {
             return items;
         }

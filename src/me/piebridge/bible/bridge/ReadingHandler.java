@@ -30,7 +30,7 @@ public class ReadingHandler extends Handler implements View.OnClickListener {
     private AlertDialog dialog;
 
     public ReadingHandler(Context context) {
-        wr = new WeakReference<Context>(context);
+        wr = new WeakReference<>(context);
     }
 
     @Override

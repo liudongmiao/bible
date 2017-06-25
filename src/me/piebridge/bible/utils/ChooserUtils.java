@@ -22,7 +22,7 @@ public class ChooserUtils {
     public static void startActivityExcludeSelf(Context context, Intent intent, String title) {
         List<ResolveInfo> activities = context.getPackageManager().queryIntentActivities(intent, 0);
         if (!activities.isEmpty()) {
-            List<Intent> intents = new ArrayList<Intent>();
+            List<Intent> intents = new ArrayList<>();
             for (ResolveInfo activity : activities) {
                 String packageName = activity.activityInfo.packageName;
                 if (BuildConfig.APPLICATION_ID.equals(packageName) || activity.priority != 0) {

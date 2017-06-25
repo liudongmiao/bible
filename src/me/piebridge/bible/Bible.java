@@ -14,7 +14,6 @@
 package me.piebridge.bible;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
@@ -86,37 +85,39 @@ public class Bible {
     private SQLiteDatabase database = null;
     private String databaseVersion = "";
 
+    // FIXME
     private static Context mContext = null;
 
-    private ArrayList<String> books = new ArrayList<String>();
-    private ArrayList<String> osiss = new ArrayList<String>();
-    private ArrayList<String> chapters = new ArrayList<String>();
-    private ArrayList<String> versions = new ArrayList<String>();
+    private ArrayList<String> books = new ArrayList<>();
+    private ArrayList<String> osiss = new ArrayList<>();
+    private ArrayList<String> chapters = new ArrayList<>();
+    private ArrayList<String> versions = new ArrayList<>();
     private final Object versionsLock = new Object();
     private final Object versionsCheckingLock = new Object();
-    private final HashMap<String, String> versionpaths = new HashMap<String, String>();
-    private ArrayList<String> humans = new ArrayList<String>();
+    private final HashMap<String, String> versionpaths = new HashMap<>();
+    private ArrayList<String> humans = new ArrayList<>();
 
+    // FIXME
     private static Bible bible = null;
 
-    private HashMap<String, String> versionNames = new HashMap<String, String>();
-    private HashMap<String, String> versionDates = new HashMap<String, String>();
-    private HashMap<String, String> versionFullnames = new HashMap<String, String>();
+    private HashMap<String, String> versionNames = new HashMap<>();
+    private HashMap<String, String> versionDates = new HashMap<>();
+    private HashMap<String, String> versionFullnames = new HashMap<>();
 
     private String annotationOsis = null;
     private String noteOsis = null;
-    private HashMap<String, Note> notes = new HashMap<String, Note>();
-    private HashMap<String, String> annotations = new HashMap<String, String>();
+    private HashMap<String, Note> notes = new HashMap<>();
+    private HashMap<String, String> annotations = new HashMap<>();
 
-    private LinkedHashMap<String, String> allhuman = new LinkedHashMap<String, String>();
-    private LinkedHashMap<String, String> allosis = new LinkedHashMap<String, String>();
-    private LinkedHashMap<String, String> searchfull = new LinkedHashMap<String, String>();
-    private LinkedHashMap<String, String> searchshort = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> allhuman = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> allosis = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> searchfull = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> searchshort = new LinkedHashMap<>();
 
     private Collator collator;
     private Locale lastLocale;
     private boolean unpacked = false;
-    private HashMap<String, Long> mtime = new HashMap<String, Long>();
+    private HashMap<String, Long> mtime = new HashMap<>();
     private String css;
     public String versionName;
 
@@ -168,7 +169,7 @@ public class Bible {
 
     public List<Integer> getVerses(String book, int chapter) {
         Cursor cursor = null;
-        List<Integer> verses = new ArrayList<Integer>();
+        List<Integer> verses = new ArrayList<>();
         try {
             cursor = database.query(Provider.TABLE_VERSE, Provider.COLUMNS_VERSE,
                     "book = ? and verse > ? and verse < ?",
@@ -197,8 +198,8 @@ public class Bible {
     }
 
     private int checkVersionsSync(boolean all) {
-        List<String> newVersions = new ArrayList<String>();
-        Map<String, String> newVersionpaths = new HashMap<String, String>();
+        List<String> newVersions = new ArrayList<>();
+        Map<String, String> newVersionpaths = new HashMap<>();
         File[] dirs = getExternalFilesDirs();
         if (dirs.length == 0) {
             checkInternalVersions(newVersions, newVersionpaths, all);
@@ -278,11 +279,7 @@ public class Bible {
         }
         File file = getFile(version);
         if (file == null || !file.isFile()) {
-            if ("".equals(databaseVersion)) {
-                return setDefaultVersion();
-            } else {
-                return false;
-            }
+            return "".equals(databaseVersion) && setDefaultVersion();
         }
         if (database != null) {
             if (databaseVersion.equals(version)) {
@@ -304,7 +301,7 @@ public class Bible {
                 for (Entry<String, String> entry : allhuman.entrySet()) {
                     editor.putString(entry.getKey(), entry.getValue());
                 }
-                editor.commit();
+                editor.apply();
             }
             return true;
         } catch (Exception e) {
@@ -499,9 +496,9 @@ public class Bible {
             case HUMAN:
                 return humans;
             case VERSIONPATH:
-                return new ArrayList<String>(versionpaths.keySet());
+                return new ArrayList<>(versionpaths.keySet());
             default:
-                return new ArrayList<String>();
+                return new ArrayList<>();
         }
     }
 
@@ -622,7 +619,7 @@ public class Bible {
         }
         if (newVersion && unpack) {
             PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("demoVersion",
-                    versionCode).commit();
+                    versionCode).apply();
         }
     }
 
@@ -641,7 +638,7 @@ public class Bible {
         if (file != null && file.isFile()) {
             return setVersion(version);
         }
-        PreferenceManager.getDefaultSharedPreferences(mContext).edit().remove("version").commit();
+        PreferenceManager.getDefaultSharedPreferences(mContext).edit().remove("version").apply();
         if (TextUtils.isEmpty(version) || version.endsWith("demo")) {
             checkBibleData(false);
             setDefaultVersion();
@@ -722,7 +719,7 @@ public class Bible {
     private ArrayList<LinkedHashMap<String, String>> getMaps(TYPE type) {
         updateLocale();
         ArrayList<LinkedHashMap<String, String>> maps =
-                new ArrayList<LinkedHashMap<String, String>>();
+                new ArrayList<>();
         if (type == TYPE.HUMAN) {
             maps.add(allhuman);
             maps.add(searchfull);
@@ -813,7 +810,7 @@ public class Bible {
      *
      */
     public LinkedHashMap<String, String> getOsiss(String book, int limit) {
-        LinkedHashMap<String, String> osiss = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> osiss = new LinkedHashMap<>();
 
         if (book != null) {
             // fix for zhcn
@@ -826,7 +823,7 @@ public class Bible {
 
         Log.d(TAG, "book: " + book);
 
-        ArrayList<Entry<String, String>> maps = new ArrayList<Entry<String, String>>();
+        ArrayList<Entry<String, String>> maps = new ArrayList<>();
 
         for (Entry<String, String> entry : searchshort.entrySet()) {
             maps.add(entry);
@@ -1243,7 +1240,7 @@ public class Bible {
 
     private void saveJson(SharedPreferences sp, String header, String json) throws IOException {
         if (header != null) {
-            sp.edit().putString(JSON + "_etag", header).commit();
+            sp.edit().putString(JSON + "_etag", header).apply();
         }
         File file = new File(mContext.getFilesDir(), JSON + ".tmp");
         OutputStream os = new BufferedOutputStream(new FileOutputStream(file));

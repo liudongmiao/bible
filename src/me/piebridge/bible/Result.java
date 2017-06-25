@@ -247,7 +247,7 @@ public class Result extends Activity
 
     private void showChapter(String book, String chapter, int verse) {
         Intent intent = new Intent(this, ReadingItemsActivity.class);
-        ArrayList<OsisItem> items = new ArrayList<OsisItem>();
+        ArrayList<OsisItem> items = new ArrayList<>();
         Log.d(TAG, String.format(Locale.US, "book: %s, chapter: %s, verse: %d", book, chapter, verse));
         if (chapter.equals("0")) {
             items.add(new OsisItem(book, 1));

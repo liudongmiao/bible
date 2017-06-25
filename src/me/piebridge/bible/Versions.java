@@ -53,15 +53,15 @@ public class Versions extends Activity {
     private EditText query;
     private ImageView refresh;
     private SimpleAdapter adapter;
-    private List<String> languages = new ArrayList<String>();
-    private List<String> names = new ArrayList<String>();
-    private List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-    private List<Map<String, String>> filtered = new ArrayList<Map<String, String>>();
-    private List<Map<String, String>> updated = new ArrayList<Map<String, String>>();
-    private List<Map<String, String>> matched = new ArrayList<Map<String, String>>();
-    private List<Map<String, String>> halfmatched = new ArrayList<Map<String, String>>();
-    private List<HashMap<String, String>> versions = new ArrayList<HashMap<String, String>>();
-    private HashMap<String, String> request = new HashMap<String, String>();
+    private List<String> languages = new ArrayList<>();
+    private List<String> names = new ArrayList<>();
+    private List<Map<String, String>> data = new ArrayList<>();
+    private List<Map<String, String>> filtered = new ArrayList<>();
+    private List<Map<String, String>> updated = new ArrayList<>();
+    private List<Map<String, String>> matched = new ArrayList<>();
+    private List<Map<String, String>> halfmatched = new ArrayList<>();
+    private List<HashMap<String, String>> versions = new ArrayList<>();
+    private HashMap<String, String> request = new HashMap<>();
 
     public static final int STOP = 0;
     public static final int START = 1;
@@ -74,8 +74,8 @@ public class Versions extends Activity {
     public static final String TAG = "me.piebridge.bible$Versions";
 
     private static Handler resume = null;
-    private static final Map<String, Integer> completed = new HashMap<String, Integer>();
-    private static final Map<String, String> queue = new HashMap<String, String>();
+    private static final Map<String, Integer> completed = new HashMap<>();
+    private static final Map<String, String> queue = new HashMap<>();
 
     private boolean checkversion;
     private boolean showing = false;
@@ -192,7 +192,7 @@ public class Versions extends Activity {
                 editor.putLong(entry.getValue(), Long.parseLong(key));
             }
         }
-        editor.commit();
+        editor.apply();
     }
 
     List<HashMap<String, String>> parseVersions(List<HashMap<String, String>> list, String string) {
@@ -209,7 +209,7 @@ public class Versions extends Activity {
             }
             for (int i = 0; i < jsonVersions.length(); ++i) {
                 JSONObject version = jsonVersions.getJSONObject(i);
-                HashMap<String, String> map = new HashMap<String, String>();
+                HashMap<String, String> map = new HashMap<>();
                 String action;
                 String code = version.getString("code");
                 String lang = version.getString("lang");
@@ -294,7 +294,7 @@ public class Versions extends Activity {
                             public void onClick(DialogInterface dialog, int which) {
                                 checkversion = true;
                                 showing = false;
-                                sp.edit().putBoolean(CHECKVERSION, true).commit();
+                                sp.edit().putBoolean(CHECKVERSION, true).apply();
                                 handler.sendEmptyMessage(START);
                             }
                         }, new DialogInterface.OnClickListener() {
@@ -302,7 +302,7 @@ public class Versions extends Activity {
                             public void onClick(DialogInterface dialog, int which) {
                                 checkversion = false;
                                 showing = false;
-                                sp.edit().putBoolean(CHECKVERSION, false).commit();
+                                sp.edit().putBoolean(CHECKVERSION, false).apply();
                             }
                         });
                 showing = true;

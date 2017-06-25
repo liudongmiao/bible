@@ -54,7 +54,7 @@ public class SelectBookFragment extends AbstractSelectFragment {
     }
 
     private List[] convertItems(Collection<String> items) {
-        List<String> keys = new ArrayList<String>(items);
+        List<String> keys = new ArrayList<>(items);
         int matt = keys.indexOf("Matt");
         int gen = keys.indexOf("Gen");
         List<String> oldData;

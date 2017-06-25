@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -45,6 +46,7 @@ public abstract class DrawerActivity extends AppCompatActivity
         }
 
         NavigationView navigation = (NavigationView) findViewById(R.id.navigation);
+        navigation.setCheckedItem(R.id.menu_reading);
         navigation.setNavigationItemSelectedListener(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -54,7 +56,7 @@ public abstract class DrawerActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(final MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
         drawer.closeDrawer(GravityCompat.START);
         drawer.postDelayed(new Runnable() {
             @Override
@@ -67,13 +69,13 @@ public abstract class DrawerActivity extends AppCompatActivity
 
     protected void navigate(final int itemId) {
         switch (itemId) {
-            case R.string.menu_search:
+            case R.id.menu_search:
                 startActivity(new Intent(this, Search.class));
                 break;
-            case R.string.menu_settings:
+            case R.id.menu_settings:
                 startActivity(new Intent(this, Settings.class));
                 break;
-            case R.string.menu_download:
+            case R.id.menu_download:
                 startActivity(new Intent(this, Versions.class));
                 break;
             default:

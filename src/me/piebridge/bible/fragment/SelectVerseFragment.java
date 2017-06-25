@@ -14,7 +14,7 @@ public class SelectVerseFragment extends AbstractSelectFragment {
 
     public void selectItems(Map<String, Boolean> verses) {
         this.verses = verses;
-        Map<String, String> grids = new LinkedHashMap<String, String>();
+        Map<String, String> grids = new LinkedHashMap<>();
         for (String verse : verses.keySet()) {
             grids.put(verse, verse);
         }

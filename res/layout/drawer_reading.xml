@@ -15,7 +15,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:elevation="4dp"
-        app:elevation="4dp"
         app:menu="@menu/drawer" />
 
 </android.support.v4.widget.DrawerLayout>
