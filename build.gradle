@@ -61,6 +61,10 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    applicationVariants.all { variant ->
+        variant.resValue "string", "versionName", variant.versionName
+    }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -122,9 +126,9 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['StickyListHeaders-29f254.jar'])
-    compile "com.android.support:support-fragment:${rootProject.supportLibraryVersion}"
+    compile "com.android.support:support-v13:${rootProject.supportLibraryVersion}"
     compile "com.android.support:appcompat-v7:${rootProject.supportLibraryVersion}"
     compile "com.android.support:cardview-v7:${rootProject.supportLibraryVersion}"
-    compile "com.android.support:preference-v7:${rootProject.supportLibraryVersion}"
+    compile "com.android.support:preference-v14:${rootProject.supportLibraryVersion}"
     compile "com.android.support:design:${rootProject.supportLibraryVersion}"
 }

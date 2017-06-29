@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.piebridge.bible"
-    android:sharedUserId="me.piebridge.bible"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:sharedUserId="me.piebridge.bible">
 
     <permission
         android:name="me.piebridge.bible.permission.ACCESS"
@@ -39,9 +39,6 @@
             android:name=".Search"
             android:theme="@style/light"
             android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".Settings"
-            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
             android:name=".Versions"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -161,6 +158,18 @@
             android:name=".activity.SelectVersionActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/choose_version"
+            android:parentActivityName=".activity.ReadingActivity"
+            android:theme="@style/light">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.ReadingActivity" />
+        </activity>
+
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/settings"
+            android:parentActivityName=".activity.ReadingActivity"
             android:theme="@style/light">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

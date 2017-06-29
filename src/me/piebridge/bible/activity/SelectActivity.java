@@ -1,15 +1,13 @@
 package me.piebridge.bible.activity;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.SharedPreferencesCompat;
+import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.widget.CompoundButton;
@@ -26,7 +24,6 @@ import me.piebridge.bible.fragment.SelectChapterFragment;
 import me.piebridge.bible.fragment.SelectVerseFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.NumberUtils;
-import me.piebridge.bible.utils.ThemeUtils;
 
 public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageChangeListener, CompoundButton.OnCheckedChangeListener {
 
@@ -53,7 +50,6 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeUtils.setTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select);
         ActionBar actionBar = getSupportActionBar();
@@ -83,7 +79,7 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
         mPager = (ViewPager) findViewById(R.id.pager);
         ((TabLayout) findViewById(R.id.tabs)).setupWithViewPager(mPager);
 
-        mAdapter = new SelectAdapter(getSupportFragmentManager(), new String[] {
+        mAdapter = new SelectAdapter(getFragmentManager(), new String[] {
                 getString(R.string.book), getString(R.string.chapter), getString(R.string.verse)
         }, new Fragment[] {
                 selectBook, selectChapter, selectVerse
@@ -225,8 +221,8 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (buttonView.getId() == R.id.verse_switch) {
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(SHOW_VERSES, isChecked);
-            SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
+            PreferenceManager.getDefaultSharedPreferences(this)
+                    .edit().putBoolean(SHOW_VERSES, isChecked).apply();
             if (!isChecked && mPager.getCurrentItem() == VERSE) {
                 finishSelect();
             } else {

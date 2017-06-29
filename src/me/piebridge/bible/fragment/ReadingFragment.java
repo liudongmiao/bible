@@ -1,8 +1,9 @@
 package me.piebridge.bible.fragment;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -70,20 +71,18 @@ public class ReadingFragment extends Fragment {
     private String selectedContent = "";
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    @SuppressWarnings("deprecation")
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
         if (TextUtils.isEmpty(template)) {
             try {
-                template = FileUtils.readAsString(context.getAssets().open("reader.html"));
+                template = FileUtils.readAsString(activity.getAssets().open("reader.html"));
             } catch (IOException e) {
                 LogUtils.d("cannot get template", e);
             }
         }
         if (readingBridge == null) {
-            AbstractReadingActivity activity = (AbstractReadingActivity) getActivity();
-            if (activity != null) {
-                readingBridge = new ReadingBridge(activity, this);
-            }
+            readingBridge = new ReadingBridge((ReadingBridge.Bridge) activity, this);
         }
     }
 
@@ -106,10 +105,11 @@ public class ReadingFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reading, container, false);
-        nestedView = (NestedScrollView) view.findViewById(R.id.nested);
-        webView = (WebView) view.findViewById(R.id.webview);
+        nestedView = view.findViewById(R.id.nested);
+        webView = view.findViewById(R.id.webview);
         webView.setFocusableInTouchMode(false);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.getSettings().setSupportZoom(true);
@@ -140,7 +140,8 @@ public class ReadingFragment extends Fragment {
 
     private String getTitle(Bundle bundle) {
         if (bundle != null) {
-            return BibleUtils.getBookChapterVerse(bundle.getString(HUMAN), BibleUtils.getChapter(bundle.getString(CURR)));
+            return BibleUtils.getBookChapterVerse(bundle.getString(HUMAN),
+                    BibleUtils.getChapter(bundle.getString(CURR)));
         } else {
             return null;
         }
@@ -218,7 +219,8 @@ public class ReadingFragment extends Fragment {
         if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE)
                 || "CCB".equalsIgnoreCase(version)
                 || (!TextUtils.isEmpty(version) && version.endsWith("ss"))) {
-            body = body.replaceAll("「", "“").replaceAll("」", "”").replaceAll("『", "‘").replaceAll("』", "’");
+            body = body.replaceAll("「", "“").replaceAll("」", "”").replaceAll("『", "‘").replaceAll("』",
+                    "’");
         }
         if (bundle.getBoolean(SHANGTI, false)) {
             body = body.replace("　神", "上帝");
@@ -245,10 +247,11 @@ public class ReadingFragment extends Fragment {
     }
 
     public void scrollTo(int top) {
-        Context context = getContext();
+        Context context = getActivity();
         if (context != null) {
             DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-            LogUtils.d("title: " + getTitle(getArguments()) + ", scroll to " + top + ", density: " + metrics.density);
+            LogUtils.d("title: " + getTitle(getArguments()) + ", scroll to " + top + ", density: " +
+                    metrics.density);
             final int scrollY = (int) (top * metrics.density);
             nestedView.post(new Runnable() {
                 @Override
@@ -260,7 +263,7 @@ public class ReadingFragment extends Fragment {
     }
 
     private int currentPos() {
-        Context context = getContext();
+        Context context = getActivity();
         if (context != null) {
             DisplayMetrics metrics = context.getResources().getDisplayMetrics();
             return (int) (nestedView.getScrollY() / metrics.density);

@@ -17,7 +17,6 @@ import me.piebridge.bible.Bible;
 import me.piebridge.bible.R;
 import me.piebridge.bible.adapter.GridAdapter;
 import me.piebridge.bible.utils.BibleUtils;
-import me.piebridge.bible.utils.ThemeUtils;
 
 public class SelectVersionActivity extends ToolbarActivity implements GridAdapter.GridChecker, AdapterView.OnItemClickListener {
 
@@ -26,7 +25,6 @@ public class SelectVersionActivity extends ToolbarActivity implements GridAdapte
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeUtils.setTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_version);
         ActionBar actionBar = getSupportActionBar();

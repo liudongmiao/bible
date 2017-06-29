@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v4.content.SharedPreferencesCompat;
 
 import me.piebridge.bible.R;
 
@@ -37,8 +36,7 @@ public class ThemeUtils {
     public static void switchTheme(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         String theme = sp.getString(THEME, THEME_LIGHT);
-        SharedPreferences.Editor editor = sp.edit().putString(THEME, THEME_LIGHT.equals(theme) ? THEME_DARK : THEME_LIGHT);
-        SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
+        sp.edit().putString(THEME, THEME_LIGHT.equals(theme) ? THEME_DARK : THEME_LIGHT).apply();
     }
 
 }

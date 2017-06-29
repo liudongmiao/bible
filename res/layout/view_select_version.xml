@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:id="@+id/version_button"
-    style="@style/SelectableButton"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/version_button"
+    style="@style/SelectableButton"
     tools:showIn="@layout/activity_reading">
 
     <TextView

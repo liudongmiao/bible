@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
-import android.support.v4.content.SharedPreferencesCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -111,7 +110,7 @@ public class ReadingActivity extends AbstractReadingActivity {
             String chapter = BibleUtils.getChapter(osis);
             editor.putString(book, chapter);
             editor.putString("version", bible.getVersion());
-            SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
+            editor.apply();
         }
     }
 

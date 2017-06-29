@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="red"
+        android:summary="@string/wojinred"
+        android:title="@string/red" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="cross"
+        android:title="@string/xlink" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="shangti"
+        android:summary="@string/shangti_or_shen"
+        android:title="@string/shangti" />
+
+    <Preference
+        android:key="version"
+        android:summary="@string/versionName"
+        android:title="@string/version" />
+
+
+</PreferenceScreen>

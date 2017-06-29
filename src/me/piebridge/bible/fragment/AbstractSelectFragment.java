@@ -1,9 +1,9 @@
 package me.piebridge.bible.fragment;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +23,8 @@ import me.piebridge.bible.utils.BibleUtils;
 /**
  * Created by thom on 16/7/6.
  */
-public abstract class AbstractSelectFragment extends Fragment implements AdapterView.OnItemClickListener, GridAdapter.GridChecker {
+public abstract class AbstractSelectFragment extends Fragment
+        implements AdapterView.OnItemClickListener, GridAdapter.GridChecker {
 
     private static final int COLUMN_5 = 5;
 
@@ -49,7 +50,7 @@ public abstract class AbstractSelectFragment extends Fragment implements Adapter
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_select, container, false);
-        gridView = (GridView) view.findViewById(R.id.gridView);
+        gridView = view.findViewById(R.id.gridView);
         gridView.setNumColumns(COLUMN_5);
         SelectActivity selectActivity = wr.get();
         if (selectActivity != null) {

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
+import android.icu.text.LocaleDisplayNames;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,7 +24,6 @@ import android.widget.TextView;
 import me.piebridge.bible.Bible;
 import me.piebridge.bible.Provider;
 import me.piebridge.bible.R;
-import me.piebridge.bible.Settings;
 import me.piebridge.bible.adapter.ReadingAdapter;
 import me.piebridge.bible.bridge.ReadingBridge;
 import me.piebridge.bible.bridge.ReadingHandler;
@@ -73,6 +73,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
 
     private static final int REQUEST_CODE_SELECT = 1001;
     private static final int REQUEST_CODE_VERSION = 1002;
+    private static final int FONT_SIZE_DEFAULT = 14;
 
     protected ViewPager mPager;
     private AppBarLayout mAppBar;
@@ -106,7 +107,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
         mPager = (ViewPager) findViewById(R.id.pager);
         bible = Bible.getInstance(this);
         fontPath = BibleUtils.getFontPath(this);
-        mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount());
+        mAdapter = new ReadingAdapter(getFragmentManager(), retrieveOsisCount());
         initialize();
     }
 
@@ -257,11 +258,11 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
         }
         String version = bible.getVersion();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        bundle.putInt(FONT_SIZE, sp.getInt(Settings.FONTSIZE + "-" + version, Settings.FONTSIZE_MED));
-        bundle.putBoolean(CROSS, sp.getBoolean(Settings.XLINK, false));
-        bundle.putBoolean(SHANGTI, sp.getBoolean(Settings.SHANGTI, false));
+        bundle.putInt(FONT_SIZE, sp.getInt(FONT_SIZE + "-" + version, FONT_SIZE_DEFAULT));
+        bundle.putBoolean(CROSS, sp.getBoolean(CROSS, false));
+        bundle.putBoolean(SHANGTI, sp.getBoolean(SHANGTI, false));
         bundle.putString(VERSION, bible.getVersion());
-        bundle.putBoolean(RED, sp.getBoolean(Settings.RED, true));
+        bundle.putBoolean(RED, sp.getBoolean(RED, true));
         updateBundle(bundle);
         return bundle;
     }
