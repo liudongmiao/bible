@@ -90,12 +90,6 @@ public class ReadingActivity extends AbstractReadingActivity {
     }
 
     @Override
-    protected boolean switchTheme() {
-        saveOsis();
-        return super.switchTheme();
-    }
-
-    @Override
     protected void onPause() {
         saveOsis();
         super.onPause();

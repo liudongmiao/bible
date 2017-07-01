@@ -2,6 +2,15 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <ListPreference
+        android:layout_width="match_parent"
+        android:defaultValue="light"
+        android:entries="@array/theme_entries"
+        android:entryValues="@array/theme_values"
+        android:key="theme"
+        android:summary="%s"
+        android:title="@string/theme_title" />
+
     <SwitchPreference
         android:defaultValue="true"
         android:key="red"

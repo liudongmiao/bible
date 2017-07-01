@@ -1,7 +1,6 @@
 package me.piebridge.bible.utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -28,15 +27,9 @@ public class ThemeUtils {
         activity.setTheme(isDark(activity) ? R.style.dark_dialog : R.style.light_dialog);
     }
 
-    public static boolean isDark(Activity activity) {
+    private static boolean isDark(Activity activity) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
         return THEME_DARK.equals(sp.getString(THEME, THEME_LIGHT));
-    }
-
-    public static void switchTheme(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        String theme = sp.getString(THEME, THEME_LIGHT);
-        sp.edit().putString(THEME, THEME_LIGHT.equals(theme) ? THEME_DARK : THEME_LIGHT).apply();
     }
 
 }

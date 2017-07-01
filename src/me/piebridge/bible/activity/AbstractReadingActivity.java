@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import android.icu.text.LocaleDisplayNames;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -166,12 +165,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
         ThemeUtils.setTheme(this);
     }
 
-    protected boolean switchTheme() {
-        ThemeUtils.switchTheme(this);
-        recreate();
-        return true;
-    }
-
     protected void updateTaskDescription(String label) {
         if (mAppBar != null) {
             mAppBar.setExpanded(true);
@@ -304,16 +297,12 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, R.string.switch_theme, Menu.FIRST, R.string.switch_theme);
+        // FIXME
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.string.switch_theme) {
-            return switchTheme();
-        }
         return super.onOptionsItemSelected(item);
     }
 

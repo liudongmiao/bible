@@ -81,4 +81,8 @@
     <string name="menu_download">下載</string>
     <string name="menu_settings">設置</string>
     <string name="menu_about">關於</string>
+
+    <string name="theme_title">主題</string>
+    <string name="theme_light">淺色</string>
+    <string name="theme_dark">深色</string>
 </resources>
