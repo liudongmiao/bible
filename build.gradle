@@ -1,10 +1,13 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url 'https://dl.google.com/dl/android/maven2'
+        }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0'
     }
 }
 
@@ -31,10 +34,10 @@ def getBibleVersion = { ->
     }
 }
 
-project.ext.supportLibraryVersion = '25.4.0'
-project.ext.buildToolsVersion = '26.0.0'
+project.ext.supportLibraryVersion = '27.0.1'
+project.ext.buildToolsVersion = '27.0.0'
 project.ext.minSdkVersion = 14
-project.ext.targetSdkVersion = 26
+project.ext.targetSdkVersion = 27
 project.ext.versionCode = 86
 project.ext.simpleVersionName = getBibleVersion()
 project.ext.versionName = project.ext.simpleVersionName
@@ -109,9 +112,9 @@ android {
         }
 
         applicationVariants.all { variant ->
-            variant.outputs.each { output ->
+            variant.outputs.all { output ->
                 if (variant.buildType.name == 'release') {
-                    output.outputFile = rootProject.file("pb-v${rootProject.simpleVersionName}.apk")
+                    output.outputFileName = "bi-v${rootProject.simpleVersionName}.apk"
                 }
             }
         }
@@ -125,10 +128,19 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['StickyListHeaders-29f254.jar'])
-    compile "com.android.support:support-v13:${rootProject.supportLibraryVersion}"
-    compile "com.android.support:appcompat-v7:${rootProject.supportLibraryVersion}"
-    compile "com.android.support:cardview-v7:${rootProject.supportLibraryVersion}"
-    compile "com.android.support:preference-v14:${rootProject.supportLibraryVersion}"
-    compile "com.android.support:design:${rootProject.supportLibraryVersion}"
+    implementation fileTree(dir: 'libs', include: ['StickyListHeaders-29f254.jar'])
+    implementation "com.android.support:support-v13:${rootProject.supportLibraryVersion}"
+    implementation "com.android.support:appcompat-v7:${rootProject.supportLibraryVersion}"
+    implementation "com.android.support:cardview-v7:${rootProject.supportLibraryVersion}"
+    implementation "com.android.support:preference-v14:${rootProject.supportLibraryVersion}"
+    implementation "com.android.support:design:${rootProject.supportLibraryVersion}"
+}
+
+task copyReleaseApk(type: Copy) {
+    from file("build/outputs/apk/release/bi-v${rootProject.simpleVersionName}.apk")
+    into rootProject.file('.')
+}
+
+afterEvaluate {
+    assembleRelease.finalizedBy copyReleaseApk
 }
