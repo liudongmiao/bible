@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
@@ -31,7 +32,7 @@ public abstract class DrawerActivity extends AppCompatActivity
     private ActionBarDrawerToggle drawerToggle;
 
     protected void setupDrawer() {
-        drawer = (DrawerLayout) findViewById(R.id.drawer);
+        drawer = findViewById(R.id.drawer);
         if (drawerToggle == null) {
             drawerToggle = new ActionBarDrawerToggle(this, drawer, R.string.install,
                     R.string.uninstall);
@@ -44,7 +45,12 @@ public abstract class DrawerActivity extends AppCompatActivity
             actionBar.setHomeButtonEnabled(true);
         }
 
-        NavigationView navigation = (NavigationView) findViewById(R.id.navigation);
+        NavigationView navigation = findViewById(R.id.navigation);
+        // TODO
+        Menu menu = navigation.getMenu();
+        menu.removeItem(R.id.menu_highlight);
+        menu.removeItem(R.id.menu_notes);
+        menu.removeItem(R.id.menu_about);
         navigation.setCheckedItem(R.id.menu_reading);
         navigation.setNavigationItemSelectedListener(this);
 

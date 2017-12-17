@@ -1,10 +1,8 @@
 package me.piebridge.bible;
 
-import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Build;
 
 class DownloadInfo {
     public final long id;
@@ -17,9 +15,11 @@ class DownloadInfo {
         this.title = title;
     }
 
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     public static DownloadInfo getDownloadInfo(Context context, long id) {
         DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        if (dm == null) {
+            return null;
+        }
         Cursor cursor = dm.query(new DownloadManager.Query().setFilterById(id));
         if (!cursor.moveToFirst())
             return null;

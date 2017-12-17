@@ -825,24 +825,16 @@ public class Bible {
 
         ArrayList<Entry<String, String>> maps = new ArrayList<>();
 
-        for (Entry<String, String> entry : searchshort.entrySet()) {
-            maps.add(entry);
-        }
+        maps.addAll(searchshort.entrySet());
 
-        for (Entry<String, String> entry : searchfull.entrySet()) {
-            maps.add(entry);
-        }
+        maps.addAll(searchfull.entrySet());
 
         for (LinkedHashMap<String, String> map : getMaps(TYPE.HUMAN)) {
-            for (Entry<String, String> entry : map.entrySet()) {
-                maps.add(entry);
-            }
+            maps.addAll(map.entrySet());
         }
 
         for (LinkedHashMap<String, String> map : getMaps(TYPE.OSIS)) {
-            for (Entry<String, String> entry : map.entrySet()) {
-                maps.add(entry);
-            }
+            maps.addAll(map.entrySet());
         }
 
         if (book == null || "".equals(book)) {

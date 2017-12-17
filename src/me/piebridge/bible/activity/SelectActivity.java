@@ -72,12 +72,13 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
         selectChapter.setItems(prepareChapters(book), chapter);
         selectVerse.selectItems(prepareVerses(book, chapter));
 
-        mSwitch = (CompoundButton) findViewById(R.id.verse_switch);
+        mSwitch = findViewById(R.id.verse_switch);
         mSwitch.setChecked(PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SHOW_VERSES, true));
         mSwitch.setOnCheckedChangeListener(this);
 
-        mPager = (ViewPager) findViewById(R.id.pager);
-        ((TabLayout) findViewById(R.id.tabs)).setupWithViewPager(mPager);
+        mPager = findViewById(R.id.pager);
+        TabLayout tabs = findViewById(R.id.tabs);
+        tabs.setupWithViewPager(mPager);
 
         mAdapter = new SelectAdapter(getFragmentManager(), new String[] {
                 getString(R.string.book), getString(R.string.chapter), getString(R.string.verse)

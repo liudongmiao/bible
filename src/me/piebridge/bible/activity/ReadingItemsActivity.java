@@ -81,8 +81,8 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
 
     @Override
     protected void initializeHeader(View header) {
-        itemsView = (TextView) header.findViewById(R.id.items);
-        spinner = (Spinner) header.findViewById(R.id.spinner);
+        itemsView = header.findViewById(R.id.items);
+        spinner = header.findViewById(R.id.spinner);
         ArrayAdapter adapter = new HiddenArrayAdapter(this, R.layout.view_spinner_item, convertItems(items));
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);

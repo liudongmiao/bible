@@ -96,7 +96,7 @@ public class ReadingHandler extends Handler implements View.OnClickListener {
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
         if (isCross && !TextUtils.isEmpty(cross)) {
-            TextView messageView = (TextView) dialog.findViewById(android.R.id.message);
+            TextView messageView = dialog.findViewById(android.R.id.message);
             messageView.setTag(cross.contains("<") ? messageView.getText().toString() : cross);
             messageView.setOnClickListener(this);
         }

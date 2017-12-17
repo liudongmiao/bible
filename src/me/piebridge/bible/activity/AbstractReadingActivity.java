@@ -103,7 +103,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
         setContentView(getContentLayout());
 
         mHeader = findHeader();
-        mPager = (ViewPager) findViewById(R.id.pager);
+        mPager = findViewById(R.id.pager);
         bible = Bible.getInstance(this);
         fontPath = BibleUtils.getFontPath(this);
         mAdapter = new ReadingAdapter(getFragmentManager(), retrieveOsisCount());
@@ -134,11 +134,11 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
     }
 
     protected View findHeader() {
-        mAppBar = (AppBarLayout) findViewById(R.id.appbar);
+        mAppBar = findViewById(R.id.appbar);
         if (mAppBar != null) {
             mAppBar.addOnOffsetChangedListener(this);
         }
-        Toolbar toolbar = (Toolbar) findViewById(getToolbarLayout());
+        Toolbar toolbar = findViewById(getToolbarLayout());
         setSupportActionBar(toolbar);
         return toolbar;
     }
@@ -200,7 +200,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
     }
 
     protected final void initializeVersion(View header) {
-        versionView = (TextView) header.findViewById(R.id.version);
+        versionView = header.findViewById(R.id.version);
         View versionButton = header.findViewById(R.id.version_button);
         if (versionButton != null) {
             versionButton.setOnClickListener(this);

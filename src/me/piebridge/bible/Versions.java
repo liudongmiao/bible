@@ -55,12 +55,12 @@ public class Versions extends Activity {
     private SimpleAdapter adapter;
     private List<String> languages = new ArrayList<>();
     private List<String> names = new ArrayList<>();
-    private List<Map<String, String>> data = new ArrayList<>();
+    private final List<Map<String, String>> data = new ArrayList<>();
     private List<Map<String, String>> filtered = new ArrayList<>();
     private List<Map<String, String>> updated = new ArrayList<>();
     private List<Map<String, String>> matched = new ArrayList<>();
     private List<Map<String, String>> halfmatched = new ArrayList<>();
-    private List<HashMap<String, String>> versions = new ArrayList<>();
+    private final List<HashMap<String, String>> versions = new ArrayList<>();
     private HashMap<String, String> request = new HashMap<>();
 
     public static final int STOP = 0;
@@ -85,19 +85,19 @@ public class Versions extends Activity {
         setContentView(R.layout.versions);
         bible = Bible.getInstance(this);
 
-        list = (ListView) findViewById(android.R.id.list);
+        list = findViewById(android.R.id.list);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 @SuppressWarnings("unchecked")
                 Map<String, String> map = (Map<String, String>) adapter.getItem(position);
-                TextView action = (TextView) view.findViewById(R.id.action);
+                TextView action = view.findViewById(R.id.action);
                 clickVersion(action, map, false);
             }
 
         });
 
-        query = (EditText) findViewById(R.id.query);
+        query = findViewById(R.id.query);
         query.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int before, int after) {
@@ -117,7 +117,7 @@ public class Versions extends Activity {
 
         });
 
-        refresh = (ImageView) findViewById(R.id.refresh);
+        refresh = findViewById(R.id.refresh);
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -564,7 +564,7 @@ public class Versions extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = super.getView(position, convertView, parent);
-            final TextView action = (TextView) view.findViewById(R.id.action);
+            final TextView action = view.findViewById(R.id.action);
             if (action != null) {
                 action.setTag(position);
                 action.setOnClickListener(new View.OnClickListener() {
@@ -643,7 +643,7 @@ public class Versions extends Activity {
                     name = request.get("name");
                 }
             }
-            TextView tv = (TextView) convertView.findViewById(android.R.id.title);
+            TextView tv = convertView.findViewById(android.R.id.title);
             tv.setText(name.toUpperCase(Locale.US));
             return convertView;
         }

@@ -41,7 +41,7 @@ public class SelectVersionActivity extends ToolbarActivity implements GridAdapte
         GridAdapter versionAdapter = new GridAdapter(this, this, typeface);
         versionAdapter.setData(versions);
 
-        GridView gridView = (GridView) findViewById(R.id.gridView);
+        GridView gridView = findViewById(R.id.gridView);
         gridView.setNumColumns(1);
         gridView.setAdapter(versionAdapter);
         gridView.setOnItemClickListener(this);

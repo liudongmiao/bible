@@ -99,7 +99,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         updateSearch();
         updateVersion();
 
-        edittext = (AutoCompleteTextView) findViewById(R.id.searchtext);
+        edittext = findViewById(R.id.searchtext);
         edittext.setThreshold(1);
         edittext.setOnEditorActionListener(this);
         edittext.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line) {

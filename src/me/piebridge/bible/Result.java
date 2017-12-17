@@ -36,8 +36,7 @@ import java.util.Locale;
 
 import me.piebridge.bible.activity.ReadingItemsActivity;
 
-public class Result extends Activity
-{
+public class Result extends Activity {
     private final String TAG = "me.piebridge.bible$Search";
 
     private TextView textView = null;
@@ -64,15 +63,17 @@ public class Result extends Activity
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
-            case SHOWRESULT:
-                showResults((Cursor) msg.obj);
-                break;
+                case SHOWRESULT:
+                    showResults((Cursor) msg.obj);
+                    break;
             }
             return false;
         }
     });
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,8 +84,8 @@ public class Result extends Activity
             osisfrom = intent.getStringExtra("osisfrom");
             osisto = intent.getStringExtra("osisto");
             Log.d(TAG, "query: " + query + ", osisfrom: " + osisfrom + ", osisto: " + osisto);
-            textView = (TextView) findViewById(R.id.text);
-            listView = (ListView) findViewById(R.id.list);
+            textView = findViewById(R.id.text);
+            listView = findViewById(R.id.list);
             show();
         } else {
             finish();
@@ -101,7 +102,8 @@ public class Result extends Activity
                 }
                 version = bible.getVersion();
                 books = getQueryBooks(osisfrom, osisto);
-                if (!query.equals(prevQuery) || !books.equals(prevBooks) || !version.equals(prevVersion)) {
+                if (!query.equals(prevQuery) || !books.equals(prevBooks) ||
+                        !version.equals(prevVersion)) {
                     doSearch(query, books);
                 }
             }
@@ -112,7 +114,8 @@ public class Result extends Activity
 
         Log.d(TAG, "search \"" + query + "\" in version \"" + version + "\"");
 
-        Uri uri = Provider.CONTENT_URI_SEARCH.buildUpon().appendQueryParameter("books", books).appendEncodedPath(query).fragment(version).build();
+        Uri uri = Provider.CONTENT_URI_SEARCH.buildUpon().appendQueryParameter("books",
+                books).appendEncodedPath(query).fragment(version).build();
         Cursor cursor = null;
         try {
             cursor = getContentResolver().query(uri, null, null, null, null);
@@ -123,10 +126,12 @@ public class Result extends Activity
         if (osis != null) {
             String human = bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, osis));
             String chapters = bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, osis));
-            String unformatted = getString(R.string.chapters, new Object[] { human, chapters.split(",").length });
-            MatrixCursor extras = new MatrixCursor(new String[] { "_id", "book", "human", "verse", "unformatted" });
-            extras.addRow(new String[] { "-1", osis, human, "0", unformatted });
-            Cursor[] cursors = { extras, cursor };
+            String unformatted =
+                    getString(R.string.chapters, new Object[] {human, chapters.split(",").length});
+            MatrixCursor extras =
+                    new MatrixCursor(new String[] {"_id", "book", "human", "verse", "unformatted"});
+            extras.addRow(new String[] {"-1", osis, human, "0", unformatted});
+            Cursor[] cursors = {extras, cursor};
             cursor = new MergeCursor(cursors);
         }
         prevQuery = query;
@@ -140,38 +145,39 @@ public class Result extends Activity
         dismiss();
         if (cursor == null) {
             textView.setText(getString(R.string.search_no_results, new Object[] {
-                query,
-                humanfrom,
-                humanto,
-                bible.getVersionName(version)
+                    query,
+                    humanfrom,
+                    humanto,
+                    bible.getVersionName(version)
             }));
             return;
         } else {
             int count = cursor.getCount();
-            String countString = getResources().getQuantityString(R.plurals.search_results, count, new Object[] {
-                count,
-                query,
-                humanfrom,
-                humanto,
-                bible.getVersionName(version)
-            });
+            String countString =
+                    getResources().getQuantityString(R.plurals.search_results, count, new Object[] {
+                            count,
+                            query,
+                            humanfrom,
+                            humanto,
+                            bible.getVersionName(version)
+                    });
             textView.setText(countString);
         }
 
         String[] from = new String[] {
-            Provider.COLUMN_HUMAN,
-            Provider.COLUMN_VERSE,
-            Provider.COLUMN_UNFORMATTED,
+                Provider.COLUMN_HUMAN,
+                Provider.COLUMN_VERSE,
+                Provider.COLUMN_UNFORMATTED,
         };
 
         int[] to = new int[] {
-            R.id.human,
-            R.id.verse,
-            R.id.unformatted,
+                R.id.human,
+                R.id.verse,
+                R.id.unformatted,
         };
 
         adapter = new SimpleCursorAdapter(this,
-            R.layout.item, cursor, from, to);
+                R.layout.item, cursor, from, to);
         adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
             public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
                 int verseIndex = cursor.getColumnIndexOrThrow(Provider.COLUMN_VERSE);
@@ -180,9 +186,10 @@ public class Result extends Activity
                     if (chapterVerse[0] == 0) {
                         return true;
                     }
-                    String book = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_BOOK));
+                    String book =
+                            cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_BOOK));
                     String string = getString(R.string.search_result_verse,
-                        new Object[] {getChapter(book, chapterVerse[0]), chapterVerse[1]});
+                            new Object[] {getChapter(book, chapterVerse[0]), chapterVerse[1]});
                     TextView textView = (TextView) view;
                     textView.setText(string);
                     return true;
@@ -194,7 +201,7 @@ public class Result extends Activity
                         context = context.replaceAll("「", "“").replaceAll("」", "”");
                         context = context.replaceAll("『", "‘").replaceAll("』", "’");
                     }
-                    ((TextView)view).setText(context, TextView.BufferType.SPANNABLE);
+                    ((TextView) view).setText(context, TextView.BufferType.SPANNABLE);
                     Spannable span = (Spannable) ((TextView) view).getText();
                     String lowercontext = context.toLowerCase(Locale.US);
                     String lowerquery = query.toLowerCase(Locale.US);
@@ -204,7 +211,8 @@ public class Result extends Activity
                         if (index == -1) {
                             break;
                         }
-                        span.setSpan(new BackgroundColorSpan(color), index, index + query.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        span.setSpan(new BackgroundColorSpan(color), index, index + query.length(),
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                     return true;
                 }
@@ -224,7 +232,8 @@ public class Result extends Activity
     }
 
     private String getChapter(String book, int chapterId) {
-        String[] chapters = bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, book)).split(",");
+        String[] chapters =
+                bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, book)).split(",");
         String chapter;
         if (chapterId < 1) {
             chapter = chapters[0];
@@ -239,7 +248,8 @@ public class Result extends Activity
 
     private boolean showVerse(Cursor verseCursor) {
         String book = verseCursor.getString(verseCursor.getColumnIndexOrThrow(Provider.COLUMN_BOOK));
-        String verse = verseCursor.getString(verseCursor.getColumnIndexOrThrow(Provider.COLUMN_VERSE));
+        String verse =
+                verseCursor.getString(verseCursor.getColumnIndexOrThrow(Provider.COLUMN_VERSE));
         int[] chapterVerse = bible.getChapterVerse(verse);
         showChapter(book, getChapter(book, chapterVerse[0]), chapterVerse[1]);
         return true;
@@ -248,7 +258,8 @@ public class Result extends Activity
     private void showChapter(String book, String chapter, int verse) {
         Intent intent = new Intent(this, ReadingItemsActivity.class);
         ArrayList<OsisItem> items = new ArrayList<>();
-        Log.d(TAG, String.format(Locale.US, "book: %s, chapter: %s, verse: %d", book, chapter, verse));
+        Log.d(TAG,
+                String.format(Locale.US, "book: %s, chapter: %s, verse: %d", book, chapter, verse));
         if (chapter.equals("0")) {
             items.add(new OsisItem(book, 1));
         } else {
@@ -285,13 +296,14 @@ public class Result extends Activity
             frombook = tobook;
             tobook = swap;
         }
-        String queryBooks = String.format("'%s'", bible.get(Bible.TYPE.OSIS, frombook));
+        StringBuilder queryBooks = new StringBuilder();
+        queryBooks.append(String.format("'%s'", bible.get(Bible.TYPE.OSIS, frombook)));
         for (int i = frombook + 1; i <= tobook; i++) {
-            queryBooks += String.format(", '%s'", bible.get(Bible.TYPE.OSIS, i));
+            queryBooks.append(String.format(", '%s'", bible.get(Bible.TYPE.OSIS, i)));
         }
         humanfrom = bible.get(Bible.TYPE.HUMAN, frombook);
         humanto = bible.get(Bible.TYPE.HUMAN, tobook);
-        return queryBooks;
+        return queryBooks.toString();
     }
 
     private void show() {

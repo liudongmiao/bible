@@ -40,7 +40,7 @@ public class GridAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = super.getView(position, convertView, parent);
-        TextView textView = (TextView) view.findViewById(R.id.text);
+        TextView textView = view.findViewById(R.id.text);
         String item = getItem(position);
         String human = gridChecker.getGridName(item);
         if (textColor == null) {

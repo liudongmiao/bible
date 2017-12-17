@@ -26,7 +26,7 @@ public abstract class ToolbarActivity extends AppCompatActivity {
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
-        Toolbar toolbar = (Toolbar) findViewById(getToolbarActionbarId());
+        Toolbar toolbar = findViewById(getToolbarActionbarId());
         titleView = toolbar.findViewById(getToolbarTitleId());
         setTitle(getTitle());
         setSupportActionBar(toolbar);

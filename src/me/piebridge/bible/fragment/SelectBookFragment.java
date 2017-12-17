@@ -26,8 +26,8 @@ public class SelectBookFragment extends AbstractSelectFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_select_book, container, false);
-        left = (GridView) view.findViewById(R.id.left);
-        right = (GridView) view.findViewById(R.id.right);
+        left = view.findViewById(R.id.left);
+        right = view.findViewById(R.id.right);
         SelectActivity selectActivity = wr.get();
         if (selectActivity != null) {
             left.setAdapter(new GridAdapter(selectActivity, this, typeface));

@@ -30,10 +30,10 @@ public class ReadingActivity extends AbstractReadingActivity {
     @Override
     protected void initializeHeader(View header) {
         setupDrawer();
-        bookView = (TextView) header.findViewById(R.id.book);
+        bookView = header.findViewById(R.id.book);
         header.findViewById(R.id.book_button).setOnClickListener(this);
 
-        chapterView = (TextView) header.findViewById(R.id.chapter);
+        chapterView = header.findViewById(R.id.chapter);
         header.findViewById(R.id.chapter_button).setOnClickListener(this);
 
         initializeVersion(header);
