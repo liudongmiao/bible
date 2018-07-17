@@ -1196,7 +1196,7 @@ public class Bible {
 
     public static final String JSON = "versions.json";
 
-    String getLocalVersions() throws IOException {
+    public String getLocalVersions() throws IOException {
         InputStream is = null;
         File file = new File(mContext.getFilesDir(), JSON);
         if (file.isFile()) {
@@ -1209,7 +1209,7 @@ public class Bible {
         return json;
     }
 
-    String getRemoteVersions() throws IOException {
+    public String getRemoteVersions() throws IOException {
         SharedPreferences sp = mContext.getSharedPreferences("json", 0);
         StringBuilder etag = new StringBuilder(sp.getString(JSON + "_etag", ""));
 

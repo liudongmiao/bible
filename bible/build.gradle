@@ -1,0 +1,96 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion rootProject.targetSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    defaultConfig {
+        resConfigs "en", "zh-rCN", "zh-rTW"
+        versionCode rootProject.versionCode
+        versionName rootProject.versionName
+        minSdkVersion rootProject.minSdkVersion
+        maxSdkVersion rootProject.targetSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    applicationVariants.all { variant ->
+        variant.resValue "string", "versionName", variant.versionName
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+        androidTest.setRoot('tests')
+    }
+
+    if (rootProject.file('ant.properties').exists()) {
+        Properties properties = new Properties()
+        properties.load(new FileInputStream(rootProject.file('ant.properties')))
+
+        signingConfigs {
+            release {
+                storeFile file(properties['key.store'])
+                storePassword properties['key.store.password']
+                keyAlias properties['key.alias']
+                keyPassword properties['key.alias.password']
+            }
+        }
+
+        buildTypes {
+            release {
+                signingConfig signingConfigs.release
+            }
+            debug {
+                signingConfig signingConfigs.release
+            }
+        }
+
+        applicationVariants.all { variant ->
+            variant.outputs.all { output ->
+                if (variant.buildType.name == 'release') {
+                    output.outputFileName = "bi-v${rootProject.simpleVersionName}.apk"
+                }
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['StickyListHeaders-29f254.jar'])
+    implementation "com.android.support:support-v13:${rootProject.supportLibraryVersion}"
+    implementation "com.android.support:appcompat-v7:${rootProject.supportLibraryVersion}"
+    implementation "com.android.support:cardview-v7:${rootProject.supportLibraryVersion}"
+    implementation "com.android.support:preference-v14:${rootProject.supportLibraryVersion}"
+    implementation "com.android.support:design:${rootProject.supportLibraryVersion}"
+}
+
+task copyReleaseApk(type: Copy) {
+    from file("build/outputs/apk/release/bi-v${rootProject.simpleVersionName}.apk")
+    into rootProject.file('.')
+}
+
+afterEvaluate {
+    assembleRelease.finalizedBy copyReleaseApk
+}

@@ -4,7 +4,7 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.database.Cursor;
 
-class DownloadInfo {
+public class DownloadInfo {
     public final long id;
     public final int status;
     public final String title;

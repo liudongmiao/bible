@@ -1,4 +1,4 @@
-package me.piebridge.bible;
+package me.piebridge.bible.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -44,7 +44,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class Versions extends Activity {
+import me.piebridge.bible.Bible;
+import me.piebridge.bible.DownloadInfo;
+import me.piebridge.bible.Log;
+import me.piebridge.bible.R;
+
+public class VersionsActivity extends Activity {
 
     private static long mtime = 0;
 
@@ -70,15 +75,11 @@ public class Versions extends Activity {
     public static final int COMPLETE = 4;
     public static final int CHECKZIP = 5;
 
-    public static final String CHECKVERSION = "checkversion";
-    public static final String TAG = "me.piebridge.bible$Versions";
+    public static final String TAG = "me.piebridge.bible$VersionsActivity";
 
     private static Handler resume = null;
     private static final Map<String, Integer> completed = new HashMap<>();
     private static final Map<String, String> queue = new HashMap<>();
-
-    private boolean checkversion;
-    private boolean showing = false;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -281,39 +282,10 @@ public class Versions extends Activity {
         if (completed.size() > 0) {
             handler.sendEmptyMessage(COMPLETE);
         }
-        if (!showing) {
-            final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-            Map<String, ?> map = sp.getAll();
-            if (map.containsKey(CHECKVERSION)) {
-                checkversion = Boolean.valueOf(String.valueOf(map.get(CHECKVERSION)));
-            } else {
-                areYouSure(getString(R.string.checkversion),
-                        getString(R.string.checkversion_detail, getString(android.R.string.yes)),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                checkversion = true;
-                                showing = false;
-                                sp.edit().putBoolean(CHECKVERSION, true).apply();
-                                handler.sendEmptyMessage(START);
-                            }
-                        }, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                checkversion = false;
-                                showing = false;
-                                sp.edit().putBoolean(CHECKVERSION, false).apply();
-                            }
-                        });
-                showing = true;
-            }
-        }
-        if (!showing && Boolean.TRUE.equals(checkversion)) {
-            long now = System.currentTimeMillis() / 1000;
-            if (mtime == 0 || mtime - now > 86400) {
-                mtime = now;
-                handler.sendEmptyMessageDelayed(START, 400);
-            }
+        long now = System.currentTimeMillis() / 1000;
+        if (mtime == 0 || mtime - now > 86400) {
+            mtime = now;
+            handler.sendEmptyMessageDelayed(START, 400);
         }
     }
 
@@ -438,8 +410,8 @@ public class Versions extends Activity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         resume = null;
     }
 
@@ -494,9 +466,9 @@ public class Versions extends Activity {
     }
 
     void clickVersion(final TextView view, final Map<String, String> map, final boolean button) {
-        final String code = (String) map.get("code");
-        final String name = (String) map.get("name");
-        final String action = (String) map.get("action");
+        final String code = map.get("code");
+        final String name = map.get("name");
+        final String action = map.get("action");
         final String text = view.getText().toString();
         if (action == null) {
             bible.email(this);
@@ -736,8 +708,8 @@ public class Versions extends Activity {
 
     void download(final Map<String, String> map) {
         String id = null;
-        final String path = (String) map.get("path");
-        final String code = (String) map.get("code");
+        final String path = map.get("path");
+        final String code = map.get("code");
         DownloadInfo info = bible.download(path);
         if (info != null) {
             id = String.valueOf(info.id);

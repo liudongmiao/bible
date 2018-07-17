@@ -17,7 +17,6 @@ import android.view.WindowManager;
 
 import me.piebridge.bible.R;
 import me.piebridge.bible.Search;
-import me.piebridge.bible.Versions;
 
 /**
  * Created by thom on 16/7/24.
@@ -81,7 +80,7 @@ public abstract class DrawerActivity extends AppCompatActivity
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.menu_download:
-                startActivity(new Intent(this, Versions.class));
+                startActivity(new Intent(this, VersionsActivity.class));
                 break;
             default:
                 break;

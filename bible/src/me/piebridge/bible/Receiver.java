@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import me.piebridge.bible.activity.VersionsActivity;
+
 public class Receiver extends BroadcastReceiver {
 
     @Override
@@ -32,12 +34,12 @@ public class Receiver extends BroadcastReceiver {
             return;
         }
         if (info.status != DownloadManager.STATUS_SUCCESSFUL) {
-            Versions.onDownloadComplete(info);
+            VersionsActivity.onDownloadComplete(info);
         } else {
             Bible.getInstance(context).checkBibleData(false, new Runnable() {
                 @Override
                 public void run() {
-                    Versions.onDownloadComplete(info);
+                    VersionsActivity.onDownloadComplete(info);
                 }
             });
         }

@@ -40,7 +40,7 @@
             android:theme="@style/light"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".Versions"
+            android:name=".activity.VersionsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>

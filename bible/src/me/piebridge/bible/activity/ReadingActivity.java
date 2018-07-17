@@ -90,9 +90,9 @@ public class ReadingActivity extends AbstractReadingActivity {
     }
 
     @Override
-    protected void onPause() {
+    protected void onStop() {
         saveOsis();
-        super.onPause();
+        super.onStop();
     }
 
     private void saveOsis() {
