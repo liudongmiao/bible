@@ -3,15 +3,24 @@
 
     <color name="grey_900">#ff212121</color>
     <color name="grey_850">#ff303030</color>
+    <color name="grey_300">#ffe0e0e0</color>
     <color name="grey_50">#fffafafa</color>
 
-    <color name="red_200">#ffef9a9a</color>
-    <color name="red_500">#fff44336</color>
+    <color name="text_dark">#ffe5e5e5</color>
+    <color name="text_light">#ff252525</color>
 
-    <color name="yellow_200">#fffff59d</color>
-    <color name="yellow_500">#ffffeb3b</color>
+    <color name="red_dark">#ffffbab8</color>
+    <color name="red_light">#ffc6280d</color>
 
-    <color name="primary">#ff0c3d84</color>
-    <color name="primary_dark">#ff082a5c</color>
+    <!-- 55ffcf0f -->
+    <color name="yellow_dark">#4dffcf0f</color>
+    <color name="yellow_light">#99fee479</color>
+
+    <!-- 551887ff, 663e9bff -->
+    <color name="blue_dark">#4d1887ff</color>
+    <color name="blue_light">#997ebcfe</color>
+
+    <color name="primary">#ff1859a3</color>
+    <color name="primary_dark">#ff0c3d84</color>
 
 </resources>

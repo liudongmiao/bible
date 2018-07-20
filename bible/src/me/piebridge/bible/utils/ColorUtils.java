@@ -12,15 +12,27 @@ import java.util.Locale;
  */
 public class ColorUtils {
 
-    private static DecimalFormat DF = new DecimalFormat("#.##");
+    private static DecimalFormat DF = new DecimalFormat("#.###");
 
     private static final int A = 24;
     private static final int R = 16;
     private static final int G = 8;
     private static final double MAX = 255.0;
+    private static final double A100 = 100.0;
+    private static final double A1000 = 1000.0;
 
     private ColorUtils() {
 
+    }
+
+    private static double cssAlpha(int alpha) {
+        // https://drafts.csswg.org/cssom/#serializing-css-values
+        double rounded = Math.round(alpha * A100 / MAX) / A100;
+        if (Math.round(rounded * MAX) == alpha) {
+            return rounded;
+        } else {
+            return Math.round(alpha * A1000 / MAX) / A1000;
+        }
     }
 
     public static String rgba(int color) {
@@ -29,7 +41,11 @@ public class ColorUtils {
         int r = (color >>> R) & 0xff;
         int g = (color >>> G) & 0xff;
         int b = color & 0xff;
-        return String.format(Locale.US, "rgba(%d, %d, %d, %s)", r, g, b, DF.format(a / MAX));
+        if (a == 0xff) {
+            return String.format(Locale.US, "#%02x%02x%02x", r, g, b);
+        } else {
+            return String.format(Locale.US, "rgba(%d, %d, %d, %s)", r, g, b, DF.format(cssAlpha(a)));
+        }
     }
 
     public static String blend(int source, int drop) {
@@ -49,7 +65,7 @@ public class ColorUtils {
             dropA = 0xff;
         }
 
-        // blend: WebKit/Source/platform/graphics/Color.cpp
+        // blend: third_party/blink/renderer/platform/graphics/color.cc
         int d = 0xff * (sourceA + dropA) - sourceA * dropA;
         int targetA = d / 0xff;
         int targetR = (sourceR * sourceA * (0xff - dropA) + 0xff * dropA * dropR) / d;
@@ -57,24 +73,10 @@ public class ColorUtils {
         int targetB = (sourceB * sourceA * (0xff - dropA) + 0xff * dropA * dropB) / d;
 
         return String.format(Locale.US, "rgba(%d, %d, %d, %s)", targetR, targetG, targetB,
-                DF.format(targetA / MAX));
+                DF.format(cssAlpha(targetA)));
     }
 
-    public static int replaceAlpha(int source, int alpha) {
-        return (source & 0xffffff) | (alpha & 0xff000000);
-    }
-
-    public static int fixOpacity(int color) {
-        int a = (color >>> A) & 0xff;
-        if (a == 0xff) {
-            // use 87% opacity
-            return replaceAlpha(color, 0xde000000);
-        } else {
-            return color;
-        }
-    }
-
-    public static int resolveColor(Context context, int resId) {
+    public static int resolve(Context context, int resId) {
         TypedValue tv = new TypedValue();
         context.getTheme().resolveAttribute(resId, tv, true);
         if (isColor(tv.type)) {

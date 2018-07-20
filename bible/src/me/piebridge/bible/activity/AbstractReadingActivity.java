@@ -37,7 +37,9 @@ import me.piebridge.bible.utils.ThemeUtils;
 /**
  * Created by thom on 15/10/18.
  */
-public abstract class AbstractReadingActivity extends DrawerActivity implements ReadingBridge.Bridge, View.OnClickListener, ViewPager.OnPageChangeListener, AppBarLayout.OnOffsetChangedListener {
+public abstract class AbstractReadingActivity extends DrawerActivity
+        implements ReadingBridge.Bridge, View.OnClickListener, ViewPager.OnPageChangeListener,
+        AppBarLayout.OnOffsetChangedListener {
 
     public static final String CSS = "css";
     public static final String OSIS = "osis";
@@ -60,13 +62,15 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
     public static final String SEARCH = "search";
     public static final String HIGHLIGHTED = "highlighted";
     public static final String RED = "red";
-    public static final String COLOR_BACKGROUND = "colorBackground";
+
     public static final String COLOR_TEXT = "colorText";
     public static final String COLOR_LINK = "colorLink";
     public static final String COLOR_RED = "colorRed";
-    public static final String COLOR_SELECTED = "colorSelected";
-    public static final String COLOR_HIGHLIGHT = "colorHighlight";
-    public static final String COLOR_HIGHLIGHT_SELECTED = "colorHighlightSelected";
+
+    public static final String COLOR_BACKGROUND = "colorBackground";
+    public static final String COLOR_BACKGROUND_HIGHLIGHT = "backgroundHighlight";
+    public static final String COLOR_BACKGROUND_SELECTION = "backgroundSelection";
+    public static final String COLOR_BACKGROUND_HIGHLIGHT_SELECTION = "backgroundHighlightSelection";
 
     protected static final int POSITION_UNKNOWN = -1;
 
@@ -83,20 +87,25 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
 
     private Handler handler = new ReadingHandler(this);
 
-    private String colorBackground;
-    private String colorText;
-    private String colorLink;
-    private String colorRed;
-    private String colorSelected;
-    private String colorHighlight;
-    private String colorHighLightSelected;
+    private String mTextColorNormal;
+    private String mTextColorLink;
+    private String mTextColorRed;
+
+    private String mBackground;
+    private String mBackgroundHighlight;
+    private String mBackgroundSelection;
+    private String mBackgroundHighlightSelection;
+
     private String fontPath;
 
     protected Bible bible;
     private TextView versionView;
 
+    private boolean mDark;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mDark = ThemeUtils.isDark(this);
         setTheme();
         resolveColors();
         super.onCreate(savedInstanceState);
@@ -114,23 +123,31 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
     public void onRestart() {
         super.onRestart();
         fontPath = BibleUtils.getFontPath(this);
-        if (!ObjectUtils.isIdentical(fontPath, mAdapter.getData(getCurrentPosition()).getString(FONT_PATH))) {
+        String oldFontPath = mAdapter.getData(getCurrentPosition()).getString(FONT_PATH);
+        if (!ObjectUtils.isIdentical(fontPath, oldFontPath)) {
             refresh();
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (ThemeUtils.isDark(this) != mDark) {
+            recreate();
+        }
+    }
+
     private void resolveColors() {
-        colorBackground = ColorUtils.rgba(ColorUtils.resolveColor(this, android.R.attr.colorBackground));
-        colorLink = ColorUtils.rgba(ColorUtils.resolveColor(this, android.R.attr.textColorLink));
-        int textColorHighlight = ColorUtils.resolveColor(this, android.R.attr.textColorHighlight);
-        int textColorPrimary = ColorUtils.resolveColor(this, android.R.attr.textColorPrimary);
-        int red = ColorUtils.replaceAlpha(ColorUtils.resolveColor(this, R.attr.colorRed), textColorPrimary);
-        int highlight = ColorUtils.replaceAlpha(ColorUtils.resolveColor(this, R.attr.colorYellow), textColorHighlight);
-        colorText = ColorUtils.rgba(ColorUtils.fixOpacity(textColorPrimary));
-        colorSelected = ColorUtils.rgba(textColorHighlight);
-        colorRed = ColorUtils.rgba(red);
-        colorHighlight = ColorUtils.rgba(highlight);
-        colorHighLightSelected = ColorUtils.blend(highlight, textColorHighlight);
+        mTextColorNormal = ColorUtils.rgba(ColorUtils.resolve(this, R.attr.textColorNormal));
+        mTextColorLink = ColorUtils.rgba(ColorUtils.resolve(this, android.R.attr.textColorLink));
+        mTextColorRed = ColorUtils.rgba(ColorUtils.resolve(this, R.attr.textColorRed));
+
+        mBackground = ColorUtils.rgba(ColorUtils.resolve(this, android.R.attr.colorBackground));
+        int backgroundHighlight = ColorUtils.resolve(this, R.attr.backgroundHighlight);
+        int backgroundSelection = ColorUtils.resolve(this, R.attr.backgroundSelection);
+        mBackgroundHighlight = ColorUtils.rgba(backgroundHighlight);
+        mBackgroundSelection = ColorUtils.rgba(backgroundSelection);
+        mBackgroundHighlightSelection = ColorUtils.blend(backgroundHighlight, backgroundSelection);
     }
 
     protected View findHeader() {
@@ -232,12 +249,12 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
             if (cursor != null) {
                 cursor.moveToFirst();
                 bundle.putInt(ID, cursor.getInt(cursor.getColumnIndex(BaseColumns._ID)));
-                String curr = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_OSIS));
+                String curr = getString(cursor, Provider.COLUMN_OSIS);
                 bundle.putString(CURR, curr);
-                bundle.putString(NEXT, cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_NEXT)));
-                bundle.putString(PREV, cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_PREVIOUS)));
-                bundle.putString(HUMAN, cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN)));
-                bundle.putString(CONTENT, cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CONTENT)));
+                bundle.putString(NEXT, getString(cursor, Provider.COLUMN_NEXT));
+                bundle.putString(PREV, getString(cursor, Provider.COLUMN_PREVIOUS));
+                bundle.putString(HUMAN, getString(cursor, Provider.COLUMN_HUMAN));
+                bundle.putString(CONTENT, getString(cursor, Provider.COLUMN_CONTENT));
                 bundle.putString(OSIS, curr);
                 bundle.putString(HIGHLIGHTED, bible.getHighlight(curr));
                 bundle.putStringArray(NOTES, bible.getNoteVerses(curr));
@@ -258,6 +275,10 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
         bundle.putBoolean(RED, sp.getBoolean(RED, true));
         updateBundle(bundle);
         return bundle;
+    }
+
+    private String getString(Cursor cursor, String columnName) {
+        return cursor.getString(cursor.getColumnIndexOrThrow(columnName));
     }
 
     private void prepareNext(int position, String osis) {
@@ -309,24 +330,27 @@ public abstract class AbstractReadingActivity extends DrawerActivity implements 
     @Override
     public void showAnnotation(String link, String annotation) {
         LogUtils.d("link: " + link + ", annotation: " + annotation);
-        handler.sendMessage(handler.obtainMessage(ReadingHandler.SHOW_ANNOTATION, new ReadingHandler.Annotation(link, annotation, getCurrentOsis())));
+        handler.sendMessage(handler.obtainMessage(ReadingHandler.SHOW_ANNOTATION,
+                new ReadingHandler.Annotation(link, annotation, getCurrentOsis())));
     }
 
     @Override
     public void showNote(String verse) {
         LogUtils.d("show note, verse: " + verse);
-        handler.sendMessage(handler.obtainMessage(ReadingHandler.SHOW_NOTE, new ReadingHandler.Note(verse, getCurrentOsis())));
+        handler.sendMessage(handler.obtainMessage(ReadingHandler.SHOW_NOTE,
+                new ReadingHandler.Note(verse, getCurrentOsis())));
     }
 
     @Override
     public void updateBundle(Bundle bundle) {
-        bundle.putString(COLOR_BACKGROUND, colorBackground);
-        bundle.putString(COLOR_TEXT, colorText);
-        bundle.putString(COLOR_LINK, colorLink);
-        bundle.putString(COLOR_RED, colorRed);
-        bundle.putString(COLOR_HIGHLIGHT, colorHighlight);
-        bundle.putString(COLOR_SELECTED, colorSelected);
-        bundle.putString(COLOR_HIGHLIGHT_SELECTED, colorHighLightSelected);
+        bundle.putString(COLOR_TEXT, mTextColorNormal);
+        bundle.putString(COLOR_LINK, mTextColorLink);
+        bundle.putString(COLOR_RED, mTextColorRed);
+
+        bundle.putString(COLOR_BACKGROUND, mBackground);
+        bundle.putString(COLOR_BACKGROUND_HIGHLIGHT, mBackgroundHighlight);
+        bundle.putString(COLOR_BACKGROUND_SELECTION, mBackgroundSelection);
+        bundle.putString(COLOR_BACKGROUND_HIGHLIGHT_SELECTION, mBackgroundHighlightSelection);
         if (!TextUtils.isEmpty(fontPath)) {
             bundle.putString(FONT_PATH, fontPath);
         }

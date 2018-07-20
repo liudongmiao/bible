@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">聖經</string>
+    <string name="app_name">簡讀聖經</string>
     <string name="search_hint">經句或關鍵詞</string>
     <string name="search_description">搜尋聖經章節，或者關鍵詞</string>
     <string name="search_no_results">在“%4$s”本中從“%2$s”至“%3$s”無法找到“%1$s”。</string>

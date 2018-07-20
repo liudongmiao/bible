@@ -25,11 +25,11 @@ import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 
 import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_BACKGROUND;
-import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_HIGHLIGHT;
-import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_HIGHLIGHT_SELECTED;
+import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_BACKGROUND_HIGHLIGHT;
+import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_BACKGROUND_HIGHLIGHT_SELECTION;
+import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_BACKGROUND_SELECTION;
 import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_LINK;
 import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_RED;
-import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_SELECTED;
 import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_TEXT;
 import static me.piebridge.bible.activity.AbstractReadingActivity.CONTENT;
 import static me.piebridge.bible.activity.AbstractReadingActivity.CROSS;
@@ -163,12 +163,12 @@ public class ReadingFragment extends Fragment {
         String backgroundColor = getString(bundle, COLOR_BACKGROUND);
         String textColor = getString(bundle, COLOR_TEXT);
         String linkColor = getString(bundle, COLOR_LINK);
-        String selectedColor = getString(bundle, COLOR_SELECTED);
-        String highlightColor = getString(bundle, COLOR_HIGHLIGHT);
-        String highlightSelectedColor = getString(bundle, COLOR_HIGHLIGHT_SELECTED);
+        String backgroundSelection = getString(bundle, COLOR_BACKGROUND_SELECTION);
+        String backgroundHighlight = getString(bundle, COLOR_BACKGROUND_HIGHLIGHT);
+        String backgroundHighlightSelection = getString(bundle, COLOR_BACKGROUND_HIGHLIGHT_SELECTION);
         return String.format(template, fontSize, css,
                 backgroundColor, textColor, linkColor,
-                selectedColor, highlightColor, highlightSelectedColor,
+                backgroundSelection, backgroundHighlight, backgroundHighlightSelection,
                 verseBegin, verseStart, verseEnd,
                 search, selectedVerses, highlighted,
                 Arrays.toString(notes), title, body);

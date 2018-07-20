@@ -45,11 +45,6 @@ public abstract class DrawerActivity extends AppCompatActivity
         }
 
         NavigationView navigation = findViewById(R.id.navigation);
-        // TODO
-        Menu menu = navigation.getMenu();
-        menu.removeItem(R.id.menu_highlight);
-        menu.removeItem(R.id.menu_notes);
-        menu.removeItem(R.id.menu_about);
         navigation.setCheckedItem(R.id.menu_reading);
         navigation.setNavigationItemSelectedListener(this);
 

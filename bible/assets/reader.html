@@ -13,6 +13,10 @@
             text-justify: distribute;
         }
 
+        .selection, .highlight {
+            padding-top: 0.21em;
+        }
+
         h1 {
             font-size: 2em;
         }
@@ -32,7 +36,7 @@
             color: %s;
         }
 
-        .selected {
+        .selection, ::selection {
             background: %s;
         }
 
@@ -40,7 +44,7 @@
             background: %s;
         }
 
-        .highlight.selected {
+        .highlight.selection {
             background: %s;
         }
     </style>

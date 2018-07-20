@@ -17,8 +17,11 @@
         <item name="popupTheme">@style/ThemeOverlay.AppCompat</item>
         <item name="preferenceTheme">@style/preference</item>
         <item name="android:colorBackground">@color/grey_850</item>
-        <item name="colorRed">@color/red_200</item>
-        <item name="colorYellow">@color/yellow_200</item>
+        <item name="android:textColorPrimary">@color/text_dark</item>
+        <item name="textColorNormal">?android:attr/textColorPrimary</item>
+        <item name="textColorRed">@color/red_dark</item>
+        <item name="backgroundHighlight">@color/yellow_dark</item>
+        <item name="backgroundSelection">@color/blue_dark</item>
     </style>
 
     <style name="light" parent="@style/Theme.AppCompat.Light.NoActionBar">
@@ -27,8 +30,11 @@
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="preferenceTheme">@style/preference</item>
         <item name="android:colorBackground">@color/grey_50</item>
-        <item name="colorRed">@color/red_500</item>
-        <item name="colorYellow">@color/yellow_500</item>
+        <item name="android:textColorPrimary">@color/text_light</item>
+        <item name="textColorNormal">?android:attr/textColorPrimary</item>
+        <item name="textColorRed">@color/red_light</item>
+        <item name="backgroundHighlight">@color/yellow_light</item>
+        <item name="backgroundSelection">@color/blue_light</item>
     </style>
 
     <style name="dark.dialog" parent="@style/Theme.AppCompat.Dialog">
@@ -37,8 +43,11 @@
         <item name="colorPrimaryDark">@android:color/black</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat</item>
         <item name="android:colorBackground">@color/grey_850</item>
-        <item name="colorRed">@color/red_200</item>
-        <item name="colorYellow">@color/yellow_200</item>
+        <item name="android:textColorPrimary">@color/text_dark</item>
+        <item name="textColorNormal">?android:attr/textColorPrimary</item>
+        <item name="textColorRed">@color/red_dark</item>
+        <item name="backgroundHighlight">@color/yellow_dark</item>
+        <item name="backgroundSelection">@color/blue_dark</item>
     </style>
 
     <style name="light.dialog" parent="@style/Theme.AppCompat.Light.Dialog">
@@ -47,8 +56,11 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="android:colorBackground">@color/grey_50</item>
-        <item name="colorRed">@color/red_500</item>
-        <item name="colorYellow">@color/yellow_500</item>
+        <item name="android:textColorPrimary">@color/text_light</item>
+        <item name="textColorNormal">?android:attr/textColorPrimary</item>
+        <item name="textColorRed">@color/red_light</item>
+        <item name="backgroundHighlight">@color/yellow_light</item>
+        <item name="backgroundSelection">@color/blue_light</item>
     </style>
 
     <style name="SelectableButton">
@@ -65,7 +77,7 @@
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:singleLine">true</item>
         <item name="android:textSize">@dimen/text_size_toolbar</item>
-        <item name="android:textColor">@color/grey_50</item>
+        <item name="android:textColor">@color/text_dark</item>
     </style>
 
 </resources>

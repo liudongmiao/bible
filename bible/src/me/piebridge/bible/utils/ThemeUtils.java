@@ -27,7 +27,7 @@ public class ThemeUtils {
         activity.setTheme(isDark(activity) ? R.style.dark_dialog : R.style.light_dialog);
     }
 
-    private static boolean isDark(Activity activity) {
+    public static boolean isDark(Activity activity) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
         return THEME_DARK.equals(sp.getString(THEME, THEME_LIGHT));
     }

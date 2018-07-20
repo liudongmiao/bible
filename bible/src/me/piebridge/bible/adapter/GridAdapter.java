@@ -29,7 +29,7 @@ public class GridAdapter extends ArrayAdapter<String> {
     public GridAdapter(Context context, GridChecker gridChecker) {
         super(context, R.layout.view_cell, R.id.text);
         this.gridChecker = gridChecker;
-        this.textColorSelected = ColorUtils.resolveColor(context, R.attr.colorAccent);
+        this.textColorSelected = ColorUtils.resolve(context, R.attr.colorAccent);
     }
 
     public GridAdapter(Context context, GridChecker gridChecker, Typeface typeface) {

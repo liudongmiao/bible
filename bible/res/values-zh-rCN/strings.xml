@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">圣经</string>
+    <string name="app_name">简读圣经</string>
     <string name="search_hint">经句或关键字</string>
     <string name="search_description">搜索圣经章节，或者关键字</string>
     <string name="search_no_results">在“%4$s”本中从“%2$s”至“%3$s”无法找到“%1$s”。</string>
