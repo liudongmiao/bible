@@ -28,8 +28,8 @@
     <string name="deleteversiondetail">您將不能閱讀和搜尋%s!</string>
     <string name="red">紅字</string>
     <string name="wojinred">可用時適用耶穌的話</string>
-    <string name="fontsize">字體大小</string>
-    <string name="fontsummary">適用版本%1$s</string>
+    <string name="fontsize">字體大小（%s）</string>
+    <string name="reset">預設</string>
     <string name="nightmode">夜間模式</string>
     <string name="settings">設定</string>
     <string name="justify">文字分散對齊</string>
@@ -81,6 +81,11 @@
     <string name="menu_download">下載</string>
     <string name="menu_settings">設置</string>
     <string name="menu_about">關於</string>
+
+    <string name="action_highlight">@string/menu_highlight</string>
+    <string name="action_unhighlight">取消明亮</string>
+    <string name="action_notes">@string/menu_notes</string>
+    <string name="action_share">分享</string>
 
     <string name="theme_title">主題</string>
     <string name="theme_light">淺色</string>

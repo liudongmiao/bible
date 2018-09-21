@@ -78,7 +78,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bible = Bible.getInstance(getBaseContext());
+        bible = Bible.getInstance(getApplicationContext());
 
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -105,7 +105,7 @@ public class Search extends PreferenceActivity implements Preference.OnPreferenc
         edittext.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line) {
             private ArrayList<String> mStrings = new ArrayList<>();
             private BibleFilter mFilter;
-            private Bible bible = Bible.getInstance(getBaseContext());
+            private Bible bible = Bible.getInstance(getApplicationContext());
 
             @Override
             public Filter getFilter() {

@@ -17,11 +17,13 @@
 
         <item
             android:id="@+id/menu_highlight"
+            android:enabled="false"
             android:icon="@drawable/ic_star_black_24dp"
             android:title="@string/menu_highlight" />
 
         <item
             android:id="@+id/menu_notes"
+            android:enabled="false"
             android:icon="@drawable/ic_speaker_notes_black_24dp"
             android:title="@string/menu_notes" />
 
@@ -41,6 +43,7 @@
 
         <item
             android:id="@+id/menu_about"
+            android:enabled="false"
             android:icon="@drawable/ic_info_outline_black_24dp"
             android:title="@string/menu_about" />
     </group>

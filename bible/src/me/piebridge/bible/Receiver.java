@@ -36,7 +36,7 @@ public class Receiver extends BroadcastReceiver {
         if (info.status != DownloadManager.STATUS_SUCCESSFUL) {
             VersionsActivity.onDownloadComplete(info);
         } else {
-            Bible.getInstance(context).checkBibleData(false, new Runnable() {
+            Bible.getInstance(context.getApplicationContext()).checkBibleData(false, new Runnable() {
                 @Override
                 public void run() {
                     VersionsActivity.onDownloadComplete(info);

@@ -28,12 +28,15 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -104,11 +107,6 @@ public class Bible {
     private HashMap<String, String> versionDates = new HashMap<>();
     private HashMap<String, String> versionFullnames = new HashMap<>();
 
-    private String annotationOsis = null;
-    private String noteOsis = null;
-    private HashMap<String, Note> notes = new HashMap<>();
-    private HashMap<String, String> annotations = new HashMap<>();
-
     private LinkedHashMap<String, String> allhuman = new LinkedHashMap<>();
     private LinkedHashMap<String, String> allosis = new LinkedHashMap<>();
     private LinkedHashMap<String, String> searchfull = new LinkedHashMap<>();
@@ -142,8 +140,8 @@ public class Bible {
 
     public void updateLocale() {
         Locale locale = Locale.getDefault();
-        collator = Collator.getInstance(locale);
-        if (!locale.equals(lastLocale)) {
+        if (collator == null || !locale.equals(lastLocale)) {
+            collator = Collator.getInstance(locale);
             lastLocale = locale;
             updateResources();
         }
@@ -153,10 +151,7 @@ public class Bible {
         if (bible == null) {
             bible = new Bible(context);
         }
-        if (context != null) {
-            mContext = context;
-            bible.updateLocale();
-        }
+        bible.updateLocale();
         return bible;
     }
 
@@ -538,19 +533,18 @@ public class Bible {
     }
 
     private String getVersionMetadata(String name, SQLiteDatabase metadata, String defaultValue) {
-        String value = defaultValue;
-        Cursor cursor = metadata.query("metadata", new String[] {"value"},
-                "name = ? or name = ?",
-                new String[] {name, name + "_" + Locale.getDefault().toString()},
-                null, null, "name desc", "1");
-        while (cursor != null && cursor.moveToNext()) {
-            value = cursor.getString(cursor.getColumnIndexOrThrow("value"));
-            break;
+        try (
+                Cursor cursor = metadata.query("metadata", new String[] {"value"},
+                        "name = ? or name = ?",
+                        new String[] {name, name + "_" + Locale.getDefault().toString()},
+                        null, null, "name desc", "1")
+        ) {
+            if (cursor != null && cursor.moveToNext()) {
+                return cursor.getString(0);
+            } else {
+                return defaultValue;
+            }
         }
-        if (cursor != null) {
-            cursor.close();
-        }
-        return value;
     }
 
     public String getVersionFullname(String version) {
@@ -610,7 +604,7 @@ public class Bible {
         } catch (NameNotFoundException e) {
             LogUtils.d("cannot find self", e);
         }
-        boolean newVersion = (demoVersion != versionCode);
+        boolean newVersion = demoVersion != versionCode;
         boolean unpack = unpackRaw(newVersion, R.raw.niv84demo,
                 new File(mContext.getFilesDir(), "niv84demo.sqlite3"));
         if (unpack) {
@@ -1278,23 +1272,16 @@ public class Bible {
         }
     }
 
-    public void loadAnnotations(String osis, boolean load) {
-        if (TextUtils.isEmpty(osis) || osis.equals(annotationOsis)) {
-            return;
+    public String getAnnotation(String osis, String link) {
+        if (TextUtils.isEmpty(osis) || TextUtils.isEmpty(link)) {
+            return null;
         }
-        annotations.clear();
-        if (!load) {
-            return;
-        }
-        annotationOsis = osis;
         Cursor cursor = null;
         try {
-            cursor = database.query("annotations", new String[] {"link", "content"}, "osis = ?",
-                    new String[] {osis}, null, null, null, null);
-            while (cursor.moveToNext()) {
-                String link = cursor.getString(0);
-                String content = cursor.getString(1);
-                annotations.put(link, content);
+            cursor = database.query("annotations", new String[] {"content"}, "osis = ? and link = ?",
+                    new String[] {osis, link}, null, null, null, null);
+            if (cursor.moveToNext()) {
+                return cursor.getString(0);
             }
         } catch (SQLiteException e) {
             // ignore
@@ -1303,10 +1290,7 @@ public class Bible {
                 cursor.close();
             }
         }
-    }
-
-    public String getAnnotation(String link) {
-        return annotations.get(link);
+        return null;
     }
 
     /**
@@ -1314,41 +1298,33 @@ public class Bible {
      *
      * @param osis book.chapter
      */
-    public void loadNotes(String osis) {
+    @NonNull
+    public Bundle loadNotes(String osis) {
+        Bundle bundle = new Bundle();
         if (osis == null) {
-            return;
+            return bundle;
         }
-        if (this.noteOsis != null && this.noteOsis.equals(osis)) {
-            return;
-        }
-        this.noteOsis = osis;
-        notes.clear();
         if (mOpenHelper == null) {
             mOpenHelper = new AnnotationsDatabaseHelper(mContext);
         }
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
         if (!isDatabaseIntegrityOk(db)) {
-            return;
+            return bundle;
         }
 
         Cursor cursor = null;
         try {
-            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null,
+            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS,
+                    new String[] {AnnotationsDatabaseHelper.COLUMN_ID,
+                            AnnotationsDatabaseHelper.COLUMN_VERSE},
                     "osis = ? and type = ?", new String[] {
                             osis, "note"}, null, null, null);
             while (cursor != null && cursor.moveToNext()) {
-                long id = cursor.getInt(cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_ID));
-                String verse = cursor.getString(
-                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_VERSE));
-                String verses = cursor.getString(
-                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_VERSES));
-                String content = cursor.getString(
-                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
-                Long create = cursor.getLong(
-                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
-                Long update = cursor.getLong(
-                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_UPDATETIME));
-                notes.put(verse, new Note(id, verse, verses, content, create, update));
+                long id = cursor.getInt(0);
+                String verse = cursor.getString(1);
+                if (TextUtils.isDigitsOnly(verse)) {
+                    bundle.putLong(verse, id);
+                }
             }
         } catch (RuntimeException e) {
             LogUtils.d("cannot load notes : " + osis, e);
@@ -1357,6 +1333,7 @@ public class Bible {
                 cursor.close();
             }
         }
+        return bundle;
     }
 
     public static class Note {
@@ -1422,6 +1399,14 @@ public class Bible {
         public void setId(Long id) {
             this.id = id;
         }
+
+        public String getVerses() {
+            return this.verses;
+        }
+
+        public String getContent() {
+            return content;
+        }
     }
 
     /**
@@ -1430,32 +1415,45 @@ public class Bible {
      * @param osis book.chapter
      * @return
      */
-    public String[] getNoteVerses(String osis) {
-        if (osis == null) {
-            return null;
-        }
-        if (!osis.equals(this.noteOsis)) {
-            loadNotes(osis);
-        }
-        return notes.keySet().toArray(new String[notes.size()]);
+    public Bundle getNoteVerses(String osis) {
+        return loadNotes(osis);
     }
 
-    /**
-     * get notes for book.cpater.verse
-     *
-     * @param osis  book.chapter
-     * @param verse the verse is one of the result in {@link #getNoteVerses(String)}
-     * @return note
-     * @see {@link #getNoteVerses(String)}
-     */
-    public Note getNote(String osis, String verse) {
-        if (osis == null) {
+    public Note getNote(long id) {
+        if (mOpenHelper == null) {
+            mOpenHelper = new AnnotationsDatabaseHelper(mContext);
+        }
+        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        if (!isDatabaseIntegrityOk(db)) {
             return null;
         }
-        if (!osis.equals(this.noteOsis)) {
-            loadNotes(osis);
+
+        Cursor cursor = null;
+        try {
+            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null,
+                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?",
+                    new String[] {Long.toString(id)}, null, null, null);
+            if (cursor != null && cursor.moveToNext()) {
+                String verse = cursor.getString(
+                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_VERSE));
+                String verses = cursor.getString(
+                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_VERSES));
+                String content = cursor.getString(
+                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
+                Long create = cursor.getLong(
+                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
+                Long update = cursor.getLong(
+                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_UPDATETIME));
+                return new Note(id, verse, verses, content, create, update);
+            }
+        } catch (RuntimeException e) {
+            LogUtils.d("cannot load note : " + id, e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        return notes.get(verse);
+        return null;
     }
 
     /**
@@ -1466,50 +1464,50 @@ public class Bible {
      * @param content note content
      * @return true if saved, false if not
      */
-    public boolean saveNote(String osis, String verse, String verses, String content) {
+    public boolean saveNote(long id, String osis, String verse, String verses, String content) {
         if (content == null || content.length() == 0) {
             return false;
         }
-        Note note = notes.get(verse);
-        if (note == null) {
-            note = new Note(verse, verses, content);
-        } else if (!note.update(verses, content)) {
-            return false;
-        }
-        notes.put(verse, note);
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         if (!isDatabaseIntegrityOk(db)) {
             File path = mContext.getDatabasePath(AnnotationsDatabaseHelper.DATABASE_NAME);
             if (path != null && path.delete()) {
-                return saveNote(osis, verse, verses, content);
+                return saveNote(0, osis, verse, verses, content);
             }
             return false;
         }
-        ContentValues values = note.getContentValues();
-        values.put(AnnotationsDatabaseHelper.COLUMN_OSIS, osis);
-        Long id = note.getId();
-        if (id == null) {
-            id = db.insert(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, values);
-            note.setId(id);
+
+
+        long time = System.currentTimeMillis() / 1000;
+        if (id == 0) {
+            ContentValues values = new ContentValues();
+            values.put(AnnotationsDatabaseHelper.COLUMN_TYPE, "note");
+            values.put(AnnotationsDatabaseHelper.COLUMN_OSIS, osis);
+            values.put(AnnotationsDatabaseHelper.COLUMN_VERSE, verse);
+            values.put(AnnotationsDatabaseHelper.COLUMN_VERSES, verses);
+            values.put(AnnotationsDatabaseHelper.COLUMN_CONTENT, content);
+            values.put(AnnotationsDatabaseHelper.COLUMN_CREATETIME, time);
+            values.put(AnnotationsDatabaseHelper.COLUMN_UPDATETIME, time);
+            db.insert(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, values);
         } else {
+            ContentValues values = new ContentValues();
+            values.put(AnnotationsDatabaseHelper.COLUMN_VERSES, verses);
+            values.put(AnnotationsDatabaseHelper.COLUMN_CONTENT, content);
+            values.put(AnnotationsDatabaseHelper.COLUMN_UPDATETIME, time);
             db.update(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, values,
                     AnnotationsDatabaseHelper.COLUMN_ID + " = ?", new String[] {String.valueOf(id)});
         }
         return true;
     }
 
-    public boolean deleteNote(Note note) {
-        if (note == null || note.getId() == null) {
-            return false;
-        }
+    public boolean deleteNote(long id) {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         if (!isDatabaseIntegrityOk(db)) {
             return true;
         }
         db.delete(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS,
                 AnnotationsDatabaseHelper.COLUMN_ID + " = ?",
-                new String[] {String.valueOf(note.getId())});
-        notes.remove(note.verse);
+                new String[] {String.valueOf(id)});
         return true;
     }
 

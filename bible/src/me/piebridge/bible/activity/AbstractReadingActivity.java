@@ -1,6 +1,7 @@
 package me.piebridge.bible.activity;
 
 import android.app.ActivityManager;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -11,14 +12,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 import me.piebridge.bible.Bible;
 import me.piebridge.bible.Provider;
@@ -26,7 +31,11 @@ import me.piebridge.bible.R;
 import me.piebridge.bible.adapter.ReadingAdapter;
 import me.piebridge.bible.bridge.ReadingBridge;
 import me.piebridge.bible.bridge.ReadingHandler;
+import me.piebridge.bible.fragment.AddNotesFragment;
+import me.piebridge.bible.fragment.FontsizeFragment;
 import me.piebridge.bible.fragment.ReadingFragment;
+import me.piebridge.bible.fragment.ShowAnnotationFragment;
+import me.piebridge.bible.fragment.ShowNotesFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ColorUtils;
 import me.piebridge.bible.utils.LogUtils;
@@ -41,6 +50,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         implements ReadingBridge.Bridge, View.OnClickListener, ViewPager.OnPageChangeListener,
         AppBarLayout.OnOffsetChangedListener {
 
+    private ActionMode actionMode;
+
     public static final String CSS = "css";
     public static final String OSIS = "osis";
     public static final String ID = "id";
@@ -54,7 +65,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     public static final String VERSE = "verse";
     public static final String VERSE_START = "verseStart";
     public static final String VERSE_END = "verseEnd";
-    public static final String FONT_SIZE = "fontSize";
+    public static final String FONT_SIZE = "fontsize";
     public static final String FONT_PATH = "fontPath";
     public static final String CROSS = "cross";
     public static final String SHANGTI = "shangti";
@@ -76,7 +87,13 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
     private static final int REQUEST_CODE_SELECT = 1001;
     private static final int REQUEST_CODE_VERSION = 1002;
-    private static final int FONT_SIZE_DEFAULT = 14;
+    private static final int FONT_SIZE_DEFAULT = FontsizeFragment.FONTSIZE_DEFAULT;
+
+    private static final String FRAGMENT_ADD_NOTES = "add-notes";
+
+    private static final String FRAGMENT_SHOW_NOTES = "show-notes";
+
+    private static final String FRAGMENT_SHOW_ANNOTATIONS = "show-annotations";
 
     protected ViewPager mPager;
     private AppBarLayout mAppBar;
@@ -113,9 +130,9 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
         mHeader = findHeader();
         mPager = findViewById(R.id.pager);
-        bible = Bible.getInstance(this);
+        bible = Bible.getInstance(getApplicationContext());
         fontPath = BibleUtils.getFontPath(this);
-        mAdapter = new ReadingAdapter(getFragmentManager(), retrieveOsisCount());
+        mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount());
         initialize();
     }
 
@@ -134,6 +151,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         super.onResume();
         if (ThemeUtils.isDark(this) != mDark) {
             recreate();
+        } else {
+            setCheckedItem(R.id.menu_reading);
         }
     }
 
@@ -160,12 +179,24 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         return toolbar;
     }
 
-    protected final int getCurrentPosition() {
+    public final int getCurrentPosition() {
         return mPager.getCurrentItem();
     }
 
-    protected final String getCurrentOsis() {
-        return mAdapter.getData(getCurrentPosition()).getString(OSIS);
+    public final String getCurrentOsis() {
+        if (mAdapter == null) {
+            return null;
+        } else {
+            return mAdapter.getData(getCurrentPosition()).getString(OSIS);
+        }
+    }
+
+    public final ReadingFragment getCurrentFragment() {
+        if (mAdapter == null) {
+            return null;
+        } else {
+            return mAdapter.getFragment(getCurrentPosition());
+        }
     }
 
     protected final void prepare(int position) {
@@ -257,7 +288,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
                 bundle.putString(CONTENT, getString(cursor, Provider.COLUMN_CONTENT));
                 bundle.putString(OSIS, curr);
                 bundle.putString(HIGHLIGHTED, bible.getHighlight(curr));
-                bundle.putStringArray(NOTES, bible.getNoteVerses(curr));
+                bundle.putBundle(NOTES, bible.getNoteVerses(curr));
             }
         } catch (SQLiteException e) {
             LogUtils.d("cannot query " + osis, e);
@@ -330,15 +361,14 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     @Override
     public void showAnnotation(String link, String annotation) {
         LogUtils.d("link: " + link + ", annotation: " + annotation);
-        handler.sendMessage(handler.obtainMessage(ReadingHandler.SHOW_ANNOTATION,
-                new ReadingHandler.Annotation(link, annotation, getCurrentOsis())));
+        handler.obtainMessage(ReadingHandler.SHOW_ANNOTATION,
+                new ReadingHandler.Annotation(link, annotation, getCurrentOsis())).sendToTarget();
     }
 
     @Override
     public void showNote(String verse) {
         LogUtils.d("show note, verse: " + verse);
-        handler.sendMessage(handler.obtainMessage(ReadingHandler.SHOW_NOTE,
-                new ReadingHandler.Note(verse, getCurrentOsis())));
+        handler.obtainMessage(ReadingHandler.SHOW_NOTE, verse).sendToTarget();
     }
 
     @Override
@@ -451,6 +481,182 @@ public abstract class AbstractReadingActivity extends DrawerActivity
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
         } else {
             decorView.setSystemUiVisibility(0);
+        }
+    }
+
+    public void onSelected(boolean highlight, String verses, String content) {
+        handler.obtainMessage(ReadingHandler.SHOW_SELECTION,
+                new ReadingHandler.Selection(highlight, verses, content)).sendToTarget();
+    }
+
+    @Override
+    public void saveHighlight(String verses) {
+        String osis = getCurrentOsis();
+        LogUtils.d("osis: " + osis + ", highlight: " + verses);
+        bible.saveHighlight(osis, verses);
+        handler.obtainMessage(ReadingHandler.SHOW_SELECTION,
+                new ReadingHandler.Selection(false, null, null)).sendToTarget();
+    }
+
+    public void setHighlight(String verses, boolean added) {
+        getCurrentFragment().setHighlight(verses, added);
+    }
+
+    public void setNote(String verse, boolean added) {
+        getCurrentFragment().setNote(verse, added);
+    }
+
+    public void addNotes(String verses) {
+        handler.obtainMessage(ReadingHandler.ADD_NOTES, verses).sendToTarget();
+    }
+
+    public void share(ReadingHandler.Selection selection) {
+        handler.obtainMessage(ReadingHandler.SHARE, selection).sendToTarget();
+    }
+
+    public String getVerse(String verses) {
+        int index = verses.indexOf('-');
+        if (index < 0) {
+            index = verses.indexOf(',');
+        }
+        if (index < 0) {
+            return verses;
+        } else {
+            return verses.substring(0, index);
+        }
+    }
+
+    public void doAddNotes(String verses) {
+        String osis = getCurrentOsis();
+        LogUtils.d("osis: " + osis + ", update notes: " + verses);
+        String verse = getVerse(verses);
+        Bible.Note note = fetchNote(verse);
+
+        final String tag = FRAGMENT_ADD_NOTES;
+        FragmentManager manager = getSupportFragmentManager();
+        AddNotesFragment fragment = (AddNotesFragment) manager.findFragmentByTag(tag);
+        if (fragment != null) {
+            fragment.dismiss();
+        }
+        fragment = new AddNotesFragment();
+        fragment.setNote(verses, note);
+        fragment.show(manager, tag);
+    }
+
+    public void saveNotes(long id, String verses, String content) {
+        String osis = getCurrentOsis();
+        String verse = getVerse(verses);
+        bible.saveNote(id, osis, verse, verses, content);
+        getCurrentFragment().getArguments().putBundle(NOTES, bible.getNoteVerses(osis));
+        setNote(verse, !TextUtils.isEmpty(content));
+        getCurrentFragment().selectVerses(verses, false);
+    }
+
+    public void deleteNote(long id, String verses) {
+        String osis = getCurrentOsis();
+        String verse = getVerse(verses);
+        bible.deleteNote(id);
+        getCurrentFragment().getArguments().putBundle(NOTES, bible.getNoteVerses(osis));
+        setNote(verse, false);
+    }
+
+    public void doShowNote(String verse) {
+        Bible.Note note = fetchNote(verse);
+        if (note == null) {
+            return;
+        }
+
+        final String tag = FRAGMENT_SHOW_NOTES;
+        FragmentManager manager = getSupportFragmentManager();
+        ShowNotesFragment fragment = (ShowNotesFragment) manager.findFragmentByTag(tag);
+        if (fragment != null) {
+            fragment.dismiss();
+        }
+        fragment = new ShowNotesFragment();
+        fragment.setNote(note);
+        fragment.show(manager, tag);
+    }
+
+    public Bible.Note fetchNote(String verse) {
+        long id = getCurrentFragment().getNote(verse);
+        if (id > 0) {
+            return bible.getNote(id);
+        } else {
+            return null;
+        }
+    }
+
+    public void doShowAnnotation(ReadingHandler.Annotation annotation) {
+        String message = annotation.getMessage();
+        if (TextUtils.isEmpty(message)) {
+            message = bible.getAnnotation(annotation.getOsis(), annotation.getLink());
+        }
+        if (message != null) {
+            doShowAnnotation(annotation.getLink(), message);
+        }
+    }
+
+    private void doShowAnnotation(String link, String annotation) {
+        LogUtils.d("link: " + link + ", content: " + annotation);
+
+        final String tag = FRAGMENT_SHOW_ANNOTATIONS;
+        FragmentManager manager = getSupportFragmentManager();
+        ShowAnnotationFragment fragment = (ShowAnnotationFragment) manager.findFragmentByTag(tag);
+        if (fragment != null) {
+            fragment.dismiss();
+        }
+        fragment = new ShowAnnotationFragment();
+        fragment.setAnnotation(link, annotation);
+        fragment.show(manager, tag);
+    }
+
+    public void doShowSelection(ReadingHandler.Selection selection) {
+        if (selection == null || TextUtils.isEmpty(selection.getVerses())) {
+            if (actionMode != null) {
+                actionMode.finish();
+                actionMode = null;
+            }
+        } else {
+            if (actionMode != null) {
+                actionMode.setTag(selection);
+                actionMode.invalidate();
+            } else {
+                ActionMode.Callback callback = new ReadingHandler.SelectionActionMode(this,
+                        selection);
+                actionMode = startSupportActionMode(callback);
+            }
+        }
+    }
+
+    public void doShare(ReadingHandler.Selection selection) {
+        String text = bible.getVersionFullname(bible.getVersion()) + " "
+                + getCurrentFragment().getTitle() + ":"
+                + selection.getVerses() + "\n\n"
+                + selection.getContent();
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        intent.setType("text/plain");
+        try {
+            startActivity(Intent.createChooser(intent, getString(R.string.share)));
+        } catch (ActivityNotFoundException ignore) {
+            // do nothing
+        }
+
+    }
+
+    public void updateFontSize(int fontSize) {
+        int position = getCurrentPosition();
+        updateFontSize(position, fontSize);
+        updateFontSize(position - 1, fontSize);
+        updateFontSize(position + 1, fontSize);
+    }
+
+    private void updateFontSize(int position, int fontSize) {
+        if (position > 0 && position < mAdapter.getCount()) {
+            ReadingFragment fragment = mAdapter.getFragment(position);
+            if (fragment != null) {
+                fragment.updateFontSize(fontSize);
+            }
         }
     }
 

@@ -30,8 +30,8 @@
     <string name="deleteversiondetail">You won\'t be able to read or search the %s!</string>
     <string name="red">Red Letter</string>
     <string name="wojinred">For Words of Jesus if available</string>
-    <string name="fontsize">Font Size</string>
-    <string name="fontsummary">For version %1$s</string>
+    <string name="fontsize">Font Size (%s)</string>
+    <string name="reset">Default</string>
     <string name="nightmode">Night Mode</string>
     <string name="settings">Settings</string>
     <string name="justify">Text Justified</string>
@@ -82,6 +82,11 @@
     <string name="menu_download">Download</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
+
+    <string name="action_highlight">@string/menu_highlight</string>
+    <string name="action_unhighlight">Unhighlight</string>
+    <string name="action_notes">@string/menu_notes</string>
+    <string name="action_share">Share</string>
 
     <string name="theme_title">Theme</string>
     <string name="theme_light">Light</string>

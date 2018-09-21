@@ -1,6 +1,6 @@
 package me.piebridge.bible.activity;
 
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
@@ -14,6 +14,8 @@ import android.widget.TextView;
 import me.piebridge.bible.Bible;
 import me.piebridge.bible.Provider;
 import me.piebridge.bible.R;
+import me.piebridge.bible.fragment.FontsizeFragment;
+import me.piebridge.bible.fragment.ReadingFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
 
@@ -22,10 +24,21 @@ import me.piebridge.bible.utils.LogUtils;
  */
 public class ReadingActivity extends AbstractReadingActivity {
 
+    public static final String WEBVIEW_DATA = "webview-data";
+
     private static final int SIZE = 1189;
 
     private TextView bookView;
     private TextView chapterView;
+
+    private static final int REQUEST_CODE_SETTINGS = 1190;
+
+    private int mFontSize;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     protected void initializeHeader(View header) {
@@ -50,6 +63,11 @@ public class ReadingActivity extends AbstractReadingActivity {
         bookView.setText(bookName);
         chapterView.setText(chapterVerse);
         updateTaskDescription(title);
+
+        ReadingFragment currentFragment = getCurrentFragment();
+        if (currentFragment != null) {
+            currentFragment.onSelected();
+        }
     }
 
     @Override
@@ -98,14 +116,43 @@ public class ReadingActivity extends AbstractReadingActivity {
     private void saveOsis() {
         String osis = getCurrentOsis();
         if (!TextUtils.isEmpty(osis)) {
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-            editor.putString(OSIS, osis);
             String book = BibleUtils.getBook(osis);
             String chapter = BibleUtils.getChapter(osis);
-            editor.putString(book, chapter);
-            editor.putString("version", bible.getVersion());
-            editor.apply();
+            PreferenceManager.getDefaultSharedPreferences(this).edit()
+                    .putString(OSIS, osis)
+                    .putString(book, chapter)
+                    .putString("version", bible.getVersion()).apply();
         }
+    }
+
+    @Override
+    protected void openSettings() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        ReadingFragment currentFragment = getCurrentFragment();
+        if (currentFragment != null) {
+            intent.putExtra(WEBVIEW_DATA, currentFragment.getBody());
+        }
+
+        mFontSize = getFontSize();
+        startActivityForResult(intent, REQUEST_CODE_SETTINGS);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_SETTINGS) {
+            int fontSize = getFontSize();
+            if (mFontSize != fontSize) {
+                updateFontSize(fontSize);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private int getFontSize() {
+        Bible bible = Bible.getInstance(getApplication());
+        String key = AbstractReadingActivity.FONT_SIZE + "-" + bible.getVersion();
+        return PreferenceManager.getDefaultSharedPreferences(getApplication()).getInt(key, FontsizeFragment.FONTSIZE_DEFAULT);
     }
 
 }

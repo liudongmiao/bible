@@ -43,7 +43,7 @@ public class Suggestion extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         if (bible == null) {
-            bible = Bible.getInstance(getContext());
+            bible = Bible.getInstance(getContext().getApplicationContext());
             bible.checkBibleData(true, null);
         }
         Log.d(TAG , "uri: " + uri);

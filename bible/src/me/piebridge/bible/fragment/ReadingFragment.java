@@ -1,10 +1,8 @@
 package me.piebridge.bible.fragment;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -13,16 +11,21 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 
 import me.piebridge.bible.R;
+import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.bridge.ReadingBridge;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
+import me.piebridge.bible.utils.ObjectUtils;
 
 import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_BACKGROUND;
 import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_BACKGROUND_HIGHLIGHT;
@@ -117,7 +120,18 @@ public class ReadingFragment extends Fragment {
         webView.getSettings().setDisplayZoomControls(false);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(readingBridge, "android");
+        webView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return true;
+            }
+        });
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     public void setForceVerse(int verse) {
@@ -129,15 +143,26 @@ public class ReadingFragment extends Fragment {
         if (!TextUtils.isEmpty(osis) && osis.equals(bundle.getString(CURR))) {
             saveState();
         }
-        String content = bundle.getString(CONTENT);
-        if (!TextUtils.isEmpty(content)) {
-            String title = getTitle(bundle);
-            String body = getBody(title, content);
+        String body = getBody();
+        if (!TextUtils.isEmpty(body)) {
+            int fontSize = bundle.getInt(FONT_SIZE);
+            webView.getSettings().setDefaultFontSize(fontSize);
+            webView.getSettings().setDefaultFixedFontSize(fontSize);
             webView.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
         }
     }
 
-    private String getTitle(Bundle bundle) {
+    public String getBody() {
+        Bundle bundle = getArguments();
+        String content = bundle.getString(CONTENT);
+        if (TextUtils.isEmpty(content)) {
+            return null;
+        }
+        return getBody(getTitle(), content);
+    }
+
+    public String getTitle() {
+        Bundle bundle = getArguments();
         if (bundle != null) {
             return BibleUtils.getBookChapterVerse(bundle.getString(HUMAN),
                     BibleUtils.getChapter(bundle.getString(CURR)));
@@ -150,14 +175,14 @@ public class ReadingFragment extends Fragment {
         Bundle bundle = getArguments();
         osis = bundle.getString(CURR);
         String body = fixIfNeeded(bundle, content);
-        String[] notes = bundle.getStringArray(NOTES);
-        int fontSize = bundle.getInt(FONT_SIZE);
+        String[] notes = keys(bundle.getBundle(NOTES));
         String css = fixCSS(bundle);
         int verseStart = NumberUtils.parseInt(getString(bundle, VERSE_START));
         int verseEnd = NumberUtils.parseInt(getString(bundle, VERSE_END));
         int verseBegin = getVerseBegin(bundle);
         LogUtils.d("title: " + title + ", forceVerse: " + forceVerse + ", verse: " + verse
-                + ", verseStart: " + verseStart + ", VERSE: " + getString(bundle, VERSE));
+                + ", verseStart: " + verseStart + ", VERSE: " + getString(bundle, VERSE)
+                + ", notes: " + Arrays.toString(notes));
         String search = getString(bundle, SEARCH);
         String highlighted = getString(bundle, HIGHLIGHTED);
         String backgroundColor = getString(bundle, COLOR_BACKGROUND);
@@ -166,12 +191,20 @@ public class ReadingFragment extends Fragment {
         String backgroundSelection = getString(bundle, COLOR_BACKGROUND_SELECTION);
         String backgroundHighlight = getString(bundle, COLOR_BACKGROUND_HIGHLIGHT);
         String backgroundHighlightSelection = getString(bundle, COLOR_BACKGROUND_HIGHLIGHT_SELECTION);
-        return String.format(template, fontSize, css,
+        return String.format(template, css,
                 backgroundColor, textColor, linkColor,
                 backgroundSelection, backgroundHighlight, backgroundHighlightSelection,
                 verseBegin, verseStart, verseEnd,
                 search, selectedVerses, highlighted,
                 Arrays.toString(notes), title, body);
+    }
+
+    private String[] keys(Bundle bundle) {
+        if (bundle == null) {
+            return new String[0];
+        }
+        int size = bundle.size();
+        return bundle.keySet().toArray(new String[size]);
     }
 
     private int getVerseBegin(Bundle bundle) {
@@ -249,7 +282,7 @@ public class ReadingFragment extends Fragment {
         Context context = getActivity();
         if (context != null) {
             DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-            LogUtils.d("title: " + getTitle(getArguments()) + ", scroll to " + top + ", density: " +
+            LogUtils.d("title: " + getTitle() + ", scroll to " + top + ", density: " +
                     metrics.density);
             final int scrollY = (int) (top * metrics.density);
             nestedView.post(new Runnable() {
@@ -269,6 +302,59 @@ public class ReadingFragment extends Fragment {
         } else {
             return 0;
         }
+    }
+
+    public WebView getWebView() {
+        return webView;
+    }
+
+    public void setHighlight(String verses, boolean added) {
+        readingBridge.setHighlight(webView, verses, added);
+    }
+
+    public void setNote(String verse, boolean added) {
+        readingBridge.setNote(webView, verse, added);
+    }
+
+    public long getNote(String verse) {
+        Bundle bundle = getArguments().getBundle(NOTES);
+        if (bundle == null) {
+            return 0;
+        } else {
+            return bundle.getLong(verse);
+        }
+    }
+
+    public void selectVerses(String verses, boolean added) {
+        readingBridge.selectVerses(webView, verses, added);
+    }
+
+    public void onSelected(boolean highlight, String verses, String content) {
+        highlightSelected = highlight;
+        selectedVerses = verses;
+        selectedContent = content;
+        AbstractReadingActivity activity = (AbstractReadingActivity) getActivity();
+        if (ObjectUtils.isIdentical(activity.getCurrentOsis(), osis)) {
+            activity.onSelected(highlight, verses, content);
+        }
+    }
+
+    public void onSelected() {
+        AbstractReadingActivity activity = (AbstractReadingActivity) getActivity();
+        if (isCurrent()) {
+            activity.onSelected(highlightSelected, selectedVerses, selectedContent);
+        }
+    }
+
+    private boolean isCurrent() {
+        AbstractReadingActivity activity = (AbstractReadingActivity) getActivity();
+        return activity != null && ObjectUtils.isIdentical(activity.getCurrentOsis(), osis);
+    }
+
+    public void updateFontSize(int fontSize) {
+        getArguments().putInt(FONT_SIZE, fontSize);
+        webView.getSettings().setDefaultFontSize(fontSize);
+        webView.getSettings().setDefaultFixedFontSize(fontSize);
     }
 
 }

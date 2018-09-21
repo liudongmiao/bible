@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -81,7 +82,19 @@ public class OsisItem implements Parcelable {
     }
 
     public String toString() {
-        return String.format("%s %s:%s-%s", book, chapter, verseStart, verseEnd);
+        StringBuilder sb = new StringBuilder();
+        sb.append(book);
+        sb.append(" ");
+        sb.append(chapter);
+        if (!TextUtils.isEmpty(verseStart)) {
+            sb.append(":");
+            sb.append(verseStart);
+            if (!TextUtils.isEmpty(verseEnd)) {
+                sb.append("-");
+                sb.append(verseEnd);
+            }
+        }
+        return sb.toString();
     }
 
     public String toOsis() {

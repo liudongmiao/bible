@@ -1,10 +1,11 @@
 package me.piebridge.bible.adapter;
 
-import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.v13.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import me.piebridge.bible.fragment.ReadingFragment;
 
@@ -19,14 +20,24 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
 
     private final SparseArray<Bundle> mBundles;
 
+    private final SparseArray<ReadingFragment> mFragments;
+
     public ReadingAdapter(FragmentManager fm, int size) {
         super(fm);
         mSize = size;
         mBundles = new SparseArray<>();
+        mFragments = new SparseArray<>();
     }
 
     public void setSize(int size) {
         mSize = size;
+    }
+
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        ReadingFragment fragment = (ReadingFragment) super.instantiateItem(container, position);
+        mFragments.put(position, fragment);
+        return fragment;
     }
 
     @Override
@@ -44,7 +55,12 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         super.destroyItem(container, position, object);
+        mFragments.remove(position);
         mBundles.remove(position);
+    }
+
+    public ReadingFragment getFragment(int position) {
+        return mFragments.get(position);
     }
 
     public synchronized void setData(int position, Bundle bundle) {

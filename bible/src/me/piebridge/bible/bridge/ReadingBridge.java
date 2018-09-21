@@ -62,6 +62,10 @@ public class ReadingBridge {
             selectedVerses = "";
             selectedContent = "";
         }
+        Bridge bridge = wr.get();
+        if (bridge != null) {
+            fragment.onSelected(highlightSelected, selectedVerses, selectedContent);
+        }
     }
 
     @JavascriptInterface
@@ -82,7 +86,9 @@ public class ReadingBridge {
 
     @JavascriptInterface
     public void setTop(final String top) {
-        fragment.scrollTo(NumberUtils.parseInt(top));
+        if (fragment != null) {
+            fragment.scrollTo(NumberUtils.parseInt(top));
+        }
     }
 
     @JavascriptInterface
@@ -107,6 +113,33 @@ public class ReadingBridge {
             }
         }
         return verse;
+    }
+
+    public void setHighlight(WebView webView, String verses, boolean added) {
+        String url = "javascript:setHighlightVerses(\"" + verses + "\", " + added + ");";
+        LogUtils.d("url: " + url);
+        webView.loadUrl(url);
+    }
+
+    public void setNote(WebView webView, String verse, boolean added) {
+        String url = "javascript:addNote(\"" + verse + "\", " + added + ");";
+        LogUtils.d("url: " + url);
+        webView.loadUrl(url);
+    }
+
+    public void selectVerses(WebView webView, String verses, boolean added) {
+        String url = "javascript:selectVerses(\"" + verses + "\", " + added + ");";
+        LogUtils.d("url: " + url);
+        webView.loadUrl(url);
+    }
+
+    @JavascriptInterface
+    public void setHighlight(String verses) {
+        LogUtils.d("setHighlight: " + verses);
+        Bridge bridge = wr.get();
+        if (bridge != null) {
+            bridge.saveHighlight(verses);
+        }
     }
 
     public boolean isHighlightSelected(boolean defaultHighlightSelected) {
@@ -149,6 +182,8 @@ public class ReadingBridge {
         void showNote(String verseNum);
 
         void updateBundle(Bundle bundle);
+
+        void saveHighlight(String verses);
 
     }
 

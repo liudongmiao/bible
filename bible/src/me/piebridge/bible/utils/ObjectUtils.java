@@ -11,9 +11,11 @@ public class ObjectUtils {
 
     /**
      * I'd like name it as equals, but sonar complains
+     *
+     * @see java.util.Objects#equals(Object, Object)
      */
     public static boolean isIdentical(Object a, Object b) {
-        return a == null ? b == null : a.equals(b);
+        return (a == b) || (a != null && a.equals(b));
     }
 
 }

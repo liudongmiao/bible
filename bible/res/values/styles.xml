@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="tab" parent="TextAppearance.Design.Tab">
+    <style name="tab" parent="@style/TextAppearance.Design.Tab">
         <item name="android:textSize">@dimen/text_size_menu</item>
     </style>
 
-    <style name="progress" parent="Widget.AppCompat.ProgressBar">
+    <style name="progress" parent="@style/Widget.AppCompat.ProgressBar">
     </style>
 
-    <style name="preference" parent="PreferenceThemeOverlay.v14.Material">
+    <style name="preference" parent="@style/PreferenceThemeOverlay">
     </style>
 
     <style name="dark" parent="@style/Theme.AppCompat.NoActionBar">
+        <item name="windowActionModeOverlay">true</item>
         <item name="colorPrimary">@color/grey_900</item>
         <item name="colorPrimaryDark">@android:color/black</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat</item>
@@ -25,6 +26,7 @@
     </style>
 
     <style name="light" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionModeOverlay">true</item>
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>

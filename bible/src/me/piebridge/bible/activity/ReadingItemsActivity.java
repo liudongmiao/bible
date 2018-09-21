@@ -2,13 +2,14 @@ package me.piebridge.bible.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.appcompat.app.ActionBar;
 
 import java.util.List;
 
@@ -127,6 +128,9 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
     protected String getTitle(Bundle bundle, String osis) {
         String book = BibleUtils.getBook(osis);
         int osisPosition = bible.getPosition(Bible.TYPE.OSIS, book);
+        if (osisPosition < 0) {
+            return null;
+        }
         String bookName = bible.get(Bible.TYPE.BOOK, osisPosition);
         String chapterVerse = BibleUtils.getChapterVerse(this, bundle);
         return BibleUtils.getBookChapterVerse(bookName, chapterVerse);

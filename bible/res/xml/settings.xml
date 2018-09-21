@@ -1,37 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen
+    app:iconSpaceReserved="false"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ListPreference
+    <androidx.preference.Preference
+        android:key="fontsize"
+        android:title="@string/fontsize"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.ListPreference
         android:layout_width="match_parent"
         android:defaultValue="light"
         android:entries="@array/theme_entries"
         android:entryValues="@array/theme_values"
         android:key="theme"
         android:summary="%s"
-        android:title="@string/theme_title" />
+        android:title="@string/theme_title"
+        app:iconSpaceReserved="false" />
 
-    <SwitchPreference
+    <androidx.preference.SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="red"
         android:summary="@string/wojinred"
-        android:title="@string/red" />
+        android:title="@string/red"
+        app:iconSpaceReserved="false" />
 
-    <SwitchPreference
+    <androidx.preference.SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="cross"
-        android:title="@string/xlink" />
+        android:title="@string/xlink"
+        app:iconSpaceReserved="false" />
 
-    <SwitchPreference
+    <androidx.preference.SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="shangti"
         android:summary="@string/shangti_or_shen"
-        android:title="@string/shangti" />
+        android:title="@string/shangti"
+        app:iconSpaceReserved="false" />
 
-    <Preference
+    <androidx.preference.Preference
         android:key="version"
         android:summary="@string/versionName"
-        android:title="@string/version" />
+        android:title="@string/version"
+        app:iconSpaceReserved="false" />
 
-
-</PreferenceScreen>
+</androidx.preference.PreferenceScreen>

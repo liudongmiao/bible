@@ -2,7 +2,8 @@ package me.piebridge.bible.utils;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+
+import androidx.core.content.ContextCompat;
 
 import java.io.File;
 
@@ -30,6 +31,9 @@ public class BibleUtils {
     }
 
     public static String getChapter(String osis) {
+        if (osis == null) {
+            return null;
+        }
         int index = osis.indexOf('.');
         if (index > 0) {
             return osis.substring(index + 1);
@@ -68,12 +72,7 @@ public class BibleUtils {
     }
 
     public static String getBookChapterVerse(String bookName, String chapterVerse) {
-        StringBuilder sb = new StringBuilder(bookName);
-        if (!Bible.isCJK(bookName)) {
-            sb.append(" ");
-        }
-        sb.append(chapterVerse);
-        return sb.toString();
+        return bookName + " " + chapterVerse;
     }
 
     public static String getFontPath(Context context) {

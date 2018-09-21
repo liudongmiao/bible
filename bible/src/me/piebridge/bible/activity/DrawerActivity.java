@@ -4,16 +4,18 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.navigation.NavigationView;
 
 import me.piebridge.bible.R;
 import me.piebridge.bible.Search;
@@ -30,6 +32,8 @@ public abstract class DrawerActivity extends AppCompatActivity
 
     private ActionBarDrawerToggle drawerToggle;
 
+    private NavigationView navigation;
+
     protected void setupDrawer() {
         drawer = findViewById(R.id.drawer);
         if (drawerToggle == null) {
@@ -44,7 +48,7 @@ public abstract class DrawerActivity extends AppCompatActivity
             actionBar.setHomeButtonEnabled(true);
         }
 
-        NavigationView navigation = findViewById(R.id.navigation);
+        navigation = findViewById(R.id.navigation);
         navigation.setCheckedItem(R.id.menu_reading);
         navigation.setNavigationItemSelectedListener(this);
 
@@ -72,7 +76,7 @@ public abstract class DrawerActivity extends AppCompatActivity
                 startActivity(new Intent(this, Search.class));
                 break;
             case R.id.menu_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
+                openSettings();
                 break;
             case R.id.menu_download:
                 startActivity(new Intent(this, VersionsActivity.class));
@@ -80,6 +84,10 @@ public abstract class DrawerActivity extends AppCompatActivity
             default:
                 break;
         }
+    }
+
+    protected void openSettings() {
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 
     @Override
@@ -113,6 +121,10 @@ public abstract class DrawerActivity extends AppCompatActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void setCheckedItem(@IdRes int id) {
+        navigation.setCheckedItem(id);
     }
 
 }

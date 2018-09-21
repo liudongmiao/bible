@@ -1,16 +1,18 @@
 package me.piebridge.bible.activity;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.TabLayout;
-import android.support.v13.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.widget.CompoundButton;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -58,7 +60,7 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
         }
 
         Intent intent = getIntent();
-        bible = Bible.getInstance(this);
+        bible = Bible.getInstance(getApplicationContext());
 
         String osis = intent.getStringExtra(AbstractReadingActivity.OSIS);
         book = BibleUtils.getBook(osis);
@@ -80,7 +82,7 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(mPager);
 
-        mAdapter = new SelectAdapter(getFragmentManager(), new String[] {
+        mAdapter = new SelectAdapter(getSupportFragmentManager(), new String[] {
                 getString(R.string.book), getString(R.string.chapter), getString(R.string.verse)
         }, new Fragment[] {
                 selectBook, selectChapter, selectVerse

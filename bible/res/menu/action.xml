@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_highlight"
+        android:icon="@drawable/ic_highlight_24dp"
+        android:title="@string/action_highlight"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_unhighlight"
+        android:icon="@drawable/ic_unlighlight_24dp"
+        android:title="@string/action_unhighlight"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_notes"
+        android:icon="@drawable/ic_notes_24dp"
+        android:title="@string/action_notes"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_share"
+        android:icon="@drawable/ic_share_24dp"
+        android:title="@string/action_share"
+        app:showAsAction="always" />
+
+</menu>

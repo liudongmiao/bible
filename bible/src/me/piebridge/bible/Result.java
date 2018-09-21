@@ -98,7 +98,7 @@ public class Result extends Activity {
         new Thread(new Runnable() {
             public void run() {
                 if (bible == null) {
-                    bible = Bible.getInstance(getBaseContext());
+                    bible = Bible.getInstance(getApplicationContext());
                 }
                 version = bible.getVersion();
                 books = getQueryBooks(osisfrom, osisto);

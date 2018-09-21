@@ -21,10 +21,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Locale;
 
 import me.piebridge.bible.activity.ReadingCrossActivity;
 import me.piebridge.bible.activity.ReadingItemsActivity;
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ChooserUtils;
 import me.piebridge.bible.utils.LogUtils;
 
@@ -74,7 +76,8 @@ public class Passage extends Activity {
             cross = intent.getBooleanExtra(CROSS, false);
             osisfrom = intent.getStringExtra("osisfrom");
             osisto = intent.getStringExtra("osisto");
-        } else if ("text/plain".equals(intent.getType()) && Intent.ACTION_SEND.equals(intent.getAction())) {
+        } else if ("text/plain".equals(intent.getType()) &&
+                Intent.ACTION_SEND.equals(intent.getAction())) {
             search = intent.getStringExtra(Intent.EXTRA_TEXT);
         }
     }
@@ -92,7 +95,7 @@ public class Passage extends Activity {
     private void routeInThread() {
         new Thread(new Runnable() {
             public void run() {
-                Bible bible = Bible.getInstance(getBaseContext());
+                Bible bible = Bible.getInstance(getApplicationContext());
                 hasVersion = true;
                 if (!TextUtils.isEmpty(version)) {
                     if (!bible.get(Bible.TYPE.VERSION).contains(version.toLowerCase(Locale.US))) {
@@ -108,9 +111,18 @@ public class Passage extends Activity {
 
     private void route() {
         Intent intent;
-        ArrayList<OsisItem> items = OsisItem.parseSearch(search, getBaseContext());
+        ArrayList<OsisItem> items = OsisItem.parseSearch(search, getApplicationContext());
+        LogUtils.d("items:  " + items);
+        if (!items.isEmpty() && checkItems(items)) {
+            LogUtils.d("actual items:  " + items);
+            if (items.isEmpty()) {
+                finish();
+                return;
+            }
+        }
         if (!items.isEmpty() && !TextUtils.isEmpty(items.get(0).chapter)) {
-            intent = new Intent(this, cross ? ReadingCrossActivity.class : ReadingItemsActivity.class);
+            intent = new Intent(this,
+                    cross ? ReadingCrossActivity.class : ReadingItemsActivity.class);
             intent.putExtra(SEARCH, search);
             intent.putParcelableArrayListExtra(ITEMS, items);
             intent.putExtra(Intent.EXTRA_REFERRER, getIntent().getAction());
@@ -136,6 +148,22 @@ public class Passage extends Activity {
             startActivity(intent);
         }
         finish();
+    }
+
+    private boolean checkItems(ArrayList<OsisItem> items) {
+        boolean changed = false;
+        Bible bible = Bible.getInstance(getApplicationContext());
+        Iterator<OsisItem> it = items.iterator();
+        while (it.hasNext()) {
+            OsisItem item = it.next();
+            String osis = item.toOsis();
+            String book = BibleUtils.getBook(osis);
+            if (bible.getPosition(Bible.TYPE.OSIS, book) < 0) {
+                it.remove();
+                changed = true;
+            }
+        }
+        return changed;
     }
 
 }
