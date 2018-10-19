@@ -56,30 +56,38 @@ public class Passage extends Activity {
         version = null;
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             uri = intent.getData();
-            if (uri == null) {
+            if (uri != null) {
+                parseUri();
+            } else {
                 finish();
-                return;
             }
-            version = uri.getQueryParameter("version");
-            search = uri.getQueryParameter("search");
-            if (TextUtils.isEmpty(search)) {
-                search = uri.getQueryParameter("q");
-            }
-            if (TextUtils.isEmpty(search)) {
-                search = uri.getPath().replaceAll("^/search/([^/]*).*$", "$1");
-            }
-            osisfrom = uri.getQueryParameter("from");
-            osisto = uri.getQueryParameter("to");
-            LogUtils.d("uri: " + uri + ", search: " + search);
         } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             search = intent.getStringExtra(SearchManager.QUERY);
             cross = intent.getBooleanExtra(CROSS, false);
             osisfrom = intent.getStringExtra("osisfrom");
             osisto = intent.getStringExtra("osisto");
+            if (search != null && (search.startsWith("http://") || search.startsWith("https://"))) {
+                uri = Uri.parse(search);
+                parseUri();
+            }
         } else if ("text/plain".equals(intent.getType()) &&
                 Intent.ACTION_SEND.equals(intent.getAction())) {
             search = intent.getStringExtra(Intent.EXTRA_TEXT);
         }
+    }
+
+    private void parseUri() {
+        version = uri.getQueryParameter("version");
+        search = uri.getQueryParameter("search");
+        if (TextUtils.isEmpty(search)) {
+            search = uri.getQueryParameter("q");
+        }
+        if (TextUtils.isEmpty(search)) {
+            search = uri.getPath().replaceAll("^/search/([^/]*).*$", "$1");
+        }
+        osisfrom = uri.getQueryParameter("from");
+        osisto = uri.getQueryParameter("to");
+        LogUtils.d("uri: " + uri + ", search: " + search);
     }
 
     @Override
