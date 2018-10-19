@@ -37,6 +37,7 @@ import me.piebridge.bible.fragment.ReadingFragment;
 import me.piebridge.bible.fragment.ShowAnnotationFragment;
 import me.piebridge.bible.fragment.ShowNotesFragment;
 import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.utils.ChooserUtils;
 import me.piebridge.bible.utils.ColorUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
@@ -636,12 +637,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_TEXT, text);
         intent.setType("text/plain");
-        try {
-            startActivity(Intent.createChooser(intent, getString(R.string.share)));
-        } catch (ActivityNotFoundException ignore) {
-            // do nothing
-        }
-
+        ChooserUtils.startActivityExcludeSelf(this, intent, getString(R.string.share));
     }
 
     public void updateFontSize(int fontSize) {

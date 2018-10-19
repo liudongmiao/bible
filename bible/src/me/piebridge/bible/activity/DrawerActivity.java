@@ -124,7 +124,9 @@ public abstract class DrawerActivity extends AppCompatActivity
     }
 
     protected void setCheckedItem(@IdRes int id) {
-        navigation.setCheckedItem(id);
+        if (navigation != null) {
+            navigation.setCheckedItem(id);
+        }
     }
 
 }
