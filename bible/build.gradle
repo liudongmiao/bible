@@ -11,10 +11,7 @@ android {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         vectorDrawables.useSupportLibrary = true
-    }
-
-    applicationVariants.all { variant ->
-        variant.resValue "string", "versionName", variant.versionName
+        resValue "string", "versionName", rootProject.versionName
     }
 
     buildTypes {
