@@ -18,6 +18,7 @@ import me.piebridge.bible.fragment.FontsizeFragment;
 import me.piebridge.bible.fragment.ReadingFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.ObjectUtils;
 
 /**
  * Created by thom on 15/10/18.
@@ -111,6 +112,15 @@ public class ReadingActivity extends AbstractReadingActivity {
     protected void onStop() {
         saveOsis();
         super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        String currentVersion = getCurrentVersion();
+        if (currentVersion != null && currentVersion.equals(bible.getVersion())) {
+            refresh();
+        }
     }
 
     private void saveOsis() {

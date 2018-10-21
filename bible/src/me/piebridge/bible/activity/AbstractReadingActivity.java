@@ -200,6 +200,15 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         }
     }
 
+    public final String getCurrentVersion() {
+        ReadingFragment fragment = getCurrentFragment();
+        if (fragment != null) {
+            return fragment.getArguments().getString(VERSION);
+        } else {
+            return null;
+        }
+    }
+
     protected final void prepare(int position) {
         Bundle bundle = mAdapter.getData(position);
         String osis = bundle.getString(OSIS);
@@ -422,7 +431,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         }
     }
 
-    private void refresh() {
+    protected void refresh() {
         int position = getCurrentPosition();
         String osis = getCurrentOsis();
         mAdapter.setData(position, retrieveOsis(position, osis));
