@@ -10,15 +10,15 @@
     <string name="noversion">此版本僅供演示，請轉到“管理版本”安裝聖經數據。提示：聖經閱讀器僅支持外部存儲(如SDCARD)。</string>
     <string name="manageversion">管理版本</string>
     <string name="choose_version">選擇版本</string>
-    <string name="searchall">搜尋整本聖經</string>
-    <string name="searchold">搜尋舊約聖經</string>
-    <string name="searchnew">搜尋新約聖經</string>
-    <string name="searchgospel">搜尋四福音書</string>
-    <string name="searchfrom">選擇開始書卷</string>
-    <string name="searchto">選擇結束書卷</string>
+    <string name="search_all">搜尋整本聖經</string>
+    <string name="search_old">搜尋舊約聖經</string>
+    <string name="search_new">搜尋新約聖經</string>
+    <string name="search_gospel">搜尋四福音書</string>
+    <string name="search_from">選擇開始書卷</string>
+    <string name="search_to">選擇結束書卷</string>
     <string name="queryerror">無法打開數據庫，請稍候再試。</string>
     <string name="share">分享聖經經句至..</string>
-    <string name="fromto">從%1$s到%2$s</string>
+    <string name="fromto">從 %1$s 到 %2$s</string>
     <string name="otherbook">選擇其他書卷</string>
     <string name="search">在聖經中搜尋“%1$s”</string>
     <string name="demo">演示</string>
@@ -90,4 +90,6 @@
     <string name="theme_title">主題</string>
     <string name="theme_light">淺色</string>
     <string name="theme_dark">深色</string>
+
+    <string name="search_clear">清除搜尋記錄</string>
 </resources>

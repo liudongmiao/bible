@@ -11,8 +11,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 
-import me.piebridge.bible.Passage;
 import me.piebridge.bible.R;
+import me.piebridge.bible.activity.SearchActivity;
 import me.piebridge.bible.utils.DeprecationUtils;
 import me.piebridge.bible.utils.LogUtils;
 
@@ -95,9 +95,9 @@ public class ShowAnnotationFragment extends AbstractDialogFragment implements Vi
     @Override
     public void onClick(View v) {
         FragmentActivity activity = getActivity();
-        Intent intent = new Intent(activity, Passage.class);
+        Intent intent = new Intent(activity, SearchActivity.class);
         intent.setAction(Intent.ACTION_SEARCH);
-        intent.putExtra(Passage.CROSS, true);
+        intent.putExtra(SearchActivity.CROSS, true);
         intent.putExtra(SearchManager.QUERY, getArguments().getString(CROSS));
         activity.startActivity(intent);
     }

@@ -11,4 +11,6 @@
 
     <attr name="arrowDownStyle" format="reference" />
 
+    <attr name="suggestionOverlay" format="reference" />
+
 </resources>

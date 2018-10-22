@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:iconSpaceReserved="false">
+
+    <me.piebridge.bible.preference.VersionPreference
+        android:key="version"
+        android:summary="%s"
+        android:title="@string/choose_version"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="true"
+        android:key="search_all"
+        android:title="@string/search_all"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="search_old"
+        android:title="@string/search_old"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="search_new"
+        android:title="@string/search_new"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="search_gospel"
+        android:title="@string/search_gospel"
+        app:iconSpaceReserved="false" />
+
+    <ListPreference
+        android:key="search_from"
+        android:summary="%s"
+        android:title="@string/search_from"
+        app:iconSpaceReserved="false" />
+
+    <ListPreference
+        android:key="search_to"
+        android:summary="%s"
+        android:title="@string/search_to"
+        app:iconSpaceReserved="false" />
+
+</PreferenceScreen>

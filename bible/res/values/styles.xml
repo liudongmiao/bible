@@ -23,6 +23,8 @@
         <item name="textColorRed">@color/red_dark</item>
         <item name="backgroundHighlight">@color/yellow_dark</item>
         <item name="backgroundSelection">@color/blue_dark</item>
+        <item name="autoCompleteTextViewStyle">@style/autoCompleteTextViewStyle</item>
+        <item name="suggestionOverlay">@style/ThemeOverlay.AppCompat</item>
     </style>
 
     <style name="light" parent="@style/Theme.AppCompat.Light.NoActionBar">
@@ -37,6 +39,8 @@
         <item name="textColorRed">@color/red_light</item>
         <item name="backgroundHighlight">@color/yellow_light</item>
         <item name="backgroundSelection">@color/blue_light</item>
+        <item name="autoCompleteTextViewStyle">@style/autoCompleteTextViewStyle.Light</item>
+        <item name="suggestionOverlay">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
     <style name="dark.dialog" parent="@style/Theme.AppCompat.Dialog">
@@ -80,6 +84,13 @@
         <item name="android:singleLine">true</item>
         <item name="android:textSize">@dimen/text_size_toolbar</item>
         <item name="android:textColor">@color/text_dark</item>
+    </style>
+
+    <style name="autoCompleteTextViewStyle" parent="@style/Widget.AppCompat.AutoCompleteTextView">
+    </style>
+
+    <style name="autoCompleteTextViewStyle.Light" parent="@style/Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:popupBackground">#fffafafa</item>
     </style>
 
 </resources>

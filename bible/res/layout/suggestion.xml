@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="horizontal"
+    android:paddingStart="8dp"
+    android:paddingLeft="8dp"
+    android:paddingEnd="4dp"
+    android:paddingRight="4dp"
+    android:theme="?attr/suggestionOverlay">
+
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="48dp"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/ic_history_black_24dp" />
+
+    <TextView
+        android:id="@android:id/text1"
+        style="?android:attr/dropDownItemStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:singleLine="true"
+        android:textAppearance="?attr/textAppearanceSearchResultTitle"
+        tools:text="check" />
+
+    <ImageView
+        android:id="@+id/edit_query"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackground"
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</LinearLayout>

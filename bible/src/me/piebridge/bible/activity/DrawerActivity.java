@@ -18,7 +18,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 
 import me.piebridge.bible.R;
-import me.piebridge.bible.Search;
 
 /**
  * Created by thom on 16/7/24.
@@ -73,7 +72,7 @@ public abstract class DrawerActivity extends AppCompatActivity
     protected void navigate(final int itemId) {
         switch (itemId) {
             case R.id.menu_search:
-                startActivity(new Intent(this, Search.class));
+                startActivity(new Intent(this, SearchActivity.class));
                 break;
             case R.id.menu_settings:
                 openSettings();

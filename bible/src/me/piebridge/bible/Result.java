@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import me.piebridge.bible.activity.ReadingItemsActivity;
+import me.piebridge.bible.activity.SearchActivity;
 
 public class Result extends Activity {
     private final String TAG = "me.piebridge.bible$Search";
@@ -81,8 +82,8 @@ public class Result extends Activity {
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             query = intent.getStringExtra(SearchManager.QUERY);
-            osisfrom = intent.getStringExtra("osisfrom");
-            osisto = intent.getStringExtra("osisto");
+            osisfrom = intent.getStringExtra(SearchActivity.OSIS_FROM);
+            osisto = intent.getStringExtra(SearchActivity.OSIS_TO);
             Log.d(TAG, "query: " + query + ", osisfrom: " + osisfrom + ", osisto: " + osisto);
             textView = findViewById(R.id.text);
             listView = findViewById(R.id.list);
@@ -144,23 +145,18 @@ public class Result extends Activity {
     public void showResults(Cursor cursor) {
         dismiss();
         if (cursor == null) {
-            textView.setText(getString(R.string.search_no_results, new Object[] {
-                    query,
+            textView.setText(getString(R.string.search_no_results, query,
                     humanfrom,
                     humanto,
-                    bible.getVersionName(version)
-            }));
+                    bible.getVersionFullname(version)));
             return;
         } else {
             int count = cursor.getCount();
-            String countString =
-                    getResources().getQuantityString(R.plurals.search_results, count, new Object[] {
-                            count,
-                            query,
-                            humanfrom,
-                            humanto,
-                            bible.getVersionName(version)
-                    });
+            String countString = getResources().getQuantityString(R.plurals.search_results, count, count,
+                    query,
+                    humanfrom,
+                    humanto,
+                    bible.getVersionFullname(version));
             textView.setText(countString);
         }
 
@@ -272,7 +268,7 @@ public class Result extends Activity {
 
     @Override
     public boolean onSearchRequested() {
-        startActivity(new Intent(this, Search.class));
+        startActivity(new Intent(this, SearchActivity.class));
         return false;
     }
 

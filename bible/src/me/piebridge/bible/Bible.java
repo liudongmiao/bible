@@ -67,6 +67,7 @@ import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.HttpUtils;
 import me.piebridge.bible.utils.LogUtils;
 
@@ -1585,6 +1586,21 @@ public class Bible {
                     new String[] {String.valueOf(highlightId)});
         }
         return true;
+    }
+
+    public boolean checkItems(ArrayList<OsisItem> items) {
+        boolean changed = false;
+        Iterator<OsisItem> it = items.iterator();
+        while (it.hasNext()) {
+            OsisItem item = it.next();
+            String osis = item.toOsis();
+            String book = BibleUtils.getBook(osis);
+            if (getPosition(Bible.TYPE.OSIS, book) < 0) {
+                it.remove();
+                changed = true;
+            }
+        }
+        return changed;
     }
 
     private SQLiteOpenHelper mOpenHelper = null;
