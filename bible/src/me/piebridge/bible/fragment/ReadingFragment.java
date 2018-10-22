@@ -120,12 +120,6 @@ public class ReadingFragment extends Fragment {
         webView.getSettings().setDisplayZoomControls(false);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(readingBridge, "android");
-        webView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return true;
-            }
-        });
         return view;
     }
 

@@ -85,12 +85,6 @@ public class FontsizeFragment extends AbstractDialogFragment implements DialogIn
         webview.getSettings().setDisplayZoomControls(false);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.addJavascriptInterface(new ReadingBridge(null, null), "android");
-        webview.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return true;
-            }
-        });
 
         webview.getSettings().setDefaultFontSize(seekbar.getProgress());
         webview.getSettings().setDefaultFixedFontSize(seekbar.getProgress());
