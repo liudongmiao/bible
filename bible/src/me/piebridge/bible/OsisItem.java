@@ -140,6 +140,7 @@ public class OsisItem implements Parcelable {
         s = s.replace("\u002e", ":");
         s = s.replace("\uff0e", ":");
         s = s.replace("\ufe52", ":");
+        s = s.replace("\u7ae0", ":");
         s = s.replace("\uff1b", ";");
         s = s.replace("\ufe14", ";");
         s = s.replace("\ufe54", ";");
