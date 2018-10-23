@@ -14,8 +14,9 @@
         android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:suggestionRowLayout="@layout/suggestion"
-        app:iconifiedByDefault="false">
+        app:iconifiedByDefault="false"
+        app:searchIcon="@null"
+        app:suggestionRowLayout="@layout/suggestion">
     </androidx.appcompat.widget.SearchView>
 
 </androidx.appcompat.widget.Toolbar>

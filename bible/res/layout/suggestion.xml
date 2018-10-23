@@ -4,19 +4,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="40dp"
     android:background="?attr/selectableItemBackground"
     android:orientation="horizontal"
-    android:paddingStart="8dp"
-    android:paddingLeft="8dp"
+    android:paddingStart="0dp"
+    android:paddingLeft="0dp"
     android:paddingEnd="4dp"
     android:paddingRight="4dp"
     android:theme="?attr/suggestionOverlay">
 
     <ImageView
         android:layout_width="32dp"
-        android:layout_height="48dp"
+        android:layout_height="32dp"
+        android:paddingStart="8dp"
+        android:paddingLeft="8dp"
+        android:paddingEnd="0dp"
+        android:paddingRight="0dp"
         android:scaleType="centerInside"
+        android:visibility="gone"
         app:srcCompat="@drawable/ic_history_black_24dp" />
 
     <TextView
@@ -31,8 +36,8 @@
 
     <ImageView
         android:id="@+id/edit_query"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:background="?attr/selectableItemBackground"
         android:scaleType="centerInside"
         android:visibility="gone"
