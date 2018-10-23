@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.SearchView;
@@ -30,13 +32,15 @@ import me.piebridge.bible.utils.LogUtils;
 /**
  * Created by thom on 2018/10/19.
  */
-public class SearchActivity extends ToolbarActivity implements SearchView.OnQueryTextListener {
+public class SearchActivity extends ToolbarActivity implements SearchView.OnQueryTextListener, View.OnFocusChangeListener {
 
     public static final String OSIS_FROM = "osisFrom";
 
     public static final String OSIS_TO = "osisTo";
 
     public static final String CROSS = "cross";
+
+    private boolean mHasFocus;
 
     private SearchView mSearchView;
 
@@ -58,6 +62,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
 
         mSearchView = findViewById(R.id.searchView);
         mSearchView.setOnQueryTextListener(this);
+        mSearchView.setOnQueryTextFocusChangeListener(this);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         if (searchManager != null) {
             SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
@@ -93,6 +98,13 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
             LogUtils.d("handleIntent, onNewIntent");
             handleIntent(intent);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.search, menu);
+        return !mHasFocus;
     }
 
     @Override
@@ -262,6 +274,19 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
     private boolean canFinish() {
         Intent intent = getIntent();
         return intent.getAction() == null || intent.getBooleanExtra(CROSS, false);
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (v == mSearchView) {
+            mHasFocus = hasFocus;
+            invalidateOptionsMenu();
+        }
+    }
+
+    public void hideSoftInput() {
+        mSearchView.clearFocus();
+        mHasFocus = false;
     }
 
 }

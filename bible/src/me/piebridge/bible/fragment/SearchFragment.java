@@ -16,7 +16,7 @@ import me.piebridge.bible.preference.VersionPreference;
  * Created by thom on 2017/6/26.
  */
 public class SearchFragment extends PreferenceFragmentCompat
-        implements Preference.OnPreferenceChangeListener {
+        implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
     private VersionPreference preferenceVersion;
 
@@ -53,23 +53,28 @@ public class SearchFragment extends PreferenceFragmentCompat
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.search, rootKey);
-        findPreference("version").setOnPreferenceChangeListener(this);
+
+        preferenceVersion = (VersionPreference) findPreference("version");
+        setListener(preferenceVersion);
 
         preferenceSearchAll = (CheckBoxPreference) findPreference(KEY_SEARCH_ALL);
         preferenceSearchOld = (CheckBoxPreference) findPreference(KEY_SEARCH_OLD);
         preferenceSearchNew = (CheckBoxPreference) findPreference(KEY_SEARCH_NEW);
         preferenceSearchGospel = (CheckBoxPreference) findPreference(KEY_SEARCH_GOSPEL);
-        preferenceSearchAll.setOnPreferenceChangeListener(this);
-        preferenceSearchOld.setOnPreferenceChangeListener(this);
-        preferenceSearchNew.setOnPreferenceChangeListener(this);
-        preferenceSearchGospel.setOnPreferenceChangeListener(this);
+        setListener(preferenceSearchAll, preferenceSearchOld, preferenceSearchNew, preferenceSearchGospel);
 
         preferenceSearchFrom = (ListPreference) findPreference(KEY_SEARCH_FROM);
         preferenceSearchTo = (ListPreference) findPreference(KEY_SEARCH_TO);
-        preferenceSearchFrom.setOnPreferenceChangeListener(this);
-        preferenceSearchTo.setOnPreferenceChangeListener(this);
+        setListener(preferenceSearchFrom, preferenceSearchTo);
 
         updateVersion();
+    }
+
+    private void setListener(Preference... preferences) {
+        for (Preference preference : preferences) {
+            preference.setOnPreferenceChangeListener(this);
+            preference.setOnPreferenceClickListener(this);
+        }
     }
 
     @Override
@@ -82,6 +87,8 @@ public class SearchFragment extends PreferenceFragmentCompat
             default:
                 if (!Boolean.FALSE.equals(newValue)) {
                     updateSearch(preference, newValue);
+                } else {
+                    return false;
                 }
                 break;
         }
@@ -198,4 +205,12 @@ public class SearchFragment extends PreferenceFragmentCompat
             preferenceVersion.setValue(version);
         }
     }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        SearchActivity searchActivity = (SearchActivity) getActivity();
+        searchActivity.hideSoftInput();
+        return false;
+    }
+
 }

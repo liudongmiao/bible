@@ -106,25 +106,25 @@
         <activity
             android:name=".activity.SearchActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:label="@string/searchinbible"
+            android:label="@string/menu_search"
             android:parentActivityName=".activity.ReadingActivity"
             android:theme="@style/light"
             android:windowSoftInputMode="stateHidden">
-            <intent-filter>
+            <intent-filter android:label="@string/searchinbible">
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <intent-filter>
+            <intent-filter android:label="@string/searchinbible">
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter>
+            <intent-filter android:label="@string/searchinbible">
                 <action android:name="android.intent.action.PROCESS_TEXT" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter>
+            <intent-filter android:label="@string/searchinbible">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
