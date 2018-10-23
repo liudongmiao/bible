@@ -26,6 +26,7 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
 
     public static final String ITEMS = "items";
     public static final String SEARCH = "search";
+    public static final String FINISHED = "finished";
 
     private String search;
     private List<OsisItem> items;
@@ -138,11 +139,19 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home && Intent.ACTION_VIEW.equals(getIntent().getStringExtra(Intent.EXTRA_REFERRER))) {
-            Intent launchIntent = getPackageManager().getLaunchIntentForPackage(getPackageName());
-            startActivity(launchIntent);
-            finish();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Bundle extras = getIntent().getExtras();
+                if (extras != null && extras.containsKey(FINISHED)) {
+                    if (extras.getBoolean(FINISHED, false)) {
+                        startActivity(new Intent(this, SearchActivity.class));
+                    }
+                    finish();
+                    return true;
+                }
+                break;
+            default:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

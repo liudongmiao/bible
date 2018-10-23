@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.ActionBar;
@@ -56,16 +54,10 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         mSuggestions = new SearchRecentSuggestions(this,
                 SearchProvider.AUTHORITY, SearchProvider.MODE);
 
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        showBack(true);
 
         mSearchView = findViewById(R.id.searchView);
-        mSearchView.setIconifiedByDefault(false);
-        mSearchView.requestFocus();
         mSearchView.setOnQueryTextListener(this);
-        mSearchView.setQueryRefinementEnabled(true);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         if (searchManager != null) {
             SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
@@ -80,26 +72,27 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         bible = Bible.getInstance(getApplication());
 
         Intent intent = getIntent();
-        if (intent != null && intent.getAction() != null) {
+        if (intent.getAction() != null) {
             LogUtils.d("handleIntent, onCreate");
             handleIntent(intent);
+        }
+    }
+
+    private void showBack(boolean show) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(show);
         }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent != null && intent.getAction() != null) {
+        setIntent(intent);
+        if (intent.getAction() != null) {
             LogUtils.d("handleIntent, onNewIntent");
             handleIntent(intent);
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.search, menu);
-        return true;
     }
 
     @Override
@@ -108,14 +101,26 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
             case R.id.action_clear:
                 mSuggestions.clearHistory();
                 break;
+            case android.R.id.home:
+                if (canFinish()) {
+                    finish();
+                } else {
+                    startBible();
+                }
+                break;
         }
         return true;
+    }
+
+    private void startBible() {
+        startActivity(new Intent(this, ReadingActivity.class));
+        finish();
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
         if (!TextUtils.isEmpty(query)) {
-            doSearch(query);
+            doSearch(query, true);
         }
         return true;
     }
@@ -125,14 +130,18 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         return false;
     }
 
-    private void doSearch(String query) {
-        mSearchView.setQuery(query, false);
+    private void doSearch(String query, boolean parse) {
         mSuggestions.saveRecentQuery(query, null);
 
-        ArrayList<OsisItem> items = OsisItem.parseSearch(query, getApplication());
-        LogUtils.d("items: " + items);
+        ArrayList<OsisItem> items;
+        if (parse) {
+            items = OsisItem.parseSearch(query, getApplication());
+            LogUtils.d("items: " + items);
+        } else {
+            items = new ArrayList<>();
+        }
         if (!items.isEmpty()) {
-            showItems(items, false);
+            showItems(items, false, false);
         } else {
             Intent intent = new Intent(this, Result.class);
             intent.setAction(Intent.ACTION_SEARCH);
@@ -152,7 +161,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         if ((getComponentName()).equals(intent.getComponent())) {
             String query = parseQuery(intent);
             if (!TextUtils.isEmpty(query)) {
-                doSearch(query);
+                doSearch(query, true);
             }
         } else {
             super.startActivity(intent);
@@ -224,28 +233,35 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
             ArrayList<OsisItem> items = OsisItem.parseSearch(query, getApplication());
             LogUtils.d("items: " + items);
             if (!items.isEmpty() && !bible.checkItems(items)) {
-                mSearchView.setQuery(query, false);
                 mSuggestions.saveRecentQuery(query, null);
-                showItems(items, cross);
+                showItems(items, cross, true);
             } else if (data != null) {
                 redirect(data);
             } else {
-                mSearchView.setQuery(query, false);
+                doSearch(query, false);
             }
+            finish();
         }
     }
 
     private void redirect(Uri data) {
+        // FIXME: use chrome tabs
         Intent intent = new Intent(Intent.ACTION_VIEW, data);
         intent.addCategory(Intent.CATEGORY_BROWSABLE);
         ChooserUtils.startActivityExcludeSelf(this, intent, null);
     }
 
-    private void showItems(ArrayList<OsisItem> items, boolean cross) {
+    private void showItems(ArrayList<OsisItem> items, boolean cross, boolean finished) {
         Intent intent = new Intent(this, cross ? ReadingCrossActivity.class : ReadingItemsActivity.class);
         intent.putParcelableArrayListExtra(ReadingItemsActivity.ITEMS, items);
         intent.putExtra(Intent.EXTRA_REFERRER, getIntent().getAction());
+        intent.putExtra(ReadingItemsActivity.FINISHED, finished);
         super.startActivity(intent);
+    }
+
+    private boolean canFinish() {
+        Intent intent = getIntent();
+        return intent.getAction() == null || intent.getBooleanExtra(CROSS, false);
     }
 
 }
