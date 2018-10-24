@@ -1,34 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="5dp"
-    >
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/human"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@android:style/TextAppearance.Large"
-            />
-        <TextView
-            android:id="@+id/verse"
-            android:layout_marginLeft="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@android:style/TextAppearance.Large"
-            />
-    </LinearLayout>
-    <!--android:singleLine="true"-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+    android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+    android:paddingRight="?android:attr/listPreferredItemPaddingRight">
+
     <TextView
-        android:id="@+id/unformatted"
+        android:id="@+id/type"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textAppearance="?attr/textAppearanceSearchResultTitle"
+        tools:text="" />
+
+    <TextView
+        android:id="@+id/count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@android:style/TextAppearance.Medium"
-        />
+        android:textAppearance="?attr/textAppearanceSearchResultTitle"
+        tools:text="10" />
+
 </LinearLayout>
-<!-- vim: set sta sw=4 et: -->

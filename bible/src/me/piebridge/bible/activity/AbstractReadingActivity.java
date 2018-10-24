@@ -1,7 +1,6 @@
 package me.piebridge.bible.activity;
 
 import android.app.ActivityManager;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;

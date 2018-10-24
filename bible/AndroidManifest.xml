@@ -52,12 +52,10 @@
                     android:scheme="file" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Result"
-            android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
 
         <activity
             android:name=".activity.ReadingItemsActivity"
+            android:exported="false"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:parentActivityName=".activity.ReadingActivity"
             android:theme="@style/light">
@@ -74,6 +72,7 @@
         <activity
             android:name=".activity.SelectActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:exported="false"
             android:parentActivityName=".activity.ReadingActivity"
             android:theme="@style/light">
             <meta-data
@@ -84,6 +83,7 @@
         <activity
             android:name=".activity.SelectVersionActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:exported="false"
             android:label="@string/choose_version"
             android:parentActivityName=".activity.ReadingActivity"
             android:theme="@style/light">
@@ -175,6 +175,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.ReadingActivity" />
+        </activity>
+
+        <activity
+            android:name=".activity.ResultsActivity"
+            android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:parentActivityName=".activity.SearchActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.SearchActivity" />
         </activity>
 
         <provider

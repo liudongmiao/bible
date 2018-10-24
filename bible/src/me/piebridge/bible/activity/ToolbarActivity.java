@@ -1,9 +1,12 @@
 package me.piebridge.bible.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -16,6 +19,8 @@ import me.piebridge.bible.utils.ThemeUtils;
 public abstract class ToolbarActivity extends AppCompatActivity {
 
     private TextView titleView;
+
+    private static final String FINISHED = "finished";
 
     @Override
     @CallSuper
@@ -47,6 +52,39 @@ public abstract class ToolbarActivity extends AppCompatActivity {
             titleView.setText(title);
         } else {
             super.setTitle(title);
+        }
+    }
+
+    @Override
+    @CallSuper
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (hasFinished()) {
+                    onSupportNavigateUp();
+                } else {
+                    finish();
+                }
+                return true;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    protected boolean hasFinished() {
+        return getIntent().getBooleanExtra(FINISHED, false);
+    }
+
+    public Intent setFinished(Intent intent, boolean finished) {
+        intent.putExtra(FINISHED, finished);
+        return intent;
+    }
+
+    protected void showBack(boolean show) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(show);
         }
     }
 

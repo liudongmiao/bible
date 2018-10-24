@@ -41,16 +41,21 @@ public class OsisItem implements Parcelable {
         this.verseEnd = parcel.readString();
     }
 
-    OsisItem(String book) {
+    public OsisItem(String book) {
         this.book = book;
     }
 
-    OsisItem(String book, int chapter) {
+    public OsisItem(String book, int chapter) {
         this.book = book;
         this.chapter = String.valueOf(chapter);
     }
 
-    OsisItem(String book, String chapter, String verseStart) {
+    public OsisItem(String book, String chapter) {
+        this.book = book;
+        this.chapter = chapter;
+    }
+
+    public OsisItem(String book, String chapter, String verseStart) {
         this.book = book;
         this.chapter = chapter;
         if (isValidVerse(verseStart)) {
@@ -58,7 +63,7 @@ public class OsisItem implements Parcelable {
         }
     }
 
-    OsisItem(String book, int chapter, int verseStart) {
+    public OsisItem(String book, int chapter, int verseStart) {
         this.book = book;
         this.chapter = String.valueOf(chapter);
         if (verseStart > 0) {
@@ -66,7 +71,7 @@ public class OsisItem implements Parcelable {
         }
     }
 
-    OsisItem(String book, String chapter, String verseStart, String verseEnd) {
+    public OsisItem(String book, String chapter, String verseStart, String verseEnd) {
         this.book = book;
         this.chapter = chapter;
         if (isValidVerse(verseStart)) {

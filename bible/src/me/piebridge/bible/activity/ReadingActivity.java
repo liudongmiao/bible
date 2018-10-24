@@ -18,7 +18,6 @@ import me.piebridge.bible.fragment.FontsizeFragment;
 import me.piebridge.bible.fragment.ReadingFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
-import me.piebridge.bible.utils.ObjectUtils;
 
 /**
  * Created by thom on 15/10/18.

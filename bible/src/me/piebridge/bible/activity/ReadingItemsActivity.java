@@ -2,7 +2,6 @@ package me.piebridge.bible.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,7 +25,6 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
 
     public static final String ITEMS = "items";
     public static final String SEARCH = "search";
-    public static final String FINISHED = "finished";
 
     private String search;
     private List<OsisItem> items;
@@ -135,25 +133,6 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         String bookName = bible.get(Bible.TYPE.BOOK, osisPosition);
         String chapterVerse = BibleUtils.getChapterVerse(this, bundle);
         return BibleUtils.getBookChapterVerse(bookName, chapterVerse);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Bundle extras = getIntent().getExtras();
-                if (extras != null && extras.containsKey(FINISHED)) {
-                    if (extras.getBoolean(FINISHED, false)) {
-                        startActivity(new Intent(this, SearchActivity.class));
-                    }
-                    finish();
-                    return true;
-                }
-                break;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

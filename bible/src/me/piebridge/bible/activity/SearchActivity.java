@@ -14,16 +14,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.SearchView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Locale;
 
 import me.piebridge.bible.Bible;
 import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
-import me.piebridge.bible.Result;
 import me.piebridge.bible.fragment.SearchFragment;
 import me.piebridge.bible.provider.SearchProvider;
 import me.piebridge.bible.utils.ChooserUtils;
@@ -55,10 +54,10 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        showBack(true);
+
         mSuggestions = new SearchRecentSuggestions(this,
                 SearchProvider.AUTHORITY, SearchProvider.MODE);
-
-        showBack(true);
 
         mSearchView = findViewById(R.id.searchView);
         mSearchView.setOnQueryTextListener(this);
@@ -76,28 +75,14 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
 
         bible = Bible.getInstance(getApplication());
 
-        Intent intent = getIntent();
-        if (intent.getAction() != null) {
-            LogUtils.d("handleIntent, onCreate");
-            handleIntent(intent);
-        }
-    }
-
-    private void showBack(boolean show) {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(show);
-        }
+        handleIntent(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        if (intent.getAction() != null) {
-            LogUtils.d("handleIntent, onNewIntent");
-            handleIntent(intent);
-        }
+        handleIntent(intent);
     }
 
     @Override
@@ -112,27 +97,17 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         switch (item.getItemId()) {
             case R.id.action_clear:
                 mSuggestions.clearHistory();
-                break;
-            case android.R.id.home:
-                if (canFinish()) {
-                    finish();
-                } else {
-                    startBible();
-                }
+                return true;
+            default:
                 break;
         }
-        return true;
-    }
-
-    private void startBible() {
-        startActivity(new Intent(this, ReadingActivity.class));
-        finish();
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
         if (!TextUtils.isEmpty(query)) {
-            doSearch(query, true);
+            doSearch(query, true, false);
         }
         return true;
     }
@@ -142,20 +117,23 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         return false;
     }
 
-    private void doSearch(String query, boolean parse) {
+    private void doSearch(String query, boolean parse, boolean finished) {
         mSuggestions.saveRecentQuery(query, null);
 
         ArrayList<OsisItem> items;
         if (parse) {
             items = OsisItem.parseSearch(query, getApplication());
-            LogUtils.d("items: " + items);
+            fixItems(items);
+            if (!items.isEmpty()) {
+                LogUtils.d("items: " + items);
+            }
         } else {
             items = new ArrayList<>();
         }
         if (!items.isEmpty()) {
             showItems(items, false, false);
         } else {
-            Intent intent = new Intent(this, Result.class);
+            Intent intent = new Intent(this, ResultsActivity.class);
             intent.setAction(Intent.ACTION_SEARCH);
             intent.putExtra(SearchManager.QUERY, query);
 
@@ -164,7 +142,17 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
             intent.putExtra(OSIS_TO, sharedPreferences.getString(SearchFragment.KEY_SEARCH_TO, null));
 
             LogUtils.d("intent: " + intent + ", extra: " + intent.getExtras());
-            super.startActivity(intent);
+            super.startActivity(setFinished(intent, finished));
+        }
+    }
+
+    private void fixItems(ArrayList<OsisItem> items) {
+        Iterator<OsisItem> it = items.iterator();
+        while (it.hasNext()) {
+            OsisItem item = it.next();
+            if (TextUtils.isEmpty(item.chapter)) {
+                it.remove();
+            }
         }
     }
 
@@ -173,7 +161,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         if ((getComponentName()).equals(intent.getComponent())) {
             String query = parseQuery(intent);
             if (!TextUtils.isEmpty(query)) {
-                doSearch(query, true);
+                mSearchView.setQuery(query, true);
             }
         } else {
             super.startActivity(intent);
@@ -181,11 +169,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
     }
 
     private String parseQuery(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            return intent.getStringExtra(SearchManager.QUERY);
-        } else {
-            return null;
-        }
+        return intent.getStringExtra(SearchManager.QUERY);
     }
 
     private String lower(String version) {
@@ -197,6 +181,12 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
     }
 
     private void handleIntent(Intent intent) {
+        LogUtils.d("intent: " + intent + ", extra: " + intent.getExtras());
+        String action = intent.getAction();
+        if (action == null) {
+            mSearchView.setQuery(parseQuery(intent), false);
+            return;
+        }
         String query = null;
         Uri data = null;
         switch (intent.getAction()) {
@@ -243,14 +233,15 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
 
         if (query != null) {
             ArrayList<OsisItem> items = OsisItem.parseSearch(query, getApplication());
-            LogUtils.d("items: " + items);
+            fixItems(items);
             if (!items.isEmpty() && !bible.checkItems(items)) {
+                LogUtils.d("items: " + items);
                 mSuggestions.saveRecentQuery(query, null);
                 showItems(items, cross, true);
             } else if (data != null) {
                 redirect(data);
             } else {
-                doSearch(query, false);
+                doSearch(query, false, true);
             }
             finish();
         }
@@ -267,13 +258,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         Intent intent = new Intent(this, cross ? ReadingCrossActivity.class : ReadingItemsActivity.class);
         intent.putParcelableArrayListExtra(ReadingItemsActivity.ITEMS, items);
         intent.putExtra(Intent.EXTRA_REFERRER, getIntent().getAction());
-        intent.putExtra(ReadingItemsActivity.FINISHED, finished);
-        super.startActivity(intent);
-    }
-
-    private boolean canFinish() {
-        Intent intent = getIntent();
-        return intent.getAction() == null || intent.getBooleanExtra(CROSS, false);
+        super.startActivity(setFinished(intent, finished));
     }
 
     @Override
@@ -287,6 +272,16 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
     public void hideSoftInput() {
         mSearchView.clearFocus();
         mHasFocus = false;
+    }
+
+    @Override
+    protected boolean hasFinished() {
+        Intent intent = getIntent();
+        if (intent.getAction() == null || intent.getBooleanExtra(CROSS, false)) {
+            return false;
+        } else {
+            return super.hasFinished();
+        }
     }
 
 }

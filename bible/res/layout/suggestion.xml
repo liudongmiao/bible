@@ -31,7 +31,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:singleLine="true"
-        android:textAppearance="?attr/textAppearanceSearchResultTitle"
+        android:textAppearance="?attr/textAppearanceSearchResultSubtitle"
         tools:text="check" />
 
     <ImageView

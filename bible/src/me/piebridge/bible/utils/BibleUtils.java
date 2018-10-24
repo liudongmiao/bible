@@ -6,8 +6,10 @@ import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 
 import java.io.File;
+import java.math.BigDecimal;
 
 import me.piebridge.bible.Bible;
+import me.piebridge.bible.Provider;
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.AbstractReadingActivity;
 
@@ -85,6 +87,13 @@ public class BibleUtils {
             }
         }
         return null;
+    }
+
+    public static int[] getChapterVerse(String string) {
+        int value = new BigDecimal(string).multiply(new BigDecimal(Provider.THOUSAND)).intValue();
+        int chapter = value / Provider.THOUSAND;
+        int verse = value % Provider.THOUSAND;
+        return new int[] {chapter, verse};
     }
 
 }

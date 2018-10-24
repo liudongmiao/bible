@@ -19,6 +19,9 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.text.TextUtils;
+
+import me.piebridge.bible.utils.LogUtils;
 
 public class Provider extends ContentProvider {
 
@@ -43,13 +46,16 @@ public class Provider extends ContentProvider {
     public static final String[] COLUMNS_VERSE = {"verse"};
 
     public static final String TABLE_CHAPTERS = "chapters";
-    public static final String[] COLUMNS_CHAPTER = {"id as _id", "reference_osis as osis", "reference_human as human", "content", "previous_reference_osis as previous", "next_reference_osis as next"};
+    public static final String[] COLUMNS_CHAPTER =
+            {"id as _id", "reference_osis as osis", "reference_human as human", "content",
+                    "previous_reference_osis as previous", "next_reference_osis as next"};
     public static final String[] COLUMNS_CHAPTERS = {"count(id) as _count"};
 
     public static final String TABLE_BOOKS = "books";
     public static final String[] COLUMNS_BOOKS = {"number as _id", "osis", "human", "chapters"};
 
     public static final String AUTHORITY = "me.piebridge.bible.provider";
+    public static final Uri CONTENT_URI_BOOK = Uri.parse("content://" + AUTHORITY + "/book");
     public static final Uri CONTENT_URI_SEARCH = Uri.parse("content://" + AUTHORITY + "/search");
     public static final Uri CONTENT_URI_VERSE = Uri.parse("content://" + AUTHORITY + "/verse");
     public static final Uri CONTENT_URI_CHAPTER = Uri.parse("content://" + AUTHORITY + "/chapter");
@@ -59,6 +65,7 @@ public class Provider extends ContentProvider {
     private static final int URI_VERSE = 1;
     private static final int URI_CHAPTER = 2;
     private static final int URI_CHAPTERS = 3;
+    private static final int URI_BOOK = 4;
 
     private Bible bible;
 
@@ -70,17 +77,40 @@ public class Provider extends ContentProvider {
         matcher.addURI(AUTHORITY, "verse/#", URI_VERSE);
         matcher.addURI(AUTHORITY, "chapter/*", URI_CHAPTER);
         matcher.addURI(AUTHORITY, "chapters", URI_CHAPTERS);
+        matcher.addURI(AUTHORITY, "book/*", URI_BOOK);
         return matcher;
     }
 
-    private Cursor queryVerse(String books, String query) {
+    private Cursor queryBook(String query, String books) {
         SQLiteDatabase database = bible.getDatabase();
         if (database == null) {
             return null;
         }
 
+        LogUtils.d("queryBook, books: " + books + ", query: " + query);
+        Cursor cursor = database.query(TABLE_BOOKS, COLUMNS_BOOKS,
+                TextUtils.isEmpty(books) ? "human like ?" : "human like ? and osis in (" + books + ")",
+                new String[] {"%" + query + "%"}, null, null, "number ASC");
+
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+
+        return cursor;
+    }
+
+    private Cursor queryVerse(String query, String books) {
+        SQLiteDatabase database = bible.getDatabase();
+        if (database == null) {
+            return null;
+        }
+
+        LogUtils.d("queryVerse, books: " + books + ", query: " + query);
         Cursor cursor = database.query(TABLE_VERSES, COLUMNS_VERSES,
-                books == null ? "unformatted like ?" : "unformatted like ? and book in (" + books + ")",
+                TextUtils.isEmpty(books) ? "unformatted like ?" : "unformatted like ? and book in (" + books + ")",
                 new String[] {"%" + query + "%"}, null, null, "id ASC");
 
         if (cursor == null) {
@@ -190,9 +220,7 @@ public class Provider extends ContentProvider {
         }
         switch (uriMatcher.match(uri)) {
             case URI_SEARCH:
-                String query = uri.getLastPathSegment();
-                String books = uri.getQueryParameter("books");
-                return queryVerse(books, query);
+                return queryVerse(uri.getLastPathSegment(), uri.getQueryParameter("books"));
             case URI_VERSE:
                 String id = uri.getLastPathSegment();
                 return getVerse(id);
@@ -201,6 +229,8 @@ public class Provider extends ContentProvider {
                 return getChapter(osis);
             case URI_CHAPTERS:
                 return getChapters();
+            case URI_BOOK:
+                return queryBook(uri.getLastPathSegment(), uri.getQueryParameter("books"));
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
         }
