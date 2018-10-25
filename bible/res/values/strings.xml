@@ -26,7 +26,7 @@
     <string name="demo">DEMO</string>
     <string name="chapters">%1$s, %2$d chapters.</string>
     <string name="searchinbible">Search in Bible</string>
-    <string name="deleteversion">Delete Version %s?</string>
+    <string name="deleteversion">Delete Version \"%s\"?</string>
     <string name="deleteversiondetail">You won\'t be able to read or search the %s!</string>
     <string name="red">Red Letter</string>
     <string name="wojinred">For Words of Jesus if available</string>
@@ -93,5 +93,6 @@
     <string name="theme_dark">Dark</string>
 
     <string name="search_clear">Clear Search History</string>
+    <string name="confirm">Confirm</string>
 
 </resources>

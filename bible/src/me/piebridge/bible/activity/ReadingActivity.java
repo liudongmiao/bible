@@ -18,6 +18,7 @@ import me.piebridge.bible.fragment.FontsizeFragment;
 import me.piebridge.bible.fragment.ReadingFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.ObjectUtils;
 
 /**
  * Created by thom on 15/10/18.
@@ -162,6 +163,17 @@ public class ReadingActivity extends AbstractReadingActivity {
         Bible bible = Bible.getInstance(getApplication());
         String key = AbstractReadingActivity.FONT_SIZE + "-" + bible.getVersion();
         return PreferenceManager.getDefaultSharedPreferences(getApplication()).getInt(key, FontsizeFragment.FONTSIZE_DEFAULT);
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String version = intent.getStringExtra(AbstractReadingActivity.VERSION);
+        if (!TextUtils.isEmpty(version) && !ObjectUtils.equals(version, getCurrentVersion())) {
+            bible.setVersion(version);
+            updateVersion();
+            refresh();
+        }
     }
 
 }

@@ -14,7 +14,7 @@ public class ObjectUtils {
      *
      * @see java.util.Objects#equals(Object, Object)
      */
-    public static boolean isIdentical(Object a, Object b) {
+    public static boolean equals(Object a, Object b) { // NOSONAR
         return (a == b) || (a != null && a.equals(b));
     }
 

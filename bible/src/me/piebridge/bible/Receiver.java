@@ -5,7 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import me.piebridge.bible.activity.VersionsActivity;
+import me.piebridge.bible.utils.LogUtils;
 
 public class Receiver extends BroadcastReceiver {
 
@@ -16,38 +16,18 @@ public class Receiver extends BroadcastReceiver {
             onCompleteDownloads(context, intent);
         } else if (DownloadManager.ACTION_NOTIFICATION_CLICKED.equals(action)) {
             onClickDownloads(context);
-        } else if ("android.provider.Telephony.SECRET_CODE".equals(action)) {
-            launchApplication(context);
         }
     }
 
-
     private void onClickDownloads(Context context) {
-        context.startActivity(new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        context.startActivity(new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     private void onCompleteDownloads(Context context, Intent intent) {
+        BibleApplication application = (BibleApplication) context.getApplicationContext();
         long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-        final DownloadInfo info = DownloadInfo.getDownloadInfo(context, id);
-        if (info == null) {
-            return;
-        }
-        if (info.status != DownloadManager.STATUS_SUCCESSFUL) {
-            VersionsActivity.onDownloadComplete(info);
-        } else {
-            Bible.getInstance(context.getApplicationContext()).checkBibleData(false, new Runnable() {
-                @Override
-                public void run() {
-                    VersionsActivity.onDownloadComplete(info);
-                }
-            });
-        }
-    }
-
-    private void launchApplication(Context context) {
-        Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
-        context.startActivity(intent);
+        LogUtils.d("intent: " + intent + ", extras: " + intent.getExtras());
+        application.checkStatus(id);
     }
 
 }

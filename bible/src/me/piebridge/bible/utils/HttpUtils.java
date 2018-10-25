@@ -34,11 +34,13 @@ public class HttpUtils {
             return null;
         }
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setInstanceFollowRedirects(false);
         try {
             if (eTag.length() > 0) {
                 connection.addRequestProperty("If-None-Match", eTag.toString());
             }
             int code = connection.getResponseCode();
+            LogUtils.d("url: " + url + ", code: " + code);
             if (code == STATUS_304) {
                 return null;
             } else if (isRedirected(code)) {

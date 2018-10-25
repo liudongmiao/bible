@@ -328,7 +328,7 @@ public class ReadingFragment extends Fragment {
         selectedVerses = verses;
         selectedContent = content;
         AbstractReadingActivity activity = (AbstractReadingActivity) getActivity();
-        if (ObjectUtils.isIdentical(activity.getCurrentOsis(), osis)) {
+        if (ObjectUtils.equals(activity.getCurrentOsis(), osis)) {
             activity.onSelected(highlight, verses, content);
         }
     }
@@ -342,7 +342,7 @@ public class ReadingFragment extends Fragment {
 
     private boolean isCurrent() {
         AbstractReadingActivity activity = (AbstractReadingActivity) getActivity();
-        return activity != null && ObjectUtils.isIdentical(activity.getCurrentOsis(), osis);
+        return activity != null && ObjectUtils.equals(activity.getCurrentOsis(), osis);
     }
 
     public void updateFontSize(int fontSize) {

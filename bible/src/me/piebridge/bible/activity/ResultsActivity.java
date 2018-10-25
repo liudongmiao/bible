@@ -317,19 +317,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
             this.cardView = view;
             this.bookView = view.findViewById(R.id.book);
         }
-    }
 
-    private static class CountViewHolder extends RecyclerView.ViewHolder {
-
-        final TextView typeView;
-
-        final TextView countView;
-
-        public CountViewHolder(View view) {
-            super(view);
-            this.typeView = view.findViewById(R.id.type);
-            this.countView = view.findViewById(R.id.count);
-        }
     }
 
 

@@ -36,7 +36,7 @@ public class VersionPreference extends ListPreference {
     public void setValue(String value) {
         super.setValue(value);
         Bible bible = Bible.getInstance(getContext().getApplicationContext());
-        if (!ObjectUtils.isIdentical(bible.getVersion(), value)) {
+        if (!ObjectUtils.equals(bible.getVersion(), value)) {
             bible.setVersion(value);
         }
         super.setSummary(bible.getVersionFullname(value));

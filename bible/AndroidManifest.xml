@@ -13,6 +13,7 @@
     <uses-permission android:name="me.piebridge.bible.permission.ACCESS" />
 
     <application
+        android:name=".BibleApplication"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_bible"
@@ -33,12 +34,20 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity-alias>
 
         <activity
             android:name=".activity.VersionsActivity"
+            android:label="@string/menu_download"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="me.piebridge.bible.intent.action.DOWNLOAD" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

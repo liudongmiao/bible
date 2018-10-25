@@ -141,7 +141,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         super.onRestart();
         fontPath = BibleUtils.getFontPath(this);
         String oldFontPath = mAdapter.getData(getCurrentPosition()).getString(FONT_PATH);
-        if (!ObjectUtils.isIdentical(fontPath, oldFontPath)) {
+        if (!ObjectUtils.equals(fontPath, oldFontPath)) {
             refresh();
         }
     }

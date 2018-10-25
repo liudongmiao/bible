@@ -12,15 +12,13 @@
     <color name="red_dark">#ffffbab8</color>
     <color name="red_light">#ffc6280d</color>
 
-    <!-- 55ffcf0f -->
-    <color name="yellow">#ffffefaf</color>
-    <color name="yellow_dark">#4dffcf0f</color>
-    <color name="yellow_light">#99fee479</color>
+    <color name="yellow">#fffee9be</color>
+    <color name="yellow_dark">#ff8a754a</color>
+    <color name="yellow_light">#fffde9be</color>
 
-    <!-- b2d7ff, 551887ff, 663e9bff -->
-    <color name="blue">#ffb2d7ff</color>
-    <color name="blue_dark">#4d1887ff</color>
-    <color name="blue_light">#997ebcfe</color>
+    <color name="blue">#ffb3d7ff</color>
+    <color name="blue_dark">#ff3f638b</color>
+    <color name="blue_light">#ffb3d6fd</color>
 
     <color name="primary">#ff1859a3</color>
     <color name="primary_dark">#ff0c3d84</color>

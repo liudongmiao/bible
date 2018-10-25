@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+    <shortcut
+        android:icon="@drawable/ic_file_download_black_24dp"
+        android:shortcutId="download"
+        android:shortcutShortLabel="@string/menu_download">
+        <intent android:action="me.piebridge.bible.intent.action.DOWNLOAD" />
+    </shortcut>
+    -->
+</shortcuts>

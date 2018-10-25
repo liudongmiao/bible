@@ -1,34 +1,37 @@
 package me.piebridge.bible.activity;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.graphics.drawable.AnimationDrawable;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.Message;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.Filter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
-import com.emilsjolander.components.stickylistheaders.StickyListHeadersAdapter;
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
+import androidx.appcompat.widget.SearchView;
+import androidx.cardview.widget.CardView;
+import androidx.collection.SimpleArrayMap;
+import androidx.fragment.app.FragmentManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,695 +39,743 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.text.Collator;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import me.piebridge.bible.Bible;
-import me.piebridge.bible.DownloadInfo;
-import me.piebridge.bible.Log;
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.R;
+import me.piebridge.bible.fragment.DeleteVersionConfirmFragment;
+import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.ObjectUtils;
 
-public class VersionsActivity extends Activity {
+public class VersionsActivity extends ToolbarActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener,
+        View.OnClickListener {
 
-    private static long mtime = 0;
+    private static final long LATER = 250;
+
+    private static final String FRAGMENT_CONFIRM = "fragment-confirm";
+
+    private RecyclerView recyclerView;
+    private VersionAdapter versionsAdaper;
+
+    private SearchView mSearchView;
+
+    private MainHandler mainHandler;
+    private WorkHandler workHandler;
 
     private Bible bible;
-    private ListView list;
-    private EditText query;
-    private ImageView refresh;
-    private SimpleAdapter adapter;
-    private List<String> languages = new ArrayList<>();
-    private List<String> names = new ArrayList<>();
-    private final List<Map<String, String>> data = new ArrayList<>();
-    private List<Map<String, String>> filtered = new ArrayList<>();
-    private List<Map<String, String>> updated = new ArrayList<>();
-    private List<Map<String, String>> matched = new ArrayList<>();
-    private List<Map<String, String>> halfmatched = new ArrayList<>();
-    private final List<HashMap<String, String>> versions = new ArrayList<>();
-    private HashMap<String, String> request = new HashMap<>();
 
-    public static final int STOP = 0;
-    public static final int START = 1;
-    public static final int DELETE = 2;
-    public static final int DELETED = 3;
-    public static final int COMPLETE = 4;
-    public static final int CHECKZIP = 5;
+    private static final int ADD_VERSION = 0;
+    private static final int DELETE_VERSION = 1;
+    private static final int UPDATE_VERSIONS = 2;
+    private static final int UPDATE_ACTIONS = 3;
 
-    public static final String TAG = "me.piebridge.bible$VersionsActivity";
+    private BroadcastReceiver receiver;
 
-    private static Handler resume = null;
-    private static final Map<String, Integer> completed = new HashMap<>();
-    private static final Map<String, String> queue = new HashMap<>();
-
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.versions);
-        bible = Bible.getInstance(getApplicationContext());
+        setContentView(R.layout.activity_versions);
+        showBack(true);
 
-        list = findViewById(android.R.id.list);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                @SuppressWarnings("unchecked")
-                Map<String, String> map = (Map<String, String>) adapter.getItem(position);
-                TextView action = view.findViewById(R.id.action);
-                clickVersion(action, map, false);
-            }
+        versionsAdaper = new VersionAdapter(this);
 
-        });
+        recyclerView = findViewById(R.id.recycler);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
-        query = findViewById(R.id.query);
-        query.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int before, int after) {
-            }
+        mainHandler = new MainHandler(this);
+        workHandler = new WorkHandler(this);
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int after) {
-                filtering = true;
-                if (adapter != null) {
-                    adapter.getFilter().filter(s);
-                }
-            }
+        handleIntent(getIntent());
 
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
+        recyclerView.setAdapter(versionsAdaper);
 
-        });
-
-        refresh = findViewById(R.id.refresh);
-        refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handler.sendEmptyMessage(START);
-            }
-        });
-
-        if (request.size() == 0) {
-            String none = "none";
-            request.put("lang", none);
-            request.put("code", getString(R.string.request_other_version));
-            request.put("name", getString(R.string.request_version_message));
-            languages.add(request.get("lang"));
-            names.add(getString(R.string.not_found));
-        }
-
-        if (queue.size() == 0) {
-            readQueue();
-        }
-        Intent intent = getIntent();
-        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            Uri uri = intent.getData();
-            final String path = uri.getLastPathSegment();
-            if ("file".equals(uri.getScheme()) && path != null && path.startsWith("bibledata")) {
-                handler.sendMessage(handler.obtainMessage(CHECKZIP, new File(uri.getPath())));
-            }
-        }
-    }
-
-    public static final String QUEUE = "download_queue";
-
-    @SuppressLint("InlinedApi")
-    private void readQueue() {
-        SharedPreferences sp = getSharedPreferences(QUEUE, Context.MODE_PRIVATE);
-        Map<String, ?> map = sp.getAll();
-        if (map == null || map.size() == 0) {
-            return;
-        }
-        for (Entry<String, ?> entry : map.entrySet()) {
-            String key = entry.getKey();
-            long value;
-            try {
-                value = Long.parseLong(String.valueOf(entry.getValue()));
-            } catch (NumberFormatException e) {
-                continue;
-            }
-            DownloadInfo info = DownloadInfo.getDownloadInfo(this, value);
-            if (info == null) {
-                continue;
-            }
-            switch (info.status) {
-                case DownloadManager.STATUS_PAUSED:
-                case DownloadManager.STATUS_PENDING:
-                case DownloadManager.STATUS_RUNNING:
-                    queue.put(key, String.valueOf(value));
-                    queue.put(String.valueOf(value), key);
-                    break;
-                case DownloadManager.STATUS_FAILED:
-                case DownloadManager.STATUS_SUCCESSFUL:
-                default:
-                    break;
-            }
-        }
-    }
-
-    private void saveQueue() {
-        final Editor editor = getSharedPreferences(QUEUE, Context.MODE_PRIVATE).edit();
-        editor.clear();
-        for (Entry<String, String> entry : queue.entrySet()) {
-            String key = entry.getKey();
-            if (!TextUtils.isEmpty(key) && TextUtils.isDigitsOnly(key)) {
-                editor.putLong(entry.getValue(), Long.parseLong(key));
-            }
-        }
-        editor.apply();
-    }
-
-    List<HashMap<String, String>> parseVersions(List<HashMap<String, String>> list, String string) {
-        Context context = bible.getContext();
+        bible = Bible.getInstance(getApplication());
         try {
-            JSONObject jsons = new JSONObject(string);
-            List<String> installed = bible.get(Bible.TYPE.VERSIONPATH);
-            JSONArray jsonVersions = jsons.getJSONArray("versions");
-            JSONObject jsonLanguages = null;
-            try {
-                jsonLanguages = jsons.getJSONObject("languages");
-            } catch (JSONException e) {
-                // do nothing
-            }
-            for (int i = 0; i < jsonVersions.length(); ++i) {
-                JSONObject version = jsonVersions.getJSONObject(i);
-                HashMap<String, String> map = new HashMap<>();
-                String action;
-                String code = version.getString("code");
-                String lang = version.getString("lang");
-                String date = version.getString("date");
-                map.put("lang", lang);
-                map.put("code", code.toUpperCase(Locale.US));
-                map.put("name", version.getString("name"));
-                String path = null;
-                if (date != null && date.length() > 0) {
-                    path = String.format("bibledata-%s-%s.zip", lang, code);
-                }
-                map.put("path", path);
-                if (!installed.contains(code)) {
-                    action = context.getString(path == null ? R.string.request : R.string.install);
-                    String cancel = context.getString(R.string.cancel_install);
-                    if (queue.containsKey(map.get("code"))) {
-                        map.put("text", cancel);
-                    } else {
-                        map.put("text", action);
-                    }
-                } else if (canUpdate(date, code)) {
-                    action = context.getString(R.string.update);
-                    map.put("text", action);
-                } else {
-                    action = context.getString(R.string.uninstall);
-                    map.put("text", action);
-                }
-                map.put("action", action);
-                list.add(map);
-                if (!languages.contains(lang)) {
-                    languages.add(lang);
-                    String name = lang;
-                    if (jsonLanguages != null) {
-                        try {
-                            name = jsonLanguages.getString(lang);
-                        } catch (JSONException e) {
-                        }
-                    }
-                    names.add(name);
-                }
-            }
-        } catch (JSONException e) {
+            versionsAdaper.setVersions(bible.getLocalVersions());
+        } catch (JSONException | IOException ignore) {
+            // do nothing
         }
-        return list;
+
+        workHandler.sendEmptyMessage(UPDATE_VERSIONS);
+
+        receiver = new Receiver(this);
     }
 
-    private boolean canUpdate(String date, String code) {
-        if (bible != null) {
-            String current = bible.getDate(code);
-            try {
-                return Integer.parseInt(date) > Integer.parseInt(current);
-            } catch (NumberFormatException e) {
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        final Uri uri = intent.getData();
+        if (uri != null) {
+            final String path = uri.getPath();
+            final String segment = uri.getLastPathSegment();
+            if ("file".equals(uri.getScheme()) && path != null && isBibleData(segment)) {
+                workHandler.obtainMessage(ADD_VERSION, path).sendToTarget();
             }
         }
+    }
+
+    void checkZip(String path) {
+        if (bible.checkZipPath(new File(path))) {
+            bible.checkVersionsSync(true);
+            updateActionsLater();
+        }
+    }
+
+    void deleteVersion(String version) {
+        if (bible.deleteVersion(version)) {
+            bible.checkVersionsSync(true);
+            updateActionsLater();
+        }
+    }
+
+    private boolean isBibleData(String segment) {
+        return segment != null && segment.startsWith("bibledata-") && segment.endsWith(".zip");
+    }
+
+    public void updateQuery(String query) {
+        try {
+            versionsAdaper.setQuery(query == null ? null : query.toLowerCase(Locale.US));
+        } catch (JSONException ignore) {
+            // do nothing
+        }
+        mSearchView.clearFocus();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        updateQuery(query);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.versions, menu);
+        mSearchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.setOnCloseListener(this);
+        mSearchView.setOnSearchClickListener(this);
+        return true;
+    }
+
+    @Override
+    public boolean onClose() {
+        updateQuery(null);
+        setTitle(getTitle());
         return false;
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        resume = handler;
-        String json;
-        try {
-            json = bible.getLocalVersions();
-        } catch (IOException e) {
-            json = "{versions:[]}";
-        }
-        setVersions(json);
-        if (completed.size() > 0) {
-            handler.sendEmptyMessage(COMPLETE);
-        }
-        long now = System.currentTimeMillis() / 1000;
-        if (mtime == 0 || mtime - now > 86400) {
-            mtime = now;
-            handler.sendEmptyMessageDelayed(START, 400);
+    public void onBackPressed() {
+        if (!mSearchView.isIconified()) {
+            mSearchView.setIconified(true);
+        } else {
+            super.onBackPressed();
         }
     }
 
-    boolean refreshing = false;
-
-    private Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(final Message msg) {
-            switch (msg.what) {
-                case STOP:
-                    if (msg.obj != null) {
-                        setVersions((String) msg.obj);
-                    }
-                    refreshing = false;
-                    ((AnimationDrawable) refresh.getDrawable()).stop();
-                    return false;
-                case START:
-                    Log.d(TAG, "start refresh versions");
-                    refreshVersions();
-                    refreshing = true;
-                    ((AnimationDrawable) refresh.getDrawable()).start();
-                    return false;
-                case DELETE:
-                    if (bible == null) {
-                        return false;
-                    }
-                    final String code = (String) msg.obj;
-                    Log.d(TAG, "delete " + code);
-                    bible.deleteVersion(code);
-                    handler.sendMessage(handler.obtainMessage(DELETED, code));
-                    return false;
-                case DELETED:
-                    Log.d(TAG, "deleted " + msg.obj);
-                    final String install = getString(R.string.install);
-                    synchronized (versions) {
-                        for (Map<String, String> map : versions) {
-                            if (map.get("code").equalsIgnoreCase((String) msg.obj)) {
-                                map.put("text", install);
-                                map.put("action", install);
-                            }
-                        }
-                    }
-                    filterVersion(query.getText().toString());
-                    adapter.notifyDataSetChanged();
-                    return false;
-                case COMPLETE:
-                    String uninstall = getString(R.string.uninstall);
-                    synchronized (versions) {
-                        for (Map<String, String> map : versions) {
-                            if (completed.size() == 0) {
-                                break;
-                            }
-                            synchronized (completed) {
-                                String version = map.get("code").toUpperCase(Locale.US);
-                                if (completed.containsKey(version)) {
-                                    String action;
-                                    if (DownloadManager.STATUS_SUCCESSFUL != completed.get(version)) {
-                                        action = getString(R.string.install);
-                                    } else {
-                                        action = uninstall;
-                                    }
-                                    map.put("text", action);
-                                    map.put("action", action);
-                                    completed.remove(version);
-                                }
-                            }
-                        }
-                    }
-                    filterVersion(query.getText().toString());
-                    adapter.notifyDataSetChanged();
-                    return false;
-                case CHECKZIP:
-                    final File path = (File) msg.obj;
-                    bible.checkZipPath(path);
-                    bible.checkBibleData(false, new Runnable() {
-                        @Override
-                        public void run() {
-                            onDownloadComplete(path.getPath());
-                        }
-                    });
-                    return false;
-                default:
-                    return false;
-            }
-        }
-    });
-
-    void refreshVersions() {
-        if (!refreshing) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    String json = null;
-                    try {
-                        json = bible.getRemoteVersions();
-                    } catch (Exception e) {
-                        Log.e(TAG, "", e);
-                    } finally {
-                        handler.sendMessage(handler.obtainMessage(STOP, json));
-                    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (!mSearchView.isIconified()) {
+                    mSearchView.setIconified(true);
+                    return true;
                 }
-            }).start();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        LogUtils.d("click: " + v);
+        if (v == mSearchView) {
+            setTitle(null);
+        } else if (v instanceof CardView) {
+            View action = v.findViewById(R.id.action);
+            VersionItem versionItem = (VersionItem) action.getTag();
+            LogUtils.d("click card, code: " + versionItem.code + ", lang: " + versionItem.lang);
+            launchVersion(versionItem.code);
+        } else if (v instanceof Button) {
+            VersionItem versionItem = (VersionItem) v.getTag();
+            LogUtils.d("click button, code: " + versionItem.code + ", lang: " + versionItem.lang);
+            onClickButton(versionItem);
         }
     }
 
-    void setVersions(String json) {
-        if (json == null || json.length() == 0) {
-            return;
+    private void onClickButton(VersionItem versionItem) {
+        int action = versionItem.action;
+        switch (action) {
+            case R.string.install:
+            case R.string.update:
+                downloadVersion(versionItem, action == R.string.update);
+                updateActionsLater();
+                break;
+            case R.string.cancel_install:
+                BibleApplication application = (BibleApplication) getApplication();
+                application.cancel(versionItem.filename());
+                updateActionsLater();
+                break;
+            case R.string.uninstall:
+                showDelete(versionItem);
+                break;
+            default:
+                break;
         }
-        synchronized (versions) {
-            versions.clear();
-            parseVersions(versions, json);
-            versions.add(request);
-        }
-        if (adapter == null) {
-            String[] from = {"code", "name", "text", "lang"};
-            int[] to = {R.id.code, R.id.name, R.id.action, 0};
-            adapter = new Adapter(this, data, R.layout.version, from, to);
-            list.setAdapter(adapter);
-        }
-        adapter.getFilter().filter(query.getText().toString());
+    }
+
+    private void launchVersion(String version) {
+        Intent intent = new Intent(this, ReadingActivity.class);
+        intent.putExtra(AbstractReadingActivity.VERSION, version);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter);
     }
 
     @Override
     protected void onStop() {
+        mainHandler.removeCallbacksAndMessages(null);
+        workHandler.removeCallbacksAndMessages(null);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onStop();
-        resume = null;
     }
 
-    @Override
-    protected void onDestroy() {
-        saveQueue();
-        super.onDestroy();
-    }
-
-    public static void onDownloadComplete(DownloadInfo info) {
-        long id = info.id;
-        String code = queue.get(String.valueOf(id));
-        Log.d(TAG, "download complete: " + code);
-        if (code != null) {
-            synchronized (queue) {
-                queue.remove(String.valueOf(id));
-                queue.remove(code);
+    @WorkerThread
+    void updateVersions() {
+        try {
+            String versions = bible.getRemoteVersions();
+            if (!TextUtils.isEmpty(versions)) {
+                mainHandler.obtainMessage(UPDATE_VERSIONS, versions).sendToTarget();
             }
-            synchronized (completed) {
-                completed.put(code.toUpperCase(Locale.US), info.status);
-            }
-            if (resume != null) {
-                resume.sendEmptyMessage(COMPLETE);
-            }
+        } catch (IOException ignore) {
+            // do nothing
         }
     }
 
-    @SuppressLint("InlinedApi")
-    private void onDownloadComplete(String path) {
-        if (path == null || !path.endsWith(".zip")) {
-            return;
-        }
-        int sep = path.lastIndexOf("-");
-        if (sep == -1) {
-            return;
-        }
-        String code = path.substring(sep + 1, path.length() - 4);
-        Log.d(TAG, "download complete: " + code);
-        synchronized (queue) {
-            String id = queue.get(code);
-            if (id != null) {
-                queue.remove(id);
-            }
-            queue.remove(code);
-        }
-        synchronized (completed) {
-            completed.put(code.toUpperCase(Locale.US), DownloadManager.STATUS_SUCCESSFUL);
-        }
-        if (resume != null) {
-            resume.sendEmptyMessage(COMPLETE);
+    @MainThread
+    void updateVersions(String versions) {
+        try {
+            versionsAdaper.setVersions(versions);
+        } catch (JSONException ignore) {
+            // do nothing
         }
     }
 
-    void clickVersion(final TextView view, final Map<String, String> map, final boolean button) {
-        final String code = map.get("code");
-        final String name = map.get("name");
-        final String action = map.get("action");
-        final String text = view.getText().toString();
-        if (action == null) {
-            bible.email(this);
-        }
-        if (text.equals(getString(R.string.request))) {
-            String content = code.toUpperCase(Locale.US) + ", " + name;
-            bible.email(this, content);
-        } else if (text.equals(getString(R.string.install)) || text.equals(getString(R.string.update))) {
-            download(map);
-        } else if (text.equals(getString(R.string.cancel_install))) {
-            if (queue.containsKey(code) && queue.get(code) != null) {
-                long id = Long.parseLong(queue.get(code));
-                if (id > 0) {
-                    bible.cancel(id);
-                    synchronized (queue) {
-                        queue.remove(String.valueOf(id));
-                        queue.remove(code);
-                    }
-                }
-            }
-            map.put("text", action);
-            adapter.notifyDataSetChanged();
-        } else if (text.equals(getString(R.string.uninstall))) {
-            if (!button) {
-                bible.setVersion(code.toLowerCase(Locale.US));
-                Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
-                intent.putExtra("version", code.toLowerCase(Locale.US));
-                startActivity(intent);
-            } else {
-                areYouSure(getString(R.string.deleteversion, code.toUpperCase(Locale.US)),
-                        getString(R.string.deleteversiondetail, name),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                handler.sendMessage(handler.obtainMessage(DELETE, code));
-                            }
-                        });
-            }
-        }
+    @MainThread
+    void updateActions() {
+        versionsAdaper.updateActions();
     }
 
-    void areYouSure(String title, String message, DialogInterface.OnClickListener handler) {
-        new AlertDialog.Builder(this).setTitle(title).setMessage(message)
-                .setPositiveButton(android.R.string.yes, handler).setNegativeButton(android.R.string.no, null).create()
-                .show();
-    }
-
-    void areYouSure(String title, String message, DialogInterface.OnClickListener positive, DialogInterface.OnClickListener negative) {
-        new AlertDialog.Builder(this).setTitle(title).setMessage(message)
-                .setPositiveButton(android.R.string.yes, positive)
-                .setNegativeButton(android.R.string.no, negative)
-                .setCancelable(false)
-                .create().show();
-    }
-
-    class Adapter extends SimpleAdapter implements StickyListHeadersAdapter {
-
-        private LayoutInflater mInflater;
-
-        public Adapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to) {
-            super(context, data, resource, from, to);
-            mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view = super.getView(position, convertView, parent);
-            final TextView action = view.findViewById(R.id.action);
-            if (action != null) {
-                action.setTag(position);
-                action.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        int position = (Integer) view.getTag();
-                        @SuppressWarnings("unchecked")
-                        Map<String, String> map = (Map<String, String>) getItem(position);
-                        if (map != null) {
-                            clickVersion((TextView) view, map, true);
-                        }
-                    }
-                });
-                @SuppressWarnings("unchecked")
-                Map<String, String> map = (Map<String, String>) getItem(position);
-                if (map == null || map.get("action") == null) {
-                    action.setVisibility(View.GONE);
-                } else {
-                    action.setVisibility(View.VISIBLE);
-                }
-            }
-            return view;
-        }
-
-        Filter mFilter;
-
-        public Filter getFilter() {
-            if (mFilter == null) {
-                mFilter = new SimpleFilter();
-            }
-            return mFilter;
-        }
-
-        class SimpleFilter extends Filter {
-            @Override
-            protected FilterResults performFiltering(CharSequence prefix) {
-                FilterResults results = new FilterResults();
-                String filter = null;
-                if (prefix != null && prefix.length() > 0) {
-                    filter = prefix.toString().toLowerCase(Locale.US);
-                }
-                filterVersion(filter);
-                results.count = data.size();
-                return results;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                if (results.count > 0) {
-                    notifyDataSetChanged();
-                } else {
-                    notifyDataSetInvalidated();
-                }
-            }
-        }
-
-        @Override
-        public View getHeaderView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.sticky, parent, false);
-            }
-            long section = getHeaderId(position);
-            String name = null;
-            if (section != -1) {
-                try {
-                    name = names.get((int) section);
-                } catch (IndexOutOfBoundsException e) {
-                    // do nothing, shouldn't happened
-                }
-            }
-            if (name == null) {
-                @SuppressWarnings("unchecked")
-                Map<String, String> map = (Map<String, String>) getItem(position);
-                name = map.get("lang");
-                if (name == null) {
-                    name = request.get("name");
-                }
-            }
-            TextView tv = convertView.findViewById(android.R.id.title);
-            tv.setText(name.toUpperCase(Locale.US));
-            return convertView;
-        }
-
-        @Override
-        public long getHeaderId(int position) {
-            @SuppressWarnings("unchecked")
-            Map<String, String> map = (Map<String, String>) getItem(position);
-            String language = map.get("lang");
-            if (language == null) {
-                language = request.get("lang");
-            }
-            return languages.indexOf(language);
-        }
-    }
-
-    volatile boolean filtering = false;
-
-    void filterVersion(String filter) {
-        final Locale locale = Locale.getDefault();
-        final String lang = locale.getLanguage().toLowerCase(Locale.US);
-        final String fullname = lang + "-" + locale.getCountry().toLowerCase(Locale.US);
-        filtering = false;
-        Log.d(TAG, "filtering Version: " + filter);
-        synchronized (versions) {
-            updated.clear();
-            matched.clear();
-            halfmatched.clear();
-            filtered.clear();
-            for (HashMap<String, String> map : versions) {
-                if (filtering) {
-                    filtering = false;
-                    return;
-                }
-                String language = map.get("lang");
-                List<Map<String, String>> list;
-                if (fullname.equals(language)) {
-                    list = matched;
-                } else if (language.startsWith(lang)) {
-                    list = halfmatched;
-                } else {
-                    list = filtered;
-                }
-                if (filter == null || map.get("action") == null) {
-                    list.add(map);
-                    addIfUpdated(updated, map);
-                } else {
-                    int index = languages.indexOf(language);
-                    if (index != -1 && names.size() > index) {
-                        String name = names.get(index);
-                        if (name.toLowerCase(Locale.US).contains(filter)) {
-                            list.add(map);
-                            addIfUpdated(updated, map);
-                            continue;
-                        }
-                    }
-                    for (String value : map.values()) {
-                        if (filtering) {
-                            filtering = false;
-                            return;
-                        }
-                        if (value.toLowerCase(Locale.US).contains(filter)) {
-                            list.add(map);
-                            addIfUpdated(updated, map);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        synchronized (data) {
-            data.clear();
-            data.addAll(updated);
-            data.addAll(matched);
-            data.addAll(halfmatched);
-            data.addAll(filtered);
-        }
-        Log.d(TAG, "filtered Version: " + filter);
-    }
-
-    void addIfUpdated(List<Map<String, String>> updated, HashMap<String, String> map) {
-        String update = bible.getContext().getString(R.string.update);
-        if (update.equals(map.get("text"))) {
-            @SuppressWarnings("unchecked")
-            HashMap<String, String> clone = (HashMap<String, String>) map.clone();
-            clone.put("lang", update);
-            updated.add(clone);
-        }
-    }
-
-    void download(final Map<String, String> map) {
-        String id = null;
-        final String path = map.get("path");
-        final String code = map.get("code");
-        DownloadInfo info = bible.download(path);
-        if (info != null) {
-            id = String.valueOf(info.id);
-        }
-        synchronized (queue) {
-            queue.put(code, id);
-            if (id != null) {
-                queue.put(id, code);
-            }
-        }
-        if (id != null) {
-            String cancel = getString(R.string.cancel_install);
-            map.put("text", cancel);
-            adapter.notifyDataSetChanged();
+    String getVersionDate(VersionItem item) {
+        if (bible.get(Bible.TYPE.VERSION).contains(item.code)) {
+            return bible.getDate(item.code);
         } else {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Bible.BIBLEDATA_PREFIX + path)));
+            return null;
         }
     }
+
+    void downloadVersion(VersionItem item, boolean force) {
+        BibleApplication application = (BibleApplication) getApplication();
+        application.download(item.filename(), force);
+        updateActionsLater();
+    }
+
+    private void updateActionsLater() {
+        mainHandler.removeMessages(UPDATE_ACTIONS);
+        mainHandler.sendEmptyMessageDelayed(UPDATE_ACTIONS, LATER);
+    }
+
+    boolean isDownloading(VersionItem item) {
+        BibleApplication application = (BibleApplication) getApplication();
+        return application.isDownloading(item.filename());
+    }
+
+    void onReceive(Intent intent) {
+        LogUtils.d("local intent: " + intent + ", extras: " + intent.getExtras());
+        String filename = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (filename != null) {
+            File file = new File(getExternalCacheDir(), filename);
+            if (file.exists()) {
+                workHandler.obtainMessage(ADD_VERSION, file.getPath()).sendToTarget();
+                return;
+            }
+        }
+        updateActionsLater();
+    }
+
+    public void showDelete(VersionItem item) {
+        final String tag = FRAGMENT_CONFIRM;
+        FragmentManager manager = getSupportFragmentManager();
+        DeleteVersionConfirmFragment fragment = (DeleteVersionConfirmFragment) manager.findFragmentByTag(tag);
+        if (fragment != null) {
+            fragment.dismiss();
+        }
+        fragment = new DeleteVersionConfirmFragment();
+        fragment.setMessage(getString(R.string.confirm),
+                getString(R.string.deleteversion, item.name), item.code);
+        fragment.show(manager, tag);
+    }
+
+    public void confirmDelete(String extra) {
+        workHandler.obtainMessage(DELETE_VERSION, extra).sendToTarget();
+    }
+
+    static class Receiver extends BroadcastReceiver {
+
+        private final WeakReference<VersionsActivity> mReference;
+
+        public Receiver(VersionsActivity activity) {
+            this.mReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            VersionsActivity activity = mReference.get();
+            if (activity != null) {
+                activity.onReceive(intent);
+            }
+        }
+
+    }
+
+    static class MainHandler extends Handler {
+
+        private final WeakReference<VersionsActivity> mReference;
+
+        public MainHandler(VersionsActivity activity) {
+            super(activity.getMainLooper());
+            this.mReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            VersionsActivity activity = mReference.get();
+            if (activity == null) {
+                return;
+            }
+            switch (msg.what) {
+                case UPDATE_VERSIONS:
+                    activity.updateVersions((String) msg.obj);
+                    removeMessages(UPDATE_VERSIONS);
+                    break;
+                case UPDATE_ACTIONS:
+                    activity.updateActions();
+                    removeMessages(UPDATE_ACTIONS);
+                    break;
+            }
+        }
+
+    }
+
+    static class WorkHandler extends Handler {
+
+        private final WeakReference<VersionsActivity> mReference;
+
+        public WorkHandler(VersionsActivity activity) {
+            super(newLooper());
+            this.mReference = new WeakReference<>(activity);
+        }
+
+        private static Looper newLooper() {
+            HandlerThread thread = new HandlerThread("Update");
+            thread.start();
+            return thread.getLooper();
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            VersionsActivity activity = mReference.get();
+            if (activity == null) {
+                return;
+            }
+            switch (msg.what) {
+                case ADD_VERSION:
+                    activity.checkZip((String) msg.obj);
+                    break;
+                case DELETE_VERSION:
+                    activity.deleteVersion((String) msg.obj);
+                    break;
+                case UPDATE_VERSIONS:
+                    activity.updateVersions();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    }
+
+    private static class VersionAdapter extends RecyclerView.Adapter {
+
+        private static final int TYPE_VERSION = 0;
+
+        private static final int TYPE_COUNT = 1;
+
+        private String mJson;
+
+        private String mQuery;
+
+        private final List<VersionItem> mItems;
+
+        private final WeakReference<VersionsActivity> mReference;
+
+        public VersionAdapter(VersionsActivity activity) {
+            this.mItems = new ArrayList<>();
+            this.mReference = new WeakReference<>(activity);
+        }
+
+        public void setVersions(String json) throws JSONException {
+            if (!ObjectUtils.equals(this.mJson, json)) {
+                this.mJson = json;
+                prepareData();
+            }
+        }
+
+        public void setQuery(String query) throws JSONException {
+            if (!ObjectUtils.equals(this.mQuery, query)) {
+                this.mQuery = query;
+                prepareData();
+            }
+        }
+
+        public synchronized void updateActions() {
+            VersionsActivity activity = mReference.get();
+            boolean changed = false;
+            for (VersionItem item : mItems) {
+                if (item.isVersion()) {
+                    int action = getAction(activity, item);
+                    if (action != item.action) {
+                        LogUtils.d("item: " + item.code + ", old: " + item.action + ", new: " + action);
+                        item.action = action;
+                        item.shouldUpdate = true;
+                        changed = true;
+                    }
+                }
+            }
+            if (changed) {
+                DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffCallback(mItems, mItems));
+                result.dispatchUpdatesTo(this);
+            }
+        }
+
+        private synchronized void prepareData() throws JSONException {
+            List<VersionItem> items = new ArrayList<>();
+
+            JSONObject jsons = new JSONObject(mJson);
+            JSONArray jsonVersions = jsons.getJSONArray("versions");
+            JSONObject jsonLanguages = jsons.getJSONObject("languages");
+
+            int length = jsonVersions.length();
+            SimpleArrayMap<String, Integer> counter = new SimpleArrayMap<>();
+
+            VersionsActivity activity = mReference.get();
+            for (int i = 0; i < length; ++i) {
+                JSONObject version = jsonVersions.getJSONObject(i);
+                VersionItem item = new VersionItem();
+                item.code = version.optString("code");
+                item.date = version.optString("date");
+                item.lang = version.optString("lang");
+                item.name = version.optString("name");
+                item.action = getAction(activity, item);
+                if (item.action == R.string.update) {
+                    activity.downloadVersion(item, true);
+                    item.action = R.string.cancel_install;
+                }
+
+                String lang = jsonLanguages.optString(item.lang);
+                if (accept(item, lang)) {
+                    items.add(item);
+                    int index = counter.indexOfKey(item.lang);
+                    if (index >= 0) {
+                        counter.put(item.lang, counter.valueAt(index) + 1);
+                    } else {
+                        counter.put(item.lang, 1);
+                    }
+                }
+            }
+
+            int size = counter.size();
+            for (int i = 0; i < size; ++i) {
+                String lang = counter.keyAt(i);
+                int value = counter.valueAt(i);
+                VersionItem item = new VersionItem();
+                item.lang = lang;
+                item.name = jsonLanguages.optString(item.lang);
+                item.code = Integer.toString(value);
+                items.add(item);
+            }
+            Collections.sort(items, new Comparator<VersionItem>() {
+
+                @Override
+                public int compare(VersionItem o1, VersionItem o2) {
+                    if (ObjectUtils.equals(o1.lang, o2.lang)) {
+                        return Collator.getInstance().compare(o1.code, o2.code);
+                    } else {
+                        final Locale locale = Locale.getDefault();
+                        final String lang = locale.getLanguage().toLowerCase(Locale.US);
+                        final String langFull = lang + "-" + locale.getCountry().toLowerCase(Locale.US);
+                        if (ObjectUtils.equals(langFull, o1.lang)) {
+                            return -1;
+                        } else if (ObjectUtils.equals(langFull, o2.lang)) {
+                            return 1;
+                        }
+
+                        if (o1.lang.startsWith(lang)) {
+                            return -1;
+                        } else if (o2.lang.startsWith(lang)) {
+                            return 1;
+                        }
+
+                        return Collator.getInstance().compare(o1.lang, o2.lang);
+                    }
+                }
+
+            });
+
+            if (mItems.isEmpty()) {
+                mItems.addAll(items);
+                notifyItemRangeInserted(0, items.size());
+            } else {
+                DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffCallback(mItems, items));
+                mItems.clear();
+                mItems.addAll(items);
+                result.dispatchUpdatesTo(this);
+            }
+        }
+
+        private int getAction(VersionsActivity activity, VersionItem item) {
+            String date = activity.getVersionDate(item);
+            if (activity.isDownloading(item)) {
+                return R.string.cancel_install;
+            } else if (TextUtils.isEmpty(date)) {
+                return R.string.install;
+            } else if (ObjectUtils.equals(item.date, date)) {
+                return R.string.uninstall;
+            } else {
+                return R.string.update;
+            }
+        }
+
+        private boolean accept(VersionItem item, String lang) {
+            if (TextUtils.isEmpty(mQuery)) {
+                return true;
+            }
+            if (item.code.toLowerCase(Locale.US).contains(mQuery)) {
+                return true;
+            }
+            if (item.name.toLowerCase(Locale.US).contains(mQuery)) {
+                return true;
+            }
+            if (lang.toLowerCase(Locale.US).contains(mQuery)) {
+                return true;
+            }
+            return false;
+        }
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            CardView cardView;
+            switch (viewType) {
+                case TYPE_COUNT:
+                    View view = inflater.inflate(R.layout.item, parent, false);
+                    return new CountViewHolder(view);
+                case TYPE_VERSION:
+                    cardView = (CardView) inflater.inflate(R.layout.item_version, parent, false);
+                    VersionViewHolder holder = new VersionViewHolder(cardView);
+                    holder.cardView.setOnClickListener(mReference.get());
+                    holder.actionView.setOnClickListener(mReference.get());
+                    return holder;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            if (holder instanceof CountViewHolder) {
+                bindCountViewHolder((CountViewHolder) holder, position);
+            } else if (holder instanceof VersionViewHolder) {
+                bindVersionViewHolder((VersionViewHolder) holder, position);
+            }
+        }
+
+        private void bindVersionViewHolder(VersionViewHolder holder, int position) {
+            VersionItem versionItem = mItems.get(position);
+            holder.codeView.setText(versionItem.code);
+            holder.nameView.setText(versionItem.name);
+            holder.actionView.setText(versionItem.action);
+            holder.actionView.setTag(versionItem);
+            switch (versionItem.action) {
+                case R.string.install:
+                case R.string.cancel_install:
+                    holder.cardView.setEnabled(false);
+                    break;
+                case R.string.uninstall:
+                case R.string.update:
+                    holder.cardView.setEnabled(true);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void bindCountViewHolder(CountViewHolder holder, int position) {
+            VersionItem versionItem = mItems.get(position);
+            holder.countView.setText(versionItem.code);
+            holder.typeView.setText(versionItem.name);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mItems.size();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            VersionItem item = mItems.get(position);
+            if (item.isVersion()) {
+                return TYPE_VERSION;
+            } else {
+                return TYPE_COUNT;
+            }
+        }
+
+    }
+
+    private static class VersionItem {
+
+        boolean shouldUpdate;
+
+        String code;
+
+        String date;
+
+        String lang;
+
+        String name;
+
+        int action;
+
+        @Override
+        public int hashCode() {
+            return (code + "-" + lang + "-" + name).hashCode();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (other instanceof VersionItem) {
+                return isSame((VersionItem) other);
+            } else {
+                return false;
+            }
+        }
+
+        private boolean isSame(VersionItem other) {
+            return ObjectUtils.equals(code, other.code)
+                    && ObjectUtils.equals(lang, other.lang)
+                    && ObjectUtils.equals(name, other.name);
+        }
+
+        public boolean isVersion() {
+            return !TextUtils.isDigitsOnly(code);
+        }
+
+        public String filename() {
+            return String.format("bibledata-%s-%s.zip", lang, code);
+        }
+    }
+
+    private static class DiffCallback extends DiffUtil.Callback {
+
+        private final List<VersionItem> mOldList;
+
+        private final List<VersionItem> mNewList;
+
+        DiffCallback(List<VersionItem> oldList, List<VersionItem> newList) {
+            mOldList = oldList;
+            mNewList = newList;
+        }
+
+        @Override
+        public int getOldListSize() {
+            return mOldList.size();
+        }
+
+        @Override
+        public int getNewListSize() {
+            return mNewList.size();
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            VersionItem oldItem = mOldList.get(oldItemPosition);
+            VersionItem newItem = mNewList.get(newItemPosition);
+            return oldItem.equals(newItem);
+        }
+
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            VersionItem oldItem = mOldList.get(oldItemPosition);
+            VersionItem newItem = mNewList.get(newItemPosition);
+            try {
+                return oldItem.equals(newItem) && !oldItem.shouldUpdate;
+            } finally {
+                oldItem.shouldUpdate = false;
+            }
+        }
+
+    }
+
+    private static class VersionViewHolder extends RecyclerView.ViewHolder {
+
+        final CardView cardView;
+
+        final Button actionView;
+
+        final TextView codeView;
+
+        final TextView nameView;
+
+        public VersionViewHolder(CardView view) {
+            super(view);
+            this.cardView = view;
+            this.actionView = view.findViewById(R.id.action);
+            this.codeView = view.findViewById(R.id.code);
+            this.nameView = view.findViewById(R.id.name);
+        }
+
+    }
+
 }

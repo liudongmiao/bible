@@ -24,7 +24,7 @@
     <string name="demo">演示</string>
     <string name="chapters">%1$s，共 %2$d 章。</string>
     <string name="searchinbible">在聖經中搜尋</string>
-    <string name="deleteversion">移除版本%s?</string>
+    <string name="deleteversion">移除版本“%s”?</string>
     <string name="deleteversiondetail">您將不能閱讀和搜尋%s!</string>
     <string name="red">紅字</string>
     <string name="wojinred">可用時適用耶穌的話</string>
@@ -92,4 +92,5 @@
     <string name="theme_dark">深色</string>
 
     <string name="search_clear">清除搜尋記錄</string>
+    <string name="confirm">確認</string>
 </resources>

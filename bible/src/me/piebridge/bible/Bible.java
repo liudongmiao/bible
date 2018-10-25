@@ -13,8 +13,6 @@
 
 package me.piebridge.bible;
 
-import android.annotation.SuppressLint;
-import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
@@ -193,7 +191,7 @@ public class Bible {
         }
     }
 
-    private int checkVersionsSync(boolean all) {
+    public int checkVersionsSync(boolean all) {
         List<String> newVersions = new ArrayList<>();
         Map<String, String> newVersionpaths = new HashMap<>();
         File[] dirs = getExternalFilesDirs();
@@ -941,30 +939,18 @@ public class Bible {
     }
 
     public boolean deleteVersion(String version) {
-        boolean returncode = false;
         version = version.toLowerCase(Locale.US);
         File file = getFile(version);
+        LogUtils.d("version: " + version + ", file: " + file);
         if (file != null && file.isFile() && file.delete()) {
-            returncode = true;
+            versionDates.remove(version);
+            return true;
+        } else {
+            return false;
         }
-        synchronized (versionsLock) {
-            Iterator<String> it = versions.iterator();
-            while (it.hasNext()) {
-                if (version.equals(it.next())) {
-                    it.remove();
-                }
-            }
-            versionpaths.remove(version);
-        }
-        checkBibleData(false, null);
-        if (version.equalsIgnoreCase(databaseVersion)) {
-            setVersion(get(TYPE.VERSION, 0));
-        }
-        return returncode;
     }
 
-    @SuppressLint("NewApi")
-    private void checkBibleData(boolean all) {
+    public void checkBibleData(boolean all) {
         synchronized (versionsCheckingLock) {
             if ((!checking || !all) && versions.size() > 0) {
                 Log.d(TAG, "cancel checking");
@@ -976,8 +962,7 @@ public class Bible {
                 }
             }
             checkZipData(Environment.getExternalStorageDirectory());
-            checkZipData(new File(Environment.getExternalStorageDirectory(),
-                    Environment.DIRECTORY_DOWNLOADS));
+            checkZipData(new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS));
             checkZipData(mContext.getExternalCacheDir());
             checkVersionsSync(true);
         }
@@ -1022,12 +1007,12 @@ public class Bible {
         return true;
     }
 
-    public void checkZipPath(File path) {
+    public boolean checkZipPath(File path) {
         try {
-            unpackZip(path);
+            return unpackZip(path);
         } catch (IOException e) {
-        } catch (Exception e) {
             Log.e(TAG, "unpackZip", e);
+            return false;
         }
     }
 
@@ -1114,7 +1099,7 @@ public class Bible {
             }
             File file = new File(path, name);
             if (name.endsWith(".sqlite3") && file.exists() && file.isFile()) {
-                Log.d(TAG, "add version " + name);
+                LogUtils.d("add version " + name);
                 String version = name.toLowerCase(Locale.US).replace(".sqlite3", "");
                 if (!checkVersionMeta(file, version)) {
                     continue;
@@ -1167,23 +1152,6 @@ public class Bible {
 
     public static final String BIBLEDATA_PREFIX =
             "https://github.com/liudongmiao/bibledata/raw/master/";
-
-    public DownloadInfo download(String filename) {
-        if (getExternalFilesDirs() == null) {
-            return null;
-        }
-        String url = BIBLEDATA_PREFIX + filename;
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        request.setTitle(filename);
-        request.setDestinationUri(Uri.fromFile(new File(mContext.getExternalCacheDir(), filename)));
-        DownloadManager dm = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
-        return DownloadInfo.getDownloadInfo(mContext, dm.enqueue(request));
-    }
-
-    public void cancel(long id) {
-        DownloadManager dm = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
-        dm.remove(id);
-    }
 
     public Context getContext() {
         return mContext;
