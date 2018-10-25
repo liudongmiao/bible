@@ -283,11 +283,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         Bundle bundle = new Bundle();
         bundle.putString(OSIS, osis);
         Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
-        Cursor cursor = null;
-        try {
-            cursor = getContentResolver().query(uri, null, null, null, null);
-            if (cursor != null) {
-                cursor.moveToFirst();
+        try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
                 bundle.putInt(ID, cursor.getInt(cursor.getColumnIndex(BaseColumns._ID)));
                 String curr = getString(cursor, Provider.COLUMN_OSIS);
                 bundle.putString(CURR, curr);
@@ -301,10 +298,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
             }
         } catch (SQLiteException e) {
             LogUtils.d("cannot query " + osis, e);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
         String version = bible.getVersion();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);

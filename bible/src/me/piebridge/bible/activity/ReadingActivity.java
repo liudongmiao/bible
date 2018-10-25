@@ -84,18 +84,12 @@ public class ReadingActivity extends AbstractReadingActivity {
     @Override
     protected int retrieveOsisCount() {
         Uri uri = Provider.CONTENT_URI_CHAPTERS.buildUpon().build();
-        Cursor cursor = null;
-        try {
-            cursor = getContentResolver().query(uri, null, null, null, null);
-            if (cursor != null) {
+        try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
                 return cursor.getInt(cursor.getColumnIndex(BaseColumns._COUNT));
             }
         } catch (SQLiteException e) {
             LogUtils.d("cannot get chapter size", e);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
         return SIZE;
     }
