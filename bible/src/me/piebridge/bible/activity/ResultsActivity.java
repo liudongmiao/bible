@@ -81,6 +81,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
     private void handleIntent(Intent intent) {
         mQuery = intent.getStringExtra(SearchManager.QUERY);
         setTitle(mQuery);
+        updateTaskDescription(mQuery);
         updateVersion();
         refresh();
     }

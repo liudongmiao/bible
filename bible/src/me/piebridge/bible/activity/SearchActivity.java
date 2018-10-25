@@ -76,6 +76,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         bible = Bible.getInstance(getApplication());
 
         handleIntent(getIntent());
+        updateTaskDescription(getTitle().toString());
     }
 
     @Override
