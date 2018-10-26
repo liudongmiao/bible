@@ -242,10 +242,12 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     }
 
     private void launchVersion(String version) {
-        Intent intent = new Intent(this, ReadingActivity.class);
-        intent.putExtra(AbstractReadingActivity.VERSION, version);
-        startActivity(intent);
-        finish();
+        Intent intent = super.getSupportParentActivityIntent();
+        if (intent != null) {
+            intent.putExtra(AbstractReadingActivity.VERSION, version);
+            startActivity(intent);
+            finish();
+        }
     }
 
     @Override
