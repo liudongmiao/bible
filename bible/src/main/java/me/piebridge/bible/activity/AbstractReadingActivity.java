@@ -191,6 +191,15 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         }
     }
 
+    public final String getCurrentTitle() {
+        ReadingFragment currentFragment = getCurrentFragment();
+        if (currentFragment == null) {
+            return null;
+        } else {
+            return currentFragment.getTitle();
+        }
+    }
+
     public final ReadingFragment getCurrentFragment() {
         if (mAdapter == null) {
             return null;
@@ -426,11 +435,18 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         if (requestCode == REQUEST_CODE_SELECT && data != null) {
             jump(data.getStringExtra(OSIS), data.getStringExtra(VERSE));
         } else if (requestCode == REQUEST_CODE_VERSION && data != null) {
-            if (bible.setVersion(data.getStringExtra(VERSION))) {
-                refreshAdapter();
-            } else {
-                refresh();
+            String version = data.getStringExtra(VERSION);
+            if (!ObjectUtils.equals(version, getCurrentVersion())) {
+                switchToVersion(version);
             }
+        }
+    }
+
+    protected void switchToVersion(String version) {
+        if (bible.setVersion(version)) {
+            refreshAdapter();
+        } else {
+            refresh();
         }
     }
 
@@ -446,7 +462,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
             Bundle bundle = retrieveOsis(position, osis);
             if (TextUtils.isEmpty(bundle.getString(CURR))) {
                 bundle = retrieveOsis(position, "null");
-                osis = bundle.getString(CURR);
             }
             position = bundle.getInt(ID) - 1;
             mAdapter.setSize(newCount);

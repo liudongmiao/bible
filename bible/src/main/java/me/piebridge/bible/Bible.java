@@ -1100,6 +1100,26 @@ public class Bible {
         }
     }
 
+    public boolean hasChapter(String version, String osis) {
+        File file = getFile(version);
+        if (file == null || !file.isFile()) {
+            return false;
+        }
+        try (
+                SQLiteDatabase metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
+                        SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+                Cursor cursor = metadata.query(Provider.TABLE_CHAPTERS, new String[] {"id"},
+                        "reference_osis = ? or reference_osis = ?",
+                        new String[] {osis, osis.replace(Bible.INTRO, "1")},
+                        null, null, "id", "1")
+        ) {
+            return cursor != null && cursor.moveToFirst();
+        } catch (SQLiteException e) {
+            LogUtils.w("cannot open " + file, e);
+        }
+        return false;
+    }
+
     public static final String BIBLEDATA_PREFIX =
             "https://github.com/liudongmiao/bibledata/raw/master/";
 

@@ -94,5 +94,8 @@
 
     <string name="search_clear">Clear Search History</string>
     <string name="confirm">Confirm</string>
+    <string name="version_no_chapter_confirm">\"%1$s\" has no \"%2$s\". Do you want to switch and read first chapter?</string>
+    <string name="info">Info</string>
+    <string name="version_no_chapter_info">\"%1$s\" has no \"%2$s\".</string>
 
 </resources>

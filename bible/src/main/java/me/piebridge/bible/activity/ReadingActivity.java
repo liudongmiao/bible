@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.lang.ref.WeakReference;
@@ -25,6 +26,7 @@ import me.piebridge.bible.Provider;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.FontsizeFragment;
 import me.piebridge.bible.fragment.ReadingFragment;
+import me.piebridge.bible.fragment.SwitchVersionConfirmFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
@@ -37,6 +39,7 @@ public class ReadingActivity extends AbstractReadingActivity {
     public static final String WEBVIEW_DATA = "webview-data";
 
     private static final int SIZE = 1189;
+    private static final String FRAGMENT_CONFIRM = "fragment-confirm";
 
     private TextView bookView;
     private TextView chapterView;
@@ -46,6 +49,8 @@ public class ReadingActivity extends AbstractReadingActivity {
     private int mFontSize;
 
     private BroadcastReceiver receiver;
+
+    private String mTitle;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,11 +76,11 @@ public class ReadingActivity extends AbstractReadingActivity {
         int osisPosition = bible.getPosition(Bible.TYPE.OSIS, book);
         String bookName = bible.get(Bible.TYPE.BOOK, osisPosition);
         String chapterVerse = BibleUtils.getChapterVerse(this, bundle);
-        String title = BibleUtils.getBookChapterVerse(bookName, chapterVerse);
+        mTitle = BibleUtils.getBookChapterVerse(bookName, chapterVerse);
 
         bookView.setText(bookName);
         chapterView.setText(chapterVerse);
-        updateTaskDescription(title);
+        updateTaskDescription(mTitle);
 
         ReadingFragment currentFragment = getCurrentFragment();
         if (currentFragment != null) {
@@ -208,6 +213,32 @@ public class ReadingActivity extends AbstractReadingActivity {
         if (Intent.ACTION_CONFIGURATION_CHANGED.equals(intent.getAction())) {
             refreshAdapter();
         }
+    }
+
+    @Override
+    protected void switchToVersion(String version) {
+        if (bible.hasChapter(version, getCurrentOsis())) {
+            super.switchToVersion(version);
+        } else {
+            showSwitchToVersion(version);
+        }
+    }
+
+    private void showSwitchToVersion(String version) {
+        final String tag = FRAGMENT_CONFIRM;
+        FragmentManager manager = getSupportFragmentManager();
+        SwitchVersionConfirmFragment fragment = (SwitchVersionConfirmFragment) manager.findFragmentByTag(tag);
+        if (fragment != null) {
+            fragment.dismiss();
+        }
+        fragment = new SwitchVersionConfirmFragment();
+        fragment.setMessage(getString(R.string.confirm),
+                getString(R.string.version_no_chapter_confirm, bible.getVersionFullname(version), mTitle), version);
+        fragment.show(manager, tag);
+    }
+
+    public void confirmSwitchToVersion(String extra) {
+        super.switchToVersion(extra);
     }
 
     private static class Receiver extends BroadcastReceiver {

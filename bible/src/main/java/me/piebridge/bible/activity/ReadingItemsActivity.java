@@ -9,6 +9,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.fragment.app.FragmentManager;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import me.piebridge.bible.Bible;
 import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.adapter.HiddenArrayAdapter;
+import me.piebridge.bible.fragment.InfoFragment;
 import me.piebridge.bible.utils.BibleUtils;
 
 /**
@@ -25,6 +27,7 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
 
     public static final String ITEMS = "items";
     public static final String SEARCH = "search";
+    private static final String FRAGMENT_INFO = "fragment-info";
 
     private String search;
     private List<OsisItem> items;
@@ -106,8 +109,8 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         int size = items.size();
         CharSequence[] values = new CharSequence[size];
         for (int i = 0; i < size; ++i) {
-            Bundle bundle = items.get(i).toBundle();
-            values[i] = getTitle(bundle, bundle.getString(AbstractReadingActivity.OSIS));
+            OsisItem item = items.get(i);
+            values[i] = getTitle(item.toBundle(), item.toOsis());
         }
         return values;
     }
@@ -156,6 +159,32 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         } else {
             super.onClick(v);
         }
+    }
+
+    @Override
+    protected void switchToVersion(String version) {
+        for (OsisItem item : items) {
+            String osis = item.toOsis();
+            if (!bible.hasChapter(version, osis)) {
+                Bundle bundle = item.toBundle();
+                showSwitchToVersion(version, getTitle(bundle, osis));
+                return;
+            }
+        }
+        super.switchToVersion(version);
+    }
+
+    private void showSwitchToVersion(String version, String human) {
+        final String tag = FRAGMENT_INFO;
+        FragmentManager manager = getSupportFragmentManager();
+        InfoFragment fragment = (InfoFragment) manager.findFragmentByTag(tag);
+        if (fragment != null) {
+            fragment.dismiss();
+        }
+        fragment = new InfoFragment();
+        fragment.setMessage(getString(R.string.info),
+                getString(R.string.version_no_chapter_info, bible.getVersionFullname(version), human), version);
+        fragment.show(manager, tag);
     }
 
 }

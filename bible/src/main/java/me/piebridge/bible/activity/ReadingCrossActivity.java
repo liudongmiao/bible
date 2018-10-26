@@ -41,4 +41,9 @@ public class ReadingCrossActivity extends ReadingItemsActivity {
         // no need to update
     }
 
+    @Override
+    protected void switchToVersion(String version) {
+        // do nothing
+    }
+
 }
