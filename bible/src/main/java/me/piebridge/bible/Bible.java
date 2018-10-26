@@ -637,7 +637,7 @@ public class Bible {
         }
         PreferenceManager.getDefaultSharedPreferences(mContext).edit().remove("version").apply();
         if (TextUtils.isEmpty(version) || version.endsWith("demo")) {
-            checkBibleData(false);
+            checkBibleData();
             setDefaultVersion();
         }
         return false;
@@ -936,47 +936,14 @@ public class Bible {
         }
     }
 
-    public void checkBibleData(boolean all) {
+    public void checkBibleData() {
         synchronized (versionsCheckingLock) {
-            if ((!checking || !all) && versions.size() > 0) {
-                LogUtils.d("cancel checking");
-                return;
+            if (versions.isEmpty() && checkVersionsSync(false) == 0) {
+                checkZipData(Environment.getExternalStorageDirectory());
+                checkZipData(new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS));
+                checkZipData(mContext.getExternalCacheDir());
+                checkVersionsSync(true);
             }
-            if (!all) {
-                if (checkVersionsSync(false) > 0) {
-                    return;
-                }
-            }
-            checkZipData(Environment.getExternalStorageDirectory());
-            checkZipData(new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS));
-            checkZipData(mContext.getExternalCacheDir());
-            checkVersionsSync(true);
-        }
-    }
-
-    private volatile boolean checking = false;
-    private volatile boolean checked = false;
-
-    public void checkBibleData(boolean block, final Runnable run) {
-        checking = true;
-        if (block && !checked) {
-            checkBibleData(true);
-            if (run != null) {
-                run.run();
-            }
-            checking = false;
-            checked = true;
-        } else {
-            new Thread(new Runnable() {
-                public void run() {
-                    checkBibleData(true);
-                    if (run != null) {
-                        run.run();
-                    }
-                    checking = false;
-                    checked = true;
-                }
-            }).start();
         }
     }
 
@@ -1007,13 +974,10 @@ public class Bible {
             return false;
         }
 
-        File[] dirs = getExternalFilesDirs();
-        File dirpath = getPath(dirs);
-
-        InputStream is = new FileInputStream(path);
         long fileSize = path.length();
-        ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is));
-        try {
+        try (
+                ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(path)))
+        ) {
             ZipEntry ze;
             while ((ze = zis.getNextEntry()) != null) {
                 long zeSize = ze.getCompressedSize();
@@ -1021,56 +985,48 @@ public class Bible {
                 if (fileSize < zeSize) {
                     break;
                 }
-                String zename = ze.getName();
-                if (zename == null || !zename.endsWith((".sqlite3"))) {
+                String zeName = ze.getName();
+                if (zeName == null || !zeName.endsWith((".sqlite3"))) {
                     continue;
                 }
-                int sep = zename.lastIndexOf(File.separator);
+                int sep = zeName.lastIndexOf(File.separator);
                 if (sep != -1) {
-                    zename = zename.substring(sep + 1);
+                    zeName = zeName.substring(sep + 1);
                 }
                 File file;
-                String version = zename.toLowerCase(Locale.US).replace(".sqlite3", "");
-                if (versionpaths.containsKey(version)) {
-                    file = new File(versionpaths.get(version));
+                String version = zeName.toLowerCase(Locale.US).replace(".sqlite3", "");
+                String versionPath = versionpaths.get(version);
+                if (versionPath != null) {
+                    file = new File(versionPath);
                 } else {
-                    file = new File(dirpath, zename);
+                    file = new File(getPath(getExternalFilesDirs()), zeName);
                 }
-                if (file.exists() && file.lastModified() > ze.getTime() &&
-                        file.lastModified() > path.lastModified()) {
+                if (file.exists() && file.lastModified() > ze.getTime() && file.lastModified() > path.lastModified()) {
                     continue;
                 }
                 LogUtils.d("unpacking " + file.getAbsoluteFile());
-                int length;
-                File tmpfile = new File(dirpath, zename + ".tmp");
-                OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpfile));
-                byte[] buffer = new byte[8192];
-                int zero = 0;
-                while ((length = zis.read(buffer)) != -1) {
-                    if (length == 0) {
-                        ++zero;
-                        if (zero > 3) {
-                            break;
-                        }
-                    } else {
-                        zero = 0;
-                    }
-                    os.write(buffer, 0, length);
-                }
-                os.close();
-                if (zero > 3) {
-                    return false;
-                } else {
-                    tmpfile.renameTo(file);
+                if (unpack(zis, file)) {
+                    //noinspection ResultOfMethodCallIgnored
                     path.delete();
                     return true;
                 }
             }
-        } finally {
-            is.close();
-            zis.close();
         }
         return false;
+    }
+
+    private boolean unpack(InputStream is, File file) throws IOException {
+        File tmpFile = new File(file.getParent(), file.getName() + ".tmp");
+        try (
+                OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpFile))
+        ) {
+            int length;
+            byte[] buffer = new byte[0x2000];
+            while ((length = is.read(buffer)) != -1) {
+                os.write(buffer, 0, length);
+            }
+            return tmpFile.renameTo(file);
+        }
     }
 
     int checkVersion(File path, List<String> versions, Map<String, String> versionpaths,
