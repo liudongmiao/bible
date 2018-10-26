@@ -22,19 +22,6 @@ android {
         }
     }
 
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-        }
-        androidTest.setRoot('tests')
-    }
-
     if (rootProject.file('ant.properties').exists()) {
         Properties properties = new Properties()
         properties.load(new FileInputStream(rootProject.file('ant.properties')))
@@ -74,7 +61,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['StickyListHeaders-29f254.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.preference:preference:1.0.0'
@@ -88,4 +74,5 @@ task copyReleaseApk(type: Copy) {
 
 afterEvaluate {
     assembleRelease.finalizedBy copyReleaseApk
+    installRelease.finalizedBy copyReleaseApk
 }
