@@ -1120,68 +1120,8 @@ public class Bible {
         return false;
     }
 
-    public static final String BIBLEDATA_PREFIX =
-            "https://github.com/liudongmiao/bibledata/raw/master/";
-
     public Context getContext() {
         return mContext;
-    }
-
-    public static final String JSON = "versions.json";
-
-    public String getLocalVersions() throws IOException {
-        InputStream is = null;
-        File file = new File(mContext.getFilesDir(), JSON);
-        if (file.isFile()) {
-            is = new FileInputStream(file);
-        } else {
-            is = mContext.getResources().openRawResource(R.raw.versions);
-        }
-        String json = getStringFromInputStream(is);
-        is.close();
-        return json;
-    }
-
-    public String getRemoteVersions() throws IOException {
-        SharedPreferences sp = mContext.getSharedPreferences("json", 0);
-        StringBuilder etag = new StringBuilder(sp.getString(JSON + "_etag", ""));
-
-        String json = HttpUtils.retrieveContent(Bible.BIBLEDATA_PREFIX + JSON, etag);
-        if (json == null) {
-            return null;
-        }
-        try {
-            new JSONObject(json);
-        } catch (JSONException e) {
-            LogUtils.d("json: " + json);
-            return null;
-        }
-
-        if (etag.length() > 0) {
-            saveJson(sp, etag.toString(), json);
-        }
-        return json;
-    }
-
-    private void saveJson(SharedPreferences sp, String header, String json) throws IOException {
-        if (header != null) {
-            sp.edit().putString(JSON + "_etag", header).apply();
-        }
-        File file = new File(mContext.getFilesDir(), JSON + ".tmp");
-        OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
-        os.write(json.getBytes("UTF-8"));
-        os.close();
-        file.renameTo(new File(mContext.getFilesDir(), JSON));
-    }
-
-    String getStringFromInputStream(InputStream is) throws IOException {
-        int length;
-        byte[] buffer = new byte[8192];
-        ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        while ((length = is.read(buffer)) >= 0) {
-            bao.write(buffer, 0, length);
-        }
-        return bao.toString();
     }
 
     public void email(Context context) {

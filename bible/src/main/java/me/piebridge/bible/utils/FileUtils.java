@@ -17,15 +17,17 @@ public class FileUtils {
     }
 
     public static String readAsString(InputStream is) throws IOException {
-        int length;
-        byte[] bytes = new byte[CACHE_SIZE];
-        BufferedInputStream bis = new BufferedInputStream(is);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        while ((length = bis.read(bytes)) != -1) {
-            bos.write(bytes, 0, length);
+        try (
+                BufferedInputStream bis = new BufferedInputStream(is);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream()
+        ) {
+            int length;
+            byte[] bytes = new byte[CACHE_SIZE];
+            while ((length = bis.read(bytes)) != -1) {
+                bos.write(bytes, 0, length);
+            }
+            return bos.toString("UTF-8");
         }
-        bis.close();
-        return bos.toString("UTF-8");
     }
 
 }

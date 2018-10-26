@@ -4,15 +4,31 @@ import android.app.Application;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import androidx.collection.SimpleArrayMap;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.utils.FileUtils;
+import me.piebridge.bible.utils.HttpUtils;
 import me.piebridge.bible.utils.LogUtils;
 
 /**
@@ -27,7 +43,11 @@ public class BibleApplication extends Application {
 
     private final Object downloadsLock = new Object();
 
-    public static final String BIBLEDATA_PREFIX = "https://github.com/liudongmiao/bibledata/raw/master/";
+    private static final String VERSIONS_JSON = "versions.json";
+
+    private static final String URL_VERSIONS_JSON = "https://dl.jianyv.com/bd/versions.json";
+
+    private static final String URL_BIBLE_DATA_PREFIX = "https://github.com/liudongmiao/bibledata/raw/master/";
 
     public void checkDownloading() {
         if (downloads == null) {
@@ -82,7 +102,7 @@ public class BibleApplication extends Application {
         if (externalCacheDir == null) {
             return 0;
         }
-        String url = BIBLEDATA_PREFIX + filename;
+        String url = URL_BIBLE_DATA_PREFIX + filename;
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setTitle(filename);
         File file = new File(externalCacheDir, filename);
@@ -183,6 +203,58 @@ public class BibleApplication extends Application {
         }
         DownloadInfo downloadInfo = downloads.get(filename);
         return downloadInfo != null && (downloadInfo.status & STATUS_DOWNLOADING) != 0;
+    }
+
+    private File getVersionsJson() {
+        return new File(getFilesDir(), VERSIONS_JSON);
+    }
+
+    public String getLocalVersions() throws IOException {
+        File file = getVersionsJson();
+        InputStream is;
+        if (file.isFile()) {
+            is = new FileInputStream(file);
+        } else {
+            is = getResources().openRawResource(R.raw.versions);
+        }
+        return FileUtils.readAsString(is);
+    }
+
+    public String getRemoteVersions() throws IOException {
+        final String keyEtag = "versions_etag";
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String etag = sharedPreferences.getString(keyEtag, "");
+        Map<String, String> headers = new LinkedHashMap<>();
+        if (!TextUtils.isEmpty(etag)) {
+            headers.put("If-None-Match", etag);
+        }
+        String json = HttpUtils.retrieveContent(URL_VERSIONS_JSON, headers);
+        if (json == null) {
+            return null;
+        }
+        try {
+            new JSONObject(json);
+        } catch (JSONException e) {
+            LogUtils.d("json: " + json);
+            return null;
+        }
+        etag = headers.get(HttpUtils.ETAG);
+        if (!TextUtils.isEmpty(etag)) {
+            sharedPreferences.edit().putString(keyEtag, etag).apply();
+        }
+
+        File file = getVersionsJson();
+        File fileTmp = new File(file.getParent(), file.getName() + ".tmp");
+        try (
+                OutputStream os = new BufferedOutputStream(new FileOutputStream(fileTmp))
+        ) {
+            os.write(json.getBytes("UTF-8"));
+        }
+        //noinspection ResultOfMethodCallIgnored
+        fileTmp.renameTo(file);
+
+        return json;
     }
 
     static class DownloadInfo {

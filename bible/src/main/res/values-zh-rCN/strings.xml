@@ -96,6 +96,7 @@
     <string name="version_no_chapter_confirm">“%1$s”中没有“%2$s”，是否切换版本并且阅读第一章？</string>
     <string name="info">提示</string>
     <string name="version_no_chapter_info">“%1$s”中没有“%2$s”。</string>
+    <string name="versions_updated">版本数据已更新。</string>
 
 
 </resources>

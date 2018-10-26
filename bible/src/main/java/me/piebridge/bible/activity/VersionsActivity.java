@@ -33,6 +33,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -100,7 +102,8 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
 
         bible = Bible.getInstance(getApplication());
         try {
-            versionsAdaper.setVersions(bible.getLocalVersions());
+            BibleApplication application = (BibleApplication) getApplication();
+            versionsAdaper.setVersions(application.getLocalVersions());
         } catch (JSONException | IOException ignore) {
             // do nothing
         }
@@ -269,7 +272,8 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     @WorkerThread
     void updateVersions() {
         try {
-            String versions = bible.getRemoteVersions();
+            BibleApplication application = (BibleApplication) getApplication();
+            String versions = application.getRemoteVersions();
             if (!TextUtils.isEmpty(versions)) {
                 mainHandler.obtainMessage(UPDATE_VERSIONS, versions).sendToTarget();
             }
@@ -281,7 +285,9 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     @MainThread
     void updateVersions(String versions) {
         try {
-            versionsAdaper.setVersions(versions);
+            if (versionsAdaper.setVersions(versions)) {
+                Snackbar.make(findViewById(R.id.coordinator), R.string.versions_updated, Snackbar.LENGTH_LONG).show();
+            }
         } catch (JSONException ignore) {
             // do nothing
         }
@@ -450,10 +456,13 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
             this.mReference = new WeakReference<>(activity);
         }
 
-        public void setVersions(String json) throws JSONException {
+        public boolean setVersions(String json) throws JSONException {
             if (!ObjectUtils.equals(this.mJson, json)) {
                 this.mJson = json;
                 prepareData();
+                return true;
+            } else {
+                return false;
             }
         }
 
