@@ -125,14 +125,32 @@ public class BibleApplication extends Application {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-                String title = checkStatus(downloadManager, id);
-                Intent intent = new Intent(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-                intent.putExtra(DownloadManager.EXTRA_DOWNLOAD_ID, id);
-                intent.putExtra(Intent.EXTRA_TEXT, title);
-                LocalBroadcastManager.getInstance(BibleApplication.this).sendBroadcast(intent);
+                checkStatusAsync(id);
             }
         }).start();
+    }
+
+    void checkStatusAsync(long id) {
+        DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        String title = checkStatus(downloadManager, id);
+        Intent intent = new Intent(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        intent.putExtra(DownloadManager.EXTRA_DOWNLOAD_ID, id);
+        intent.putExtra(Intent.EXTRA_TEXT, title);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        if (!localBroadcastManager.sendBroadcast(intent)) {
+            addBibleData(new File(getExternalCacheDir(), title));
+        }
+    }
+
+    public boolean addBibleData(File file) {
+        if (file.exists()) {
+            Bible bible = Bible.getInstance(this);
+            if (bible.checkZipPath(file)) {
+                bible.checkVersionsSync(true);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void cancel(String filename) {

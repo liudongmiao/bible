@@ -48,7 +48,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -535,7 +534,7 @@ public class Bible {
         try (
                 Cursor cursor = metadata.query("metadata", new String[] {"value"},
                         "name = ? or name = ?",
-                        new String[] {name, name + "_" + Locale.getDefault().toString()},
+                        new String[] {name, localeName(name)},
                         null, null, "name desc", "1")
         ) {
             if (cursor != null && cursor.moveToNext()) {
@@ -544,6 +543,11 @@ public class Bible {
                 return defaultValue;
             }
         }
+    }
+
+    private String localeName(String name) {
+        Locale locale = Locale.getDefault();
+        return name + "_" + locale.getLanguage() + "_" + locale.getCountry();
     }
 
     public String getVersionFullname(String version) {
@@ -1105,29 +1109,49 @@ public class Bible {
     }
 
     private boolean checkVersionMeta(File file, String version) {
-        SQLiteDatabase metadata = null;
-        try {
-            metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
-                    SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+        try (
+                SQLiteDatabase metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
+                        SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS)
+        ) {
             String dataversion = version.replace("demo", "");
-            if (!versionFullnames.containsKey(version)) {
-                versionFullnames.put(version, getVersionMetadata("fullname", metadata, dataversion));
+            if (isDatabaseSupported(metadata)) {
+                if (!versionFullnames.containsKey(version)) {
+                    versionFullnames.put(version, getVersionMetadata("fullname", metadata, dataversion));
+                }
+                if (!versionNames.containsKey(version)) {
+                    versionNames.put(version, getVersionMetadata("name", metadata, dataversion));
+                }
+                versionDates.put(version, getVersionMetadata("date", metadata, "0"));
+                return true;
             }
-            if (!versionNames.containsKey(version)) {
-                versionNames.put(version, getVersionMetadata("name", metadata, dataversion));
-            }
-            versionDates.put(version, getVersionMetadata("date", metadata, "0"));
-            // setMetadata(metadata, dataversion, false);
-            return true;
-        } catch (Exception e) {
-            try {
-                file.delete();
-            } catch (Exception f) {
-            }
-            return false;
-        } finally {
-            if (metadata != null) {
-                metadata.close();
+        } catch (SQLiteException e) {
+            LogUtils.w("cannot open " + file, e);
+        }
+        //noinspection ResultOfMethodCallIgnored
+        file.delete();
+        return false;
+    }
+
+    private boolean isDatabaseSupported(SQLiteDatabase database) {
+        return hasColumns(database, "verses", "id", "book", "verse", "unformatted")
+                && hasColumns(database, "books", "number", "osis", "human", "chapters")
+                && hasColumns(database, "chapters", "id", "reference_osis", "reference_human", "content",
+                "previous_reference_osis", "next_reference_osis")
+                && hasColumns(database, "metadata", "name", "value");
+    }
+
+    private boolean hasColumns(SQLiteDatabase database, String table, String... columns) {
+        try (Cursor cursor = database.query(table, null, null, null, null, null, null, "1")) {
+            if (cursor != null && cursor.moveToFirst()) {
+                for (String column : columns) {
+                    if (cursor.getColumnIndex(column) == -1) {
+                        LogUtils.w("table " + table + " has no column " + column);
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return false;
             }
         }
     }

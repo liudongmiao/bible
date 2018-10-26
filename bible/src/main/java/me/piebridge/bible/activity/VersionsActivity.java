@@ -128,8 +128,8 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     }
 
     void checkZip(String path) {
-        if (bible.checkZipPath(new File(path))) {
-            bible.checkVersionsSync(true);
+        BibleApplication application = (BibleApplication) getApplication();
+        if (application.addBibleData(new File(path))) {
             updateActionsLater();
         }
     }
