@@ -202,10 +202,12 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     public final String getCurrentVersion() {
         ReadingFragment fragment = getCurrentFragment();
         if (fragment != null) {
-            return fragment.getArguments().getString(VERSION);
-        } else {
-            return null;
+            Bundle arguments = fragment.getArguments();
+            if (arguments != null) {
+                return arguments.getString(VERSION);
+            }
         }
+        return null;
     }
 
     protected final void prepare(int position) {
@@ -240,9 +242,14 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         int position = getInitialPosition();
         String osis = getInitialOsis();
         Bundle bundle = retrieveOsis(position, osis);
+        if (TextUtils.isEmpty(bundle.getString(CURR))) {
+            bundle = retrieveOsis(position, "null");
+            osis = bundle.getString(CURR);
+        }
         if (position == POSITION_UNKNOWN) {
             position = bundle.getInt(ID) - 1;
         }
+        refresh(position, osis);
         mAdapter.setData(position, bundle);
         updateVersion();
         prepare(position);
@@ -329,6 +336,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     }
 
     private void prepare(int position, String osis) {
+        LogUtils.d("prepare, position: " + position + ", osis: " + osis);
         Bundle bundle = mAdapter.getData(position);
         bundle.putString(OSIS, osis);
         bundle.putAll(retrieveOsis(position, osis));
@@ -418,15 +426,48 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         if (requestCode == REQUEST_CODE_SELECT && data != null) {
             jump(data.getStringExtra(OSIS), data.getStringExtra(VERSE));
         } else if (requestCode == REQUEST_CODE_VERSION && data != null) {
-            bible.setVersion(data.getStringExtra(VERSION));
-            refresh();
+            if (bible.setVersion(data.getStringExtra(VERSION))) {
+                refreshAdapter();
+            } else {
+                refresh();
+            }
+        }
+    }
+
+    protected void refreshAdapter() {
+        int newCount = retrieveOsisCount();
+        int oldCount = mAdapter.getCount();
+        int position = getCurrentPosition();
+        String osis = getCurrentOsis();
+        LogUtils.d("oldCount: " + oldCount + ", newCount: " + newCount);
+        if (oldCount == newCount) {
+            refresh(position, osis);
+        } else {
+            Bundle bundle = retrieveOsis(position, osis);
+            if (TextUtils.isEmpty(bundle.getString(CURR))) {
+                bundle = retrieveOsis(position, "null");
+                osis = bundle.getString(CURR);
+            }
+            position = bundle.getInt(ID) - 1;
+            mAdapter.setSize(newCount);
+            mAdapter.notifyDataSetChanged();
+            refresh(position, bundle);
+            mPager.setCurrentItem(position);
         }
     }
 
     protected void refresh() {
         int position = getCurrentPosition();
         String osis = getCurrentOsis();
-        mAdapter.setData(position, retrieveOsis(position, osis));
+        refresh(position, osis);
+    }
+
+    protected void refresh(int position, String osis) {
+        refresh(position, retrieveOsis(position, osis));
+    }
+
+    private void refresh(int position, Bundle bundle) {
+        mAdapter.setData(position, bundle);
         updateVersion();
         prepare(position);
         reload(position);
@@ -450,11 +491,14 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         Bundle bundle = fragment.getArguments();
         if (bundle != null) {
             bundle.putAll(mAdapter.getData(position));
-            fragment.reloadData();
+            if (!fragment.reloadData()) {
+                mAdapter.notifyDataSetChanged();
+            }
         }
     }
 
     private void reloadData(int position) {
+        LogUtils.d("reloadData, position: " + position);
         reloadData(position, 0);
     }
 

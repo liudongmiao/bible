@@ -75,6 +75,7 @@ public class BibleApplication extends Application {
         }
         DownloadInfo downloadInfo = downloads.get(filename);
         if (downloadInfo != null && !force) {
+            LogUtils.d(filename + " status: " + downloadInfo.getStatus());
             return downloadInfo.id;
         }
         File externalCacheDir = getExternalCacheDir();
@@ -85,15 +86,15 @@ public class BibleApplication extends Application {
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setTitle(filename);
         File file = new File(externalCacheDir, filename);
-        if (file.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            file.delete();
-        }
         request.setDestinationUri(Uri.fromFile(file));
         DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         if (downloadManager != null) {
             if (downloadInfo != null) {
                 downloadManager.remove(downloadInfo.id);
+            }
+            if (file.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                file.delete();
             }
             long id = downloadManager.enqueue(request);
             if (checkStatus(downloadManager, id) != null) {
@@ -191,7 +192,24 @@ public class BibleApplication extends Application {
 
         @Override
         public String toString() {
-            return "DownloadInfo{id=" + id + ", title=" + title + ", status=" + status + "}";
+            return "DownloadInfo{id=" + id + ", title=" + title + ", status=" + getStatus() + "}";
+        }
+
+        public String getStatus() {
+            switch (status) {
+                case DownloadManager.STATUS_PENDING:
+                    return "pending";
+                case DownloadManager.STATUS_RUNNING:
+                    return "running";
+                case DownloadManager.STATUS_PAUSED:
+                    return "paused";
+                case DownloadManager.STATUS_SUCCESSFUL:
+                    return "successful";
+                case DownloadManager.STATUS_FAILED:
+                    return "failed";
+                default:
+                    return "unknown(" + status + ")";
+            }
         }
     }
 

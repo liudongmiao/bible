@@ -1,13 +1,17 @@
 package me.piebridge.bible.adapter;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
+import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.fragment.ReadingFragment;
+import me.piebridge.bible.utils.LogUtils;
 
 import static me.piebridge.bible.activity.AbstractReadingActivity.POSITION;
 
@@ -34,16 +38,20 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
         ReadingFragment fragment = (ReadingFragment) super.instantiateItem(container, position);
         mFragments.put(position, fragment);
+        Bundle arguments = fragment.getArguments();
+        if (arguments == null || TextUtils.isEmpty(arguments.getString(AbstractReadingActivity.CURR))) {
+            LogUtils.w("empty arguments: " + arguments);
+        }
         return fragment;
     }
 
     @Override
     public ReadingFragment getItem(int position) {
         ReadingFragment fragment = new ReadingFragment();
-        fragment.setArguments(mBundles.get(position));
+        fragment.setArguments(getData(position));
         return fragment;
     }
 
@@ -53,10 +61,23 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         super.destroyItem(container, position, object);
         mFragments.remove(position);
         mBundles.remove(position);
+    }
+
+    @Override
+    public int getItemPosition(@NonNull Object object) {
+        LogUtils.d("object: " + object);
+        if (object instanceof ReadingFragment) {
+            ReadingFragment fragment = (ReadingFragment) object;
+            Bundle arguments = fragment.getArguments();
+            if (arguments != null && arguments.getInt(AbstractReadingActivity.ID) > mSize) {
+                return POSITION_NONE;
+            }
+        }
+        return POSITION_UNCHANGED;
     }
 
     public ReadingFragment getFragment(int position) {

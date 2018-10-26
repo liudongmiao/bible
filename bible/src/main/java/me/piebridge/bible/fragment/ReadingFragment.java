@@ -132,7 +132,11 @@ public class ReadingFragment extends Fragment {
         this.forceVerse = verse;
     }
 
-    public void reloadData() {
+    public boolean reloadData() {
+        if (webView == null) {
+            LogUtils.w("webView is null");
+            return false;
+        }
         Bundle bundle = getArguments();
         if (!TextUtils.isEmpty(osis) && osis.equals(bundle.getString(CURR))) {
             saveState();
@@ -143,6 +147,10 @@ public class ReadingFragment extends Fragment {
             webView.getSettings().setDefaultFontSize(fontSize);
             webView.getSettings().setDefaultFixedFontSize(fontSize);
             webView.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
+            return true;
+        } else {
+            LogUtils.w("body is empty!");
+            return false;
         }
     }
 

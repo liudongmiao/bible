@@ -67,6 +67,7 @@ import java.util.zip.ZipInputStream;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.HttpUtils;
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.ObjectUtils;
 
 public class Bible {
 
@@ -251,7 +252,7 @@ public class Bible {
     private void checkInternalVersions(List<String> versions, Map<String, String> versionpaths,
                                        boolean all) {
         if (!unpacked) {
-            setDemoVersions();
+            setDemoVersions(false);
             unpacked = true;
         }
         checkVersion(mContext.getFilesDir(), versions, versionpaths, all);
@@ -286,28 +287,19 @@ public class Bible {
             database.close();
         }
         databaseVersion = version;
-        try {
-            database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
-                    SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-            LogUtils.d("open database \"" + database.getPath() + "\"");
-            int oldsize = allhuman.size();
-            setMetadata(database, databaseVersion, true);
-            if (allhuman.size() > oldsize) {
-                SharedPreferences.Editor editor =
-                        mContext.getSharedPreferences(HUMAN_PREFERENCE, 0).edit();
-                for (Entry<String, String> entry : allhuman.entrySet()) {
-                    editor.putString(entry.getKey(), entry.getValue());
-                }
-                editor.apply();
+        database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
+                SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+        LogUtils.d("open database \"" + database.getPath() + "\"");
+        int oldsize = allhuman.size();
+        setMetadata(database, databaseVersion, true);
+        if (allhuman.size() > oldsize) {
+            SharedPreferences.Editor editor = mContext.getSharedPreferences(HUMAN_PREFERENCE, 0).edit();
+            for (Entry<String, String> entry : allhuman.entrySet()) {
+                editor.putString(entry.getKey(), entry.getValue());
             }
-            return true;
-        } catch (Exception e) {
-            try {
-                file.delete();
-            } catch (Exception f) {
-            }
-            return setDefaultVersion();
+            editor.apply();
         }
+        return true;
     }
 
     private File getFile(File dir, String version) {
@@ -601,50 +593,38 @@ public class Bible {
         setResourceValuesReverse(searchshort, R.array.searchshortzhcn);
     }
 
-    private void setDemoVersions() {
-        int demoVersion =
-                PreferenceManager.getDefaultSharedPreferences(mContext).getInt("demoVersion", 0);
-        int versionCode = 0;
-        try {
-            versionCode = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(),
-                    0).versionCode;
-        } catch (NameNotFoundException e) {
-            LogUtils.d("cannot find self", e);
-        }
-        boolean newVersion = demoVersion != versionCode;
-        boolean unpack = unpackRaw(newVersion, R.raw.niv84demo,
-                new File(mContext.getFilesDir(), "niv84demo.sqlite3"));
+    private void setDemoVersions(boolean force) {
+        final int demoVersion = PreferenceManager.getDefaultSharedPreferences(mContext).getInt("demoVersion", 0);
+        final int versionCode = BuildConfig.VERSION_CODE;
+        boolean newVersion = demoVersion != versionCode || force;
+        boolean unpack = unpackRaw(newVersion, R.raw.niv84demo, new File(mContext.getFilesDir(), "niv84demo.sqlite3"));
         if (unpack) {
-            unpack = unpackRaw(newVersion, R.raw.cunpssdemo,
-                    new File(mContext.getFilesDir(), "cunpssdemo.sqlite3"));
+            unpack = unpackRaw(newVersion, R.raw.cunpssdemo, new File(mContext.getFilesDir(), "cunpssdemo.sqlite3"));
         }
         if (newVersion && unpack) {
-            PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("demoVersion",
-                    versionCode).apply();
+            PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("demoVersion", versionCode).apply();
         }
     }
 
     public boolean setDefaultVersion() {
-        String defaultVersion = "";
-        if (versions.size() > 0) {
-            defaultVersion = get(TYPE.VERSION, 0);
+        if (versions.isEmpty()) {
+            checkBibleData();
+            if (versions.isEmpty()) {
+                setDemoVersions(true);
+                checkVersionsSync(true);
+            }
         }
-        String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version",
-                defaultVersion);
-        if ((version == null || version.length() == 0) && defaultVersion.length() > 0) {
-            version = defaultVersion;
+        String version = PreferenceManager.getDefaultSharedPreferences(mContext).getString("version", null);
+        if (TextUtils.isEmpty(version) || !versions.contains(version)) {
+            version = get(TYPE.VERSION, 0);
         }
-        // check actual file
         File file = getFile(version);
         if (file != null && file.isFile()) {
-            return setVersion(version);
+            return setVersion(version, true);
+        } else {
+            LogUtils.w("cannot find version " + version);
+            return false;
         }
-        PreferenceManager.getDefaultSharedPreferences(mContext).edit().remove("version").apply();
-        if (TextUtils.isEmpty(version) || version.endsWith("demo")) {
-            checkBibleData();
-            setDefaultVersion();
-        }
-        return false;
     }
 
     private boolean unpackRaw(boolean newVersion, int resId, File file) {
@@ -933,7 +913,11 @@ public class Bible {
         File file = getFile(version);
         LogUtils.d("version: " + version + ", file: " + file);
         if (file != null && file.isFile() && file.delete()) {
+            versions.remove(version);
             versionDates.remove(version);
+            if (versions.isEmpty() || ObjectUtils.equals(version, databaseVersion)) {
+                setDefaultVersion();
+            }
             return true;
         } else {
             return false;

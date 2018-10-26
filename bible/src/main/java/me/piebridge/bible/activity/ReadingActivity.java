@@ -134,8 +134,8 @@ public class ReadingActivity extends AbstractReadingActivity {
         super.onResume();
         String currentVersion = getCurrentVersion();
         String databaseVersion = bible.getVersion();
-        if (currentVersion != null && currentVersion.equals(databaseVersion)) {
-            refresh();
+        if (currentVersion != null && !currentVersion.equals(databaseVersion)) {
+            refreshAdapter();
         }
         if (BibleUtils.isDemoVersion(databaseVersion)) {
             String version = BibleUtils.removeDemo(databaseVersion);
@@ -143,8 +143,10 @@ public class ReadingActivity extends AbstractReadingActivity {
             if (id != 0) {
                 BibleApplication application = (BibleApplication) getApplication();
                 String filename = getString(id);
-                application.download(filename, false);
-                LogUtils.d("downloading " + filename + " for " + databaseVersion);
+                if (!application.isDownloading(filename)) {
+                    LogUtils.d("will download " + filename + " for " + databaseVersion);
+                    application.download(filename, true);
+                }
             }
         }
     }
@@ -196,15 +198,15 @@ public class ReadingActivity extends AbstractReadingActivity {
         super.onNewIntent(intent);
         String version = intent.getStringExtra(AbstractReadingActivity.VERSION);
         if (!TextUtils.isEmpty(version) && !ObjectUtils.equals(version, getCurrentVersion())) {
-            bible.setVersion(version);
-            updateVersion();
-            refresh();
+            if (bible.setVersion(version)) {
+                refreshAdapter();
+            }
         }
     }
 
     protected void onReceive(Intent intent) {
         if (Intent.ACTION_CONFIGURATION_CHANGED.equals(intent.getAction())) {
-            refresh();
+            refreshAdapter();
         }
     }
 

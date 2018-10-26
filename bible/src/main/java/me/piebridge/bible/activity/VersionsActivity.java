@@ -208,17 +208,14 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
 
     @Override
     public void onClick(View v) {
-        LogUtils.d("click: " + v);
         if (v == mSearchView) {
             setTitle(null);
         } else if (v instanceof CardView) {
             View action = v.findViewById(R.id.action);
             VersionItem versionItem = (VersionItem) action.getTag();
-            LogUtils.d("click card, code: " + versionItem.code + ", lang: " + versionItem.lang);
             launchVersion(versionItem.code);
         } else if (v instanceof Button) {
             VersionItem versionItem = (VersionItem) v.getTag();
-            LogUtils.d("click button, code: " + versionItem.code + ", lang: " + versionItem.lang);
             onClickButton(versionItem);
         }
     }
@@ -594,6 +591,12 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                 return true;
             }
             if (lang.toLowerCase(Locale.US).contains(mQuery)) {
+                return true;
+            }
+            if ("uninstall".equals(mQuery) && item.action == R.string.uninstall) {
+                return true;
+            }
+            if (ObjectUtils.equals(mQuery, mReference.get().getString(item.action).toLowerCase(Locale.US))) {
                 return true;
             }
             return false;
