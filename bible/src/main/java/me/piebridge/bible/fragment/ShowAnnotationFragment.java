@@ -68,8 +68,13 @@ public class ShowAnnotationFragment extends AbstractDialogFragment implements Vi
 
     private String formatCross(String link, String annotation) {
         if (link.contains("!x.") || link.startsWith("c")) {
-            String cross = annotation.replaceAll("^.*?/passage/\\?search=([^&]*?)&.*?$", "$1")
-                    .replaceAll(",", ";");
+            String cross = annotation;
+            if (cross.contains("passage/?search=")) {
+                cross = cross.replaceAll("^.*?/passage/\\?search=([^&]*?)&.*?$", "$1").replaceAll(",", ";");
+            }
+            if (cross.contains("class=\"xt\"")) {
+                cross = cross.replaceAll("^.*?<span class=\"xt\">(.*?)</span>.*?$", "$1");
+            }
             LogUtils.d("cross: " + cross);
             return cross;
         } else {
@@ -88,8 +93,26 @@ public class ShowAnnotationFragment extends AbstractDialogFragment implements Vi
     }
 
     private static String formatMessage(String annotation) {
-        return annotation.replaceAll("<span class=\"fr\">(.*?)</span>", "<strong>$1&nbsp;</strong>")
-                .replaceAll("<span class=\"xo\">(.*?)</span>", "");
+        String message = annotation;
+        // for cross
+        if (message.contains("class=\"note x\"")) {
+            message = message.replaceAll("^<span[^>]*class=\"note x\">(.*?)</span>$", "$1");
+        }
+        if (message.contains("class=\"xo\"")) {
+            message = message.replaceAll("<span class=\"xo\">(.*?)</span>", "<a href=\"\">$1</a> : ");
+        }
+        if (message.contains("class=\"xt\"")) {
+            message = message.replaceAll("<span class=\"xt\">(.*?)</span>", "<a href=\"\">$1</a>");
+        }
+        // for note
+        if (message.contains("class=\"note f\"")) {
+            message = message.replaceAll("^<span[^>]*class=\"note f\">(.*?)</span>$", "$1");
+        }
+        if (message.contains("class=\"fr\"")) {
+            message = message.replaceAll("<span class=\"fr\">(.*?)</span>", "<a href=\"\">$1</a>");
+        }
+        LogUtils.d("message: " + message);
+        return message;
     }
 
     @Override
