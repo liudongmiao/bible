@@ -147,7 +147,7 @@ public class Provider extends ContentProvider {
         SQLiteDatabase database = bible.getDatabase();
 
         if (database == null) {
-            Log.e(TAG, "database is null");
+            LogUtils.w("database is null");
             return null;
         }
 
@@ -177,7 +177,7 @@ public class Provider extends ContentProvider {
         SQLiteDatabase database = bible.getDatabase();
 
         if (database == null) {
-            Log.e(TAG, "database is null");
+            LogUtils.w("database is null");
             return null;
         }
 
@@ -196,7 +196,7 @@ public class Provider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        Log.d(TAG, "onCreate");
+        LogUtils.d("onCreate");
         return true;
     }
 
@@ -206,13 +206,13 @@ public class Provider extends ContentProvider {
             bible = Bible.getInstance(getContext().getApplicationContext());
         }
         String version = uri.getFragment();
-        Log.d(TAG, "query uri: " + uri + ", version: " + version);
+        LogUtils.d("query uri: " + uri + ", version: " + version);
         if (version != null && !version.equals("") && !bible.setVersion(version)) {
             return null;
         }
         SQLiteDatabase database = bible.getDatabase();
         if (database == null) {
-            Log.e(TAG, "database is null");
+            LogUtils.w("database is null");
             return null;
         }
         if (bible.getVersion().equals("")) {

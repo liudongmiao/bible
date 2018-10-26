@@ -121,7 +121,7 @@ public class Bible {
     private static String HUMAN_PREFERENCE = "human";
 
     private Bible(Context context) {
-        Log.d(TAG, "init bible");
+        LogUtils.d("init bible");
         mContext = context;
         SharedPreferences preferences = mContext.getSharedPreferences(HUMAN_PREFERENCE, 0);
         for (Entry<String, ?> entry : preferences.getAll().entrySet()) {
@@ -279,14 +279,14 @@ public class Bible {
             if (databaseVersion.equals(version)) {
                 return true;
             }
-            Log.d(TAG, "close database \"" + database.getPath() + "\"");
+            LogUtils.d("close database \"" + database.getPath() + "\"");
             database.close();
         }
         databaseVersion = version;
         try {
             database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
                     SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-            Log.d(TAG, "open database \"" + database.getPath() + "\"");
+            LogUtils.d("open database \"" + database.getPath() + "\"");
             int oldsize = allhuman.size();
             setMetadata(database, databaseVersion, true);
             if (allhuman.size() > oldsize) {
@@ -308,7 +308,7 @@ public class Bible {
     }
 
     private File getFile(File dir, String version) {
-        Log.d(TAG, "directory: " + dir + ", version: " + version);
+        LogUtils.d("directory: " + dir + ", version: " + version);
         if (dir == null || !dir.isDirectory()) {
             return null;
         }
@@ -331,7 +331,7 @@ public class Bible {
             File file;
             for (File dir : getExternalFilesDirs()) {
                 file = getFile(dir, version);
-                Log.d(TAG, "version: " + version);
+                LogUtils.d("version: " + version);
                 if (file != null) {
                     versionpaths.put(version, file.getAbsolutePath());
                     return file;
@@ -450,7 +450,7 @@ public class Bible {
                 "Android"), "data"), mContext.getPackageName()), "files");
         if (!file.exists()) {
             if (!file.mkdirs()) {
-                Log.w(TAG, "cannot create directory: " + file);
+                LogUtils.w("cannot create directory: " + file);
                 return null;
             }
             try {
@@ -464,7 +464,7 @@ public class Bible {
     private File[] getExternalFilesDirs() {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ||
                 mContext == null) {
-            Log.d(TAG, "not mounted, mContext = " + mContext);
+            LogUtils.d("not mounted, mContext = " + mContext);
             return new File[0];
         } else {
             return ContextCompat.getExternalFilesDirs(mContext, null);
@@ -584,7 +584,7 @@ public class Bible {
     }
 
     private void updateResources() {
-        Log.d(TAG, "updateResources");
+        LogUtils.d("updateResources");
         setResourceValues(versionNames, R.array.versionname);
         setResourceValues(versionFullnames, R.array.versionfullname);
         setResourceValuesReverse(allosis, R.array.osiszhcn);
@@ -647,7 +647,7 @@ public class Bible {
             file.delete();
         }
 
-        Log.d(TAG, "unpacking " + file.getAbsolutePath());
+        LogUtils.d("unpacking " + file.getAbsolutePath());
 
         try {
             int length;
@@ -659,8 +659,8 @@ public class Bible {
             }
             is.close();
             os.close();
-        } catch (Exception e) {
-            Log.e(TAG, "unpacked " + file.getAbsolutePath(), e);
+        } catch (IOException e) {
+            LogUtils.w("unpacked " + file.getAbsolutePath(), e);
             return false;
         }
 
@@ -747,7 +747,7 @@ public class Bible {
             checkOsis = false;
         }
 
-        Log.d(TAG, "getOsis, book: " + book);
+        LogUtils.d("getOsis, book: " + book);
 
         if (checkOsis) {
             osis = getOsis(book, getMaps(TYPE.OSIS));
@@ -788,11 +788,11 @@ public class Bible {
                                int limit) {
         if (!osiss.values().contains(osis)) {
             String text = get(TYPE.HUMAN, bible.getPosition(TYPE.OSIS, osis));
-            Log.d(TAG, "add suggest, text=" + text + ", data=" + osis);
+            LogUtils.d("add suggest, text=" + text + ", data=" + osis);
             osiss.put(text, osis);
         }
         if (limit != -1 && osiss.size() >= limit) {
-            Log.d(TAG, "arrive limit " + limit);
+            LogUtils.d("arrive limit " + limit);
             return true;
         }
         return false;
@@ -814,7 +814,7 @@ public class Bible {
                     "").toLowerCase(Locale.US);
         }
 
-        Log.d(TAG, "book: " + book);
+        LogUtils.d("book: " + book);
 
         ArrayList<Entry<String, String>> maps = new ArrayList<>();
 
@@ -920,24 +920,6 @@ public class Bible {
         return false;
     }
 
-    public static Object getField(Object object, final Class<?> clazz, final String fieldName) {
-        try {
-            Field field = clazz.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(object);
-        } catch (Exception e) {
-            Log.e(TAG, "no such filed " + object.getClass().getName() + "." + fieldName);
-        }
-        return null;
-    }
-
-    public static Object getField(Object object, final String fieldName) {
-        if (object == null) {
-            return null;
-        }
-        return getField(object, object.getClass(), fieldName);
-    }
-
     public boolean deleteVersion(String version) {
         version = version.toLowerCase(Locale.US);
         File file = getFile(version);
@@ -953,7 +935,7 @@ public class Bible {
     public void checkBibleData(boolean all) {
         synchronized (versionsCheckingLock) {
             if ((!checking || !all) && versions.size() > 0) {
-                Log.d(TAG, "cancel checking");
+                LogUtils.d("cancel checking");
                 return;
             }
             if (!all) {
@@ -998,7 +980,7 @@ public class Bible {
         if (path == null || !path.isDirectory() || path.list() == null) {
             return false;
         }
-        Log.d(TAG, "checking zipdata " + path.getAbsolutePath());
+        LogUtils.d("checking zipdata " + path.getAbsolutePath());
         for (String name : path.list()) {
             if (name.startsWith("bibledata-") && name.endsWith("zip")) {
                 checkZipPath(new File(path, name));
@@ -1011,7 +993,7 @@ public class Bible {
         try {
             return unpackZip(path);
         } catch (IOException e) {
-            Log.e(TAG, "unpackZip", e);
+            LogUtils.w("unpackZip", e);
             return false;
         }
     }
@@ -1054,7 +1036,7 @@ public class Bible {
                         file.lastModified() > path.lastModified()) {
                     continue;
                 }
-                Log.d(TAG, "unpacking " + file.getAbsoluteFile());
+                LogUtils.d("unpacking " + file.getAbsoluteFile());
                 int length;
                 File tmpfile = new File(dirpath, zename + ".tmp");
                 OutputStream os = new BufferedOutputStream(new FileOutputStream(tmpfile));
@@ -1183,7 +1165,7 @@ public class Bible {
         try {
             new JSONObject(json);
         } catch (JSONException e) {
-            Log.d(TAG, "json: " + json);
+            LogUtils.d("json: " + json);
             return null;
         }
 

@@ -199,10 +199,6 @@
             android:name=".Provider"
             android:authorities="me.piebridge.bible.provider"
             android:permission="me.piebridge.bible.permission.ACCESS" />
-        <provider
-            android:name=".Suggestion"
-            android:authorities="me.piebridge.bible"
-            android:permission="android.permission.GLOBAL_SEARCH" />
 
         <provider
             android:name=".provider.SearchProvider"

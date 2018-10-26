@@ -25,4 +25,8 @@ public class LogUtils {
         Log.w(TAG, msg);
     }
 
+    public static void w(String msg, Throwable tr) {
+        Log.w(TAG, msg, tr);
+    }
+
 }

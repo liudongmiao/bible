@@ -200,7 +200,6 @@ public class OsisItem implements Parcelable {
             }
 
             String osis;
-            Log.d("OsisItem", String.format("book:%s, %s:%s-%s:%s", book, start_chapter, start_verse, end_chapter, end_verse));
             if (book.equalsIgnoreCase("ch")) {
                 if ("".equals(prevosis)) {
                     osis = previous;
