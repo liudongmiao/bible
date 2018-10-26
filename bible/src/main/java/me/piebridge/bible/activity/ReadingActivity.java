@@ -1,6 +1,9 @@
 package me.piebridge.bible.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
@@ -11,7 +14,13 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import java.lang.ref.WeakReference;
+
 import me.piebridge.bible.Bible;
+import me.piebridge.bible.BibleApplication;
+import me.piebridge.bible.BuildConfig;
 import me.piebridge.bible.Provider;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.FontsizeFragment;
@@ -36,9 +45,12 @@ public class ReadingActivity extends AbstractReadingActivity {
 
     private int mFontSize;
 
+    private BroadcastReceiver receiver;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        receiver = new Receiver(this);
     }
 
     @Override
@@ -103,8 +115,17 @@ public class ReadingActivity extends AbstractReadingActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter);
+    }
+
+    @Override
     protected void onStop() {
         saveOsis();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onStop();
     }
 
@@ -112,8 +133,19 @@ public class ReadingActivity extends AbstractReadingActivity {
     public void onResume() {
         super.onResume();
         String currentVersion = getCurrentVersion();
-        if (currentVersion != null && currentVersion.equals(bible.getVersion())) {
+        String databaseVersion = bible.getVersion();
+        if (currentVersion != null && currentVersion.equals(databaseVersion)) {
             refresh();
+        }
+        if (BibleUtils.isDemoVersion(databaseVersion)) {
+            String version = BibleUtils.removeDemo(databaseVersion);
+            int id = getResources().getIdentifier(version, "string", BuildConfig.APPLICATION_ID);
+            if (id != 0) {
+                BibleApplication application = (BibleApplication) getApplication();
+                String filename = getString(id);
+                application.download(filename, false);
+                LogUtils.d("downloading " + filename + " for " + databaseVersion);
+            }
         }
     }
 
@@ -168,6 +200,30 @@ public class ReadingActivity extends AbstractReadingActivity {
             updateVersion();
             refresh();
         }
+    }
+
+    protected void onReceive(Intent intent) {
+        if (Intent.ACTION_CONFIGURATION_CHANGED.equals(intent.getAction())) {
+            refresh();
+        }
+    }
+
+    private static class Receiver extends BroadcastReceiver {
+
+        private WeakReference<ReadingActivity> mReference;
+
+        public Receiver(ReadingActivity activity) {
+            this.mReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ReadingActivity readingActivity = mReference.get();
+            if (readingActivity != null) {
+                readingActivity.onReceive(intent);
+            }
+        }
+
     }
 
 }

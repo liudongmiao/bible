@@ -12,6 +12,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
 
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
 
 /**
@@ -147,6 +148,12 @@ public class BibleApplication extends Application {
             Bible bible = Bible.getInstance(this);
             if (bible.checkZipPath(file)) {
                 bible.checkVersionsSync(true);
+                String version = BibleUtils.removeDemo(bible.getVersion());
+                if (file.getName().contains(version)) {
+                    bible.setVersion(version, true);
+                    Intent intent = new Intent(Intent.ACTION_CONFIGURATION_CHANGED);
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                }
                 return true;
             }
         }

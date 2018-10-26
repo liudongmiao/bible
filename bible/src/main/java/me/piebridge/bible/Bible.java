@@ -267,6 +267,10 @@ public class Bible {
     }
 
     public boolean setVersion(String version) {
+        return setVersion(version, false);
+    }
+
+    public boolean setVersion(String version, boolean refresh) {
         if (version == null) {
             return false;
         }
@@ -275,7 +279,7 @@ public class Bible {
             return "".equals(databaseVersion) && setDefaultVersion();
         }
         if (database != null) {
-            if (databaseVersion.equals(version)) {
+            if (databaseVersion.equals(version) && !refresh) {
                 return true;
             }
             LogUtils.d("close database \"" + database.getPath() + "\"");

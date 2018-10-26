@@ -421,4 +421,7 @@
         <item>dark</item>
     </string-array>
 
+    <string name="niv1984">bibledata-en-niv1984.zip</string>
+    <string name="cunpss">bibledata-zh-cn-cunpss.zip</string>
+
 </resources>

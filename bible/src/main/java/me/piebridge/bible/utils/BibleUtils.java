@@ -96,4 +96,27 @@ public class BibleUtils {
         return new int[] {chapter, verse};
     }
 
+    public static boolean isDemoVersion(String version) {
+        switch (version) {
+            case "cunpssdemo":
+            case "niv84demo":
+            case "niv1984demo":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static String removeDemo(String version) {
+        switch (version) {
+            case "cunpssdemo":
+                return "cunpss";
+            case "niv84demo":
+            case "niv1984demo":
+                return "niv1984";
+            default:
+                return version;
+        }
+    }
+
 }
