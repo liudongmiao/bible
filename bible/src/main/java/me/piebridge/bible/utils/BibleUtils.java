@@ -80,7 +80,7 @@ public class BibleUtils {
     public static String getFontPath(Context context) {
         File font;
         File[] dirs = ContextCompat.getExternalFilesDirs(context, null);
-        if (dirs != null && dirs.length > 0 && dirs[0] != null) {
+        if (dirs.length > 0 && dirs[0] != null) {
             font = new File(dirs[0], "custom.ttf");
             if (font.isFile()) {
                 return font.getAbsolutePath();
