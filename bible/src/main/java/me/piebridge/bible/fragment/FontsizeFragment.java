@@ -4,9 +4,12 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -28,6 +31,10 @@ public class FontsizeFragment extends AbstractDialogFragment implements DialogIn
     private static final String FONTSIZE = "font-size";
 
     private SeekBar seekbar;
+
+    private ImageButton minus;
+    private ImageButton plus;
+    private TextView size;
 
     private WebView webview;
 
@@ -56,8 +63,14 @@ public class FontsizeFragment extends AbstractDialogFragment implements DialogIn
         seekbar = dialog.findViewById(R.id.seekbar);
         webview = dialog.findViewById(R.id.webview);
 
+        minus = dialog.findViewById(R.id.minus);
+        plus = dialog.findViewById(R.id.plus);
+        size = dialog.findViewById(R.id.size);
+
         seekbar.setProgress(getFontsize());
         seekbar.setMax(FONTSIZE_MAX);
+
+        size.setText(getString(R.string.count, seekbar.getProgress()));
 
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -70,11 +83,35 @@ public class FontsizeFragment extends AbstractDialogFragment implements DialogIn
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                webview.getSettings().setDefaultFontSize(progress);
-                webview.getSettings().setDefaultFixedFontSize(progress);
+                changeSize(progress);
             }
         });
 
+        minus.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                int progress = seekbar.getProgress() - 1;
+                if (progress >= 1) {
+                    seekbar.setProgress(progress);
+                    changeSize(progress);
+                }
+            }
+
+        });
+
+        plus.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                int progress = seekbar.getProgress() + 1;
+                if (progress <= FONTSIZE_MAX) {
+                    seekbar.setProgress(progress);
+                    changeSize(progress);
+                }
+            }
+
+        });
 
         webview.setFocusableInTouchMode(false);
         webview.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
@@ -88,6 +125,14 @@ public class FontsizeFragment extends AbstractDialogFragment implements DialogIn
         webview.getSettings().setDefaultFontSize(seekbar.getProgress());
         webview.getSettings().setDefaultFixedFontSize(seekbar.getProgress());
         webview.loadDataWithBaseURL("file:///android_asset/", getBody(), "text/html", "utf-8", null);
+    }
+
+    public void changeSize(int progress) {
+        minus.setEnabled(progress > 1);
+        plus.setEnabled(progress < FONTSIZE_MAX);
+        size.setText(getString(R.string.count, progress));
+        webview.getSettings().setDefaultFontSize(progress);
+        webview.getSettings().setDefaultFixedFontSize(progress);
     }
 
     public void setBody(String webviewData) {
