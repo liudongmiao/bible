@@ -233,7 +233,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                 break;
             case R.string.cancel_install:
                 BibleApplication application = (BibleApplication) getApplication();
-                application.cancel(versionItem.filename());
+                application.cancelDownload(versionItem.filename());
                 updateActionsLater();
                 break;
             case R.string.uninstall:
