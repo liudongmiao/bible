@@ -82,15 +82,19 @@ public class Provider extends ContentProvider {
     }
 
     private Cursor queryBook(String query, String books) {
-        SQLiteDatabase database = bible.getDatabase();
+        SQLiteDatabase database = bible.acquireDatabase();
         if (database == null) {
             return null;
         }
 
-        LogUtils.d("queryBook, books: " + books + ", query: " + query);
-        Cursor cursor = database.query(TABLE_BOOKS, COLUMNS_BOOKS,
-                TextUtils.isEmpty(books) ? "human like ?" : "human like ? and osis in (" + books + ")",
-                new String[] {"%" + query + "%"}, null, null, "number ASC");
+        Cursor cursor;
+        try {
+            cursor = database.query(TABLE_BOOKS, COLUMNS_BOOKS,
+                    TextUtils.isEmpty(books) ? "human like ?" : "human like ? and osis in (" + books + ")",
+                    new String[] {"%" + query + "%"}, null, null, "number ASC");
+        } finally {
+            bible.releaseDatabase(database);
+        }
 
         if (cursor == null) {
             return null;
@@ -103,15 +107,19 @@ public class Provider extends ContentProvider {
     }
 
     private Cursor queryVerse(String query, String books) {
-        SQLiteDatabase database = bible.getDatabase();
+        SQLiteDatabase database = bible.acquireDatabase();
         if (database == null) {
             return null;
         }
 
-        LogUtils.d("queryVerse, books: " + books + ", query: " + query);
-        Cursor cursor = database.query(TABLE_VERSES, COLUMNS_VERSES,
-                TextUtils.isEmpty(books) ? "unformatted like ?" : "unformatted like ? and book in (" + books + ")",
-                new String[] {"%" + query + "%"}, null, null, "id ASC");
+        Cursor cursor;
+        try {
+            cursor = database.query(TABLE_VERSES, COLUMNS_VERSES,
+                    TextUtils.isEmpty(books) ? "unformatted like ?" : "unformatted like ? and book in (" + books + ")",
+                    new String[] {"%" + query + "%"}, null, null, "id ASC");
+        } finally {
+            bible.releaseDatabase(database);
+        }
 
         if (cursor == null) {
             return null;
@@ -124,14 +132,18 @@ public class Provider extends ContentProvider {
     }
 
     private Cursor getVerse(String id) {
-        SQLiteDatabase database = bible.getDatabase();
-
+        SQLiteDatabase database = bible.acquireDatabase();
         if (database == null) {
             return null;
         }
 
-        Cursor cursor = database.query(TABLE_VERSES, COLUMNS_VERSES,
-                "_id = ?", new String[] {id}, null, null, null);
+        Cursor cursor;
+        try {
+            cursor = database.query(TABLE_VERSES, COLUMNS_VERSES,
+                    "_id = ?", new String[] {id}, null, null, null);
+        } finally {
+            bible.releaseDatabase(database);
+        }
 
         if (cursor == null) {
             return null;
@@ -144,23 +156,24 @@ public class Provider extends ContentProvider {
     }
 
     private Cursor getChapter(String osis) {
-        SQLiteDatabase database = bible.getDatabase();
-
+        SQLiteDatabase database = bible.acquireDatabase();
         if (database == null) {
-            LogUtils.w("database is null");
             return null;
         }
 
         Cursor cursor;
-
-        if (!osis.equals("null")) {
-            cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTER,
-                    "reference_osis = ? or reference_osis = ?",
-                    new String[] {osis, osis.replace(Bible.INTRO, "1")},
-                    null, null, "id", "1");
-        } else {
-            cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTER,
-                    null, null, null, null, null, "1");
+        try {
+            if (!osis.equals("null")) {
+                cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTER,
+                        "reference_osis = ? or reference_osis = ?",
+                        new String[] {osis, osis.replace(Bible.INTRO, "1")},
+                        null, null, "id", "1");
+            } else {
+                cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTER,
+                        null, null, null, null, null, "1");
+            }
+        } finally {
+            bible.releaseDatabase(database);
         }
 
         if (cursor == null) {
@@ -174,15 +187,18 @@ public class Provider extends ContentProvider {
     }
 
     private Cursor getChapters() {
-        SQLiteDatabase database = bible.getDatabase();
-
+        SQLiteDatabase database = bible.acquireDatabase();
         if (database == null) {
-            LogUtils.w("database is null");
             return null;
         }
 
-        Cursor cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTERS,
-                null, null, null, null, null);
+        Cursor cursor;
+        try {
+            cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTERS,
+                    null, null, null, null, null);
+        } finally {
+            bible.releaseDatabase(database);
+        }
 
         if (cursor == null) {
             return null;
@@ -205,19 +221,13 @@ public class Provider extends ContentProvider {
         if (bible == null) {
             bible = Bible.getInstance(getContext().getApplicationContext());
         }
+
         String version = uri.getFragment();
-        LogUtils.d("query uri: " + uri + ", version: " + version);
-        if (version != null && !version.equals("") && !bible.setVersion(version)) {
+        LogUtils.d("query uri: " + uri + ", version: " + version + ", databaseVersion: " + bible.getVersion());
+        if (!TextUtils.isEmpty(version) && !bible.setVersion(version)) {
             return null;
         }
-        SQLiteDatabase database = bible.getDatabase();
-        if (database == null) {
-            LogUtils.w("database is null");
-            return null;
-        }
-        if (bible.getVersion().equals("")) {
-            return null;
-        }
+
         switch (uriMatcher.match(uri)) {
             case URI_SEARCH:
                 return queryVerse(uri.getLastPathSegment(), uri.getQueryParameter("books"));
@@ -232,7 +242,7 @@ public class Provider extends ContentProvider {
             case URI_BOOK:
                 return queryBook(uri.getLastPathSegment(), uri.getQueryParameter("books"));
             default:
-                throw new IllegalArgumentException("Unknown Uri: " + uri);
+                return null;
         }
     }
 

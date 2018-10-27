@@ -36,12 +36,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -65,7 +61,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import me.piebridge.bible.utils.BibleUtils;
-import me.piebridge.bible.utils.HttpUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
@@ -84,8 +79,10 @@ public class Bible {
         VERSIONPATH,
     }
 
-    private SQLiteDatabase database = null;
+    private SQLiteDatabase mDatabase = null;
+    private SQLiteDatabase oDatabase = null;
     private String databaseVersion = "";
+    private final Object databaseLock = new Object();
 
     // FIXME
     private static Context mContext = null;
@@ -162,22 +159,21 @@ public class Bible {
     }
 
     public List<Integer> getVerses(String book, int chapter) {
-        Cursor cursor = null;
         List<Integer> verses = new ArrayList<>();
-        try {
-            cursor = database.query(Provider.TABLE_VERSE, Provider.COLUMNS_VERSE,
-                    "book = ? and verse > ? and verse < ?",
-                    new String[] {book, String.valueOf(chapter), String.valueOf(chapter + 1)},
-                    null, null, "id");
+        SQLiteDatabase database = acquireDatabase();
+        try (
+                Cursor cursor = database.query(Provider.TABLE_VERSE, Provider.COLUMNS_VERSE,
+                        "book = ? and verse > ? and verse < ?",
+                        new String[] {book, String.valueOf(chapter), String.valueOf(chapter + 1)},
+                        null, null, "id")
+        ) {
             BigDecimal thousand = new BigDecimal(Provider.THOUSAND);
-            while (cursor.moveToNext()) {
+            while (cursor != null && cursor.moveToNext()) {
                 String verse = cursor.getString(0);
                 verses.add(new BigDecimal(verse).multiply(thousand).intValue() % Provider.THOUSAND);
             }
         } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+            releaseDatabase(database);
         }
         return verses;
     }
@@ -279,19 +275,18 @@ public class Bible {
         if (file == null || !file.isFile()) {
             return "".equals(databaseVersion) && setDefaultVersion();
         }
-        if (database != null) {
-            if (databaseVersion.equals(version) && !refresh) {
-                return true;
-            }
-            LogUtils.d("close database \"" + database.getPath() + "\"");
-            database.close();
+        if (mDatabase != null && databaseVersion.equals(version) && !refresh) {
+            return true;
         }
         databaseVersion = version;
-        database = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
-                SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-        LogUtils.d("open database \"" + database.getPath() + "\"");
+        synchronized (databaseLock) {
+            oDatabase = mDatabase;
+            mDatabase = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
+                    SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+        }
+        LogUtils.d("open database \"" + mDatabase.getPath() + "\"");
         int oldsize = allhuman.size();
-        setMetadata(database, databaseVersion, true);
+        setMetadata(mDatabase, databaseVersion, true);
         if (allhuman.size() > oldsize) {
             SharedPreferences.Editor editor = mContext.getSharedPreferences(HUMAN_PREFERENCE, 0).edit();
             for (Entry<String, String> entry : allhuman.entrySet()) {
@@ -515,8 +510,18 @@ public class Bible {
         return get(type).size();
     }
 
-    public SQLiteDatabase getDatabase() {
-        return database;
+    public SQLiteDatabase acquireDatabase() {
+        synchronized (databaseLock) {
+            return mDatabase;
+        }
+    }
+
+    public void releaseDatabase(SQLiteDatabase database) {
+        if (oDatabase != null && oDatabase != database) {
+            LogUtils.d("close database \"" + oDatabase.getPath() + "\"");
+            oDatabase.close();
+            oDatabase = null;
+        }
     }
 
     public String getVersion() {
@@ -1155,19 +1160,16 @@ public class Bible {
         if (TextUtils.isEmpty(osis) || TextUtils.isEmpty(link)) {
             return null;
         }
-        Cursor cursor = null;
-        try {
-            cursor = database.query("annotations", new String[] {"content"}, "osis = ? and link = ?",
-                    new String[] {osis, link}, null, null, null, null);
-            if (cursor.moveToNext()) {
+        SQLiteDatabase database = acquireDatabase();
+        try (
+                Cursor cursor = database.query("annotations", new String[] {"content"}, "osis = ? and link = ?",
+                        new String[] {osis, link}, null, null, null, "1")
+        ) {
+            if (cursor != null && cursor.moveToNext()) {
                 return cursor.getString(0);
             }
-        } catch (SQLiteException e) {
-            // ignore
         } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+            releaseDatabase(database);
         }
         return null;
     }
