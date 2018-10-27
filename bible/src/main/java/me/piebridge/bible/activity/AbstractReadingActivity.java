@@ -24,7 +24,9 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.appbar.AppBarLayout;
 
+import me.piebridge.bible.AnnotationComponent;
 import me.piebridge.bible.Bible;
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.Provider;
 import me.piebridge.bible.R;
 import me.piebridge.bible.adapter.ReadingAdapter;
@@ -304,8 +306,10 @@ public abstract class AbstractReadingActivity extends DrawerActivity
                 bundle.putString(HUMAN, getString(cursor, Provider.COLUMN_HUMAN));
                 bundle.putString(CONTENT, getString(cursor, Provider.COLUMN_CONTENT));
                 bundle.putString(OSIS, curr);
-                bundle.putString(HIGHLIGHTED, bible.getHighlight(curr));
-                bundle.putBundle(NOTES, bible.getNoteVerses(curr));
+
+                BibleApplication application = (BibleApplication) getApplication();
+                bundle.putString(HIGHLIGHTED, application.getHighlight(curr));
+                bundle.putBundle(NOTES, application.getNoteVerses(curr));
             }
         } catch (SQLiteException e) {
             LogUtils.d("cannot query " + osis, e);
@@ -566,7 +570,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     public void saveHighlight(String verses) {
         String osis = getCurrentOsis();
         LogUtils.d("osis: " + osis + ", highlight: " + verses);
-        bible.saveHighlight(osis, verses);
+        BibleApplication application = (BibleApplication) getApplication();
+        application.saveHighlight(osis, verses);
         handler.obtainMessage(ReadingHandler.SHOW_SELECTION,
                 new ReadingHandler.Selection(false, null, null)).sendToTarget();
     }
@@ -603,7 +608,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         String osis = getCurrentOsis();
         LogUtils.d("osis: " + osis + ", update notes: " + verses);
         String verse = getVerse(verses);
-        Bible.Note note = fetchNote(verse);
+        Bundle note = fetchNote(verse);
 
         final String tag = FRAGMENT_ADD_NOTES;
         FragmentManager manager = getSupportFragmentManager();
@@ -619,8 +624,9 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     public void saveNotes(long id, String verses, String content) {
         String osis = getCurrentOsis();
         String verse = getVerse(verses);
-        bible.saveNote(id, osis, verse, verses, content);
-        getCurrentFragment().getArguments().putBundle(NOTES, bible.getNoteVerses(osis));
+        BibleApplication application = (BibleApplication) getApplication();
+        application.saveNote(id, osis, verse, verses, content);
+        getCurrentFragment().getArguments().putBundle(NOTES, application.getNoteVerses(osis));
         setNote(verse, !TextUtils.isEmpty(content));
         getCurrentFragment().selectVerses(verses, false);
     }
@@ -628,13 +634,14 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     public void deleteNote(long id, String verses) {
         String osis = getCurrentOsis();
         String verse = getVerse(verses);
-        bible.deleteNote(id);
-        getCurrentFragment().getArguments().putBundle(NOTES, bible.getNoteVerses(osis));
+        BibleApplication application = (BibleApplication) getApplication();
+        application.deleteNote(id);
+        getCurrentFragment().getArguments().putBundle(NOTES, application.getNoteVerses(osis));
         setNote(verse, false);
     }
 
     public void doShowNote(String verse) {
-        Bible.Note note = fetchNote(verse);
+        Bundle note = fetchNote(verse);
         if (note == null) {
             return;
         }
@@ -650,10 +657,11 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         fragment.show(manager, tag);
     }
 
-    public Bible.Note fetchNote(String verse) {
+    public Bundle fetchNote(String verse) {
         long id = getCurrentFragment().getNote(verse);
         if (id > 0) {
-            return bible.getNote(id);
+            BibleApplication application = (BibleApplication) getApplication();
+            return application.getNote(id);
         } else {
             return null;
         }

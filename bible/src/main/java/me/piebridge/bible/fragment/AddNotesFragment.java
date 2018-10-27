@@ -7,21 +7,18 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 
+import me.piebridge.bible.AnnotationComponent;
 import me.piebridge.bible.Bible;
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.AbstractReadingActivity;
+import me.piebridge.bible.utils.NoteBundle;
 
 /**
  * Created by thom on 2018/9/28.
  */
 public class AddNotesFragment extends AbstractDialogFragment
         implements DialogInterface.OnClickListener {
-
-    private static final String ID = "id";
-
-    private static final String VERSES = "verses";
-
-    private static final String CONTENT = "content";
 
     public AddNotesFragment() {
         setArguments(new Bundle());
@@ -67,25 +64,24 @@ public class AddNotesFragment extends AbstractDialogFragment
         }
     }
 
-    public void setNote(String verses, Bible.Note note) {
+    public void setNote(String verses, Bundle note) {
         Bundle arguments = getArguments();
-        arguments.putString(VERSES, verses);
+        arguments.putString(NoteBundle.VERSES, verses);
         if (note != null) {
-            arguments.putLong(ID, note.getId());
-            arguments.putString(CONTENT, note.getContent());
+            arguments.putAll(note);
         }
     }
 
     private String getVerses() {
-        return getArguments().getString(VERSES);
+        return getArguments().getString(NoteBundle.VERSES);
     }
 
     private long getNoteId() {
-        return getArguments().getLong(ID);
+        return getArguments().getLong(NoteBundle.ID);
     }
 
     private String getContent() {
-        return getArguments().getString(CONTENT);
+        return getArguments().getString(NoteBundle.CONTENT);
     }
 
 }

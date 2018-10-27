@@ -15,7 +15,6 @@ package me.piebridge.bible;
 
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,17 +22,13 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import java.io.BufferedInputStream;
@@ -1053,10 +1048,6 @@ public class Bible {
         return versions.size();
     }
 
-    private boolean isDatabaseIntegrityOk(SQLiteDatabase database) {
-        return database.isDatabaseIntegrityOk();
-    }
-
     private boolean checkVersionMeta(File file, String version) {
         try (
                 SQLiteDatabase metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
@@ -1174,300 +1165,6 @@ public class Bible {
         return null;
     }
 
-    /**
-     * load notes, called when osis is changed
-     *
-     * @param osis book.chapter
-     */
-    @NonNull
-    public Bundle loadNotes(String osis) {
-        Bundle bundle = new Bundle();
-        if (osis == null) {
-            return bundle;
-        }
-        if (mOpenHelper == null) {
-            mOpenHelper = new AnnotationsDatabaseHelper(mContext);
-        }
-        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-        if (!isDatabaseIntegrityOk(db)) {
-            return bundle;
-        }
-
-        Cursor cursor = null;
-        try {
-            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS,
-                    new String[] {AnnotationsDatabaseHelper.COLUMN_ID,
-                            AnnotationsDatabaseHelper.COLUMN_VERSE},
-                    "osis = ? and type = ?", new String[] {
-                            osis, "note"}, null, null, null);
-            while (cursor != null && cursor.moveToNext()) {
-                long id = cursor.getInt(0);
-                String verse = cursor.getString(1);
-                if (TextUtils.isDigitsOnly(verse)) {
-                    bundle.putLong(verse, id);
-                }
-            }
-        } catch (RuntimeException e) {
-            LogUtils.d("cannot load notes : " + osis, e);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        return bundle;
-    }
-
-    public static class Note {
-        Long id = null;
-        String verse;
-        String verses;
-        public String content;
-        long createtime;
-        long updatetime;
-        ContentValues values = null;
-
-        public Note(Long id, String verse, String verses, String content, long create, long update) {
-            this.id = id;
-            this.verse = verse;
-            this.verses = verses;
-            this.content = content;
-            this.createtime = create;
-            this.updatetime = update;
-        }
-
-        public Note(String verse, String verses, String content) {
-            long time = System.currentTimeMillis() / 1000;
-            this.verse = verse;
-            this.verses = verses;
-            this.content = content;
-            this.createtime = time;
-            this.updatetime = time;
-        }
-
-        public boolean update(String verses, String content) {
-            if (this.verses.equals(verses) && this.content.equals(content)) {
-                return false;
-            }
-            long time = System.currentTimeMillis() / 1000;
-            this.verses = verses;
-            this.content = content;
-            this.updatetime = time;
-            if (values != null) {
-                values.put(AnnotationsDatabaseHelper.COLUMN_VERSES, verses);
-                values.put(AnnotationsDatabaseHelper.COLUMN_CONTENT, content);
-                values.put(AnnotationsDatabaseHelper.COLUMN_UPDATETIME, time);
-            }
-            return true;
-        }
-
-        public ContentValues getContentValues() {
-            if (values == null) {
-                values = new ContentValues();
-                values.put(AnnotationsDatabaseHelper.COLUMN_TYPE, "note");
-                values.put(AnnotationsDatabaseHelper.COLUMN_VERSE, verse);
-                values.put(AnnotationsDatabaseHelper.COLUMN_VERSES, verses);
-                values.put(AnnotationsDatabaseHelper.COLUMN_CONTENT, content);
-                values.put(AnnotationsDatabaseHelper.COLUMN_CREATETIME, createtime);
-                values.put(AnnotationsDatabaseHelper.COLUMN_UPDATETIME, updatetime);
-            }
-            return values;
-        }
-
-        public Long getId() {
-            return this.id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public String getVerses() {
-            return this.verses;
-        }
-
-        public String getContent() {
-            return content;
-        }
-    }
-
-    /**
-     * get a list of verse for osis, called when the reading page refresh.
-     *
-     * @param osis book.chapter
-     * @return
-     */
-    public Bundle getNoteVerses(String osis) {
-        return loadNotes(osis);
-    }
-
-    public Note getNote(long id) {
-        if (mOpenHelper == null) {
-            mOpenHelper = new AnnotationsDatabaseHelper(mContext);
-        }
-        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-        if (!isDatabaseIntegrityOk(db)) {
-            return null;
-        }
-
-        Cursor cursor = null;
-        try {
-            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null,
-                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?",
-                    new String[] {Long.toString(id)}, null, null, null);
-            if (cursor != null && cursor.moveToNext()) {
-                String verse = cursor.getString(
-                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_VERSE));
-                String verses = cursor.getString(
-                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_VERSES));
-                String content = cursor.getString(
-                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
-                Long create = cursor.getLong(
-                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_CONTENT));
-                Long update = cursor.getLong(
-                        cursor.getColumnIndex(AnnotationsDatabaseHelper.COLUMN_UPDATETIME));
-                return new Note(id, verse, verses, content, create, update);
-            }
-        } catch (RuntimeException e) {
-            LogUtils.d("cannot load note : " + id, e);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * save the note for book.chapter.verse
-     *
-     * @param osis    book.chapter
-     * @param verse   verse, normally number
-     * @param content note content
-     * @return true if saved, false if not
-     */
-    public boolean saveNote(long id, String osis, String verse, String verses, String content) {
-        if (content == null || content.length() == 0) {
-            return false;
-        }
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        if (!isDatabaseIntegrityOk(db)) {
-            File path = mContext.getDatabasePath(AnnotationsDatabaseHelper.DATABASE_NAME);
-            if (path != null && path.delete()) {
-                return saveNote(0, osis, verse, verses, content);
-            }
-            return false;
-        }
-
-
-        long time = System.currentTimeMillis() / 1000;
-        if (id == 0) {
-            ContentValues values = new ContentValues();
-            values.put(AnnotationsDatabaseHelper.COLUMN_TYPE, "note");
-            values.put(AnnotationsDatabaseHelper.COLUMN_OSIS, osis);
-            values.put(AnnotationsDatabaseHelper.COLUMN_VERSE, verse);
-            values.put(AnnotationsDatabaseHelper.COLUMN_VERSES, verses);
-            values.put(AnnotationsDatabaseHelper.COLUMN_CONTENT, content);
-            values.put(AnnotationsDatabaseHelper.COLUMN_CREATETIME, time);
-            values.put(AnnotationsDatabaseHelper.COLUMN_UPDATETIME, time);
-            db.insert(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, values);
-        } else {
-            ContentValues values = new ContentValues();
-            values.put(AnnotationsDatabaseHelper.COLUMN_VERSES, verses);
-            values.put(AnnotationsDatabaseHelper.COLUMN_CONTENT, content);
-            values.put(AnnotationsDatabaseHelper.COLUMN_UPDATETIME, time);
-            db.update(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, values,
-                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?", new String[] {String.valueOf(id)});
-        }
-        return true;
-    }
-
-    public boolean deleteNote(long id) {
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        if (!isDatabaseIntegrityOk(db)) {
-            return true;
-        }
-        db.delete(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS,
-                AnnotationsDatabaseHelper.COLUMN_ID + " = ?",
-                new String[] {String.valueOf(id)});
-        return true;
-    }
-
-    public String getHighlight(String osis) {
-        String highlighted = "";
-        if (mOpenHelper == null) {
-            mOpenHelper = new AnnotationsDatabaseHelper(mContext);
-        }
-        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-        if (!isDatabaseIntegrityOk(db)) {
-            return highlighted;
-        }
-        Cursor cursor = null;
-        try {
-            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, new String[] {
-                            AnnotationsDatabaseHelper.COLUMN_ID, AnnotationsDatabaseHelper.COLUMN_VERSES},
-                    AnnotationsDatabaseHelper.COLUMN_OSIS + " = ? and " +
-                            AnnotationsDatabaseHelper.COLUMN_TYPE + " = ?",
-                    new String[] {osis, "highlight"}, null, null, null);
-            while (cursor != null && cursor.moveToNext()) {
-                highlighted = cursor.getString(1);
-            }
-        } catch (SQLiteException e) {
-            LogUtils.d("sqlite", e);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        return highlighted;
-    }
-
-    public Long getHighlightId(String osis) {
-        Long highlightId = null;
-        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-        if (!isDatabaseIntegrityOk(db)) {
-            return null;
-        }
-        Cursor cursor = null;
-        try {
-            cursor = db.query(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, new String[] {
-                            AnnotationsDatabaseHelper.COLUMN_ID, AnnotationsDatabaseHelper.COLUMN_VERSES},
-                    AnnotationsDatabaseHelper.COLUMN_OSIS + " = ? and " +
-                            AnnotationsDatabaseHelper.COLUMN_TYPE + " = ?",
-                    new String[] {osis, "highlight"}, null, null, null);
-            while (cursor != null && cursor.moveToNext()) {
-                highlightId = cursor.getLong(0);
-            }
-        } catch (SQLiteException e) {
-            LogUtils.d("sqlite", e);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        return highlightId;
-    }
-
-    public boolean saveHighlight(String osis, String verses) {
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        if (!isDatabaseIntegrityOk(db)) {
-            File path = mContext.getDatabasePath(AnnotationsDatabaseHelper.DATABASE_NAME);
-            return path != null && path.delete() && saveHighlight(osis, verses);
-        }
-        ContentValues values = new ContentValues();
-        values.put(AnnotationsDatabaseHelper.COLUMN_OSIS, osis);
-        values.put(AnnotationsDatabaseHelper.COLUMN_TYPE, "highlight");
-        values.put(AnnotationsDatabaseHelper.COLUMN_VERSES, verses);
-        Long highlightId = getHighlightId(osis);
-        if (highlightId == null) {
-            db.insert(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, null, values);
-        } else {
-            db.update(AnnotationsDatabaseHelper.TABLE_ANNOTATIONS, values,
-                    AnnotationsDatabaseHelper.COLUMN_ID + " = ?",
-                    new String[] {String.valueOf(highlightId)});
-        }
-        return true;
-    }
-
     public boolean checkItems(ArrayList<OsisItem> items) {
         boolean changed = false;
         Iterator<OsisItem> it = items.iterator();
@@ -1483,52 +1180,5 @@ public class Bible {
         return changed;
     }
 
-    private SQLiteOpenHelper mOpenHelper = null;
 
-    private class AnnotationsDatabaseHelper extends SQLiteOpenHelper {
-
-        private static final int DATABASE_VERSION = 2;
-        private static final String DATABASE_NAME = "annotations.db";
-
-        AnnotationsDatabaseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        public static final String TABLE_ANNOTATIONS = "annotations";
-        public static final String COLUMN_ID = BaseColumns._ID;
-        public static final String COLUMN_TYPE = "type";
-        public static final String COLUMN_OSIS = "osis";
-        public static final String COLUMN_VERSE = "verse";
-        public static final String COLUMN_VERSES = "verses";
-        public static final String COLUMN_CONTENT = "content";
-        public static final String COLUMN_CREATETIME = "createtime";
-        public static final String COLUMN_UPDATETIME = "updatetime";
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_ANNOTATIONS);
-            db.execSQL("CREATE TABLE " + TABLE_ANNOTATIONS + " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    COLUMN_OSIS + " VARCHAR NOT NULL," +
-                    COLUMN_TYPE + " VARCHAR NOT NULL," +
-                    COLUMN_VERSE + " VARCHAR," +
-                    COLUMN_VERSES + " TEXT," +
-                    COLUMN_CONTENT + " TEXT," +
-                    COLUMN_CREATETIME + " DATETIME," +
-                    COLUMN_UPDATETIME + " DATETIME" +
-                    ");");
-
-            db.execSQL("CREATE INDEX osis_tye ON " + TABLE_ANNOTATIONS + " (" +
-                    COLUMN_OSIS + ", " + COLUMN_TYPE +
-                    ");");
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            if (oldVersion < 2) {
-                onCreate(db);
-            }
-        }
-
-    }
 }
