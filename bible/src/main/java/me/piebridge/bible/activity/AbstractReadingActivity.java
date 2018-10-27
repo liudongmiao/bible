@@ -541,7 +541,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         bundle.putString(VERSE_START, verse);
         int oldPosition = getCurrentPosition();
         int position = bundle.getInt(ID) - 1;
-        mAdapter.setData(position, bundle);
+        refresh(position, bundle, false);
         mPager.setCurrentItem(position);
 
         // if it's cached, then reloaded
