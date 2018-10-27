@@ -74,6 +74,8 @@ public class ShowAnnotationFragment extends AbstractDialogFragment implements Vi
             }
             if (cross.contains("class=\"xt\"")) {
                 cross = cross.replaceAll("^.*?<span class=\"xt\">(.*?)</span>.*?$", "$1");
+                cross = cross.replaceAll("see ", ";");
+                cross = cross.replaceAll("See ", ";");
             }
             LogUtils.d("cross: " + cross);
             return cross;
