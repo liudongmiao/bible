@@ -423,10 +423,13 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     }
 
     private void select(int position) {
-        Intent intent = new Intent(this, SelectActivity.class);
-        intent.putExtra(SelectActivity.POSITION, position);
-        intent.putExtra(OSIS, getCurrentOsis());
-        startActivityForResult(intent, REQUEST_CODE_SELECT);
+        String currentOsis = getCurrentOsis();
+        if (!TextUtils.isEmpty(currentOsis)) {
+            Intent intent = new Intent(this, SelectActivity.class);
+            intent.putExtra(SelectActivity.POSITION, position);
+            intent.putExtra(OSIS, currentOsis);
+            startActivityForResult(intent, REQUEST_CODE_SELECT);
+        }
     }
 
     @Override

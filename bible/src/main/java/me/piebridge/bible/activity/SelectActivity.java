@@ -166,7 +166,7 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
         if (bibleVerses.isEmpty()) {
             return Collections.emptyMap();
         }
-        int max = bibleVerses.get(bibleVerses.size() - 1);
+        int max = Collections.max(bibleVerses);
         Map<String, Boolean> verses = new LinkedHashMap<>();
         if (max == bibleVerses.size()) {
             for (int i = 1; i <= max; ++i) {

@@ -41,12 +41,14 @@ public class ChooserUtils {
                     intents.add(new Intent(intent).setPackage(packageName));
                 }
             }
-            Intent chooser = Intent.createChooser(intents.remove(0), title);
-            chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toArray(new Parcelable[0]));
-            context.startActivity(chooser);
-        } else {
-            context.startActivity(Intent.createChooser(intent, title));
+            if (!intents.isEmpty()) {
+                Intent chooser = Intent.createChooser(intents.remove(0), title);
+                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toArray(new Parcelable[0]));
+                context.startActivity(chooser);
+                return;
+            }
         }
+        context.startActivity(Intent.createChooser(intent, title));
     }
 
     @TargetApi(Build.VERSION_CODES.N)

@@ -11,6 +11,7 @@ import me.piebridge.bible.Bible;
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.SearchActivity;
 import me.piebridge.bible.preference.VersionPreference;
+import me.piebridge.bible.utils.ObjectUtils;
 
 /**
  * Created by thom on 2017/6/26.
@@ -140,13 +141,13 @@ public class SearchFragment extends PreferenceFragmentCompat
         }
 
         int searchType;
-        if (osisFrom.equals(osisFirst) && osisTo.equals(osisLast)) {
+        if (ObjectUtils.equals(osisFrom, osisFirst) && ObjectUtils.equals(osisTo, osisLast)) {
             searchType = SEARCH_ALL;
-        } else if (osisFrom.equals(OLD_FIRST) && osisTo.equals(OLD_LAST)) {
+        } else if (ObjectUtils.equals(osisFrom, OLD_FIRST) && ObjectUtils.equals(osisTo, OLD_LAST)) {
             searchType = SEARCH_OLD;
-        } else if (osisFrom.equals(NEW_FIRST) && osisTo.equals(NEW_LAST)) {
+        } else if (ObjectUtils.equals(osisFrom, NEW_FIRST) && ObjectUtils.equals(osisTo, NEW_LAST)) {
             searchType = SEARCH_NEW;
-        } else if (osisFrom.equals(GOSPEL_FIRST) && osisTo.equals(GOSPEL_LAST)) {
+        } else if (ObjectUtils.equals(osisFrom, GOSPEL_FIRST) && ObjectUtils.equals(osisTo, GOSPEL_LAST)) {
             searchType = SEARCH_GOSPEL;
         } else {
             searchType = SEARCH_CUSTOM;

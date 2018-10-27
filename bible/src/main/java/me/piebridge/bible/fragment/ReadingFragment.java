@@ -355,8 +355,10 @@ public class ReadingFragment extends Fragment {
 
     public void updateFontSize(int fontSize) {
         getArguments().putInt(FONT_SIZE, fontSize);
-        webView.getSettings().setDefaultFontSize(fontSize);
-        webView.getSettings().setDefaultFixedFontSize(fontSize);
+        if (webView != null) {
+            webView.getSettings().setDefaultFontSize(fontSize);
+            webView.getSettings().setDefaultFixedFontSize(fontSize);
+        }
     }
 
 }
