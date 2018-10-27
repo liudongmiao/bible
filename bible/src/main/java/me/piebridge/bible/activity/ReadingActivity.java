@@ -46,8 +46,6 @@ public class ReadingActivity extends AbstractReadingActivity {
 
     private static final int REQUEST_CODE_SETTINGS = 1190;
 
-    private int mFontSize;
-
     private BroadcastReceiver receiver;
 
     private String mTitle;
@@ -140,6 +138,7 @@ public class ReadingActivity extends AbstractReadingActivity {
         String currentVersion = getCurrentVersion();
         String databaseVersion = bible.getVersion();
         if (currentVersion != null && !currentVersion.equals(databaseVersion)) {
+            LogUtils.d("version changed from " + currentVersion + " to " + databaseVersion);
             refreshAdapter();
         }
         if (BibleUtils.isDemoVersion(databaseVersion)) {
@@ -176,26 +175,20 @@ public class ReadingActivity extends AbstractReadingActivity {
             intent.putExtra(WEBVIEW_DATA, currentFragment.getBody());
         }
 
-        mFontSize = getFontSize();
         startActivityForResult(intent, REQUEST_CODE_SETTINGS);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_SETTINGS) {
-            int fontSize = getFontSize();
-            if (mFontSize != fontSize) {
-                updateFontSize(fontSize);
+            ReadingFragment currentFragment = getCurrentFragment();
+            if (currentFragment != null && isChanged(currentFragment.getArguments())) {
+                LogUtils.d("settings changed, refresh");
+                refresh();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    private int getFontSize() {
-        Bible bible = Bible.getInstance(getApplication());
-        String key = AbstractReadingActivity.FONT_SIZE + "-" + bible.getVersion();
-        return PreferenceManager.getDefaultSharedPreferences(getApplication()).getInt(key, FontsizeFragment.FONTSIZE_DEFAULT);
     }
 
     @Override

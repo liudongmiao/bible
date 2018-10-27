@@ -224,8 +224,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         String osis = bundle.getString(OSIS);
         if (!TextUtils.isEmpty(osis)) {
             updateHeader(bundle, osis);
-            prepareNext(position, bundle.getString(NEXT));
             preparePrev(position, bundle.getString(PREV));
+            prepareNext(position, bundle.getString(NEXT));
         }
     }
 
@@ -253,16 +253,11 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         Bundle bundle = retrieveOsis(position, osis);
         if (TextUtils.isEmpty(bundle.getString(CURR))) {
             bundle = retrieveOsis(position, "null");
-            osis = bundle.getString(CURR);
         }
         if (position == POSITION_UNKNOWN) {
             position = bundle.getInt(ID) - 1;
         }
-        refresh(position, osis);
-        mAdapter.setData(position, bundle);
-        updateVersion();
-        prepare(position);
-
+        refresh(position, bundle, false);
         mPager.setCurrentItem(position);
     }
 
@@ -315,15 +310,27 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         } catch (SQLiteException e) {
             LogUtils.d("cannot query " + osis, e);
         }
-        String version = bible.getVersion();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        bundle.putInt(FONT_SIZE, sp.getInt(FONT_SIZE + "-" + version, FONT_SIZE_DEFAULT));
+        String databaseVersion = bible.getVersion();
+        int fontSize = sp.getInt(FONT_SIZE + "-" + databaseVersion, FONT_SIZE_DEFAULT);
+        bundle.putString(VERSION, databaseVersion);
+        bundle.putInt(FONT_SIZE, fontSize);
         bundle.putBoolean(CROSS, sp.getBoolean(CROSS, false));
         bundle.putBoolean(SHANGTI, sp.getBoolean(SHANGTI, false));
-        bundle.putString(VERSION, bible.getVersion());
         bundle.putBoolean(RED, sp.getBoolean(RED, true));
         updateBundle(bundle);
         return bundle;
+    }
+
+    public boolean isChanged(Bundle bundle) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        String databaseVersion = bible.getVersion();
+        int fontSize = sp.getInt(FONT_SIZE + "-" + databaseVersion, FONT_SIZE_DEFAULT);
+        return !ObjectUtils.equals(bundle.getString(VERSION), databaseVersion)
+                || !ObjectUtils.equals(bundle.getInt(FONT_SIZE), fontSize)
+                || !ObjectUtils.equals(bundle.getBoolean(CROSS), sp.getBoolean(CROSS, false))
+                || !ObjectUtils.equals(bundle.getBoolean(SHANGTI), sp.getBoolean(SHANGTI, false))
+                || !ObjectUtils.equals(bundle.getBoolean(RED), sp.getBoolean(RED, true));
     }
 
     private String getString(Cursor cursor, String columnName) {
@@ -347,8 +354,10 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     private void prepare(int position, String osis) {
         LogUtils.d("prepare, position: " + position + ", osis: " + osis);
         Bundle bundle = mAdapter.getData(position);
-        bundle.putString(OSIS, osis);
-        bundle.putAll(retrieveOsis(position, osis));
+        if (!ObjectUtils.equals(osis, bundle.getString(CURR)) || isChanged(bundle)) {
+            bundle.putString(OSIS, osis);
+            bundle.putAll(retrieveOsis(position, osis));
+        }
     }
 
     @Override
@@ -469,7 +478,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
             position = bundle.getInt(ID) - 1;
             mAdapter.setSize(newCount);
             mAdapter.notifyDataSetChanged();
-            refresh(position, bundle);
+            refresh(position, bundle, true);
             mPager.setCurrentItem(position);
         }
     }
@@ -481,14 +490,16 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     }
 
     protected void refresh(int position, String osis) {
-        refresh(position, retrieveOsis(position, osis));
+        refresh(position, retrieveOsis(position, osis), true);
     }
 
-    private void refresh(int position, Bundle bundle) {
+    private void refresh(int position, Bundle bundle, boolean reload) {
         mAdapter.setData(position, bundle);
         updateVersion();
         prepare(position);
-        reload(position);
+        if (reload) {
+            reload(position);
+        }
     }
 
     private void reload(int position) {
@@ -527,8 +538,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         int oldPosition = getCurrentPosition();
         int position = bundle.getInt(ID) - 1;
         mAdapter.setData(position, bundle);
-        prepare(position);
-
         mPager.setCurrentItem(position);
 
         // if it's cached, then reloaded
@@ -701,22 +710,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         intent.putExtra(Intent.EXTRA_TEXT, text);
         intent.setType("text/plain");
         ChooserUtils.startActivityExcludeSelf(this, intent, getString(R.string.share));
-    }
-
-    public void updateFontSize(int fontSize) {
-        int position = getCurrentPosition();
-        updateFontSize(position, fontSize);
-        updateFontSize(position - 1, fontSize);
-        updateFontSize(position + 1, fontSize);
-    }
-
-    private void updateFontSize(int position, int fontSize) {
-        if (position > 0 && position < mAdapter.getCount()) {
-            ReadingFragment fragment = mAdapter.getFragment(position);
-            if (fragment != null) {
-                fragment.updateFontSize(fontSize);
-            }
-        }
     }
 
 }

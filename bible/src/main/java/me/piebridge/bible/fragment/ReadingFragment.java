@@ -138,7 +138,8 @@ public class ReadingFragment extends Fragment {
             return false;
         }
         Bundle bundle = getArguments();
-        if (!TextUtils.isEmpty(osis) && osis.equals(bundle.getString(CURR))) {
+        String currentOsis = bundle.getString(CURR);
+        if (!TextUtils.isEmpty(osis) && osis.equals(currentOsis)) {
             saveState();
         }
         String body = getBody();
@@ -351,14 +352,6 @@ public class ReadingFragment extends Fragment {
     private boolean isCurrent() {
         AbstractReadingActivity activity = (AbstractReadingActivity) getActivity();
         return activity != null && ObjectUtils.equals(activity.getCurrentOsis(), osis);
-    }
-
-    public void updateFontSize(int fontSize) {
-        getArguments().putInt(FONT_SIZE, fontSize);
-        if (webView != null) {
-            webView.getSettings().setDefaultFontSize(fontSize);
-            webView.getSettings().setDefaultFixedFontSize(fontSize);
-        }
     }
 
 }
