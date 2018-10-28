@@ -13,21 +13,14 @@
 
 package me.piebridge.bible;
 
-import android.app.SearchManager;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
@@ -40,10 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,8 +51,6 @@ import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
 public class Bible {
-
-    private final static String TAG = "me.piebridge.bible$Bible";
 
     public static final String INTRO = "int";
 
@@ -82,17 +71,19 @@ public class Bible {
     // FIXME
     private static Context mContext = null;
 
+    // FIXME
+    private static Bible bible = null;
+
     private ArrayList<String> books = new ArrayList<>();
     private ArrayList<String> osiss = new ArrayList<>();
     private ArrayList<String> chapters = new ArrayList<>();
     private ArrayList<String> versions = new ArrayList<>();
     private final Object versionsLock = new Object();
-    private final Object versionsCheckingLock = new Object();
     private final HashMap<String, String> versionpaths = new HashMap<>();
     private ArrayList<String> humans = new ArrayList<>();
 
-    // FIXME
-    private static Bible bible = null;
+    private Map<String, String> overrideVersionNames = new HashMap<>();
+    private Map<String, String> overrideVersionFullnames = new HashMap<>();
 
     private HashMap<String, String> versionNames = new HashMap<>();
     private HashMap<String, String> versionDates = new HashMap<>();
@@ -103,7 +94,6 @@ public class Bible {
     private LinkedHashMap<String, String> searchfull = new LinkedHashMap<>();
     private LinkedHashMap<String, String> searchshort = new LinkedHashMap<>();
 
-    private Collator collator;
     private Locale lastLocale;
     private boolean unpacked = false;
     private HashMap<String, Long> mtime = new HashMap<>();
@@ -125,8 +115,7 @@ public class Bible {
 
     public void updateLocale() {
         Locale locale = Locale.getDefault();
-        if (collator == null || !locale.equals(lastLocale)) {
-            collator = Collator.getInstance(locale);
+        if (!locale.equals(lastLocale)) {
             lastLocale = locale;
             updateResources();
         }
@@ -136,15 +125,7 @@ public class Bible {
         if (bible == null) {
             bible = new Bible(context);
         }
-        bible.updateLocale();
         return bible;
-    }
-
-    public int[] getChapterVerse(String string) {
-        int value = new BigDecimal(string).multiply(new BigDecimal(Provider.THOUSAND)).intValue();
-        int chapter = value / Provider.THOUSAND;
-        int verse = value % Provider.THOUSAND;
-        return new int[] {chapter, verse};
     }
 
     public List<Integer> getVerses(String book, int chapter) {
@@ -188,32 +169,24 @@ public class Bible {
                 versionpaths.clear();
                 versions.addAll(newVersions);
                 versionpaths.putAll(newVersionpaths);
+                versionNames.putAll(overrideVersionNames);
+                versionFullnames.putAll(overrideVersionFullnames);
             }
             return versions.size();
         }
         File path = getPath(dirs);
-        File oldpath = new File(Environment.getExternalStorageDirectory(), ".piebridge");
         Long oldmtime = mtime.get(path.getAbsolutePath());
         if (oldmtime == null) {
             oldmtime = 0L;
         }
-        if (versions.size() != 0 && path.lastModified() <= oldmtime
-                &&
-                (!oldpath.exists() || !oldpath.isDirectory() || oldpath.lastModified() <= oldmtime)) {
+        if (versions.size() != 0 && path.lastModified() <= oldmtime) {
             return versions.size();
         }
-        checkVersion(oldpath, newVersions, newVersionpaths, all);
         for (File dir : dirs) {
             if (dir != null) {
                 checkVersion(dir, newVersions, newVersionpaths, all);
             }
         }
-        Collections.sort(newVersions, new Comparator<String>() {
-            @Override
-            public int compare(String item1, String item2) {
-                return collator.compare(getVersionFullname(item1), getVersionFullname(item2));
-            }
-        });
         if (newVersions.size() == 0) {
             checkInternalVersions(newVersions, newVersionpaths, all);
         }
@@ -222,34 +195,19 @@ public class Bible {
             versions.clear();
             versionpaths.clear();
             versions.addAll(newVersions);
-            versions.retainAll(newVersions);
+            versionpaths.putAll(newVersionpaths);
+            versionNames.putAll(overrideVersionNames);
+            versionFullnames.putAll(overrideVersionFullnames);
         }
         return versions.size();
     }
 
-    private void showNewVersion(String version) {
-        if (!versionpaths.containsKey(version)) {
-            String text = mContext.getString(R.string.new_version, version.toUpperCase(Locale.US));
-            Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void checkInternalVersions(List<String> versions, Map<String, String> versionpaths,
-                                       boolean all) {
+    private void checkInternalVersions(List<String> versions, Map<String, String> versionpaths, boolean all) {
         if (!unpacked) {
             setDemoVersions(false);
             unpacked = true;
         }
         checkVersion(mContext.getFilesDir(), versions, versionpaths, all);
-    }
-
-    public boolean isDemoVersion(String version) {
-        File file = getFile(version);
-        if (file == null) {
-            return false;
-        } else {
-            return file.getParentFile().equals(mContext.getFilesDir());
-        }
     }
 
     public boolean setVersion(String version) {
@@ -361,7 +319,6 @@ public class Bible {
                         // we have only one column
                         chapter = sortChapter(cursor_chapter.getString(0)).toLowerCase(Locale.US);
                     }
-                } catch (Exception e) {
                 } finally {
                     if (cursor_chapter != null) {
                         cursor_chapter.close();
@@ -556,12 +513,11 @@ public class Bible {
                 version.replace("demo", "").replace("niv84", "niv1984")).toUpperCase(Locale.US);
     }
 
-    private String getResourceValue(HashMap<String, String> map, String key) {
+    private String getResourceValue(Map<String, String> map, String key) {
         return map.containsKey(key) ? map.get(key) : key;
     }
 
-    private void setResourceValues(HashMap<String, String> map, int resId) {
-        map.clear();
+    private void setResourceValues(Map<String, String> map, int resId) {
         for (String entry : mContext.getResources().getStringArray(resId)) {
             String[] strings = entry.split("\\|", 2);
             map.put(strings[0], strings[1]);
@@ -579,8 +535,12 @@ public class Bible {
 
     private void updateResources() {
         LogUtils.d("updateResources");
-        setResourceValues(versionNames, R.array.versionname);
-        setResourceValues(versionFullnames, R.array.versionfullname);
+        overrideVersionNames.clear();
+        setResourceValues(overrideVersionNames, R.array.versionname);
+
+        overrideVersionFullnames.clear();
+        setResourceValues(overrideVersionFullnames, R.array.versionfullname);
+
         setResourceValuesReverse(allosis, R.array.osiszhcn);
         setResourceValuesReverse(allosis, R.array.osiszhtw);
         setResourceValuesReverse(searchfull, R.array.searchfullzhcn);
@@ -692,9 +652,7 @@ public class Bible {
     }
 
     private ArrayList<LinkedHashMap<String, String>> getMaps(TYPE type) {
-        updateLocale();
-        ArrayList<LinkedHashMap<String, String>> maps =
-                new ArrayList<>();
+        ArrayList<LinkedHashMap<String, String>> maps = new ArrayList<>();
         if (type == TYPE.HUMAN) {
             maps.add(allhuman);
             maps.add(searchfull);
@@ -778,119 +736,6 @@ public class Bible {
             return true;
         }
         return false;
-    }
-
-    /*
-     * 根据book获取多个osiss，可能用于查询
-     *
-     */
-    public LinkedHashMap<String, String> getOsiss(String book, int limit) {
-        LinkedHashMap<String, String> osiss = new LinkedHashMap<>();
-
-        if (book != null) {
-            // fix for zhcn
-            book = book.replace("约一", "约壹");
-            book = book.replace("约二", "约贰");
-            book = book.replace("约三", "约叁");
-            book = book.replace(SearchManager.SUGGEST_URI_PATH_QUERY, "").replace(" ",
-                    "").toLowerCase(Locale.US);
-        }
-
-        LogUtils.d("book: " + book);
-
-        ArrayList<Entry<String, String>> maps = new ArrayList<>();
-
-        maps.addAll(searchshort.entrySet());
-
-        maps.addAll(searchfull.entrySet());
-
-        for (LinkedHashMap<String, String> map : getMaps(TYPE.HUMAN)) {
-            maps.addAll(map.entrySet());
-        }
-
-        for (LinkedHashMap<String, String> map : getMaps(TYPE.OSIS)) {
-            maps.addAll(map.entrySet());
-        }
-
-        if (book == null || "".equals(book)) {
-            for (int i = 0; i < this.osiss.size() && i < limit; ++i) {
-                osiss.put(humans.get(i), this.osiss.get(i));
-            }
-            return osiss;
-        }
-
-        for (Entry<String, String> entry : maps) {
-            if (checkStartSuggest(osiss, entry.getValue(), entry.getValue(), book, limit)) {
-                return osiss;
-            }
-        }
-
-        for (Entry<String, String> entry : maps) {
-            if (checkContainSuggest(osiss, entry.getValue(), entry.getValue(), book, limit)) {
-                return osiss;
-            }
-        }
-
-        for (Entry<String, String> entry : maps) {
-            if (checkStartSuggest(osiss, entry.getKey(), entry.getValue(), book, limit)) {
-                return osiss;
-            }
-        }
-
-        for (Entry<String, String> entry : maps) {
-            if (checkContainSuggest(osiss, entry.getKey(), entry.getValue(), book, limit)) {
-                return osiss;
-            }
-        }
-
-        String osis = "";
-        String chapter = "";
-        if (osiss.size() == 0) {
-            ArrayList<OsisItem> items = OsisItem.parseSearch(book, mContext);
-            if (items.size() == 1) {
-                OsisItem item = items.get(0);
-                osis = item.book;
-                chapter = item.chapter;
-            }
-        } else if (osiss.size() == 1) {
-            for (Entry<String, String> entry : osiss.entrySet()) {
-                osis = entry.getValue();
-                chapter = "0";
-            }
-        }
-
-        if ("".equals(osis)) {
-            return osiss;
-        }
-
-        String bookname = get(TYPE.HUMAN, bible.getPosition(TYPE.OSIS, osis));
-        if (bookname == null) {
-            bookname = osis;
-        }
-        int chapternum = 0;
-        int maxchapter = 0;
-        try {
-            chapternum = Integer.parseInt(chapter);
-        } catch (Exception e) {
-        }
-        try {
-            maxchapter = Integer.parseInt(get(TYPE.CHAPTER, getPosition(TYPE.OSIS, osis)));
-        } catch (Exception e) {
-            return osiss;
-        }
-        if (bookname == null || "".equals(bookname)) {
-            return osiss;
-        }
-        if (chapternum != 0) {
-            osiss.put(bookname + " " + chapternum, osis + chapternum);
-        }
-        for (int i = chapternum * 10; i <= maxchapter && i < 10 * chapternum + 10; i++) {
-            if (i != 0) {
-                osiss.put(bookname + " " + i, osis + i);
-            }
-        }
-
-        return osiss;
     }
 
     public static boolean isCJK(String s) {
@@ -1023,10 +868,10 @@ public class Bible {
                 SQLiteDatabase metadata = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
                         SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS)
         ) {
-            String dataversion = version.replace("demo", "");
             if (isDatabaseSupported(metadata)) {
-                versionFullnames.put(version, getVersionMetadata("fullname", metadata, dataversion));
-                versionNames.put(version, getVersionMetadata("name", metadata, dataversion));
+                String dataVersion = BibleUtils.removeDemo(version);
+                versionFullnames.put(version, getVersionMetadata("fullname", metadata, dataVersion));
+                versionNames.put(version, getVersionMetadata("name", metadata, dataVersion));
                 versionDates.put(version, getVersionMetadata("date", metadata, "0"));
                 return true;
             }
@@ -1082,35 +927,6 @@ public class Bible {
         return false;
     }
 
-    public Context getContext() {
-        return mContext;
-    }
-
-    public void email(Context context) {
-        email(context, null);
-    }
-
-    public void email(Context context, String content) {
-        StringBuilder subject = new StringBuilder();
-        subject.append(context.getString(R.string.app_name));
-        subject.append(" ");
-        subject.append(BuildConfig.VERSION_NAME);
-        subject.append("(Android ");
-        subject.append(Locale.getDefault().toString());
-        subject.append("-");
-        subject.append(Build.VERSION.RELEASE);
-        subject.append(")");
-        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:liudongmiao@gmail.com"));
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject.toString());
-        if (content != null) {
-            intent.putExtra(Intent.EXTRA_TEXT, content);
-        }
-        try {
-            context.startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-        }
-    }
-
     public String getAnnotation(String osis, String link) {
         if (TextUtils.isEmpty(osis) || TextUtils.isEmpty(link)) {
             return null;
@@ -1143,6 +959,5 @@ public class Bible {
         }
         return changed;
     }
-
 
 }
