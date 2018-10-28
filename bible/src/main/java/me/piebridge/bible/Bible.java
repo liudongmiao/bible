@@ -233,7 +233,7 @@ public class Bible {
         }
         LogUtils.d("open database \"" + mDatabase.getPath() + "\"");
         int oldsize = allhuman.size();
-        setMetadata(mDatabase, databaseVersion, true);
+        setMetadata(mDatabase);
         if (allhuman.size() > oldsize) {
             SharedPreferences.Editor editor = mContext.getSharedPreferences(HUMAN_PREFERENCE, 0).edit();
             for (Entry<String, String> entry : allhuman.entrySet()) {
@@ -256,145 +256,84 @@ public class Bible {
         return path;
     }
 
-    private File getFile(String version) {
-        if (version == null) {
+    private File getFile(String versionName) {
+        if (TextUtils.isEmpty(versionName)) {
             return null;
         }
-        version = version.toLowerCase(Locale.US);
+        String version = versionName.toLowerCase(Locale.US);
         String path = versionpaths.get(version);
         if (path != null) {
             return new File(path);
         } else {
-            File file;
             for (File dir : getExternalFilesDirs()) {
-                file = getFile(dir, version);
+                File file = getFile(dir, version);
                 LogUtils.d("version: " + version);
                 if (file != null) {
                     versionpaths.put(version, file.getAbsolutePath());
                     return file;
                 }
             }
-            file = getFile(new File(Environment.getExternalStorageDirectory(), ".piebridge"),
-                    version);
-            if (file != null) {
-                versionpaths.put(version, file.getAbsolutePath());
-                return file;
-            }
             return getFile(mContext.getFilesDir(), version);
         }
     }
 
-    private void setMetadata(SQLiteDatabase metadata, String dataversion, boolean change) {
-        Cursor cursor =
-                metadata.query(Provider.TABLE_BOOKS, Provider.COLUMNS_BOOKS, null, null, null, null,
-                        null);
-        if (change) {
-            osiss.clear();
-            books.clear();
-            chapters.clear();
-            humans.clear();
-        }
-        try {
-            while (cursor.moveToNext()) {
-                String osis = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_OSIS));
-                String book = cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN));
-                String chapter =
-                        cursor.getString(cursor.getColumnIndexOrThrow(Provider.COLUMN_CHAPTERS));
-
-                if (book.endsWith(" 1")) {
-                    book = book.substring(0, book.length() - 2);
-                }
-                if (!allhuman.containsKey(book)) {
-                    allhuman.put(book, osis);
-                }
-
-                Cursor cursor_chapter = null;
-                // select group_concat(replace(reference_osis, "Gen.", "")) as osis from chapters where reference_osis like 'Gen.%';
-                try {
-                    cursor_chapter = metadata.query(Provider.TABLE_CHAPTERS,
-                            new String[] {"group_concat(replace(reference_osis, \"" + osis +
-                                    ".\", \"\")) as osis"},
-                            "reference_osis like ?", new String[] {osis + ".%"}, null, null, null);
-                    if (cursor_chapter.moveToNext()) {
-                        // we have only one column
-                        chapter = sortChapter(cursor_chapter.getString(0)).toLowerCase(Locale.US);
-                    }
-                } finally {
-                    if (cursor_chapter != null) {
-                        cursor_chapter.close();
-                    }
-                }
-                if (change) {
-                    osiss.add(osis);
-                    books.add(book);
-                    chapters.add(chapter);
-                    humans.add(book);
-                }
-            }
-        } finally {
+    private void setMetadata(SQLiteDatabase metadata) {
+        osiss.clear();
+        books.clear();
+        chapters.clear();
+        humans.clear();
+        try (
+                Cursor cursor = metadata.query(Provider.TABLE_BOOKS, Provider.COLUMNS_BOOKS, null, null, null, null, null)
+        ) {
             if (cursor != null) {
-                cursor.close();
+                int osisIndex = cursor.getColumnIndexOrThrow(Provider.COLUMN_OSIS);
+                int humanIndex = cursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN);
+                while (cursor.moveToNext()) {
+                    String osis = cursor.getString(osisIndex);
+                    String human = cursor.getString(humanIndex);
+                    String chapter = getChapters(metadata, osis);
+                    if (human.endsWith(" 1")) {
+                        // what's this?
+                        human = human.substring(0, human.length() - 2);
+                    }
+                    if (!allhuman.containsKey(human)) {
+                        allhuman.put(human, osis);
+                    }
+                    osiss.add(osis);
+                    books.add(human);
+                    chapters.add(chapter);
+                    humans.add(human);
+                    LogUtils.d("osis: " + osis + ", human: " + human + ", chapters: " + chapter);
+                }
             }
         }
-
         css = getVersionMetadata("css", metadata, "");
     }
 
-    private String sortChapter(String chapter) {
-        String[] chapters = chapter.split(",");
-        Arrays.sort(chapters, new Comparator<String>() {
-            @Override
-            public int compare(String left, String right) {
-                int l;
-                int r;
-                try {
-                    l = Integer.parseInt(left);
-                } catch (NumberFormatException e) {
-                    l = 0;
+    private String getChapters(SQLiteDatabase metadata, String osis) {
+        StringBuilder sb = new StringBuilder();
+        try (
+                Cursor cursor = metadata.query(Provider.TABLE_CHAPTERS,
+                        new String[] {"reference_osis"},
+                        "reference_osis like ?", new String[] {osis + ".%"}, null, null, " id asc")
+        ) {
+            if (cursor != null && cursor.moveToFirst()) {
+                sb.append(getChapterName(cursor.getString(0), osis));
+                while (cursor.moveToNext()) {
+                    sb.append(",");
+                    sb.append(getChapterName(cursor.getString(0), osis));
                 }
-                try {
-                    r = Integer.parseInt(right);
-                } catch (NumberFormatException e) {
-                    r = 0;
-                }
-                if (l == 0 && r == 0) {
-                    // shouldn't happend
-                    return left.compareTo(right);
-                } else {
-                    return l - r;
-                }
-            }
-        });
-        StringBuilder sb = new StringBuilder(chapter.length());
-        int length = chapters.length;
-        for (int i = 0; i < length; ++i) {
-            sb.append(chapters[i]);
-            if (i < length - 1) {
-                sb.append(",");
             }
         }
         return sb.toString();
     }
 
-    public String getCSS() {
-        return css;
+    private String getChapterName(String chapterOsis, String bookOsis) {
+        return chapterOsis.substring(bookOsis.length() + 1);
     }
 
-    private File getExternalFilesDir() {
-        // /mnt/sdcard/Android/data/me.piebridge.bible/files
-        File file = new File(new File(new File(new File(Environment.getExternalStorageDirectory(),
-                "Android"), "data"), mContext.getPackageName()), "files");
-        if (!file.exists()) {
-            if (!file.mkdirs()) {
-                LogUtils.w("cannot create directory: " + file);
-                return null;
-            }
-            try {
-                (new File(file, ".nomedia")).createNewFile();
-            } catch (IOException ioe) {
-            }
-        }
-        return file;
+    public String getCSS() {
+        return css;
     }
 
     private File[] getExternalFilesDirs() {
@@ -586,21 +525,21 @@ public class Bible {
             if (!newVersion) {
                 return true;
             }
+            //noinspection ResultOfMethodCallIgnored
             file.delete();
         }
 
         LogUtils.d("unpacking " + file.getAbsolutePath());
 
-        try {
+        try (
+                OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+                InputStream is = mContext.getResources().openRawResource(resId)
+        ) {
             int length;
             byte[] buffer = new byte[8192];
-            OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
-            InputStream is = mContext.getResources().openRawResource(resId);
             while ((length = is.read(buffer)) >= 0) {
                 os.write(buffer, 0, length);
             }
-            is.close();
-            os.close();
         } catch (IOException e) {
             LogUtils.w("unpacked " + file.getAbsolutePath(), e);
             return false;
@@ -702,40 +641,6 @@ public class Bible {
         }
 
         return null;
-    }
-
-    private boolean checkStartSuggest(LinkedHashMap<String, String> osiss, String value, String key,
-                                      String book, int limit) {
-        if ("".equals(book) || value.replace(" ", "").toLowerCase(Locale.US).startsWith(book)) {
-            if (addSuggest(osiss, value, key, limit)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean checkContainSuggest(LinkedHashMap<String, String> osiss, String value, String key,
-                                        String book, int limit) {
-        if (value.replace(" ", "").toLowerCase(Locale.US).contains(book)) {
-            if (addSuggest(osiss, value, key, limit)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean addSuggest(LinkedHashMap<String, String> osiss, String value, String osis,
-                               int limit) {
-        if (!osiss.values().contains(osis)) {
-            String text = get(TYPE.HUMAN, bible.getPosition(TYPE.OSIS, osis));
-            LogUtils.d("add suggest, text=" + text + ", data=" + osis);
-            osiss.put(text, osis);
-        }
-        if (limit != -1 && osiss.size() >= limit) {
-            LogUtils.d("arrive limit " + limit);
-            return true;
-        }
-        return false;
     }
 
     public static boolean isCJK(String s) {
