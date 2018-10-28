@@ -2,6 +2,7 @@ package me.piebridge.bible.fragment;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -29,7 +30,11 @@ public class FontsizeFragment extends AbstractDialogFragment implements DialogIn
 
     private static final String BODY = "body";
 
-    private static final String FONTSIZE = "font-size";
+    private static final String FONTSIZE_KEY = "fontsize-key";
+
+    private static final String FONTSIZE_TITLE = "fontsize-title";
+
+    private static final String FONTSIZE_VALUE = "fontsize-value";
 
     private SeekBar seekbar;
 
@@ -48,7 +53,7 @@ public class FontsizeFragment extends AbstractDialogFragment implements DialogIn
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         SettingsActivity activity = (SettingsActivity) getActivity();
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(activity.getFontsizeTitle());
+        builder.setTitle(getFontsizeTitle());
         builder.setView(R.layout.fragment_dialog);
         builder.setNegativeButton(android.R.string.cancel, null);
         builder.setPositiveButton(android.R.string.ok, this);
@@ -68,7 +73,7 @@ public class FontsizeFragment extends AbstractDialogFragment implements DialogIn
         plus = dialog.findViewById(R.id.plus);
         size = dialog.findViewById(R.id.size);
 
-        seekbar.setProgress(getFontsize());
+        seekbar.setProgress(getFontsizeValue());
         seekbar.setMax(FONTSIZE_MAX);
 
         size.setText(getString(R.string.count, seekbar.getProgress()));
@@ -144,12 +149,22 @@ public class FontsizeFragment extends AbstractDialogFragment implements DialogIn
         return getArguments().getString(BODY);
     }
 
-    public void setFontsize(int fontsizeValue) {
-        getArguments().putInt(FONTSIZE, fontsizeValue);
+    public void setFontsize(String key, String title, int value) {
+        getArguments().putString(FONTSIZE_KEY, key);
+        getArguments().putString(FONTSIZE_TITLE, title);
+        getArguments().putInt(FONTSIZE_VALUE, value);
     }
 
-    public int getFontsize() {
-        return getArguments().getInt(FONTSIZE, FONTSIZE_DEFAULT);
+    private String getFontsizeKey() {
+        return getArguments().getString(FONTSIZE_KEY);
+    }
+
+    private String getFontsizeTitle() {
+        return getArguments().getString(FONTSIZE_TITLE);
+    }
+
+    private int getFontsizeValue() {
+        return getArguments().getInt(FONTSIZE_VALUE, FONTSIZE_DEFAULT);
     }
 
     @Override
@@ -163,20 +178,19 @@ public class FontsizeFragment extends AbstractDialogFragment implements DialogIn
                 break;
             case DialogInterface.BUTTON_NEUTRAL:
                 PreferenceManager.getDefaultSharedPreferences(activity.getApplication()).edit()
-                        .putInt(activity.getFontsizeKey(), FONTSIZE_DEFAULT)
+                        .remove(getFontsizeKey())
                         .apply();
                 activity.updateFontsize();
                 break;
             case DialogInterface.BUTTON_POSITIVE:
                 PreferenceManager.getDefaultSharedPreferences(activity.getApplication()).edit()
-                        .putInt(activity.getFontsizeKey(), seekbar.getProgress())
+                        .putInt(getFontsizeKey(), seekbar.getProgress())
                         .apply();
                 activity.updateFontsize();
                 break;
             default:
                 break;
         }
-
     }
 
 }

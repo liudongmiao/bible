@@ -5,7 +5,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.preference.Preference
-        android:key="fontsize"
+        android:key="fontsizeDefault"
+        android:title="@string/fontsize"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.Preference
+        android:key="fontsizeVersion"
         android:title="@string/fontsize"
         app:iconSpaceReserved="false" />
 

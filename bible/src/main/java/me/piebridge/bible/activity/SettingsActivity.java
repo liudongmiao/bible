@@ -12,6 +12,7 @@ import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.FontsizeFragment;
 import me.piebridge.bible.fragment.SettingsFragment;
 import me.piebridge.bible.utils.FileUtils;
+import me.piebridge.bible.utils.LogUtils;
 
 /**
  * Created by thom on 2017/6/26.
@@ -21,8 +22,10 @@ public class SettingsActivity extends ToolbarActivity {
 
     private static final String FRAGMENT_FONT_SIZE = "font-size";
 
-    private String fontsizeTitle;
+    private String defaultFontsizeTitle;
+    private String defaultFontsizeKey;
 
+    private String fontsizeTitle;
     private String fontsizeKey;
 
     private SettingsFragment settingsFragment;
@@ -41,6 +44,9 @@ public class SettingsActivity extends ToolbarActivity {
         fontsizeTitle = getString(R.string.fontsize, bible.getVersionName(bible.getVersion()));
         fontsizeKey = AbstractReadingActivity.FONT_SIZE + "-" + bible.getVersion();
 
+        defaultFontsizeTitle = getString(R.string.fontsize, getString(R.string.reset));
+        defaultFontsizeKey = AbstractReadingActivity.FONT_SIZE + "-default";
+
         settingsFragment = new SettingsFragment();
 
         // Display the fragment as the main content.
@@ -58,7 +64,7 @@ public class SettingsActivity extends ToolbarActivity {
         }
     }
 
-    public void showFontsizeDialog() {
+    public void showFontsizeDialog(String key, String title, int value) {
         final String tag = FRAGMENT_FONT_SIZE;
         FragmentManager manager = getSupportFragmentManager();
         FontsizeFragment fragment = (FontsizeFragment) manager.findFragmentByTag(tag);
@@ -67,8 +73,22 @@ public class SettingsActivity extends ToolbarActivity {
         }
         fragment = new FontsizeFragment();
         fragment.setBody(getWebviewData());
-        fragment.setFontsize(getFontsizeValue());
+        fragment.setFontsize(key, title, value);
         fragment.show(manager, tag);
+        LogUtils.d("show font size, key: " + key + ", title: " + title + ", value: " + value);
+    }
+
+    public String getDefaultFontsizeTitle() {
+        return defaultFontsizeTitle;
+    }
+
+    public String getDefaultFontsizeKey() {
+        return defaultFontsizeKey;
+    }
+
+    public int getDefaultFontsizeValue() {
+        return PreferenceManager.getDefaultSharedPreferences(getApplication())
+                .getInt(getDefaultFontsizeKey(), FontsizeFragment.FONTSIZE_DEFAULT);
     }
 
     public String getFontsizeTitle() {
@@ -79,9 +99,9 @@ public class SettingsActivity extends ToolbarActivity {
         return fontsizeKey;
     }
 
-    public int getFontsizeValue() {
+    public int getFontsizeValue(int defaultFontsize) {
         return PreferenceManager.getDefaultSharedPreferences(getApplication())
-                .getInt(getFontsizeKey(), FontsizeFragment.FONTSIZE_DEFAULT);
+                .getInt(getFontsizeKey(), defaultFontsize);
     }
 
     public void updateFontsize() {

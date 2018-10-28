@@ -115,8 +115,8 @@ public class Bible {
     private Bible(Context context) {
         LogUtils.d("init bible");
         mContext = context;
-        SharedPreferences preferences = mContext.getSharedPreferences(HUMAN_PREFERENCE, 0);
-        for (Entry<String, ?> entry : preferences.getAll().entrySet()) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(HUMAN_PREFERENCE, 0);
+        for (Entry<String, ?> entry : sharedPreferences.getAll().entrySet()) {
             allhuman.put(entry.getKey(), String.valueOf(entry.getValue()));
         }
         try {

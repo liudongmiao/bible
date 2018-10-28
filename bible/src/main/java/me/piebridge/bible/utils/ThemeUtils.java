@@ -28,8 +28,8 @@ public class ThemeUtils {
     }
 
     public static boolean isDark(Activity activity) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
-        return THEME_DARK.equals(sp.getString(THEME, THEME_LIGHT));
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        return THEME_DARK.equals(sharedPreferences.getString(THEME, THEME_LIGHT));
     }
 
 }

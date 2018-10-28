@@ -314,27 +314,32 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         } catch (SQLiteException e) {
             LogUtils.d("cannot query " + osis, e);
         }
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        String databaseVersion = bible.getVersion();
-        int fontSize = sp.getInt(FONT_SIZE + "-" + databaseVersion, FONT_SIZE_DEFAULT);
-        bundle.putString(VERSION, databaseVersion);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String version = bible.getVersion();
+        int fontSize = getFontsize(sharedPreferences, version);
+        bundle.putString(VERSION, version);
         bundle.putInt(FONT_SIZE, fontSize);
-        bundle.putBoolean(CROSS, sp.getBoolean(CROSS, false));
-        bundle.putBoolean(SHANGTI, sp.getBoolean(SHANGTI, false));
-        bundle.putBoolean(RED, sp.getBoolean(RED, true));
+        bundle.putBoolean(CROSS, sharedPreferences.getBoolean(CROSS, false));
+        bundle.putBoolean(SHANGTI, sharedPreferences.getBoolean(SHANGTI, false));
+        bundle.putBoolean(RED, sharedPreferences.getBoolean(RED, true));
         updateBundle(bundle);
         return bundle;
     }
 
     public boolean isChanged(Bundle bundle) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        String databaseVersion = bible.getVersion();
-        int fontSize = sp.getInt(FONT_SIZE + "-" + databaseVersion, FONT_SIZE_DEFAULT);
-        return !ObjectUtils.equals(bundle.getString(VERSION), databaseVersion)
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String version = bible.getVersion();
+        int fontSize = getFontsize(sharedPreferences, version);
+        return !ObjectUtils.equals(bundle.getString(VERSION), version)
                 || !ObjectUtils.equals(bundle.getInt(FONT_SIZE), fontSize)
-                || !ObjectUtils.equals(bundle.getBoolean(CROSS), sp.getBoolean(CROSS, false))
-                || !ObjectUtils.equals(bundle.getBoolean(SHANGTI), sp.getBoolean(SHANGTI, false))
-                || !ObjectUtils.equals(bundle.getBoolean(RED), sp.getBoolean(RED, true));
+                || !ObjectUtils.equals(bundle.getBoolean(CROSS), sharedPreferences.getBoolean(CROSS, false))
+                || !ObjectUtils.equals(bundle.getBoolean(SHANGTI), sharedPreferences.getBoolean(SHANGTI, false))
+                || !ObjectUtils.equals(bundle.getBoolean(RED), sharedPreferences.getBoolean(RED, true));
+    }
+
+    private int getFontsize(SharedPreferences sharedPreferences, String version) {
+        int defaultFontsize = sharedPreferences.getInt(FONT_SIZE + "-default", FONT_SIZE_DEFAULT);
+        return sharedPreferences.getInt(FONT_SIZE + "-" + version, defaultFontsize);
     }
 
     private String getString(Cursor cursor, String columnName) {
