@@ -11,8 +11,6 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
-import androidx.core.content.ContextCompat;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -246,14 +244,14 @@ public class AnnotationComponent {
         @Override
         public File getDatabasePath(String name) {
             File oldPath = super.getDatabasePath(name);
-            File[] dirs = ContextCompat.getExternalFilesDirs(getBaseContext(), null);
-            if (dirs.length == 0) {
+            File dir = getExternalFilesDir(null);
+            if (dir == null) {
                 LogUtils.w("annotations file: " + oldPath);
                 return oldPath;
             }
 
             File oldParent = oldPath.getParentFile();
-            File newParent = new File(dirs[0].getParentFile(), "databases");
+            File newParent = new File(dir.getParentFile(), "databases");
             File newPath = new File(newParent, oldPath.getName());
             makeDir(newParent);
 
