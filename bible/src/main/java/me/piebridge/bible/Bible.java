@@ -108,7 +108,6 @@ public class Bible {
     private boolean unpacked = false;
     private HashMap<String, Long> mtime = new HashMap<>();
     private String css;
-    public String versionName;
 
     private static String HUMAN_PREFERENCE = "human";
 
@@ -118,11 +117,6 @@ public class Bible {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(HUMAN_PREFERENCE, 0);
         for (Entry<String, ?> entry : sharedPreferences.getAll().entrySet()) {
             allhuman.put(entry.getKey(), String.valueOf(entry.getValue()));
-        }
-        try {
-            versionName = context.getPackageManager().getPackageInfo(context.getPackageName(),
-                    0).versionName;
-        } catch (NameNotFoundException e) {
         }
         updateLocale();
         checkVersionsSync(true);
@@ -1127,10 +1121,8 @@ public class Bible {
     public void email(Context context, String content) {
         StringBuilder subject = new StringBuilder();
         subject.append(context.getString(R.string.app_name));
-        if (versionName != null) {
-            subject.append(" ");
-            subject.append(versionName);
-        }
+        subject.append(" ");
+        subject.append(BuildConfig.VERSION_NAME);
         subject.append("(Android ");
         subject.append(Locale.getDefault().toString());
         subject.append("-");
