@@ -28,6 +28,7 @@ import me.piebridge.bible.fragment.FontsizeFragment;
 import me.piebridge.bible.fragment.ReadingFragment;
 import me.piebridge.bible.fragment.SwitchVersionConfirmFragment;
 import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
@@ -172,7 +173,7 @@ public class ReadingActivity extends AbstractReadingActivity {
         Intent intent = new Intent(this, SettingsActivity.class);
         ReadingFragment currentFragment = getCurrentFragment();
         if (currentFragment != null) {
-            intent.putExtra(WEBVIEW_DATA, currentFragment.getBody());
+            intent.putExtra(WEBVIEW_DATA, FileUtils.compress(currentFragment.getBody()));
         }
 
         startActivityForResult(intent, REQUEST_CODE_SETTINGS);

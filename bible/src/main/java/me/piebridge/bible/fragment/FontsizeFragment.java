@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.SettingsActivity;
 import me.piebridge.bible.bridge.ReadingBridge;
+import me.piebridge.bible.utils.FileUtils;
 
 /**
  * Created by thom on 2018/9/28.
@@ -124,7 +125,7 @@ public class FontsizeFragment extends AbstractDialogFragment implements DialogIn
 
         webview.getSettings().setDefaultFontSize(seekbar.getProgress());
         webview.getSettings().setDefaultFixedFontSize(seekbar.getProgress());
-        webview.loadDataWithBaseURL("file:///android_asset/", getBody(), "text/html", "utf-8", null);
+        webview.loadDataWithBaseURL("file:///android_asset/", getBody(), "text/html", FileUtils.UTF_8, null);
     }
 
     public void changeSize(int progress) {

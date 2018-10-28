@@ -24,7 +24,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.appbar.AppBarLayout;
 
-import me.piebridge.bible.AnnotationComponent;
 import me.piebridge.bible.Bible;
 import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.Provider;
@@ -40,6 +39,7 @@ import me.piebridge.bible.fragment.ShowNotesFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ChooserUtils;
 import me.piebridge.bible.utils.ColorUtils;
+import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ObjectUtils;
@@ -304,7 +304,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
                 bundle.putString(NEXT, getString(cursor, Provider.COLUMN_NEXT));
                 bundle.putString(PREV, getString(cursor, Provider.COLUMN_PREVIOUS));
                 bundle.putString(HUMAN, getString(cursor, Provider.COLUMN_HUMAN));
-                bundle.putString(CONTENT, getString(cursor, Provider.COLUMN_CONTENT));
+                bundle.putByteArray(CONTENT, FileUtils.compress(getString(cursor, Provider.COLUMN_CONTENT)));
                 bundle.putString(OSIS, curr);
 
                 BibleApplication application = (BibleApplication) getApplication();

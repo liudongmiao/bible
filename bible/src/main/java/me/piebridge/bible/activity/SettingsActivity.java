@@ -11,6 +11,7 @@ import me.piebridge.bible.Bible;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.FontsizeFragment;
 import me.piebridge.bible.fragment.SettingsFragment;
+import me.piebridge.bible.utils.FileUtils;
 
 /**
  * Created by thom on 2017/6/26.
@@ -51,7 +52,7 @@ public class SettingsActivity extends ToolbarActivity {
     public String getWebviewData() {
         Intent intent = getIntent();
         if (intent != null) {
-            return intent.getStringExtra(ReadingActivity.WEBVIEW_DATA);
+            return FileUtils.uncompressAsString(intent.getByteArrayExtra(ReadingActivity.WEBVIEW_DATA));
         } else {
             return null;
         }

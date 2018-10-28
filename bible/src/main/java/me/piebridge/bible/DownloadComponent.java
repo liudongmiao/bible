@@ -272,7 +272,7 @@ public class DownloadComponent extends Handler {
         try (
                 OutputStream os = new BufferedOutputStream(new FileOutputStream(fileTmp))
         ) {
-            os.write(json.getBytes("UTF-8"));
+            os.write(json.getBytes(FileUtils.UTF_8));
         }
         //noinspection ResultOfMethodCallIgnored
         fileTmp.renameTo(file);

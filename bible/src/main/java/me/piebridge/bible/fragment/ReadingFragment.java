@@ -147,7 +147,7 @@ public class ReadingFragment extends Fragment {
             int fontSize = bundle.getInt(FONT_SIZE);
             webView.getSettings().setDefaultFontSize(fontSize);
             webView.getSettings().setDefaultFixedFontSize(fontSize);
-            webView.loadDataWithBaseURL("file:///android_asset/", body, "text/html", "utf-8", null);
+            webView.loadDataWithBaseURL("file:///android_asset/", body, "text/html", FileUtils.UTF_8, null);
             return true;
         } else {
             LogUtils.w("body is empty!");
@@ -157,7 +157,7 @@ public class ReadingFragment extends Fragment {
 
     public String getBody() {
         Bundle bundle = getArguments();
-        String content = bundle.getString(CONTENT);
+        String content = FileUtils.uncompressAsString(bundle.getByteArray(CONTENT));
         if (TextUtils.isEmpty(content)) {
             return null;
         }
