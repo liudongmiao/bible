@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -23,16 +24,20 @@ public class FileUtils {
     }
 
     public static String readAsString(InputStream is) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (
-                BufferedInputStream bis = new BufferedInputStream(is);
-                ByteArrayOutputStream bos = new ByteArrayOutputStream()
+                BufferedInputStream bis = new BufferedInputStream(is)
         ) {
-            int length;
-            byte[] bytes = new byte[CACHE_SIZE];
-            while ((length = bis.read(bytes)) != -1) {
-                bos.write(bytes, 0, length);
-            }
-            return bos.toString(UTF_8);
+            copy(bis, baos);
+        }
+        return baos.toString(UTF_8);
+    }
+
+    public static void copy(InputStream is, OutputStream os) throws IOException {
+        int length;
+        byte[] bytes = new byte[CACHE_SIZE];
+        while ((length = is.read(bytes)) != -1) {
+            os.write(bytes, 0, length);
         }
     }
 
@@ -45,37 +50,30 @@ public class FileUtils {
     }
 
     public static byte[] compress(byte[] uncompressed) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            GZIPOutputStream gos = new GZIPOutputStream(baos);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (
+                GZIPOutputStream gos = new GZIPOutputStream(baos)
+        ) {
             gos.write(uncompressed);
-            gos.close();
-            return baos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return baos.toByteArray();
     }
 
     public static byte[] uncompress(byte[] compressed) {
         if (compressed == null) {
             return null;
         }
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ByteArrayInputStream bais = new ByteArrayInputStream(compressed);
-            GZIPInputStream gis = new GZIPInputStream(bais);
-            byte[] buffer = new byte[CACHE_SIZE];
-            int length;
-            while ((length = gis.read(buffer)) != -1) {
-                if (length > 0) {
-                    baos.write(buffer, 0, length);
-                }
-            }
-            gis.close();
-            return baos.toByteArray();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (
+                GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(compressed))
+        ) {
+            copy(gis, baos);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return baos.toByteArray();
     }
 
     public static String uncompressAsString(byte[] compressed) {
