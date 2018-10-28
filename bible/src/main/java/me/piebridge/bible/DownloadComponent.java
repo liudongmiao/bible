@@ -48,9 +48,9 @@ public class DownloadComponent extends Handler {
 
     private static final String VERSIONS_JSON = "versions.json";
 
-    private static final String URL_VERSIONS_JSON = "https://dl.jianyv.com/bd/versions.json";
+    private static final String URL_PREFIX = "https://dl.jianyv.com/bd/";
 
-    private static final String URL_BIBLE_DATA_PREFIX = "https://github.com/liudongmiao/bibledata/raw/master/";
+    private static final String URL_VERSIONS_JSON = URL_PREFIX + VERSIONS_JSON;
 
     private Context mContext;
 
@@ -123,7 +123,7 @@ public class DownloadComponent extends Handler {
         if (externalCacheDir == null) {
             return 0;
         }
-        String url = URL_BIBLE_DATA_PREFIX + filename;
+        String url = URL_PREFIX + filename;
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setTitle(filename);
         File file = new File(externalCacheDir, filename);
