@@ -1049,12 +1049,8 @@ public class Bible {
         ) {
             String dataversion = version.replace("demo", "");
             if (isDatabaseSupported(metadata)) {
-                if (!versionFullnames.containsKey(version)) {
-                    versionFullnames.put(version, getVersionMetadata("fullname", metadata, dataversion));
-                }
-                if (!versionNames.containsKey(version)) {
-                    versionNames.put(version, getVersionMetadata("name", metadata, dataversion));
-                }
+                versionFullnames.put(version, getVersionMetadata("fullname", metadata, dataversion));
+                versionNames.put(version, getVersionMetadata("name", metadata, dataversion));
                 versionDates.put(version, getVersionMetadata("date", metadata, "0"));
                 return true;
             }
