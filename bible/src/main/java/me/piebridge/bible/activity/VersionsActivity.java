@@ -96,8 +96,6 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         mainHandler = new MainHandler(this);
         workHandler = new WorkHandler(this);
 
-        handleIntent(getIntent());
-
         recyclerView.setAdapter(versionsAdaper);
 
         bible = Bible.getInstance(getApplication());
@@ -113,26 +111,9 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         receiver = new Receiver(this);
     }
 
-    @Override
-    public void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        final Uri uri = intent.getData();
-        if (uri != null) {
-            final String path = uri.getPath();
-            final String segment = uri.getLastPathSegment();
-            if ("file".equals(uri.getScheme()) && path != null && isBibleData(segment)) {
-                workHandler.obtainMessage(ADD_VERSION, path).sendToTarget();
-            }
-        }
-    }
-
-    void checkZip(String path) {
+    void checkZip(File file) {
         BibleApplication application = (BibleApplication) getApplication();
-        if (application.addBibleData(new File(path))) {
+        if (application.addBibleData(file)) {
             updateActionsLater();
         }
     }
@@ -328,7 +309,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         if (filename != null) {
             File file = new File(getExternalCacheDir(), filename);
             if (file.exists()) {
-                workHandler.obtainMessage(ADD_VERSION, file.getPath()).sendToTarget();
+                workHandler.obtainMessage(ADD_VERSION, file).sendToTarget();
                 return;
             }
         }
@@ -422,7 +403,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
             }
             switch (msg.what) {
                 case ADD_VERSION:
-                    activity.checkZip((String) msg.obj);
+                    activity.checkZip((File) msg.obj);
                     break;
                 case DELETE_VERSION:
                     activity.deleteVersion((String) msg.obj);

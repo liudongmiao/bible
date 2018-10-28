@@ -45,18 +45,6 @@
                 <action android:name="me.piebridge.bible.intent.action.DOWNLOAD" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="*"
-                    android:mimeType="application/zip"
-                    android:pathPattern=".*\/bibledata-.*\\.zip"
-                    android:scheme="file" />
-            </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Chapter" />
