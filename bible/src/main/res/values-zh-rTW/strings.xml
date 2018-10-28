@@ -98,4 +98,7 @@
     <string name="version_no_chapter_info">“%1$s”中沒有“%2$s”。</string>
     <string name="versions_updated">版本數據已更新。</string>
 
+    <string name="shangti">上帝</string>
+    <string name="shangti_or_shen">上帝/　神</string>
+
 </resources>

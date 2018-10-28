@@ -99,4 +99,7 @@
     <string name="version_no_chapter_info">\"%1$s\" has no \"%2$s\".</string>
     <string name="versions_updated">Versions metadata updated.</string>
 
+    <string name="shangti">Shangti</string>
+    <string name="shangti_or_shen">Shangti / Shen</string>
+
 </resources>
