@@ -602,7 +602,7 @@ public class Bible {
 
     public boolean setDefaultVersion() {
         if (versions.isEmpty()) {
-            checkBibleData();
+            checkVersionsSync(true);
             if (versions.isEmpty()) {
                 setDemoVersions(true);
                 checkVersionsSync(true);
@@ -916,30 +916,6 @@ public class Bible {
         } else {
             return false;
         }
-    }
-
-    public void checkBibleData() {
-        synchronized (versionsCheckingLock) {
-            if (versions.isEmpty() && checkVersionsSync(false) == 0) {
-                checkZipData(Environment.getExternalStorageDirectory());
-                checkZipData(new File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DOWNLOADS));
-                checkZipData(mContext.getExternalCacheDir());
-                checkVersionsSync(true);
-            }
-        }
-    }
-
-    private boolean checkZipData(File path) {
-        if (path == null || !path.isDirectory() || path.list() == null) {
-            return false;
-        }
-        LogUtils.d("checking zipdata " + path.getAbsolutePath());
-        for (String name : path.list()) {
-            if (name.startsWith("bibledata-") && name.endsWith("zip")) {
-                checkZipPath(new File(path, name));
-            }
-        }
-        return true;
     }
 
     public boolean checkZipPath(File path) {
