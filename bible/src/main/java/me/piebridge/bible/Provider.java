@@ -89,8 +89,23 @@ public class Provider extends ContentProvider {
 
         Cursor cursor;
         try {
+            StringBuilder selection = new StringBuilder();
+            selection.append("(");
+            selection.append("human like ?");
+            String osis = bible.getOsis(query);
+            if (!TextUtils.isEmpty(osis)) {
+                selection.append(" or osis = '");
+                selection.append(osis);
+                selection.append("'");
+            }
+            selection.append(") ");
+            if (!TextUtils.isEmpty(books)) {
+                selection.append("and osis in (");
+                selection.append(books);
+                selection.append(")");
+            }
             cursor = database.query(TABLE_BOOKS, COLUMNS_BOOKS,
-                    TextUtils.isEmpty(books) ? "human like ?" : "human like ? and osis in (" + books + ")",
+                    selection.toString(),
                     new String[] {"%" + query + "%"}, null, null, "number ASC");
         } finally {
             bible.releaseDatabase(database);
