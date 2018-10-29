@@ -24,9 +24,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.appbar.AppBarLayout;
 
-import me.piebridge.bible.Bible;
 import me.piebridge.bible.BibleApplication;
-import me.piebridge.bible.Provider;
 import me.piebridge.bible.R;
 import me.piebridge.bible.adapter.ReadingAdapter;
 import me.piebridge.bible.bridge.ReadingBridge;
@@ -36,6 +34,7 @@ import me.piebridge.bible.fragment.FontsizeFragment;
 import me.piebridge.bible.fragment.ReadingFragment;
 import me.piebridge.bible.fragment.ShowAnnotationFragment;
 import me.piebridge.bible.fragment.ShowNotesFragment;
+import me.piebridge.bible.provider.VersionProvider;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ChooserUtils;
 import me.piebridge.bible.utils.ColorUtils;
@@ -117,7 +116,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
     private String fontPath;
 
-    protected Bible bible;
     private TextView versionView;
 
     private boolean mDark;
@@ -132,7 +130,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
         mHeader = findHeader();
         mPager = findViewById(R.id.pager);
-        bible = Bible.getInstance(getApplicationContext());
         fontPath = BibleUtils.getFontPath(this);
         mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount());
         initialize();
@@ -265,7 +262,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
     protected final void updateVersion() {
         if (versionView != null) {
-            versionView.setText(bible.getVersionName(bible.getVersion()));
+            BibleApplication application = (BibleApplication) getApplication();
+            versionView.setText(application.getName(application.getVersion()));
         }
     }
 
@@ -295,19 +293,19 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     public Bundle retrieveOsis(int position, String osis) {
         Bundle bundle = new Bundle();
         bundle.putString(OSIS, osis);
-        Uri uri = Provider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
+        BibleApplication application = (BibleApplication) getApplication();
+        Uri uri = VersionProvider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
         try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
             if (cursor != null && cursor.moveToFirst()) {
                 bundle.putInt(ID, cursor.getInt(cursor.getColumnIndex(BaseColumns._ID)));
-                String curr = getString(cursor, Provider.COLUMN_OSIS);
+                String curr = getString(cursor, VersionProvider.COLUMN_OSIS);
                 bundle.putString(CURR, curr);
-                bundle.putString(NEXT, getString(cursor, Provider.COLUMN_NEXT));
-                bundle.putString(PREV, getString(cursor, Provider.COLUMN_PREVIOUS));
-                bundle.putString(HUMAN, getString(cursor, Provider.COLUMN_HUMAN));
-                bundle.putByteArray(CONTENT, FileUtils.compress(getString(cursor, Provider.COLUMN_CONTENT)));
+                bundle.putString(NEXT, getString(cursor, VersionProvider.COLUMN_NEXT));
+                bundle.putString(PREV, getString(cursor, VersionProvider.COLUMN_PREVIOUS));
+                bundle.putString(HUMAN, getString(cursor, VersionProvider.COLUMN_HUMAN));
+                bundle.putByteArray(CONTENT, FileUtils.compress(getString(cursor, VersionProvider.COLUMN_CONTENT)));
                 bundle.putString(OSIS, curr);
 
-                BibleApplication application = (BibleApplication) getApplication();
                 bundle.putString(HIGHLIGHTED, application.getHighlight(curr));
                 bundle.putBundle(NOTES, application.getNoteVerses(curr));
             }
@@ -315,7 +313,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
             LogUtils.d("cannot query " + osis, e);
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String version = bible.getVersion();
+        String version = application.getVersion();
         int fontSize = getFontsize(sharedPreferences, version);
         bundle.putString(VERSION, version);
         bundle.putInt(FONT_SIZE, fontSize);
@@ -328,7 +326,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
     public boolean isChanged(Bundle bundle) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String version = bible.getVersion();
+        BibleApplication application = (BibleApplication) getApplication();
+        String version = application.getVersion();
         int fontSize = getFontsize(sharedPreferences, version);
         return !ObjectUtils.equals(bundle.getString(VERSION), version)
                 || !ObjectUtils.equals(bundle.getInt(FONT_SIZE), fontSize)
@@ -339,7 +338,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
     private int getFontsize(SharedPreferences sharedPreferences, String version) {
         int defaultFontsize = sharedPreferences.getInt(FONT_SIZE + "-default", FONT_SIZE_DEFAULT);
-        return sharedPreferences.getInt(FONT_SIZE + "-" + version, defaultFontsize);
+        return sharedPreferences.getInt(FONT_SIZE + "-" + BibleUtils.removeDemo(version), defaultFontsize);
     }
 
     private String getString(Cursor cursor, String columnName) {
@@ -464,7 +463,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     }
 
     protected void switchToVersion(String version) {
-        if (bible.setVersion(version)) {
+        BibleApplication application = (BibleApplication) getApplication();
+        if (application.setVersion(version)) {
             refreshAdapter();
         } else {
             refresh();
@@ -675,7 +675,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     public void doShowAnnotation(ReadingHandler.Annotation annotation) {
         String message = annotation.getMessage();
         if (TextUtils.isEmpty(message)) {
-            message = bible.getAnnotation(annotation.getOsis(), annotation.getLink());
+            BibleApplication application = (BibleApplication) getApplication();
+            message = application.getAnnotation(annotation.getOsis(), annotation.getLink());
         }
         if (message != null) {
             doShowAnnotation(annotation.getLink(), message);
@@ -715,7 +716,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     }
 
     public void doShare(ReadingHandler.Selection selection) {
-        String text = bible.getVersionFullname(bible.getVersion()) + " "
+        BibleApplication application = (BibleApplication) getApplication();
+        String text = application.getFullname(application.getVersion()) + " "
                 + getCurrentFragment().getTitle() + ":"
                 + selection.getVerses() + "\n\n"
                 + selection.getContent();

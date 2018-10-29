@@ -1,4 +1,4 @@
-package me.piebridge.bible;
+package me.piebridge.bible.component;
 
 import android.content.ContentValues;
 import android.content.Context;

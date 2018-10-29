@@ -13,7 +13,7 @@ import androidx.fragment.app.FragmentManager;
 
 import java.util.List;
 
-import me.piebridge.bible.Bible;
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.adapter.HiddenArrayAdapter;
@@ -129,11 +129,8 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
 
     protected String getTitle(Bundle bundle, String osis) {
         String book = BibleUtils.getBook(osis);
-        int osisPosition = bible.getPosition(Bible.TYPE.OSIS, book);
-        if (osisPosition < 0) {
-            return null;
-        }
-        String bookName = bible.get(Bible.TYPE.BOOK, osisPosition);
+        BibleApplication application = (BibleApplication) getApplication();
+        String bookName = application.getHuman(book);
         String chapterVerse = BibleUtils.getChapterVerse(this, bundle);
         return BibleUtils.getBookChapterVerse(bookName, chapterVerse);
     }
@@ -165,7 +162,8 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
     protected void switchToVersion(String version) {
         for (OsisItem item : items) {
             String osis = item.toOsis();
-            if (!bible.hasChapter(version, osis)) {
+            BibleApplication application = (BibleApplication) getApplication();
+            if (!application.hasChapter(version, osis)) {
                 Bundle bundle = item.toBundle();
                 showSwitchToVersion(version, getTitle(bundle, osis));
                 return;
@@ -182,8 +180,9 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
             fragment.dismiss();
         }
         fragment = new InfoFragment();
+        BibleApplication application = (BibleApplication) getApplication();
         fragment.setMessage(getString(R.string.info),
-                getString(R.string.version_no_chapter_info, bible.getVersionFullname(version), human), version);
+                getString(R.string.version_no_chapter_info, application.getFullname(version), human), version);
         fragment.show(manager, tag);
     }
 

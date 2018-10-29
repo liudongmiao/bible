@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -49,7 +48,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import me.piebridge.bible.Bible;
 import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.DeleteVersionConfirmFragment;
@@ -70,8 +68,6 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
 
     private MainHandler mainHandler;
     private WorkHandler workHandler;
-
-    private Bible bible;
 
     private static final int ADD_VERSION = 0;
     private static final int DELETE_VERSION = 1;
@@ -98,7 +94,6 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
 
         recyclerView.setAdapter(versionsAdaper);
 
-        bible = Bible.getInstance(getApplication());
         try {
             BibleApplication application = (BibleApplication) getApplication();
             versionsAdaper.setVersions(application.getLocalVersions());
@@ -119,14 +114,9 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     }
 
     void deleteVersion(String version) {
-        if (bible.deleteVersion(version)) {
-            bible.checkVersionsSync(true);
-            updateActionsLater();
-        }
-    }
-
-    private boolean isBibleData(String segment) {
-        return segment != null && segment.startsWith("bibledata-") && segment.endsWith(".zip");
+        BibleApplication application = (BibleApplication) getApplication();
+        application.deleteVersion(version);
+        updateActionsLater();
     }
 
     public void updateQuery(String query) {
@@ -280,11 +270,8 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     }
 
     String getVersionDate(VersionItem item) {
-        if (bible.get(Bible.TYPE.VERSION).contains(item.code)) {
-            return bible.getDate(item.code);
-        } else {
-            return null;
-        }
+        BibleApplication application = (BibleApplication) getApplication();
+        return application.getDate(item.code);
     }
 
     void downloadVersion(VersionItem item, boolean force) {

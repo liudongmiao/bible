@@ -184,7 +184,7 @@
         </activity>
 
         <provider
-            android:name=".Provider"
+            android:name=".provider.VersionProvider"
             android:authorities="me.piebridge.bible.provider"
             android:permission="me.piebridge.bible.permission.ACCESS" />
 
@@ -193,7 +193,7 @@
             android:authorities="me.piebridge.bible.provider.search"
             android:permission="me.piebridge.bible.permission.ACCESS" />
 
-        <receiver android:name=".Receiver">
+        <receiver android:name=".receiver.DownloadReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SECRET_CODE" />
                 <data

@@ -1,13 +1,14 @@
-package me.piebridge.bible;
+package me.piebridge.bible.receiver;
 
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.utils.LogUtils;
 
-public class Receiver extends BroadcastReceiver {
+public class DownloadReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {

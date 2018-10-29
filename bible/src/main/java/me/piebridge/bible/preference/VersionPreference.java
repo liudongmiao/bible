@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import androidx.preference.ListPreference;
 import androidx.preference.PreferenceManager;
 
-import me.piebridge.bible.Bible;
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.utils.ObjectUtils;
 
 /**
@@ -20,14 +20,14 @@ public class VersionPreference extends ListPreference {
     }
 
     private void initVersions(Context context) {
-        Bible bible = Bible.getInstance(context.getApplicationContext());
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(getKey(), bible.getVersion()).apply();
+        BibleApplication application = (BibleApplication) getContext().getApplicationContext();
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(getKey(), application.getVersion()).apply();
 
-        String[] versions = bible.get(Bible.TYPE.VERSION).toArray(new String[0]);
+        String[] versions = application.getVersions().toArray(new String[0]);
         setEntryValues(versions);
         String[] humanVersions = new String[versions.length];
         for (int i = 0; i < versions.length; i++) {
-            humanVersions[i] = bible.getVersionFullname(versions[i]);
+            humanVersions[i] = application.getFullname(versions[i]);
         }
         setEntries(humanVersions);
     }
@@ -35,11 +35,11 @@ public class VersionPreference extends ListPreference {
     @Override
     public void setValue(String value) {
         super.setValue(value);
-        Bible bible = Bible.getInstance(getContext().getApplicationContext());
-        if (!ObjectUtils.equals(bible.getVersion(), value)) {
-            bible.setVersion(value);
+        BibleApplication application = (BibleApplication) getContext().getApplicationContext();
+        if (!ObjectUtils.equals(application.getVersion(), value)) {
+            application.setVersion(value);
         }
-        super.setSummary(bible.getVersionFullname(value));
+        super.setSummary(application.getFullname(value));
     }
 
 }

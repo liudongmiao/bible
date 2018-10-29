@@ -8,10 +8,10 @@ import androidx.core.content.ContextCompat;
 import java.io.File;
 import java.math.BigDecimal;
 
-import me.piebridge.bible.Bible;
-import me.piebridge.bible.Provider;
 import me.piebridge.bible.R;
+import me.piebridge.bible.component.VersionComponent;
 import me.piebridge.bible.activity.AbstractReadingActivity;
+import me.piebridge.bible.provider.VersionProvider;
 
 /**
  * Created by thom on 16/7/1.
@@ -47,7 +47,7 @@ public class BibleUtils {
 
     public static String getChapter(String osis, Context context) {
         String chapter = getChapter(osis);
-        if (Bible.INTRO.equalsIgnoreCase(chapter)) {
+        if (VersionComponent.INTRO.equalsIgnoreCase(chapter)) {
             return context.getString(R.string.intro);
         } else {
             return chapter;
@@ -90,16 +90,15 @@ public class BibleUtils {
     }
 
     public static int[] getChapterVerse(String string) {
-        int value = new BigDecimal(string).multiply(new BigDecimal(Provider.THOUSAND)).intValue();
-        int chapter = value / Provider.THOUSAND;
-        int verse = value % Provider.THOUSAND;
+        int value = new BigDecimal(string).multiply(new BigDecimal(VersionProvider.THOUSAND)).intValue();
+        int chapter = value / VersionProvider.THOUSAND;
+        int verse = value % VersionProvider.THOUSAND;
         return new int[] {chapter, verse};
     }
 
     public static boolean isDemoVersion(String version) {
         switch (version) {
             case "cunpssdemo":
-            case "niv84demo":
             case "niv1984demo":
                 return true;
             default:
@@ -111,12 +110,20 @@ public class BibleUtils {
         switch (version) {
             case "cunpssdemo":
                 return "cunpss";
-            case "niv84demo":
             case "niv1984demo":
                 return "niv1984";
             default:
                 return version;
         }
+    }
+
+    public static boolean isCJK(String s) {
+        for (char c : s.toCharArray()) {
+            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

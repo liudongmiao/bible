@@ -19,14 +19,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.lang.ref.WeakReference;
 
-import me.piebridge.bible.Bible;
 import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.BuildConfig;
-import me.piebridge.bible.Provider;
 import me.piebridge.bible.R;
-import me.piebridge.bible.fragment.FontsizeFragment;
 import me.piebridge.bible.fragment.ReadingFragment;
 import me.piebridge.bible.fragment.SwitchVersionConfirmFragment;
+import me.piebridge.bible.provider.VersionProvider;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
@@ -72,8 +70,8 @@ public class ReadingActivity extends AbstractReadingActivity {
     @Override
     protected void updateHeader(Bundle bundle, String osis) {
         String book = BibleUtils.getBook(osis);
-        int osisPosition = bible.getPosition(Bible.TYPE.OSIS, book);
-        String bookName = bible.get(Bible.TYPE.BOOK, osisPosition);
+        BibleApplication application = (BibleApplication) getApplication();
+        String bookName = application.getHuman(book);
         String chapterVerse = BibleUtils.getChapterVerse(this, bundle);
         mTitle = BibleUtils.getBookChapterVerse(bookName, chapterVerse);
 
@@ -99,7 +97,7 @@ public class ReadingActivity extends AbstractReadingActivity {
 
     @Override
     protected int retrieveOsisCount() {
-        Uri uri = Provider.CONTENT_URI_CHAPTERS.buildUpon().build();
+        Uri uri = VersionProvider.CONTENT_URI_CHAPTERS.buildUpon().build();
         try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
             if (cursor != null && cursor.moveToFirst()) {
                 return cursor.getInt(cursor.getColumnIndex(BaseColumns._COUNT));
@@ -137,7 +135,8 @@ public class ReadingActivity extends AbstractReadingActivity {
     public void onResume() {
         super.onResume();
         String currentVersion = getCurrentVersion();
-        String databaseVersion = bible.getVersion();
+        BibleApplication application = (BibleApplication) getApplication();
+        String databaseVersion = application.getVersion();
         if (currentVersion != null && !currentVersion.equals(databaseVersion)) {
             LogUtils.d("version changed from " + currentVersion + " to " + databaseVersion);
             refreshAdapter();
@@ -146,7 +145,6 @@ public class ReadingActivity extends AbstractReadingActivity {
             String version = BibleUtils.removeDemo(databaseVersion);
             int id = getResources().getIdentifier(version, "string", BuildConfig.APPLICATION_ID);
             if (id != 0) {
-                BibleApplication application = (BibleApplication) getApplication();
                 String filename = getString(id);
                 if (!application.isDownloading(filename)) {
                     LogUtils.d("will download " + filename + " for " + databaseVersion);
@@ -161,10 +159,11 @@ public class ReadingActivity extends AbstractReadingActivity {
         if (!TextUtils.isEmpty(osis)) {
             String book = BibleUtils.getBook(osis);
             String chapter = BibleUtils.getChapter(osis);
+            BibleApplication application = (BibleApplication) getApplication();
             PreferenceManager.getDefaultSharedPreferences(this).edit()
                     .putString(OSIS, osis)
                     .putString(book, chapter)
-                    .putString("version", bible.getVersion()).apply();
+                    .putString("version", application.getVersion()).apply();
         }
     }
 
@@ -197,7 +196,8 @@ public class ReadingActivity extends AbstractReadingActivity {
         super.onNewIntent(intent);
         String version = intent.getStringExtra(AbstractReadingActivity.VERSION);
         if (!TextUtils.isEmpty(version) && !ObjectUtils.equals(version, getCurrentVersion())) {
-            if (bible.setVersion(version)) {
+            BibleApplication application = (BibleApplication) getApplication();
+            if (application.setVersion(version)) {
                 refreshAdapter();
             }
         }
@@ -211,7 +211,8 @@ public class ReadingActivity extends AbstractReadingActivity {
 
     @Override
     protected void switchToVersion(String version) {
-        if (bible.hasChapter(version, getCurrentOsis())) {
+        BibleApplication application = (BibleApplication) getApplication();
+        if (application.hasChapter(version, getCurrentOsis())) {
             super.switchToVersion(version);
         } else {
             showSwitchToVersion(version);
@@ -226,8 +227,9 @@ public class ReadingActivity extends AbstractReadingActivity {
             fragment.dismiss();
         }
         fragment = new SwitchVersionConfirmFragment();
+        BibleApplication application = (BibleApplication) getApplication();
         fragment.setMessage(getString(R.string.confirm),
-                getString(R.string.version_no_chapter_confirm, bible.getVersionFullname(version), mTitle), version);
+                getString(R.string.version_no_chapter_confirm, application.getFullname(version), mTitle), version);
         fragment.show(manager, tag);
     }
 

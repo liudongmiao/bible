@@ -15,13 +15,7 @@
         <item>rcuvts|Revised Chinese Union Version (Traditional Script)</item>
         <item>niv2011|New International Version 2011</item>
         <item>niv1984|New International Version 1984</item>
-        <item>kjv|King James Version</item>
-        <item>nkjv|New King James Version</item>
-        <item>nlt|New Living Translation</item>
-        <item>amp|Amplified Bible</item>
-        <item>msg|The Message</item>
-        <item>nasb|New American Standard Bible</item>
-        <item>esv|English Standard Version</item>
+        <item>cunpssdemo|Chinese Union Version (New Punctuation, Simplified Script, Demo)</item>
+        <item>niv1984demo|New International Version 1984 (Demo)</item>
     </string-array>
 </resources>
-<!-- vim: set sta sw=4 et: -->

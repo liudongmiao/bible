@@ -25,15 +25,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-import me.piebridge.bible.Bible;
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.OsisItem;
-import me.piebridge.bible.Provider;
 import me.piebridge.bible.R;
+import me.piebridge.bible.provider.VersionProvider;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ColorUtils;
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.ObjectUtils;
 
 /**
  * Created by thom on 2018/10/24.
@@ -44,8 +46,6 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
     private static final int RESULTS = 1;
 
     private static final int REQUEST_CODE_VERSION = 1002;
-
-    Bible bible;
 
     private TextView versionView;
 
@@ -62,8 +62,6 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
         showBack(true);
-
-        bible = Bible.getInstance(getApplication());
 
         versionView = findViewById(R.id.version);
         findViewById(R.id.version_button).setOnClickListener(this);
@@ -91,7 +89,8 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
     }
 
     protected final void updateVersion() {
-        versionView.setText(bible.getVersionName(bible.getVersion()));
+        BibleApplication application = (BibleApplication) getApplication();
+        versionView.setText(application.getName(application.getVersion()));
     }
 
 
@@ -113,9 +112,10 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         Intent intent = new Intent(this, ReadingItemsActivity.class);
         ArrayList<OsisItem> items = new ArrayList<>();
         if (TextUtils.isEmpty(item.chapter)) {
-            String[] chapters = bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, item.book)).split(",");
-            for (String chapter : chapters) {
-                items.add(new OsisItem(item.book, chapter));
+            BibleApplication application = (BibleApplication) getApplication();
+            String book = item.book;
+            for (String chapter : application.getChapters(book)) {
+                items.add(new OsisItem(book, chapter));
             }
         } else {
             items.add(item);
@@ -129,9 +129,14 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_VERSION && data != null) {
-            bible.setVersion(data.getStringExtra(AbstractReadingActivity.VERSION));
-            updateVersion();
-            refresh();
+            BibleApplication application = (BibleApplication) getApplication();
+            String version = data.getStringExtra(AbstractReadingActivity.VERSION);
+            if (!TextUtils.isEmpty(version) && !ObjectUtils.equals(version, application.getVersion())) {
+                if (application.setVersion(version)) {
+                    updateVersion();
+                    refresh();
+                }
+            }
         }
     }
 
@@ -152,32 +157,30 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         Intent intent = getIntent();
         String osisFrom = intent.getStringExtra(SearchActivity.OSIS_FROM);
         String osisTo = intent.getStringExtra(SearchActivity.OSIS_TO);
-        int fromBook = 0;
-        if (!TextUtils.isEmpty(osisFrom)) {
-            fromBook = bible.getPosition(Bible.TYPE.OSIS, osisFrom);
-            if (fromBook == -1) {
-                fromBook = 0;
-            }
+        if (TextUtils.isEmpty(osisFrom) || TextUtils.isEmpty(osisTo)) {
+            return "";
         }
-        int toBook = -1;
-        if (!TextUtils.isEmpty(osisTo)) {
-            toBook = bible.getPosition(Bible.TYPE.OSIS, osisTo);
+
+        BibleApplication application = (BibleApplication) getApplication();
+        if (ObjectUtils.equals(osisFrom, application.getFirstBook()) || ObjectUtils.equals(osisTo, application.getLastBook())) {
+            return "";
         }
-        if (toBook == -1) {
-            toBook = bible.getCount(Bible.TYPE.OSIS) - 1;
-        }
-        if (toBook < fromBook) {
-            int swap = fromBook;
-            fromBook = toBook;
-            toBook = swap;
-        }
+
+        boolean accepted = false;
         StringBuilder books = new StringBuilder();
-        if (fromBook > 0 || toBook < bible.getCount(Bible.TYPE.OSIS) - 1) {
-            books.append(String.format("'%s'", bible.get(Bible.TYPE.OSIS, fromBook)));
-            for (int i = fromBook + 1; i <= toBook; ++i) {
-                books.append(String.format(", '%s'", bible.get(Bible.TYPE.OSIS, i)));
+        for (String book : application.getBooks().keySet()) {
+            if (accepted) {
+                books.append(",");
+                books.append(book);
+                if (ObjectUtils.equals(book, osisTo)) {
+                    break;
+                }
+            } else if (ObjectUtils.equals(book, osisFrom)) {
+                accepted = true;
+                books.append(book);
             }
         }
+
         mBooks = books.toString();
         return mBooks;
     }
@@ -201,16 +204,9 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
     }
 
     String getChapter(String book, int chapterId) {
-        String[] chapters = bible.get(Bible.TYPE.CHAPTER, bible.getPosition(Bible.TYPE.OSIS, book)).split(",");
-        String chapter;
-        if (chapterId < 1) {
-            chapter = chapters[0];
-        } else if (chapterId > chapters.length) {
-            chapter = chapters[chapters.length - 1];
-        } else {
-            chapter = chapters[chapterId - 1];
-        }
-        return chapter;
+        BibleApplication application = (BibleApplication) getApplication();
+        List<String> chapters = application.getChapters(book);
+        return chapters.get(chapterId);
     }
 
     static class MainHandler extends Handler {
@@ -269,12 +265,12 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         private void doSearch(String query) {
             ResultsActivity activity = mReference.get();
             if (activity != null) {
-                Uri bookUri = Provider.CONTENT_URI_BOOK.buildUpon()
+                Uri bookUri = VersionProvider.CONTENT_URI_BOOK.buildUpon()
                         .appendQueryParameter("books", activity.getBooks())
                         .appendEncodedPath(query).build();
                 Cursor bookCursor = activity.getContentResolver().query(bookUri, null, null, null, null);
 
-                Uri verseUri = Provider.CONTENT_URI_SEARCH.buildUpon()
+                Uri verseUri = VersionProvider.CONTENT_URI_SEARCH.buildUpon()
                         .appendQueryParameter("books", activity.getBooks())
                         .appendEncodedPath(query).build();
                 Cursor verseCursor = activity.getContentResolver().query(verseUri, null, null, null, null);
@@ -359,19 +355,19 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
                 bookStart = 0;
                 bookEnd = bookStart + bookCursor.getCount();
 
-                bookOsis = bookCursor.getColumnIndex(Provider.COLUMN_OSIS);
-                bookHuman = bookCursor.getColumnIndex(Provider.COLUMN_HUMAN);
-                bookChapters = bookCursor.getColumnIndex(Provider.COLUMN_CHAPTERS);
+                bookOsis = bookCursor.getColumnIndex(VersionProvider.COLUMN_OSIS);
+                bookHuman = bookCursor.getColumnIndex(VersionProvider.COLUMN_HUMAN);
+                bookChapters = bookCursor.getColumnIndex(VersionProvider.COLUMN_CHAPTERS);
             }
 
             if (verseCursor != null) {
                 verseStart = bookEnd + 1;
                 verseEnd = verseStart + verseCursor.getCount();
 
-                verseBook = verseCursor.getColumnIndexOrThrow(Provider.COLUMN_BOOK);
-                verseHuman = verseCursor.getColumnIndexOrThrow(Provider.COLUMN_HUMAN);
-                verseVerse = verseCursor.getColumnIndexOrThrow(Provider.COLUMN_VERSE);
-                verseUnformatted = verseCursor.getColumnIndexOrThrow(Provider.COLUMN_UNFORMATTED);
+                verseBook = verseCursor.getColumnIndexOrThrow(VersionProvider.COLUMN_BOOK);
+                verseHuman = verseCursor.getColumnIndexOrThrow(VersionProvider.COLUMN_HUMAN);
+                verseVerse = verseCursor.getColumnIndexOrThrow(VersionProvider.COLUMN_VERSE);
+                verseUnformatted = verseCursor.getColumnIndexOrThrow(VersionProvider.COLUMN_UNFORMATTED);
             }
 
             LogUtils.d("book: " + bookStart + " - " + bookEnd + ", verse: " + verseStart + " - " + verseEnd);

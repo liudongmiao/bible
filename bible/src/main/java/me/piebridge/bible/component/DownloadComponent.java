@@ -1,4 +1,4 @@
-package me.piebridge.bible;
+package me.piebridge.bible.component;
 
 import android.app.DownloadManager;
 import android.content.Context;
@@ -24,9 +24,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
+import me.piebridge.bible.BibleApplication;
+import me.piebridge.bible.R;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.HttpUtils;
@@ -188,20 +192,39 @@ public class DownloadComponent extends Handler {
     }
 
     public boolean addBibleData(File file) {
-        if (file.exists()) {
-            Bible bible = Bible.getInstance(mContext);
-            if (bible.checkZipPath(file)) {
-                bible.checkVersionsSync(true);
-                String version = BibleUtils.removeDemo(bible.getVersion());
-                if (file.getName().contains(version)) {
-                    bible.setVersion(version, true);
-                    Intent intent = new Intent(Intent.ACTION_CONFIGURATION_CHANGED);
-                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        if (file.isFile() && isBibleData(file.getName())) {
+            if (mContext instanceof BibleApplication) {
+                BibleApplication application = (BibleApplication) mContext;
+                String version = getVersion(file);
+                if (!TextUtils.isEmpty(version) && application.unpackZip(file, version)) {
+                    Collection<String> versions = application.getVersions();
+                    if (versions.contains(version) && version.equals(BibleUtils.removeDemo(application.getVersion()))) {
+                        application.setVersion(version, true);
+                        Intent intent = new Intent(Intent.ACTION_CONFIGURATION_CHANGED);
+                        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                    }
+                    return true;
                 }
-                return true;
             }
         }
         return false;
+    }
+
+    private boolean isBibleData(String name) {
+        return name.startsWith("bibledata-") && name.endsWith(".zip");
+    }
+
+    private String getVersion(File file) {
+        if (file == null || !file.isFile()) {
+            return null;
+        }
+        final String prefix = "bibledata-";
+        final String suffix = ".zip";
+        String name = file.getName();
+        if (name.startsWith(prefix) && name.endsWith(name)) {
+            return name.substring(name.lastIndexOf('-') + 1, name.lastIndexOf(suffix)).toLowerCase(Locale.US);
+        }
+        return null;
     }
 
     public void cancel(String filename) {

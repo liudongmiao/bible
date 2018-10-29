@@ -7,9 +7,6 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 
-import me.piebridge.bible.AnnotationComponent;
-import me.piebridge.bible.Bible;
-import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.utils.NoteBundle;

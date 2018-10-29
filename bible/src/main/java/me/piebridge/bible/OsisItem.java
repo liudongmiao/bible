@@ -13,7 +13,6 @@
 
 package me.piebridge.bible;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -25,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import me.piebridge.bible.activity.AbstractReadingActivity;
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.NumberUtils;
 
 public class OsisItem implements Parcelable {
@@ -102,6 +102,10 @@ public class OsisItem implements Parcelable {
         return sb.toString();
     }
 
+    public String toBook() {
+        return book;
+    }
+
     public String toOsis() {
         return String.format("%s.%s", book, chapter);
     }
@@ -114,12 +118,12 @@ public class OsisItem implements Parcelable {
         return bundle;
     }
 
-    public static ArrayList<OsisItem> parseSearch(String s, Context context) {
-        String previous = PreferenceManager.getDefaultSharedPreferences(context).getString("osis", "Gen.1");
-        return parseSearch(s, context, previous);
+    public static ArrayList<OsisItem> parseSearch(String s, BibleApplication application) {
+        String previous = PreferenceManager.getDefaultSharedPreferences(application).getString("osis", "Gen.1");
+        return parseSearch(s, application, previous);
     }
 
-    public static ArrayList<OsisItem> parseSearch(String s, Context context, String previous) {
+    public static ArrayList<OsisItem> parseSearch(String s, BibleApplication application, String previous) {
         ArrayList<OsisItem> items = new ArrayList<>();
         if (s == null) {
             return items;
@@ -187,7 +191,7 @@ public class OsisItem implements Parcelable {
                     start_verse = start_chapter;
                     start_chapter = prevchap;
                 }
-            } else if (!Bible.isCJK(book) && book.length() < 2) {
+            } else if (!BibleUtils.isCJK(book) && book.length() < 2) {
                 start_chapter = book + start_chapter;
                 book = prevbook;
             }
@@ -223,7 +227,7 @@ public class OsisItem implements Parcelable {
                     continue;
                 }
             } else {
-                osis = Bible.getInstance(context).getOsis(book);
+                osis = application.getOsis(book);
             }
             if (osis == null) {
                 continue;

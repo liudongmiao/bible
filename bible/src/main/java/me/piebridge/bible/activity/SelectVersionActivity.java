@@ -12,19 +12,17 @@ import android.widget.GridView;
 
 import androidx.appcompat.app.ActionBar;
 
-import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import me.piebridge.bible.Bible;
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.R;
 import me.piebridge.bible.adapter.GridAdapter;
 import me.piebridge.bible.utils.BibleUtils;
 
 public class SelectVersionActivity extends ToolbarActivity implements GridAdapter.GridChecker, AdapterView.OnItemClickListener {
 
-    private Bible bible;
     private String version;
 
     @Override
@@ -36,19 +34,10 @@ public class SelectVersionActivity extends ToolbarActivity implements GridAdapte
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        bible = Bible.getInstance(getApplicationContext());
-        version = bible.getVersion();
-        List<String> versions = bible.get(Bible.TYPE.VERSION);
-        Collections.sort(versions, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                if (o1 == null || o2 == null) {
-                    return Collator.getInstance().compare(o1, o2);
-                } else {
-                    return Collator.getInstance().compare(bible.getVersionFullname(o1), bible.getVersionFullname(o2));
-                }
-            }
-        });
+        BibleApplication application = (BibleApplication) getApplication();
+        version = application.getVersion();
+        List<String> versions = new ArrayList<>(application.getVersions());
+        Collections.sort(versions, application::compareFullname);
 
         String font = BibleUtils.getFontPath(this);
         Typeface typeface = TextUtils.isEmpty(font) ? null : Typeface.createFromFile(font);
@@ -64,7 +53,8 @@ public class SelectVersionActivity extends ToolbarActivity implements GridAdapte
 
     @Override
     public String getGridName(String key) {
-        return bible.getVersionFullname(key);
+        BibleApplication application = (BibleApplication) getApplication();
+        return application.getFullname(key);
     }
 
     @Override

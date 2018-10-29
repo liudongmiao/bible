@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 
-import me.piebridge.bible.Bible;
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.SearchFragment;
@@ -47,8 +47,6 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
 
     private SearchRecentSuggestions mSuggestions;
 
-    private Bible bible;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +70,6 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content, mSearchFragment)
                 .commit();
-
-        bible = Bible.getInstance(getApplication());
 
         handleIntent(getIntent());
         updateTaskDescription(getTitle().toString());
@@ -123,7 +119,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
 
         ArrayList<OsisItem> items;
         if (parse) {
-            items = OsisItem.parseSearch(query, getApplication());
+            items = OsisItem.parseSearch(query, (BibleApplication) getApplication());
             fixItems(items);
             if (!items.isEmpty()) {
                 LogUtils.d("items: " + items);
@@ -227,15 +223,15 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
             }
         }
 
-        if (version != null && bible.get(Bible.TYPE.VERSION).contains(version)) {
-            bible.setVersion(version);
+        BibleApplication application = (BibleApplication) getApplication();
+        if (!TextUtils.isEmpty(version) && application.getVersions().contains(version) && application.setVersion(version)) {
             mSearchFragment.updateVersion(version);
         }
 
         if (query != null) {
-            ArrayList<OsisItem> items = OsisItem.parseSearch(query, getApplication());
+            ArrayList<OsisItem> items = OsisItem.parseSearch(query, (BibleApplication) getApplication());
             fixItems(items);
-            if (!items.isEmpty() && !bible.checkItems(items)) {
+            if (!items.isEmpty() && !application.checkItems(items)) {
                 LogUtils.d("items: " + items);
                 mSuggestions.saveRecentQuery(query, null);
                 showItems(items, cross, true);

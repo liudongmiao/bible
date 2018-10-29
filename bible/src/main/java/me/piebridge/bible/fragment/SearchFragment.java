@@ -1,13 +1,16 @@
 package me.piebridge.bible.fragment;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
-import me.piebridge.bible.Bible;
+import java.util.Map;
+
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.SearchActivity;
 import me.piebridge.bible.preference.VersionPreference;
@@ -102,14 +105,14 @@ public class SearchFragment extends PreferenceFragmentCompat
             return;
         }
 
-        Bible bible = Bible.getInstance(activity.getApplication());
+        BibleApplication application = (BibleApplication) activity.getApplication();
 
         String key = preference.getKey();
         String osisFrom;
         String osisTo;
 
-        String osisFirst = bible.get(Bible.TYPE.OSIS, 0);
-        String osisLast = bible.get(Bible.TYPE.OSIS, bible.getCount(Bible.TYPE.OSIS) - 1);
+        String osisFirst = application.getFirstBook();
+        String osisLast = application.getLastBook();
 
         switch (key) {
             case KEY_SEARCH_ALL:
@@ -159,10 +162,10 @@ public class SearchFragment extends PreferenceFragmentCompat
         preferenceSearchGospel.setChecked(searchType == SEARCH_GOSPEL);
 
         preferenceSearchFrom.setValue(osisFrom);
-        preferenceSearchTo.setSummary(bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, osisFrom)));
+        preferenceSearchTo.setSummary(application.getHuman(osisFrom));
 
         preferenceSearchTo.setValue(osisTo);
-        preferenceSearchTo.setSummary(bible.get(Bible.TYPE.HUMAN, bible.getPosition(Bible.TYPE.OSIS, osisTo)));
+        preferenceSearchTo.setSummary(application.getHuman(osisTo));
     }
 
     private void updateVersion() {
@@ -170,31 +173,29 @@ public class SearchFragment extends PreferenceFragmentCompat
         if (activity == null) {
             return;
         }
-        Bible bible = Bible.getInstance(activity.getApplication());
 
-        String[] osiss = bible.get(Bible.TYPE.OSIS).toArray(new String[0]);
-        String[] humans = bible.get(Bible.TYPE.HUMAN).toArray(new String[0]);
+        BibleApplication application = (BibleApplication) activity.getApplication();
+
+        Map<String, String> books = application.getBooks();
+        String[] osiss = books.keySet().toArray(new String[0]);
+        String[] humans = books.values().toArray(new String[0]);
 
         preferenceSearchFrom.setEntries(humans);
         preferenceSearchFrom.setEntryValues(osiss);
         preferenceSearchTo.setEntries(humans);
         preferenceSearchTo.setEntryValues(osiss);
 
-        int max = bible.getCount(Bible.TYPE.OSIS) - 1;
-        preferenceSearchAll.setSummary(getString(R.string.fromto,
-                bible.get(Bible.TYPE.HUMAN, 0), bible.get(Bible.TYPE.HUMAN, max)));
-
-        updateSearch(preferenceSearchOld, bible, OLD_FIRST, OLD_LAST);
-        updateSearch(preferenceSearchNew, bible, NEW_FIRST, NEW_LAST);
-        updateSearch(preferenceSearchGospel, bible, GOSPEL_FIRST, GOSPEL_LAST);
+        String osisFirst = application.getFirstBook();
+        String osisLast = application.getLastBook();
+        updateSearch(preferenceSearchAll, application.getHuman(osisFirst), application.getHuman(osisLast));
+        updateSearch(preferenceSearchOld, application.getHuman(OLD_FIRST), application.getHuman(OLD_LAST));
+        updateSearch(preferenceSearchNew, application.getHuman(NEW_FIRST), application.getHuman(NEW_LAST));
+        updateSearch(preferenceSearchGospel, application.getHuman(GOSPEL_FIRST), application.getHuman(GOSPEL_LAST));
     }
 
-    private void updateSearch(Preference preference, Bible bible, String osisFirst, String osisLast) {
-        int first = bible.getPosition(Bible.TYPE.OSIS, osisFirst);
-        int last = bible.getPosition(Bible.TYPE.OSIS, osisLast);
-        if (first != -1 && last != -1) {
-            preference.setSummary(getString(R.string.fromto,
-                    bible.get(Bible.TYPE.HUMAN, first), bible.get(Bible.TYPE.HUMAN, last)));
+    private void updateSearch(Preference preference, String humanFirst, String humanLast) {
+        if (!TextUtils.isEmpty(humanFirst) && !TextUtils.isEmpty(humanLast)) {
+            preference.setSummary(getString(R.string.fromto, humanFirst, humanLast));
         } else {
             preference.setEnabled(false);
             preference.setSummary("");
@@ -210,7 +211,9 @@ public class SearchFragment extends PreferenceFragmentCompat
     @Override
     public boolean onPreferenceClick(Preference preference) {
         SearchActivity searchActivity = (SearchActivity) getActivity();
-        searchActivity.hideSoftInput();
+        if (searchActivity != null) {
+            searchActivity.hideSoftInput();
+        }
         return false;
     }
 

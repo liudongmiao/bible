@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.widget.CompoundButton;
 
 import androidx.appcompat.app.ActionBar;
@@ -19,15 +20,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import me.piebridge.bible.Bible;
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.R;
+import me.piebridge.bible.component.VersionComponent;
 import me.piebridge.bible.fragment.SelectBookFragment;
 import me.piebridge.bible.fragment.SelectChapterFragment;
 import me.piebridge.bible.fragment.SelectVerseFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.NumberUtils;
 
-public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageChangeListener, CompoundButton.OnCheckedChangeListener {
+public class SelectActivity extends ToolbarActivity
+        implements ViewPager.OnPageChangeListener, CompoundButton.OnCheckedChangeListener {
 
     public static final int BOOK = 0;
     public static final int CHAPTER = 1;
@@ -48,8 +51,6 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
     private String chapter;
     private String verse;
 
-    private Bible bible;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +61,6 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
         }
 
         Intent intent = getIntent();
-        bible = Bible.getInstance(getApplicationContext());
 
         String osis = intent.getStringExtra(AbstractReadingActivity.OSIS);
         book = BibleUtils.getBook(osis);
@@ -116,8 +116,8 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
     }
 
     private String getBookName() {
-        int position = bible.getPosition(Bible.TYPE.OSIS, book);
-        return bible.get(Bible.TYPE.HUMAN, position);
+        BibleApplication application = (BibleApplication) getApplication();
+        return application.getHuman(book);
     }
 
     @Override
@@ -136,33 +136,27 @@ public class SelectActivity extends ToolbarActivity implements ViewPager.OnPageC
     }
 
     private Map<String, String> prepareBooks() {
-        Map<String, String> books = new LinkedHashMap<>();
-        int count = bible.getCount(Bible.TYPE.OSIS);
-        for (int index = 0; index < count; ++index) {
-            String osis = bible.get(Bible.TYPE.OSIS, index);
-            String human = bible.get(Bible.TYPE.HUMAN, index);
-            books.put(osis, human);
-        }
-        return books;
+        BibleApplication application = (BibleApplication) getApplication();
+        return application.getBooks();
     }
 
     private Map<String, String> prepareChapters(String book) {
-        int position = bible.getPosition(Bible.TYPE.OSIS, book);
+        BibleApplication application = (BibleApplication) getApplication();
         Map<String, String> chapters = new LinkedHashMap<>();
-        for (String chapter : bible.get(Bible.TYPE.CHAPTER, position).split(",")) {
-            String human = Bible.INTRO.equals(chapter) ? getString(R.string.intro) : chapter;
+        for (String chapter : application.getChapters(book)) {
+            String human = VersionComponent.INTRO.equals(chapter) ? getString(R.string.intro) : chapter;
             chapters.put(chapter, human);
         }
         return chapters;
     }
 
     private Map<String, Boolean> prepareVerses(String book, String chapter) {
-        if (Bible.INTRO.equals(chapter)) {
+        if (TextUtils.isEmpty(chapter) || !TextUtils.isDigitsOnly(chapter)) {
             return Collections.emptyMap();
         }
-        int position = bible.getPosition(Bible.TYPE.OSIS, book);
-        boolean hasInt = bible.get(Bible.TYPE.CHAPTER, position).startsWith(Bible.INTRO);
-        List<Integer> bibleVerses = bible.getVerses(book, NumberUtils.parseInt(chapter) + (hasInt ? 1 : 0));
+        BibleApplication application = (BibleApplication) getApplication();
+        boolean hasIntro = VersionComponent.INTRO.equals(application.getChapters(book).get(0));
+        List<Integer> bibleVerses = application.getVerses(book, NumberUtils.parseInt(chapter) + (hasIntro ? 1 : 0));
         if (bibleVerses.isEmpty()) {
             return Collections.emptyMap();
         }

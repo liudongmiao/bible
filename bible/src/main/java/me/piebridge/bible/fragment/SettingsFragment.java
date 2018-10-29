@@ -7,7 +7,6 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import me.piebridge.bible.R;
-import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.activity.SettingsActivity;
 import me.piebridge.bible.utils.NumberUtils;
 

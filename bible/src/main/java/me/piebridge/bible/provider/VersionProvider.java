@@ -1,31 +1,20 @@
-/*
- * vim: set sta sw=4 et:
- *
- * Copyright (C) 2012, 2013 Liu DongMiao <thom@piebridge.me>
- *
- * This program is free software. It comes without any warranty, to
- * the extent permitted by applicable law. You can redistribute it
- * and/or modify it under the terms of the Do What The Fuck You Want
- * To Public License, Version 2, as published by Sam Hocevar. See
- * http://sam.zoy.org/wtfpl/COPYING for more details.
- *
- */
-
-package me.piebridge.bible;
+package me.piebridge.bible.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import java.util.Locale;
+
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.utils.LogUtils;
 
-public class Provider extends ContentProvider {
-
-    private static final String TAG = "me.piebridge.bible$Provider";
+public class VersionProvider extends ContentProvider {
 
     public static final int THOUSAND = 1000;
 
@@ -67,7 +56,7 @@ public class Provider extends ContentProvider {
     private static final int URI_CHAPTERS = 3;
     private static final int URI_BOOK = 4;
 
-    private Bible bible;
+    private BibleApplication application;
 
     private final UriMatcher uriMatcher = buildUriMatcher();
 
@@ -82,7 +71,7 @@ public class Provider extends ContentProvider {
     }
 
     private Cursor queryBook(String query, String books) {
-        SQLiteDatabase database = bible.acquireDatabase();
+        SQLiteDatabase database = application.acquireDatabase();
         if (database == null) {
             return null;
         }
@@ -92,7 +81,7 @@ public class Provider extends ContentProvider {
             StringBuilder selection = new StringBuilder();
             selection.append("(");
             selection.append("human like ?");
-            String osis = bible.getOsis(query);
+            String osis = application.getOsis(query);
             if (!TextUtils.isEmpty(osis)) {
                 selection.append(" or osis = '");
                 selection.append(osis);
@@ -108,7 +97,7 @@ public class Provider extends ContentProvider {
                     selection.toString(),
                     new String[] {"%" + query + "%"}, null, null, "number ASC");
         } finally {
-            bible.releaseDatabase(database);
+            application.releaseDatabase(database);
         }
 
         if (cursor == null) {
@@ -122,7 +111,7 @@ public class Provider extends ContentProvider {
     }
 
     private Cursor queryVerse(String query, String books) {
-        SQLiteDatabase database = bible.acquireDatabase();
+        SQLiteDatabase database = application.acquireDatabase();
         if (database == null) {
             return null;
         }
@@ -133,7 +122,7 @@ public class Provider extends ContentProvider {
                     TextUtils.isEmpty(books) ? "unformatted like ?" : "unformatted like ? and book in (" + books + ")",
                     new String[] {"%" + query + "%"}, null, null, "id ASC");
         } finally {
-            bible.releaseDatabase(database);
+            application.releaseDatabase(database);
         }
 
         if (cursor == null) {
@@ -147,7 +136,7 @@ public class Provider extends ContentProvider {
     }
 
     private Cursor getVerse(String id) {
-        SQLiteDatabase database = bible.acquireDatabase();
+        SQLiteDatabase database = application.acquireDatabase();
         if (database == null) {
             return null;
         }
@@ -157,7 +146,7 @@ public class Provider extends ContentProvider {
             cursor = database.query(TABLE_VERSES, COLUMNS_VERSES,
                     "_id = ?", new String[] {id}, null, null, null);
         } finally {
-            bible.releaseDatabase(database);
+            application.releaseDatabase(database);
         }
 
         if (cursor == null) {
@@ -171,7 +160,7 @@ public class Provider extends ContentProvider {
     }
 
     private Cursor getChapter(String osis) {
-        SQLiteDatabase database = bible.acquireDatabase();
+        SQLiteDatabase database = application.acquireDatabase();
         if (database == null) {
             return null;
         }
@@ -181,14 +170,14 @@ public class Provider extends ContentProvider {
             if (!osis.equals("null")) {
                 cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTER,
                         "reference_osis = ? or reference_osis = ?",
-                        new String[] {osis, osis.replace(Bible.INTRO, "1")},
+                        new String[] {osis, application.removeIntro(osis)},
                         null, null, "id", "1");
             } else {
                 cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTER,
                         null, null, null, null, null, "1");
             }
         } finally {
-            bible.releaseDatabase(database);
+            application.releaseDatabase(database);
         }
 
         if (cursor == null) {
@@ -202,7 +191,7 @@ public class Provider extends ContentProvider {
     }
 
     private Cursor getChapters() {
-        SQLiteDatabase database = bible.acquireDatabase();
+        SQLiteDatabase database = application.acquireDatabase();
         if (database == null) {
             return null;
         }
@@ -212,7 +201,7 @@ public class Provider extends ContentProvider {
             cursor = database.query(TABLE_CHAPTERS, COLUMNS_CHAPTERS,
                     null, null, null, null, null);
         } finally {
-            bible.releaseDatabase(database);
+            application.releaseDatabase(database);
         }
 
         if (cursor == null) {
@@ -227,20 +216,30 @@ public class Provider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        LogUtils.d("onCreate");
-        return true;
+        Context context = getContext();
+        if (context instanceof BibleApplication) {
+            LogUtils.d("onCreate " + AUTHORITY);
+            application = (BibleApplication) context;
+            return true;
+        } else {
+            LogUtils.d("context " + context + " is not application");
+            return false;
+        }
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        if (bible == null) {
-            bible = Bible.getInstance(getContext().getApplicationContext());
+        if (application == null) {
+            return null;
         }
 
         String version = uri.getFragment();
-        LogUtils.d("query uri: " + uri + ", version: " + version + ", databaseVersion: " + bible.getVersion());
-        if (!TextUtils.isEmpty(version) && !bible.setVersion(version)) {
-            return null;
+        LogUtils.d("query uri: " + uri + ", version: " + version);
+        if (!TextUtils.isEmpty(version)) {
+            String normalizedVersion = version.toLowerCase(Locale.US);
+            if (!normalizedVersion.equalsIgnoreCase(application.getVersion()) && !application.setVersion(normalizedVersion)) {
+                LogUtils.w("cannot switch to version " + normalizedVersion);
+            }
         }
 
         switch (uriMatcher.match(uri)) {

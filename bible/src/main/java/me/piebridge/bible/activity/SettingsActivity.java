@@ -7,10 +7,11 @@ import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
-import me.piebridge.bible.Bible;
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.FontsizeFragment;
 import me.piebridge.bible.fragment.SettingsFragment;
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 
@@ -40,9 +41,10 @@ public class SettingsActivity extends ToolbarActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        Bible bible = Bible.getInstance(getApplication());
-        fontsizeTitle = getString(R.string.fontsize, bible.getVersionName(bible.getVersion()));
-        fontsizeKey = AbstractReadingActivity.FONT_SIZE + "-" + bible.getVersion();
+        BibleApplication application = (BibleApplication) getApplication();
+        String version = application.getVersion();
+        fontsizeTitle = getString(R.string.fontsize, application.getName(version));
+        fontsizeKey = AbstractReadingActivity.FONT_SIZE + "-" + BibleUtils.removeDemo(version);
 
         defaultFontsizeTitle = getString(R.string.fontsize, getString(R.string.reset));
         defaultFontsizeKey = AbstractReadingActivity.FONT_SIZE + "-default";
