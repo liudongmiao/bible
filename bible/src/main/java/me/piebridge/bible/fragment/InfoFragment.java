@@ -28,7 +28,7 @@ public class InfoFragment extends AbstractDialogFragment {
         return builder.create();
     }
 
-    public void setMessage(String title, String message, String extra) {
+    public void setMessage(String title, String message) {
         Bundle arguments = getArguments();
         arguments.putString(TITLE, title);
         arguments.putString(MESSAGE, message);

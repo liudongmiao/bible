@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -48,10 +49,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.net.ssl.SSLException;
+
 import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.R;
+import me.piebridge.bible.component.DownloadComponent;
 import me.piebridge.bible.fragment.DeleteVersionConfirmFragment;
+import me.piebridge.bible.fragment.InfoFragment;
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
 public class VersionsActivity extends ToolbarActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener,
@@ -60,6 +66,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     private static final long LATER = 250;
 
     private static final String FRAGMENT_CONFIRM = "fragment-confirm";
+    private static final String FRAGMENT_INFO = "fragment-info";
 
     private RecyclerView recyclerView;
     private VersionAdapter versionsAdaper;
@@ -73,6 +80,8 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     private static final int DELETE_VERSION = 1;
     private static final int UPDATE_VERSIONS = 2;
     private static final int UPDATE_ACTIONS = 3;
+    private static final int ADDED_VERSION = 4;
+    private static final int SSL_EXCEPTION = 5;
 
     private BroadcastReceiver receiver;
 
@@ -92,6 +101,8 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         mainHandler = new MainHandler(this);
         workHandler = new WorkHandler(this);
 
+        handleIntent(getIntent());
+
         recyclerView.setAdapter(versionsAdaper);
 
         try {
@@ -106,9 +117,31 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         receiver = new Receiver(this);
     }
 
-    void checkZip(File file) {
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        final Uri uri = intent.getData();
+        if (uri != null) {
+            final String path = uri.getPath();
+            final String segment = uri.getLastPathSegment();
+            if ("file".equals(uri.getScheme()) && path != null && DownloadComponent.isBibleData(segment)) {
+                workHandler.obtainMessage(ADD_VERSION, path).sendToTarget();
+            }
+        }
+    }
+
+    void checkZip(String path) {
         BibleApplication application = (BibleApplication) getApplication();
-        if (application.addBibleData(file)) {
+        File file = new File(path);
+        String version = DownloadComponent.getVersion(file);
+        LogUtils.d("file: " + file + ", version: " + version);
+        if (!TextUtils.isEmpty(version) && application.addBibleData(file)) {
+            application.cancelDownload(file.getName());
+            mainHandler.obtainMessage(ADDED_VERSION, version).sendToTarget();
             updateActionsLater();
         }
     }
@@ -248,8 +281,11 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
             if (!TextUtils.isEmpty(versions)) {
                 mainHandler.obtainMessage(UPDATE_VERSIONS, versions).sendToTarget();
             }
-        } catch (IOException ignore) {
-            // do nothing
+        } catch (SSLException e) {
+            LogUtils.w("cannot update versions", e);
+            mainHandler.sendEmptyMessage(SSL_EXCEPTION);
+        } catch (IOException e) {
+            LogUtils.w("cannot update versions", e);
         }
     }
 
@@ -296,7 +332,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         if (filename != null) {
             File file = new File(getExternalCacheDir(), filename);
             if (file.exists()) {
-                workHandler.obtainMessage(ADD_VERSION, file).sendToTarget();
+                workHandler.obtainMessage(ADD_VERSION, file.getPath()).sendToTarget();
                 return;
             }
         }
@@ -318,6 +354,32 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
 
     public void confirmDelete(String extra) {
         workHandler.obtainMessage(DELETE_VERSION, extra).sendToTarget();
+    }
+
+    void onAddedVersion(String version) {
+        BibleApplication application = (BibleApplication) getApplication();
+        String fullname = application.getFullname(version);
+        if (!TextUtils.isEmpty(fullname)) {
+            String message = getString(R.string.new_version, fullname);
+            LogUtils.d("message: " + message);
+            Snackbar.make(findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    void onSslException() {
+        showMessage(getString(R.string.ssl_exception));
+    }
+
+    private void showMessage(String message) {
+        final String tag = FRAGMENT_INFO;
+        FragmentManager manager = getSupportFragmentManager();
+        InfoFragment fragment = (InfoFragment) manager.findFragmentByTag(tag);
+        if (fragment != null) {
+            fragment.dismiss();
+        }
+        fragment = new InfoFragment();
+        fragment.setMessage(getString(R.string.info), message);
+        fragment.show(manager, tag);
     }
 
     static class Receiver extends BroadcastReceiver {
@@ -362,6 +424,14 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                     activity.updateActions();
                     removeMessages(UPDATE_ACTIONS);
                     break;
+                case ADDED_VERSION:
+                    activity.onAddedVersion((String) msg.obj);
+                    break;
+                case SSL_EXCEPTION:
+                    activity.onSslException();
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -390,7 +460,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
             }
             switch (msg.what) {
                 case ADD_VERSION:
-                    activity.checkZip((File) msg.obj);
+                    activity.checkZip((String) msg.obj);
                     break;
                 case DELETE_VERSION:
                     activity.deleteVersion((String) msg.obj);
@@ -552,10 +622,19 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                 return R.string.cancel_install;
             } else if (TextUtils.isEmpty(date)) {
                 return R.string.install;
-            } else if (ObjectUtils.equals(item.date, date)) {
-                return R.string.uninstall;
-            } else {
+            } else if (isNewer(item.date, date)) {
+                LogUtils.d("version: " + item.code + ", current: " + date + ", latest: " + item.date);
                 return R.string.update;
+            } else {
+                return R.string.uninstall;
+            }
+        }
+
+        private boolean isNewer(String latest, String current) {
+            if (TextUtils.isDigitsOnly(latest) && TextUtils.isDigitsOnly(current)) {
+                return NumberUtils.parseInt(latest) > NumberUtils.parseInt(current);
+            } else {
+                return false;
             }
         }
 

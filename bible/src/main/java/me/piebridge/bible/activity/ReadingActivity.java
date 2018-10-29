@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
@@ -141,7 +142,7 @@ public class ReadingActivity extends AbstractReadingActivity {
             LogUtils.d("version changed from " + currentVersion + " to " + databaseVersion);
             refreshAdapter();
         }
-        if (BibleUtils.isDemoVersion(databaseVersion)) {
+        if (BibleUtils.isDemoVersion(databaseVersion) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             String version = BibleUtils.removeDemo(databaseVersion);
             int id = getResources().getIdentifier(version, "string", BuildConfig.APPLICATION_ID);
             if (id != 0) {

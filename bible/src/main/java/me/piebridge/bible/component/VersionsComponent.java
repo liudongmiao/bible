@@ -158,7 +158,7 @@ public class VersionsComponent {
         }
     }
 
-    public String getVersion(File file) {
+    public static String getVersion(File file) {
         if (file == null || !file.isFile()) {
             return null;
         }

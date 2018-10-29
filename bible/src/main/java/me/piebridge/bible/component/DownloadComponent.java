@@ -210,11 +210,11 @@ public class DownloadComponent extends Handler {
         return false;
     }
 
-    private boolean isBibleData(String name) {
-        return name.startsWith("bibledata-") && name.endsWith(".zip");
+    public static boolean isBibleData(String name) {
+        return name != null && name.startsWith("bibledata-") && name.endsWith(".zip");
     }
 
-    private String getVersion(File file) {
+    public static String getVersion(File file) {
         if (file == null || !file.isFile()) {
             return null;
         }

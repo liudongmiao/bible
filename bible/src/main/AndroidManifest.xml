@@ -37,14 +37,26 @@
 
         <activity
             android:name=".activity.VersionsActivity"
-            android:label="@string/menu_download"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:label="@string/menu_download"
             android:parentActivityName=".Chapter"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="me.piebridge.bible.intent.action.DOWNLOAD" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="*"
+                    android:mimeType="application/zip"
+                    android:scheme="file" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Chapter" />
@@ -52,8 +64,8 @@
 
         <activity
             android:name=".activity.ReadingItemsActivity"
-            android:exported="false"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:exported="false"
             android:parentActivityName=".Chapter"
             android:theme="@style/light">
             <meta-data

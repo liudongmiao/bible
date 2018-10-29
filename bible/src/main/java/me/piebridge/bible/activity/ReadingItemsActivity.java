@@ -182,7 +182,7 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         fragment = new InfoFragment();
         BibleApplication application = (BibleApplication) getApplication();
         fragment.setMessage(getString(R.string.info),
-                getString(R.string.version_no_chapter_info, application.getFullname(version), human), version);
+                getString(R.string.version_no_chapter_info, application.getFullname(version), human));
         fragment.show(manager, tag);
     }
 
