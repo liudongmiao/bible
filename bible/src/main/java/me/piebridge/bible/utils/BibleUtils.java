@@ -9,8 +9,8 @@ import java.io.File;
 import java.math.BigDecimal;
 
 import me.piebridge.bible.R;
-import me.piebridge.bible.component.VersionComponent;
 import me.piebridge.bible.activity.AbstractReadingActivity;
+import me.piebridge.bible.component.VersionComponent;
 import me.piebridge.bible.provider.VersionProvider;
 
 /**

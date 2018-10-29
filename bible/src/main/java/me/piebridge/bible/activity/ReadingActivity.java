@@ -34,7 +34,7 @@ import me.piebridge.bible.utils.ObjectUtils;
 /**
  * Created by thom on 15/10/18.
  */
-public class ReadingActivity extends AbstractReadingActivity {
+public class ReadingActivity extends DrawerActivity {
 
     public static final String WEBVIEW_DATA = "webview-data";
 
@@ -135,6 +135,7 @@ public class ReadingActivity extends AbstractReadingActivity {
     @Override
     public void onResume() {
         super.onResume();
+        setCheckedItem(R.id.menu_reading);
         String currentVersion = getCurrentVersion();
         BibleApplication application = (BibleApplication) getApplication();
         String databaseVersion = application.getVersion();

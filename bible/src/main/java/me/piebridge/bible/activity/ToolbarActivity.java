@@ -35,9 +35,11 @@ public abstract class ToolbarActivity extends AppCompatActivity {
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
         Toolbar toolbar = findViewById(getToolbarActionbarId());
-        titleView = toolbar.findViewById(getToolbarTitleId());
-        setTitle(getTitle());
-        setSupportActionBar(toolbar);
+        if (toolbar != null) {
+            titleView = toolbar.findViewById(getToolbarTitleId());
+            setTitle(getTitle());
+            setSupportActionBar(toolbar);
+        }
     }
 
     protected int getToolbarActionbarId() {

@@ -11,7 +11,6 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -22,7 +21,7 @@ import me.piebridge.bible.R;
 /**
  * Created by thom on 16/7/24.
  */
-public abstract class DrawerActivity extends AppCompatActivity
+public abstract class DrawerActivity extends AbstractReadingActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int DELAY = 250;

@@ -66,11 +66,11 @@
             android:name=".activity.ReadingItemsActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
-            android:parentActivityName=".Chapter"
+            android:parentActivityName=".activity.SearchActivity"
             android:theme="@style/light">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Chapter" />
+                android:value=".activity.SearchActivity" />
         </activity>
 
         <activity

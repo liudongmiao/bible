@@ -47,7 +47,7 @@ import me.piebridge.bible.utils.ThemeUtils;
 /**
  * Created by thom on 15/10/18.
  */
-public abstract class AbstractReadingActivity extends DrawerActivity
+public abstract class AbstractReadingActivity extends ToolbarActivity
         implements ReadingBridge.Bridge, View.OnClickListener, ViewPager.OnPageChangeListener,
         AppBarLayout.OnOffsetChangedListener {
 
@@ -150,8 +150,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         super.onResume();
         if (ThemeUtils.isDark(this) != mDark) {
             recreate();
-        } else {
-            setCheckedItem(R.id.menu_reading);
         }
     }
 
