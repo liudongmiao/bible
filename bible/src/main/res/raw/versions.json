@@ -1,1 +1,1059 @@
-{"languages":{"xh":"isiXhosa (Xhosa)","en":"English","ve":"Tshiven\u1e13a (Venda)","vi":"Ti\u1ebfng Vi\u1ec7t (Vietnamese)","zu":"isiZulu (Zulu)","ib":"Iban","ig":"As\u1ee5s\u1ee5 Igbo (Igbo)","nl":"Nederlands (Dutch)","pt":"Portugu\u00eas (Portuguese)","zh-tw":"\u7e41\u9ad4\u4e2d\u6587 (Traditional Chinese)","nb":"isiNdebele (Southern Ndebele)","ts":"Xitsonga (Tsonga)","tn":"Setswana (Tswana)","zh-cn":"\u7b80\u4f53\u4e2d\u6587 (Simplified Chinese)","tl":"Filipino (Tagalog)","es":"Espa\u00f1ol (Spanish)","cb":"Cebuano","ns":"Sesotho sa Leboa (Northern Sotho)","fr":"Fran\u00e7ais (French)","yo":"Yor\u00f9b\u00e1 (Yoruba)","ht":"Krey\u00f2l ayisyen (Haitian Creole)","hi":"\u0939\u093f\u0928\u094d\u0926\u0940 (Hindi)","hl":"Ilonggo (Hiligaynon)","dt":"Central Dusun / Kadazan (Boros Dusun)","ss":"SiSwati (Swati)","sw":"Kiswahili (Swahili)","sk":"Sloven\u010dina (Slovak)","ms":"Melayu (Malay)","my":"\u1017\u1019\u102c\u1005\u102c(Burmese)"},"versions":[{"lang":"cb","date":"20140407","code":"rcpv","name":"Ang Bag-ong Maayong Balita Biblia"},{"lang":"dt","date":"20140409","code":"bdk","name":"Buuk Do Kinorohingan"},{"lang":"en","date":"20140329","code":"amp","name":"Amplified Bible"},{"lang":"en","date":"20140329","code":"cev","name":"Contemporary English Version (US Version)"},{"lang":"en","date":"20140301","code":"cjb","name":"Complete Jewish Bible"},{"lang":"en","date":"20140304","code":"erv","name":"Easy-to-Read Version"},{"lang":"en","date":"20140309","code":"esv","name":"English Standard Version"},{"lang":"en","date":"20140329","code":"gnt","name":"Good News Translation"},{"lang":"en","date":"20140303","code":"gw","name":"GOD\u2019S WORD Translation"},{"lang":"en","date":"20140329","code":"hcsb","name":"Holman Christian Standard Bible"},{"lang":"en","date":"20140303","code":"kjv","name":"King James Version"},{"lang":"en","date":"20140326","code":"leb","name":"Lexham English Bible"},{"lang":"en","date":"20140303","code":"msg","name":"The Message"},{"lang":"en","date":"20140329","code":"nabre","name":"New American Bible, Revised Edition"},{"lang":"en","date":"20140317","code":"nasb","name":"New American Standard Bible"},{"lang":"en","date":"20140312","code":"ncv","name":"New Century Version"},{"lang":"en","date":"20140319","code":"net","name":"New English Translation"},{"lang":"en","date":"20140320","code":"niv1984","name":"New International Version 1984"},{"lang":"en","date":"20140320","code":"niv2011","name":"New International Version"},{"lang":"en","date":"20140303","code":"nkjv","name":"New King James Version"},{"lang":"en","date":"20140303","code":"nlt","name":"New Living Translation"},{"lang":"en","date":"20140325","code":"nog","name":"Names of God Bible"},{"lang":"en","date":"20140403","code":"ojb","name":"Orthodox Jewish Bible"},{"lang":"en","date":"20140303","code":"tlb","name":"Living Bible"},{"lang":"es","date":"20140303","code":"nvi","name":"Nueva Versi\u00f3n Internacional"},{"lang":"es","date":"20140303","code":"rvr60","name":"Biblia Reina Valera 1960"},{"lang":"fr","date":"20140415","code":"lsg","name":"Bible Segond 1910"},{"lang":"fr","date":"20140310","code":"sg21","name":"Segond 21"},{"lang":"hi","date":"20140418","code":"ervhi","name":"Hindi Bible: Easy-to-Read Version"},{"lang":"hl","date":"20140317","code":"hlgn","name":"Ang Pulong Sang Dios"},{"lang":"ht","date":"20140311","code":"hcv","name":"Haitian Creole Version"},{"lang":"ib","date":"20140518","code":"bk","name":"Bup Kudus"},{"lang":"ig","date":"20140330","code":"igbob","name":"Bible Nso"},{"lang":"ms","date":"20140310","code":"bmdc","name":"Alkitab Berita Baik (+Deuterokanonika)"},{"lang":"my","date":"20140401","code":"bjb","name":"Judson Bible"},{"lang":"nb","date":"20140310","code":"snd12","name":"IsiNdebele 2012 Translation"},{"lang":"nl","date":"20140408","code":"nbg51","name":"NBG-vertaling 1951"},{"lang":"ns","date":"20140310","code":"nso00","name":"BIBELE Taba yea Botse"},{"lang":"ns","date":"20140310","code":"nso51","name":"BIBELE"},{"lang":"pt","date":"20140329","code":"nvipt","name":"Nova Vers\u00e3o Internacional"},{"lang":"sk","date":"20140317","code":"seb","name":"Slovensk\u00fd Ekumenick\u00fd Biblia"},{"lang":"ss","date":"20140407","code":"swt","name":"Siswati 1996 Bible"},{"lang":"sw","date":"20140310","code":"bhn","name":"Biblia Habari Njema"},{"lang":"sw","date":"20140310","code":"suv","name":"Swahili Union Version"},{"lang":"tl","date":"20140310","code":"mbb05","name":"Magandang Balita Biblia (2005)"},{"lang":"tn","date":"20140310","code":"tsw08no","name":"BAEBELE e e Boitshepo"},{"lang":"tn","date":"20140310","code":"tsw70","name":"BEIBELE"},{"lang":"ts","date":"20140310","code":"tso29no","name":"Xitsonga (Bibele)"},{"lang":"ts","date":"20140310","code":"tso89","name":"BIBELE Mahungu Lamanene"},{"lang":"ve","date":"20140416","code":"ven98","name":"BIVHILI KHETHWA Mafhungo Madifha"},{"lang":"vi","date":"20140331","code":"rvv11","name":"Revised Vietnamese Version Bible"},{"lang":"xh","date":"20140327","code":"xho75","name":"IZIBHALO EZINGCWELE"},{"lang":"xh","date":"20140327","code":"xho96","name":"IBHAYIBHILE"},{"lang":"yo","date":"20140227","code":"bm","name":"BIBELI MIM\u1ecc"},{"lang":"zh-cn","date":"20140301","code":"ccb","name":"\u5f53\u4ee3\u8bd1\u672c"},{"lang":"zh-cn","date":"20140301","code":"cunpss","name":"\u65b0\u6807\u70b9\u548c\u5408\u672c"},{"lang":"zh-cn","date":"20140301","code":"rcuvss","name":"\u548c\u5408\u672c\u4fee\u8ba2\u7248"},{"lang":"zh-tw","date":"20140308","code":"cnvt","name":"\u65b0\u8b6f\u672c"},{"lang":"zh-tw","date":"20140301","code":"cunpts","name":"\u65b0\u6a19\u9ede\u548c\u5408\u672c"},{"lang":"zh-tw","date":"20140301","code":"rcuvts","name":"\u548c\u5408\u672c\u4fee\u8a02\u7248"},{"lang":"zu","date":"20140310","code":"zul59","name":"IBHAYIBHELI ELINGCWELE"}]}
+{
+ "languages":{
+  "af":"Afrikaans",
+  "ar":"ﺎﻠﻋﺮﺒﻳﺓ(Arabic)",
+  "bc":"Central Bicolano",
+  "cb":"Cebuano",
+  "cy":"Cymraeg (Welsh)",
+  "de":"Deutsch (German)",
+  "dt":"Central Dusun / Kadazan (Boros Dusun)",
+  "el":"ελληνικά(Greek)",
+  "en":"English",
+  "es":"Español (Spanish)",
+  "fj":"Fijian",
+  "fr":"Français (French)",
+  "gr":"Κοινη (Greek)",
+  "ha":"Hausa",
+  "he":"עברית (Hebrew)",
+  "hi":"हिन्दी (Hindi)",
+  "hl":"Ilonggo (Hiligaynon)",
+  "hr":"Hrvatski (Croatian)",
+  "ht":"Kreyòl ayisyen (Haitian Creole)",
+  "ib":"Iban",
+  "id":"Bahasa Indonesia (Indonesian)",
+  "ig":"Asụsụ Igbo (Igbo)",
+  "il":"Iloko",
+  "it":"Italiano (Italian)",
+  "ja":"日本語 (Japanese)",
+  "jr":"Jarai",
+  "kj":"Kuanyama (Kwanyama)",
+  "kp":"Mountain Koiali",
+  "kr":"한국어 (Korean)",
+  "mi":"Maori",
+  "mr":"मराठी(Marathi)",
+  "ms":"Melayu (Malay)",
+  "my":"ဗမာစာ(Burmese)",
+  "nb":"isiNdebele (Southern Ndebele)",
+  "ne":"नेपाली (Nepali)",
+  "ng":"Owambo (Ndonga)",
+  "nl":"Nederlands (Dutch)",
+  "no":"Norsk (Norwegian)",
+  "ns":"Sesotho sa Leboa (Northern Sotho)",
+  "nz":"Zeme Naga",
+  "or":"ଓଡ଼ିଆ (Oriya)",
+  "pa":"ਪੰਜਾਬੀ(Punjabi)",
+  "pg":"Pangasinan",
+  "pm":"Kapampangan",
+  "pt":"Português (Portuguese)",
+  "ro":"Română (Romanian)",
+  "ru":"русский язык(Russian)",
+  "rw":"Kinyarwanda",
+  "sk":"Slovenčina (Slovak)",
+  "so":"Sesotho (Southern Sotho)",
+  "sp":"Kalenjin (Sabaot)",
+  "ss":"SiSwati (Swati)",
+  "sw":"Kiswahili (Swahili)",
+  "ta":"தமிழ் (Tamil)",
+  "th":"ไทย (Thai)",
+  "tl":"Filipino (Tagalog)",
+  "tn":"Setswana (Tswana)",
+  "to":"lea fakatonga (Tongan)",
+  "tr":"Türkçe (Turkish)",
+  "ts":"Xitsonga (Tsonga)",
+  "tw":"Twi",
+  "ve":"Tshivenḓa (Venda)",
+  "vi":"Tiếng Việt (Vietnamese)",
+  "xh":"isiXhosa (Xhosa)",
+  "yo":"Yorùbá (Yoruba)",
+  "zh-cn":"简体中文 (Simplified Chinese)",
+  "zh-tw":"繁體中文 (Traditional Chinese)",
+  "zo":"Zou",
+  "zu":"isiZulu (Zulu)"
+ },
+ "versions":[
+  {
+   "code":"afr53",
+   "date":"20181020",
+   "lang":"af",
+   "name":"Afrikaans 1933/1953"
+  },
+  {
+   "code":"afr83",
+   "date":"20151216",
+   "lang":"af",
+   "name":"Afrikaans 1983"
+  },
+  {
+   "code":"alab",
+   "date":"20151216",
+   "lang":"ar",
+   "name":"Arabic Life Application Bible"
+  },
+  {
+   "code":"avddv",
+   "date":"20160114",
+   "lang":"ar",
+   "name":"New Van Dyck Bible (Reduced Vocalization with Helps)"
+  },
+  {
+   "code":"ervar",
+   "date":"20151216",
+   "lang":"ar",
+   "name":"Arabic Bible: Easy-to-Read Version"
+  },
+  {
+   "code":"nav",
+   "date":"20151216",
+   "lang":"ar",
+   "name":"Ketab El Hayat"
+  },
+  {
+   "code":"bpv",
+   "date":"20151216",
+   "lang":"bc",
+   "name":"Marahay na Bareta Biblia"
+  },
+  {
+   "code":"apsd",
+   "date":"20151216",
+   "lang":"cb",
+   "name":"Ang Pulong Sa Dios"
+  },
+  {
+   "code":"rcpv",
+   "date":"20151216",
+   "lang":"cb",
+   "name":"Ang Bag-ong Maayong Balita Biblia"
+  },
+  {
+   "code":"bcnd",
+   "date":"20161223",
+   "lang":"cy",
+   "name":"Beibl Cymraeg Newydd Diwygiedig 2004"
+  },
+  {
+   "code":"ngude",
+   "date":"20151216",
+   "lang":"de",
+   "name":"Neue Genfer Übersetzung"
+  },
+  {
+   "code":"sch2000",
+   "date":"20151216",
+   "lang":"de",
+   "name":"Schlachter 2000"
+  },
+  {
+   "code":"bdk",
+   "date":"20151216",
+   "lang":"dt",
+   "name":"Buuk Do Kinorohingan"
+  },
+  {
+   "code":"tr1550",
+   "date":"20151216",
+   "lang":"el",
+   "name":"1550 Stephanus New Testament"
+  },
+  {
+   "code":"tr1894",
+   "date":"20151216",
+   "lang":"el",
+   "name":"1894 Scrivener New Testament"
+  },
+  {
+   "code":"akjv",
+   "date":"20161108",
+   "lang":"en",
+   "name":"Authorized (King James) Version"
+  },
+  {
+   "code":"amp",
+   "date":"20150911",
+   "lang":"en",
+   "name":"Amplified Bible"
+  },
+  {
+   "code":"ampc",
+   "date":"20151007",
+   "lang":"en",
+   "name":"Amplified Bible, Classic Edition"
+  },
+  {
+   "code":"asv",
+   "date":"20151216",
+   "lang":"en",
+   "name":"The Holy Bible, American Standard Version"
+  },
+  {
+   "code":"ceb",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Common English Bible"
+  },
+  {
+   "code":"cev",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Contemporary English Version (US Version)"
+  },
+  {
+   "code":"cevd",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Contemporary English Version (US Version)"
+  },
+  {
+   "code":"cjb",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Complete Jewish Bible"
+  },
+  {
+   "code":"dlnt",
+   "date":"20181026",
+   "lang":"en",
+   "name":"Disciples’ Literal New Testament"
+  },
+  {
+   "code":"dra",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Douay-Rheims 1899 American Edition"
+  },
+  {
+   "code":"erv",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Easy-to-Read Version"
+  },
+  {
+   "code":"esv",
+   "date":"20151216",
+   "lang":"en",
+   "name":"English Standard Version"
+  },
+  {
+   "code":"exb",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Expanded Bible"
+  },
+  {
+   "code":"gnt",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Good News Translation"
+  },
+  {
+   "code":"gnv",
+   "date":"20151216",
+   "lang":"en",
+   "name":"1599 Geneva Bible"
+  },
+  {
+   "code":"gw",
+   "date":"20151216",
+   "lang":"en",
+   "name":"GOD’S WORD Translation"
+  },
+  {
+   "code":"hcsb",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Holman Christian Standard Bible"
+  },
+  {
+   "code":"icb",
+   "date":"20150616",
+   "lang":"en",
+   "name":"International Children’s Bible"
+  },
+  {
+   "code":"isv",
+   "date":"20151216",
+   "lang":"en",
+   "name":"International Standard Version"
+  },
+  {
+   "code":"jub",
+   "date":"20150918",
+   "lang":"en",
+   "name":"Jubilee Bible 2000"
+  },
+  {
+   "code":"kj21",
+   "date":"20151216",
+   "lang":"en",
+   "name":"21st Century King James Version"
+  },
+  {
+   "code":"kjv",
+   "date":"20151216",
+   "lang":"en",
+   "name":"King James Version"
+  },
+  {
+   "code":"leb",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Lexham English Bible"
+  },
+  {
+   "code":"mev",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Modern English Version"
+  },
+  {
+   "code":"mounce",
+   "date":"20151007",
+   "lang":"en",
+   "name":"Mounce Reverse-Interlinear New Testament"
+  },
+  {
+   "code":"msg",
+   "date":"20151216",
+   "lang":"en",
+   "name":"The Message"
+  },
+  {
+   "code":"nabre",
+   "date":"20151216",
+   "lang":"en",
+   "name":"New American Bible, Revised Edition"
+  },
+  {
+   "code":"nasb",
+   "date":"20151216",
+   "lang":"en",
+   "name":"New American Standard Bible"
+  },
+  {
+   "code":"ncv",
+   "date":"20151216",
+   "lang":"en",
+   "name":"New Century Version"
+  },
+  {
+   "code":"net",
+   "date":"20151216",
+   "lang":"en",
+   "name":"New English Translation"
+  },
+  {
+   "code":"nirv",
+   "date":"20151216",
+   "lang":"en",
+   "name":"New International Reader's Version"
+  },
+  {
+   "code":"niv1984",
+   "date":"20151216",
+   "lang":"en",
+   "name":"New International Version 1984"
+  },
+  {
+   "code":"niv2011",
+   "date":"20151216",
+   "lang":"en",
+   "name":"New International Version"
+  },
+  {
+   "code":"nivuk",
+   "date":"20151027",
+   "lang":"en",
+   "name":"New International Version - UK"
+  },
+  {
+   "code":"nkjv",
+   "date":"20151216",
+   "lang":"en",
+   "name":"New King James Version"
+  },
+  {
+   "code":"nlt",
+   "date":"20151216",
+   "lang":"en",
+   "name":"New Living Translation"
+  },
+  {
+   "code":"nlt2013",
+   "date":"20151216",
+   "lang":"en",
+   "name":"New Living Translation 2013"
+  },
+  {
+   "code":"nlv",
+   "date":"20151216",
+   "lang":"en",
+   "name":"New Life Version"
+  },
+  {
+   "code":"nog",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Names of God Bible"
+  },
+  {
+   "code":"nrsv",
+   "date":"20151216",
+   "lang":"en",
+   "name":"New Revised Standard Version"
+  },
+  {
+   "code":"nrsva",
+   "date":"20151216",
+   "lang":"en",
+   "name":"New Revised Standard Version, Anglicised"
+  },
+  {
+   "code":"ojb",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Orthodox Jewish Bible"
+  },
+  {
+   "code":"phillips",
+   "date":"20150828",
+   "lang":"en",
+   "name":"J.B. Phillips New Testament"
+  },
+  {
+   "code":"rsv",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Revised Standard Version"
+  },
+  {
+   "code":"rsvce",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Revised Standard Version Catholic Edition"
+  },
+  {
+   "code":"tlb",
+   "date":"20151216",
+   "lang":"en",
+   "name":"Living Bible"
+  },
+  {
+   "code":"tlv",
+   "date":"20160405",
+   "lang":"en",
+   "name":"Tree of Life Version"
+  },
+  {
+   "code":"voice",
+   "date":"20151216",
+   "lang":"en",
+   "name":"The Voice"
+  },
+  {
+   "code":"web",
+   "date":"20151216",
+   "lang":"en",
+   "name":"World English Bible"
+  },
+  {
+   "code":"webbe",
+   "date":"20161223",
+   "lang":"en",
+   "name":"World English Bible British Edition"
+  },
+  {
+   "code":"ylt",
+   "date":"20181028",
+   "lang":"en",
+   "name":"Young's Literal Translation"
+  },
+  {
+   "code":"bhti",
+   "date":"20151216",
+   "lang":"es",
+   "name":"La Biblia Hispanoamericana (Traducción Interconfesional, versión hispanoamericana)"
+  },
+  {
+   "code":"bl92",
+   "date":"20151216",
+   "lang":"es",
+   "name":"Buku Lopatulika 1992"
+  },
+  {
+   "code":"dhh",
+   "date":"20151216",
+   "lang":"es",
+   "name":"Biblia Dios Habla Hoy (sin notas ni ayudas)"
+  },
+  {
+   "code":"nblh",
+   "date":"20151216",
+   "lang":"es",
+   "name":"Nueva Biblia Latinoamericana de Hoy"
+  },
+  {
+   "code":"ntv",
+   "date":"20151216",
+   "lang":"es",
+   "name":"Nueva Traducción Viviente"
+  },
+  {
+   "code":"nvi",
+   "date":"20151216",
+   "lang":"es",
+   "name":"Nueva Versión Internacional"
+  },
+  {
+   "code":"rvc",
+   "date":"20151216",
+   "lang":"es",
+   "name":"Reina Valera Contemporánea"
+  },
+  {
+   "code":"rvr1995",
+   "date":"20160127",
+   "lang":"es",
+   "name":"Reina-Valera 1995"
+  },
+  {
+   "code":"rvr60",
+   "date":"20151216",
+   "lang":"es",
+   "name":"Biblia Reina Valera 1960"
+  },
+  {
+   "code":"rvr95",
+   "date":"20151216",
+   "lang":"es",
+   "name":"Biblia Reina Valera 1995"
+  },
+  {
+   "code":"tla",
+   "date":"20151216",
+   "lang":"es",
+   "name":"Traducción en Lenguaje Actual"
+  },
+  {
+   "code":"fnvdc",
+   "date":"20150830",
+   "lang":"fj",
+   "name":"Vakavakadewa Vou kei na iVola tale eso"
+  },
+  {
+   "code":"bds",
+   "date":"20151216",
+   "lang":"fr",
+   "name":"La Bible du Semeur"
+  },
+  {
+   "code":"frc97",
+   "date":"20170808",
+   "lang":"fr",
+   "name":"La Bible en français courant"
+  },
+  {
+   "code":"lsg",
+   "date":"20151216",
+   "lang":"fr",
+   "name":"Bible Segond 1910"
+  },
+  {
+   "code":"neg1979",
+   "date":"20160724",
+   "lang":"fr",
+   "name":"Nouvelle Edition de Genève – NEG1979"
+  },
+  {
+   "code":"sg21",
+   "date":"20151216",
+   "lang":"fr",
+   "name":"Segond 21"
+  },
+  {
+   "code":"sblgnt",
+   "date":"20151201",
+   "lang":"gr",
+   "name":"SBL Greek New Testament"
+  },
+  {
+   "code":"hau",
+   "date":"20151216",
+   "lang":"ha",
+   "name":"Littafi Mai Tsarki"
+  },
+  {
+   "code":"hhh",
+   "date":"20151216",
+   "lang":"he",
+   "name":"Habrit Hakhadasha/Haderekh"
+  },
+  {
+   "code":"wlc",
+   "date":"20151201",
+   "lang":"he",
+   "name":"The Westminster Leningrad Codex"
+  },
+  {
+   "code":"ervhi",
+   "date":"20151216",
+   "lang":"hi",
+   "name":"Hindi Bible: Easy-to-Read Version"
+  },
+  {
+   "code":"hlgn",
+   "date":"20151216",
+   "lang":"hl",
+   "name":"Ang Pulong Sang Dios"
+  },
+  {
+   "code":"hnzri",
+   "date":"20160620",
+   "lang":"hr",
+   "name":"Hrvatski Novi Zavjet – Rijeka 2001"
+  },
+  {
+   "code":"hcv",
+   "date":"20151216",
+   "lang":"ht",
+   "name":"Haitian Creole Version"
+  },
+  {
+   "code":"bk",
+   "date":"20151216",
+   "lang":"ib",
+   "name":"Bup Kudus"
+  },
+  {
+   "code":"bimk",
+   "date":"20151216",
+   "lang":"id",
+   "name":"Alkitab dalam Bahasa Indonesia Masa Kini"
+  },
+  {
+   "code":"tb",
+   "date":"20151216",
+   "lang":"id",
+   "name":"Alkitab Terjemahan Baru"
+  },
+  {
+   "code":"igbob",
+   "date":"20151216",
+   "lang":"ig",
+   "name":"Bible Nso"
+  },
+  {
+   "code":"ripv",
+   "date":"20151216",
+   "lang":"il",
+   "name":"Ti Baro a Naimbag a Damag Biblia"
+  },
+  {
+   "code":"nr2006",
+   "date":"20151202",
+   "lang":"it",
+   "name":"Nuova Riveduta 2006"
+  },
+  {
+   "code":"jlb",
+   "date":"20181019",
+   "lang":"ja",
+   "name":"リビングバイブル"
+  },
+  {
+   "code":"jnt",
+   "date":"20151216",
+   "lang":"jr",
+   "name":"Jarai NT"
+  },
+  {
+   "code":"okyb",
+   "date":"20150605",
+   "lang":"kj",
+   "name":"Ombibeli Iyapuki"
+  },
+  {
+   "code":"kpxnt",
+   "date":"20150830",
+   "lang":"kp",
+   "name":"Iesu Keliso Hotoe Tumu"
+  },
+  {
+   "code":"rnksv",
+   "date":"20151216",
+   "lang":"kr",
+   "name":"Revised New Korean Standard Version"
+  },
+  {
+   "code":"maori",
+   "date":"20150830",
+   "lang":"mi",
+   "name":"Maori Bible"
+  },
+  {
+   "code":"ervmr",
+   "date":"20151216",
+   "lang":"mr",
+   "name":"Marathi Bible: Easy-to-Read Version"
+  },
+  {
+   "code":"bmdc",
+   "date":"20151216",
+   "lang":"ms",
+   "name":"Alkitab Berita Baik (+Deuterokanonika)"
+  },
+  {
+   "code":"bjb",
+   "date":"20151216",
+   "lang":"my",
+   "name":"Judson Bible"
+  },
+  {
+   "code":"snd12",
+   "date":"20151216",
+   "lang":"nb",
+   "name":"IsiNdebele 2012 Translation"
+  },
+  {
+   "code":"ervne",
+   "date":"20151216",
+   "lang":"ne",
+   "name":"Nepali Bible: Easy-to-Read Version"
+  },
+  {
+   "code":"ondb",
+   "date":"20151216",
+   "lang":"ng",
+   "name":"Ombiimbeli Ondjapuki"
+  },
+  {
+   "code":"htb",
+   "date":"20151202",
+   "lang":"nl",
+   "name":"Het Boek"
+  },
+  {
+   "code":"nbg51",
+   "date":"20151216",
+   "lang":"nl",
+   "name":"NBG-vertaling 1951"
+  },
+  {
+   "code":"dnb1930",
+   "date":"20151202",
+   "lang":"no",
+   "name":"Det Norsk Bibelselskap 1930"
+  },
+  {
+   "code":"n11bm",
+   "date":"20150707",
+   "lang":"no",
+   "name":"Bibelen 2011 bokmål"
+  },
+  {
+   "code":"n78bm",
+   "date":"20150707",
+   "lang":"no",
+   "name":"The Bible in Norwegian 1978/85 bokmål"
+  },
+  {
+   "code":"nso00",
+   "date":"20151216",
+   "lang":"ns",
+   "name":"BIBELE Taba yea Botse"
+  },
+  {
+   "code":"nso51",
+   "date":"20151216",
+   "lang":"ns",
+   "name":"BIBELE"
+  },
+  {
+   "code":"nagz",
+   "date":"20181019",
+   "lang":"nz",
+   "name":"KEMCI BIBLE"
+  },
+  {
+   "code":"ervor",
+   "date":"20151216",
+   "lang":"or",
+   "name":"Oriya Bible: Easy-to-Read Version"
+  },
+  {
+   "code":"ervpa",
+   "date":"20151216",
+   "lang":"pa",
+   "name":"Punjabi Bible: Easy-to-Read Version"
+  },
+  {
+   "code":"pnpv",
+   "date":"20151216",
+   "lang":"pg",
+   "name":"Maung a Balita Biblia"
+  },
+  {
+   "code":"pmpv",
+   "date":"20151216",
+   "lang":"pm",
+   "name":"Ing Mayap a Balita Biblia"
+  },
+  {
+   "code":"arc09",
+   "date":"20161108",
+   "lang":"pt",
+   "name":"Edição Revista e Corrigida de João Ferreira de Almeida"
+  },
+  {
+   "code":"nvipt",
+   "date":"20151216",
+   "lang":"pt",
+   "name":"Nova Versão Internacional"
+  },
+  {
+   "code":"bdc",
+   "date":"20161108",
+   "lang":"ro",
+   "name":"Biblia sau Sfânta Scriptură cu Trimiteri 1924 (Dumitru Cornilescu), corectată 2016"
+  },
+  {
+   "code":"ntlr",
+   "date":"20151216",
+   "lang":"ro",
+   "name":"Nouă Traducere În Limba Română"
+  },
+  {
+   "code":"nrt",
+   "date":"20151228",
+   "lang":"ru",
+   "name":"New Russian Translation"
+  },
+  {
+   "code":"synod",
+   "date":"20150927",
+   "lang":"ru",
+   "name":"Синодальный перевод"
+  },
+  {
+   "code":"bysb",
+   "date":"20150829",
+   "lang":"rw",
+   "name":"Bibiliya Yera"
+  },
+  {
+   "code":"seb",
+   "date":"20160705",
+   "lang":"sk",
+   "name":"Slovenský Ekumenický Biblia"
+  },
+  {
+   "code":"sso89so",
+   "date":"20151216",
+   "lang":"so",
+   "name":"BIBELE"
+  },
+  {
+   "code":"spynt",
+   "date":"20151019",
+   "lang":"sp",
+   "name":"Biibilya Nyēē Tiliil"
+  },
+  {
+   "code":"swt",
+   "date":"20151216",
+   "lang":"ss",
+   "name":"Siswati 1996 Bible"
+  },
+  {
+   "code":"bhn",
+   "date":"20151216",
+   "lang":"sw",
+   "name":"Biblia Habari Njema"
+  },
+  {
+   "code":"suv",
+   "date":"20151216",
+   "lang":"sw",
+   "name":"Swahili Union Version"
+  },
+  {
+   "code":"ervta",
+   "date":"20151216",
+   "lang":"ta",
+   "name":"Tamil Bible: Easy-to-Read Version"
+  },
+  {
+   "code":"tbov",
+   "date":"20160119",
+   "lang":"ta",
+   "name":"பரிசுத்த வேதாகமம் தமிழ்"
+  },
+  {
+   "code":"th1971",
+   "date":"20151019",
+   "lang":"th",
+   "name":"ฉบับ1971"
+  },
+  {
+   "code":"mbb05",
+   "date":"20151216",
+   "lang":"tl",
+   "name":"Magandang Balita Biblia (2005)"
+  },
+  {
+   "code":"snd",
+   "date":"20160620",
+   "lang":"tl",
+   "name":"Ang Salita ng Diyos"
+  },
+  {
+   "code":"tsw08no",
+   "date":"20151216",
+   "lang":"tn",
+   "name":"BAEBELE e e Boitshepo"
+  },
+  {
+   "code":"tsw70",
+   "date":"20151216",
+   "lang":"tn",
+   "name":"BEIBELE"
+  },
+  {
+   "code":"rwv",
+   "date":"20150830",
+   "lang":"to",
+   "name":"Tongan Bible (Revised West Version)"
+  },
+  {
+   "code":"tcl02",
+   "date":"20161108",
+   "lang":"tr",
+   "name":"Kutsal Kitap Yeni Ceviri"
+  },
+  {
+   "code":"tso29no",
+   "date":"20151216",
+   "lang":"ts",
+   "name":"Xitsonga (Bibele)"
+  },
+  {
+   "code":"tso89",
+   "date":"20151216",
+   "lang":"ts",
+   "name":"BIBELE Mahungu Lamanene"
+  },
+  {
+   "code":"natwi",
+   "date":"20150921",
+   "lang":"tw",
+   "name":"Nkwa Asem"
+  },
+  {
+   "code":"ervur",
+   "date":"20151216",
+   "lang":"ur",
+   "name":"Urdu Bible: Easy-to-Read Version"
+  },
+  {
+   "code":"urd",
+   "date":"20151216",
+   "lang":"ur",
+   "name":"Revised Urdu Bible"
+  },
+  {
+   "code":"ven98",
+   "date":"20151216",
+   "lang":"ve",
+   "name":"BIVHILI KHETHWA Mafhungo Madifha"
+  },
+  {
+   "code":"bpt",
+   "date":"20161108",
+   "lang":"vi",
+   "name":"Vietnamese Bible: Easy-to-Read Version"
+  },
+  {
+   "code":"rvv11",
+   "date":"20151216",
+   "lang":"vi",
+   "name":"Revised Vietnamese Version Bible"
+  },
+  {
+   "code":"xho75",
+   "date":"20151216",
+   "lang":"xh",
+   "name":"IZIBHALO EZINGCWELE"
+  },
+  {
+   "code":"xho96",
+   "date":"20151216",
+   "lang":"xh",
+   "name":"IBHAYIBHILE"
+  },
+  {
+   "code":"bm",
+   "date":"20151202",
+   "lang":"yo",
+   "name":"BIBELI MIMỌ"
+  },
+  {
+   "code":"ccb",
+   "date":"20151216",
+   "lang":"zh-cn",
+   "name":"当代译本"
+  },
+  {
+   "code":"cnvs",
+   "date":"20151216",
+   "lang":"zh-cn",
+   "name":"圣经新译本"
+  },
+  {
+   "code":"csbs",
+   "date":"20150630",
+   "lang":"zh-cn",
+   "name":"中文标准译本"
+  },
+  {
+   "code":"cunpss",
+   "date":"20150607",
+   "lang":"zh-cn",
+   "name":"新标点和合本"
+  },
+  {
+   "code":"rcuvss",
+   "date":"20151216",
+   "lang":"zh-cn",
+   "name":"和合本修订版"
+  },
+  {
+   "code":"cnvt",
+   "date":"20151216",
+   "lang":"zh-tw",
+   "name":"新譯本"
+  },
+  {
+   "code":"cunpts",
+   "date":"20160720",
+   "lang":"zh-tw",
+   "name":"新標點和合本"
+  },
+  {
+   "code":"rcuvts",
+   "date":"20151216",
+   "lang":"zh-tw",
+   "name":"和合本修訂版"
+  },
+  {
+   "code":"zomi",
+   "date":"20161108",
+   "lang":"zo",
+   "name":"LAISIENGTHOU"
+  },
+  {
+   "code":"zul59",
+   "date":"20151216",
+   "lang":"zu",
+   "name":"IBHAYIBHELI ELINGCWELE"
+  }
+ ]
+}
