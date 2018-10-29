@@ -1,6 +1,7 @@
 package me.piebridge.bible.activity;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 
 import me.piebridge.bible.R;
@@ -44,6 +45,11 @@ public class ReadingCrossActivity extends ReadingItemsActivity {
     @Override
     protected void switchToVersion(String version) {
         // do nothing
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return false;
     }
 
 }

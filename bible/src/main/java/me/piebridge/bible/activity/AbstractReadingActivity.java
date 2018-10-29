@@ -385,12 +385,17 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // FIXME
-        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.theme, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_theme) {
+            ThemeUtils.toggle(this);
+            recreate();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

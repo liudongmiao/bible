@@ -32,4 +32,12 @@ public class ThemeUtils {
         return THEME_DARK.equals(sharedPreferences.getString(THEME, THEME_LIGHT));
     }
 
+    public static void toggle(Activity activity) {
+        if (isDark(activity)) {
+            PreferenceManager.getDefaultSharedPreferences(activity).edit().putString(THEME, THEME_LIGHT).apply();
+        } else {
+            PreferenceManager.getDefaultSharedPreferences(activity).edit().putString(THEME, THEME_DARK).apply();
+        }
+    }
+
 }
