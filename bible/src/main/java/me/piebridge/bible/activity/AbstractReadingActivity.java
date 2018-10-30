@@ -109,6 +109,7 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
     private String mTextColorLink;
     private String mTextColorRed;
 
+    private int mColorBackground;
     private String mBackground;
     private String mBackgroundHighlight;
     private String mBackgroundSelection;
@@ -158,7 +159,8 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
         mTextColorLink = ColorUtils.rgba(ColorUtils.resolve(this, android.R.attr.textColorLink));
         mTextColorRed = ColorUtils.rgba(ColorUtils.resolve(this, R.attr.textColorRed));
 
-        mBackground = ColorUtils.rgba(ColorUtils.resolve(this, android.R.attr.colorBackground));
+        mColorBackground = ColorUtils.resolve(this, android.R.attr.colorBackground);
+        mBackground = ColorUtils.rgba(mColorBackground);
         int backgroundHighlight = ColorUtils.resolve(this, R.attr.backgroundHighlight);
         int backgroundSelection = ColorUtils.resolve(this, R.attr.backgroundSelection);
         mBackgroundHighlight = ColorUtils.rgba(backgroundHighlight);
@@ -728,6 +730,10 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
         intent.putExtra(Intent.EXTRA_TEXT, text);
         intent.setType("text/plain");
         ChooserUtils.startActivityExcludeSelf(this, intent, getString(R.string.share));
+    }
+
+    public int getBackgroundColor() {
+        return mColorBackground;
     }
 
 }

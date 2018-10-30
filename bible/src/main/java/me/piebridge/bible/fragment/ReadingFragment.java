@@ -112,6 +112,7 @@ public class ReadingFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_reading, container, false);
         nestedView = view.findViewById(R.id.nested);
         webView = view.findViewById(R.id.webview);
+        webView.setBackgroundColor(getBackgroundColor());
         webView.setFocusableInTouchMode(false);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.getSettings().setSupportZoom(true);
@@ -200,6 +201,10 @@ public class ReadingFragment extends Fragment {
                 verseBegin, verseStart, verseEnd,
                 search, selectedVerses, highlighted,
                 Arrays.toString(notes), title, body);
+    }
+
+    public int getBackgroundColor() {
+        return ((AbstractReadingActivity) getActivity()).getBackgroundColor();
     }
 
     private String[] keys(Bundle bundle) {
