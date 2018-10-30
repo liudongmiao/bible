@@ -187,18 +187,26 @@ public class SearchFragment extends PreferenceFragmentCompat
 
         String osisFirst = application.getFirstBook();
         String osisLast = application.getLastBook();
-        updateSearch(preferenceSearchAll, application.getHuman(osisFirst), application.getHuman(osisLast));
-        updateSearch(preferenceSearchOld, application.getHuman(OLD_FIRST), application.getHuman(OLD_LAST));
-        updateSearch(preferenceSearchNew, application.getHuman(NEW_FIRST), application.getHuman(NEW_LAST));
-        updateSearch(preferenceSearchGospel, application.getHuman(GOSPEL_FIRST), application.getHuman(GOSPEL_LAST));
+        updateSearch(preferenceSearchAll, application, osisFirst, osisLast);
+        updateSearch(preferenceSearchOld, application, OLD_FIRST, OLD_LAST);
+        updateSearch(preferenceSearchNew, application, NEW_FIRST, NEW_LAST);
+        updateSearch(preferenceSearchGospel, application, GOSPEL_FIRST, GOSPEL_LAST);
     }
 
-    private void updateSearch(Preference preference, String humanFirst, String humanLast) {
+    private void updateSearch(CheckBoxPreference preference, BibleApplication application, String osisFirst, String osisLast) {
+        String humanFirst = application.getHuman(osisFirst);
+        String humanLast = application.getHuman(osisLast);
         if (!TextUtils.isEmpty(humanFirst) && !TextUtils.isEmpty(humanLast)) {
             preference.setSummary(getString(R.string.fromto, humanFirst, humanLast));
         } else {
             preference.setEnabled(false);
             preference.setSummary("");
+        }
+        if (preference.isChecked()) {
+            preferenceSearchFrom.setValue(osisFirst);
+            preferenceSearchFrom.setSummary(humanFirst);
+            preferenceSearchTo.setValue(osisLast);
+            preferenceSearchTo.setSummary(humanLast);
         }
     }
 
