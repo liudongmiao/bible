@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.provider.VersionProvider;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
@@ -53,7 +54,7 @@ public class VersionComponent {
             return false;
         }
         File file = getFile(version);
-        if (!file.isFile()) {
+        if (file == null || !file.isFile()) {
             return false;
         }
         if (mDatabase != null && version.equals(mDatabaseVersion) && !force) {
@@ -150,6 +151,12 @@ public class VersionComponent {
 
     public boolean hasChapter(String version, String osis) {
         File file = getFile(version);
+        if (file == null) {
+            if (mContext instanceof BibleApplication) {
+                ((BibleApplication) mContext).deleteVersion(version);
+            }
+            return false;
+        }
         if (!file.isFile()) {
             return false;
         }
@@ -209,16 +216,12 @@ public class VersionComponent {
     }
 
     protected File getFile(String version) {
-        if (BibleUtils.isDemoVersion(version)) {
-            return new File(mContext.getFilesDir(), version + ".sqlite3");
-        } else {
-            return new File(mContext.getExternalFilesDir(null), version + ".sqlite3");
-        }
+        return VersionsComponent.getFile(mContext, version);
     }
 
     public void deleteVersion(String version) {
         File file = getFile(version);
-        if (file.isFile()) {
+        if (file != null && file.isFile()) {
             //noinspection ResultOfMethodCallIgnored
             file.delete();
         }

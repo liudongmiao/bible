@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.os.Environment;
 import android.text.TextUtils;
 
 import androidx.collection.ArraySet;
 import androidx.collection.SimpleArrayMap;
+import androidx.core.content.ContextCompat;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -18,8 +20,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +32,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import me.piebridge.bible.R;
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
@@ -137,14 +143,15 @@ public class VersionsComponent {
     }
 
     public Collection<String> getVersions() {
-        File dir = mContext.getExternalFilesDir(null);
-        if (dir == null) {
-            LogUtils.w("cannot getExternalFilesDir, use demo versions");
+        List<File> dirs = getDirs(mContext);
+        if (dirs.isEmpty()) {
+            LogUtils.w("no dirs, use demo versions");
             return checkDemoVersions();
         }
         final String key = KEY_VERSIONS + "_mtime";
         long mtime = mPreferenceVersions.getLong(key, 0);
-        if (mtime == dir.lastModified()) {
+        long lastModified = dirs.get(0).lastModified();
+        if (mtime == lastModified) {
             Set<String> versions = mPreferenceVersions.getStringSet(KEY_VERSIONS, null);
             if (versions != null && !versions.isEmpty()) {
                 LogUtils.d("[cache] versions: " + versions.size());
@@ -154,7 +161,7 @@ public class VersionsComponent {
         try {
             return checkVersions();
         } finally {
-            mPreferenceVersions.edit().putLong(key, dir.lastModified()).apply();
+            mPreferenceVersions.edit().putLong(key, lastModified).apply();
         }
     }
 
@@ -169,22 +176,85 @@ public class VersionsComponent {
         return name.substring(0, name.lastIndexOf(DATABASE_SUFFIX)).toLowerCase(Locale.US);
     }
 
+    public static List<File> getDirs(Context context) {
+        List<File> dirs = new ArrayList<>();
+        for (File dir : ContextCompat.getExternalFilesDirs(context, null)) {
+            if (dir != null && dir.isDirectory() && dir.canRead()) {
+                dirs.add(dir);
+            }
+        }
+        File file = new File(Environment.getExternalStorageDirectory(), ".piebridge");
+        if (file.isDirectory()) {
+            if (file.canRead()) {
+                dirs.add(file);
+            } else {
+                LogUtils.d("ignore directory: " + file);
+            }
+        }
+        Collections.sort(dirs, VersionsComponent::compare);
+        return dirs;
+    }
+
+    static int compare(File o1, File o2) {
+        return Long.compare(o2.lastModified(), o1.lastModified());
+    }
+
+    public static File getFile(Context context, String version) {
+        if (BibleUtils.isDemoVersion(version)) {
+            return new File(context.getFilesDir(), version + DATABASE_SUFFIX);
+        } else {
+            return getFile(getDirs(context), version);
+        }
+    }
+
+    public static File getFile(List<File> dirs, String version) {
+        List<File> files = new ArrayList<>();
+        String name = version + DATABASE_SUFFIX;
+        for (File dir : dirs) {
+            File file = new File(dir, name);
+            if (file.isFile() && file.canRead()) {
+                files.add(file);
+            }
+        }
+        if (files.isEmpty()) {
+            return null;
+        }
+        if (files.size() == 1) {
+            return files.get(0);
+        }
+        Collections.sort(files, VersionsComponent::compare);
+        for (File file : files) {
+            LogUtils.d("version: " + version + ", multi file: " + file);
+        }
+        return files.get(0);
+    }
+
+    private Collection<String> checkVersionFiles(List<File> dirs) {
+        Set<String> versions = new ArraySet<>();
+        for (File dir : dirs) {
+            String[] names = dir.list();
+            if (names != null) {
+                for (String name : names) {
+                    String version = getVersion(new File(dir, name));
+                    if (!TextUtils.isEmpty(version)) {
+                        versions.add(version);
+                    }
+                }
+            }
+        }
+        return versions;
+    }
+
     public Collection<String> checkVersions() {
-        File dir = mContext.getExternalFilesDir(null);
-        if (dir == null) {
-            LogUtils.w("cannot getExternalFilesDir, use demo versions");
-            return checkDemoVersions();
-        }
-        String[] names = dir.list();
-        if (names == null || names.length == 0) {
-            return checkDemoVersions();
-        }
+        List<File> dirs = getDirs(mContext);
+        LogUtils.d("dirs: " + dirs);
+        Collection<String> candidate = checkVersionFiles(dirs);
+        LogUtils.d("candidate: " + candidate);
 
         Set<String> versions = new ArraySet<>();
-        for (String name : names) {
-            File file = new File(dir, name);
-            String version = getVersion(file);
-            if (!TextUtils.isEmpty(version)) {
+        for (String version : candidate) {
+            File file = getFile(dirs, version);
+            if (file != null) {
                 String key = version + "_mtime";
                 if (versionChecked && mPreferenceVersions.getLong(key, 0) == file.lastModified()) {
                     versions.add(version);
