@@ -206,7 +206,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
     String getChapter(String book, int chapterId) {
         BibleApplication application = (BibleApplication) getApplication();
         List<String> chapters = application.getChapters(book);
-        return chapters.get(chapterId);
+        return chapters.get(chapterId - 1);
     }
 
     static class MainHandler extends Handler {
