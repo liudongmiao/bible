@@ -3,7 +3,7 @@
     <string name="app_name">簡讀聖經</string>
     <string name="search_hint">經句或關鍵詞</string>
     <string name="search_description">搜尋聖經章節，或者關鍵詞</string>
-    <string name="search_no_results">在“%4$s”本中從“%2$s”至“%3$s”無法找到“%1$s”。</string>
+    <string name="search_no_results">無法找到</string>
     <plurals name="search_results">
        <item quantity="other">在“%5$s”中從“%3$s”至“%4$s”共找到%1$d次“%2$s”：</item>
     </plurals>

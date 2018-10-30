@@ -50,6 +50,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
     private TextView versionView;
 
     private RecyclerView recyclerView;
+    private DividerItemDecoration itemDecoration;
 
     private WorkHandler workHandler;
 
@@ -69,7 +70,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         recyclerView = findViewById(R.id.recycler);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        itemDecoration = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
 
         workHandler = new WorkHandler(this, new MainHandler(this));
 
@@ -187,9 +188,15 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
 
     private void showResults(Cursor[] cursors) {
         if (cursors[0] == null && cursors[1] == null) {
-            recyclerView.setAdapter(null);
+            if (recyclerView.getItemDecorationCount() > 0) {
+                recyclerView.removeItemDecoration(itemDecoration);
+            }
+            recyclerView.setAdapter(new NoResultAdapter());
         } else {
             int color = ColorUtils.resolve(this, R.attr.backgroundSelection);
+            if (recyclerView.getItemDecorationCount() == 0) {
+                recyclerView.addItemDecoration(itemDecoration);
+            }
             recyclerView.setAdapter(new ResultAdapter(this, cursors, mQuery, color));
         }
     }
@@ -316,6 +323,29 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
 
     }
 
+    private static class NoResultAdapter extends RecyclerView.Adapter {
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            View view = inflater.inflate(R.layout.item, parent, false);
+            return new CountViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            CountViewHolder countViewHolder = (CountViewHolder) holder;
+            countViewHolder.typeView.setText(R.string.search_no_results);
+            countViewHolder.countView.setVisibility(View.GONE);
+        }
+
+        @Override
+        public int getItemCount() {
+            return 1;
+        }
+
+    }
 
     private static class ResultAdapter extends RecyclerView.Adapter {
 
@@ -323,7 +353,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         private static final int TYPE_BOOK = 1;
         private static final int TYPE_VERSE = 2;
 
-        private final ResultsActivity mActivity;
+        private final WeakReference<ResultsActivity> mReference;
 
         private final Cursor bookCursor;
         private int bookStart = -1;
@@ -344,7 +374,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         private final int mColor;
 
         public ResultAdapter(ResultsActivity activity, Cursor[] cursors, String query, int color) {
-            this.mActivity = activity;
+            this.mReference = new WeakReference<>(activity);
             this.mQuery = query.toLowerCase(Locale.US);
             this.mColor = color;
 
@@ -378,17 +408,21 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             CardView cardView;
+            ResultsActivity activity = mReference.get();
+            if (activity == null) {
+                throw new UnsupportedOperationException();
+            }
             switch (viewType) {
                 case TYPE_COUNT:
                     View view = inflater.inflate(R.layout.item, parent, false);
                     return new CountViewHolder(view);
                 case TYPE_BOOK:
                     cardView = (CardView) inflater.inflate(R.layout.item_book, parent, false);
-                    cardView.setOnClickListener(mActivity);
+                    cardView.setOnClickListener(activity);
                     return new BookViewHolder(cardView);
                 case TYPE_VERSE:
                     cardView = (CardView) inflater.inflate(R.layout.item_result, parent, false);
-                    cardView.setOnClickListener(mActivity);
+                    cardView.setOnClickListener(activity);
                     return new VerseViewHolder(cardView);
                 default:
                     throw new UnsupportedOperationException();
@@ -397,6 +431,10 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            ResultsActivity activity = mReference.get();
+            if (activity == null) {
+                throw new UnsupportedOperationException();
+            }
             if (position > verseStart && verseStart >= 0) {
                 verseCursor.moveToPosition(position - verseStart - 1);
                 VerseViewHolder verseViewHolder = (VerseViewHolder) holder;
@@ -405,20 +443,20 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
                 bindUnformatted(verseViewHolder.unformattedView);
             } else if (position == verseStart && verseStart >= 0) {
                 CountViewHolder countViewHolder = (CountViewHolder) holder;
-                countViewHolder.typeView.setText(mActivity.getString(R.string.verse));
-                countViewHolder.countView.setText(mActivity.getString(R.string.count, verseEnd - verseStart));
+                countViewHolder.typeView.setText(activity.getString(R.string.verse));
+                countViewHolder.countView.setText(activity.getString(R.string.count, verseEnd - verseStart));
             } else if (position > bookStart && bookStart >= 0) {
                 bookCursor.moveToPosition(position - bookStart - 1);
                 BookViewHolder bookViewHolder = (BookViewHolder) holder;
-                String bookResult = mActivity.getString(R.string.chapters,
+                String bookResult = activity.getString(R.string.chapters,
                         bookCursor.getString(bookHuman), bookCursor.getInt(bookChapters));
                 bookViewHolder.bookView.setText(bookResult, TextView.BufferType.SPANNABLE);
                 bookViewHolder.cardView.setTag(new OsisItem(bookCursor.getString(bookOsis)));
                 selectQuery(bookViewHolder.bookView, bookResult);
             } else if (position == bookStart && bookStart >= 0) {
                 CountViewHolder countViewHolder = (CountViewHolder) holder;
-                countViewHolder.typeView.setText(mActivity.getString(R.string.book));
-                countViewHolder.countView.setText(mActivity.getString(R.string.count, bookEnd - bookStart));
+                countViewHolder.typeView.setText(activity.getString(R.string.book));
+                countViewHolder.countView.setText(activity.getString(R.string.count, bookEnd - bookStart));
             }
         }
 
@@ -443,12 +481,16 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         }
 
         private OsisItem bindVerse(TextView textView) {
+            ResultsActivity activity = mReference.get();
+            if (activity == null) {
+                throw new UnsupportedOperationException();
+            }
             String verse = verseCursor.getString(verseVerse);
             int[] chapterVerse = BibleUtils.getChapterVerse(verse);
             if (chapterVerse[0] != 0) {
                 String book = verseCursor.getString(verseBook);
-                String chapter = mActivity.getChapter(book, chapterVerse[0]);
-                String string = mActivity.getString(R.string.search_result_verse,
+                String chapter = activity.getChapter(book, chapterVerse[0]);
+                String string = activity.getString(R.string.search_result_verse,
                         chapter,
                         chapterVerse[1]);
                 textView.setText(string);

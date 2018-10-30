@@ -4,7 +4,7 @@
     <string name="search_hint">Passage or Keyword</string>
     <string name="version_hint">Version or Description</string>
     <string name="search_description">Search Bible passage, or keyword</string>
-    <string name="search_no_results">No Results for \"%1$s\" from \"%2$s\" to \"%3$s\" in \"%4$s\".</string>
+    <string name="search_no_results">No Results</string>
     <plurals name="search_results">
         <item quantity="one">%1$d result for \"%2$s\" from \"%3$s\" to \"%4$s\" in \"%5$s\": </item>
         <item quantity="other">%1$d results for \"%2$s\" from \"%3$s\" to \"%4$s\" in \"%5$s\": </item>
