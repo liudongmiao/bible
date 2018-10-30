@@ -163,7 +163,7 @@ public class VersionsComponent {
             return null;
         }
         String name = file.getName();
-        if (!name.endsWith(name)) {
+        if (!name.endsWith(DATABASE_SUFFIX)) {
             return null;
         }
         return name.substring(0, name.lastIndexOf(DATABASE_SUFFIX)).toLowerCase(Locale.US);
@@ -310,7 +310,7 @@ public class VersionsComponent {
                 updateBooks(VersionComponent.loadBooks(database, null));
                 return true;
             }
-        } catch (SQLiteException e) {
+        } catch (SQLiteException | IllegalStateException e) {
             LogUtils.w("cannot open " + file, e);
         }
         return false;

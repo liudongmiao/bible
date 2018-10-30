@@ -221,7 +221,7 @@ public class DownloadComponent extends Handler {
         final String prefix = "bibledata-";
         final String suffix = ".zip";
         String name = file.getName();
-        if (name.startsWith(prefix) && name.endsWith(name)) {
+        if (name.startsWith(prefix) && name.endsWith(suffix)) {
             return name.substring(name.lastIndexOf('-') + 1, name.lastIndexOf(suffix)).toLowerCase(Locale.US);
         }
         return null;
