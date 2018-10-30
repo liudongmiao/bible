@@ -219,7 +219,11 @@ public class VersionsComponent {
             }
         }
         LogUtils.d("[check] versions: " + versions.size());
-        return versions;
+        if (versions.isEmpty()) {
+            return checkDemoVersions();
+        } else {
+            return versions;
+        }
     }
 
     private void removeMetadata(String version) {
