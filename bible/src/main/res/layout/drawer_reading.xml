@@ -5,11 +5,13 @@
     android:id="@+id/drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorPrimaryDark"
     android:fitsSystemWindows="true">
 
     <include layout="@layout/activity_reading" />
 
     <com.google.android.material.navigation.NavigationView
+        android:paddingTop="@dimen/status_bar_height"
         android:id="@+id/navigation"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

@@ -7,4 +7,6 @@
 
     <dimen name="content_padding">16dp</dimen>
 
+    <dimen name="status_bar_height">0dp</dimen>
+
 </resources>
