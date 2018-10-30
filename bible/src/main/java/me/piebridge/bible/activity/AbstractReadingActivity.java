@@ -123,10 +123,9 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mDark = ThemeUtils.isDark(this);
-        setTheme();
-        resolveColors();
         super.onCreate(savedInstanceState);
+        mDark = ThemeUtils.isDark(this);
+        resolveColors();
         setContentView(getContentLayout());
 
         mHeader = findHeader();
@@ -226,10 +225,6 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
             preparePrev(position, bundle.getString(PREV));
             prepareNext(position, bundle.getString(NEXT));
         }
-    }
-
-    protected void setTheme() {
-        ThemeUtils.setTheme(this);
     }
 
     protected void updateTaskDescription(String label) {

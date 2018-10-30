@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 
+import androidx.appcompat.widget.Toolbar;
+
 import me.piebridge.bible.R;
 import me.piebridge.bible.utils.ThemeUtils;
 
@@ -15,6 +17,11 @@ public class ReadingCrossActivity extends ReadingItemsActivity {
     @Override
     protected void setTheme() {
         ThemeUtils.setDialogTheme(this);
+    }
+
+    @Override
+    protected void setToolbar(Toolbar toolbar) {
+        // do nothing
     }
 
     @Override

@@ -27,14 +27,22 @@ public abstract class ToolbarActivity extends AppCompatActivity {
     @Override
     @CallSuper
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeUtils.setTheme(this);
+        setTheme();
         super.onCreate(savedInstanceState);
+    }
+
+    protected void setTheme() {
+        ThemeUtils.setTheme(this);
     }
 
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
-        Toolbar toolbar = findViewById(getToolbarActionbarId());
+        setToolbar(findViewById(getToolbarActionbarId()));
+
+    }
+
+    protected void setToolbar(Toolbar toolbar) {
         if (toolbar != null) {
             titleView = toolbar.findViewById(getToolbarTitleId());
             setTitle(getTitle());
