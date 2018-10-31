@@ -27,6 +27,7 @@ import me.piebridge.bible.fragment.SelectBookFragment;
 import me.piebridge.bible.fragment.SelectChapterFragment;
 import me.piebridge.bible.fragment.SelectVerseFragment;
 import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 
 public class SelectActivity extends ToolbarActivity
@@ -155,7 +156,12 @@ public class SelectActivity extends ToolbarActivity
             return Collections.emptyMap();
         }
         BibleApplication application = (BibleApplication) getApplication();
-        boolean hasIntro = VersionComponent.INTRO.equals(application.getChapters(book).get(0));
+        List<String> chapters = application.getChapters(book);
+        if (chapters.isEmpty()) {
+            LogUtils.w("no chapter for book " + book);
+            return Collections.emptyMap();
+        }
+        boolean hasIntro = VersionComponent.INTRO.equals(chapters.get(0));
         List<Integer> bibleVerses = application.getVerses(book, NumberUtils.parseInt(chapter) + (hasIntro ? 1 : 0));
         if (bibleVerses.isEmpty()) {
             return Collections.emptyMap();

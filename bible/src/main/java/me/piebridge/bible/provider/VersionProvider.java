@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.text.TextUtils;
 
@@ -76,7 +77,7 @@ public class VersionProvider extends ContentProvider {
             return null;
         }
 
-        Cursor cursor;
+        Cursor cursor = null;
         try {
             StringBuilder selection = new StringBuilder();
             selection.append("(");
@@ -96,6 +97,8 @@ public class VersionProvider extends ContentProvider {
             cursor = database.query(TABLE_BOOKS, COLUMNS_BOOKS,
                     selection.toString(),
                     new String[] {"%" + query + "%"}, null, null, "number ASC");
+        } catch (SQLiteException e) {
+            LogUtils.w("cannot search " + query, e);
         } finally {
             application.releaseDatabase(database);
         }
