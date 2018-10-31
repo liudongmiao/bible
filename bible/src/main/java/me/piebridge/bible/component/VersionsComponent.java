@@ -105,8 +105,9 @@ public class VersionsComponent {
         Locale locale = Locale.getDefault();
         if (!ObjectUtils.equals(mLocale, locale)) {
             mLocale = locale;
-            setResourceValues(mOverrideNames, R.array.versionname);
-            setResourceValues(mOverrideFullnames, R.array.versionfullname);
+            setResourceValues(mOverrideNames, R.array.version_name_zh);
+            setResourceValues(mOverrideFullnames, R.array.version_fullname);
+            setResourceValues(mOverrideFullnames, R.array.version_fullname_zh);
         }
     }
 

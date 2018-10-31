@@ -422,4 +422,23 @@
     <string name="niv1984">bibledata-en-niv1984.zip</string>
     <string name="cunpss">bibledata-zh-cn-cunpss.zip</string>
 
+    <string-array name="version_name_zh">
+        <item>ccb|当代</item>
+        <item>cunpss|和合</item>
+        <item>cunpts|和合</item>
+        <item>rcuvss|和修</item>
+        <item>rcuvts|和修</item>
+    </string-array>
+
+    <string-array name="version_fullname_zh">
+        <item>ccb|当代译本</item>
+        <item>cunpss|新标点和合本</item>
+        <item>cunpts|新標點和合本</item>
+        <item>rcuvss|和合本修订版</item>
+        <item>rcuvts|和合本修訂版</item>
+        <item>niv2011|英文新国际版 2011</item>
+        <item>niv1984|英文新国际版 1984</item>
+        <item>cunpssdemo|和合本新标点（演示）</item>
+    </string-array>
+
 </resources>

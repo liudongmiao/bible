@@ -1,21 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="versionname">
-        <item>ccb|CCB</item>
-        <item>cunpss|CUNPSS</item>
-        <item>cunpts|CUNPTS</item>
-        <item>rcuvss|RCUVSS</item>
-        <item>rcuvts|RCUVTS</item>
-    </string-array>
-    <string-array name="versionfullname">
-        <item>ccb|Chinese Contemporary Bible</item>
-        <item>cunpss|Chinese Union Version (New Punctuation, Simplified Script)</item>
-        <item>cunpts|Chinese Union Version (New Punctuation, Traditional Script)</item>
-        <item>rcuvss|Revised Chinese Union Version (Simplified Script)</item>
-        <item>rcuvts|Revised Chinese Union Version (Traditional Script)</item>
-        <item>niv2011|New International Version 2011</item>
+    <string-array name="version_fullname">
         <item>niv1984|New International Version 1984</item>
-        <item>cunpssdemo|Chinese Union Version (New Punctuation, Simplified Script, Demo)</item>
+        <item>niv2011|New International Version 2011</item>
         <item>niv1984demo|New International Version 1984 (Demo)</item>
     </string-array>
 </resources>

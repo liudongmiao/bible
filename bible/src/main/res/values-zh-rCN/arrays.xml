@@ -1,21 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="versionname">
-        <item>ccb|当代</item>
-        <item>cunpss|和合</item>
-        <item>cunpts|和合</item>
-        <item>rcuvss|和修</item>
-        <item>rcuvts|和修</item>
-    </string-array>
-    <string-array name="versionfullname">
-        <item>ccb|当代译本</item>
-        <item>cunpss|和合本新标点版</item>
-        <item>cunpts|和合本新標點版</item>
-        <item>rcuvss|和合本修订版</item>
-        <item>rcuvts|和合本修訂版</item>
-        <item>niv2011|英文新国际版 2011</item>
+    <string-array name="version_fullname">
         <item>niv1984|英文新国际版 1984</item>
-        <item>cunpssdemo|和合本新标点版（演示）</item>
+        <item>niv2011|英文新国际版 2011</item>
         <item>niv1984demo|英文新国际版 1984（演示）</item>
     </string-array>
 </resources>
