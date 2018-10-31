@@ -1,6 +1,5 @@
 package me.piebridge.bible;
 
-import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import me.piebridge.GenuineApplication;
 import me.piebridge.bible.component.AnnotationComponent;
 import me.piebridge.bible.component.DownloadComponent;
 import me.piebridge.bible.component.VersionComponent;
@@ -23,7 +23,7 @@ import me.piebridge.bible.utils.LogUtils;
 /**
  * Created by thom on 2018/10/25.
  */
-public class BibleApplication extends Application {
+public class BibleApplication extends GenuineApplication {
 
     private DownloadComponent mDownload;
 

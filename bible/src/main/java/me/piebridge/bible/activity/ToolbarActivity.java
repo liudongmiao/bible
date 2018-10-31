@@ -9,16 +9,16 @@ import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import me.piebridge.GenuineActivity;
 import me.piebridge.bible.R;
 import me.piebridge.bible.utils.ThemeUtils;
 
 /**
  * Created by thom on 16/7/23.
  */
-public abstract class ToolbarActivity extends AppCompatActivity {
+public abstract class ToolbarActivity extends GenuineActivity {
 
     private TextView titleView;
 

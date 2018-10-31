@@ -18,7 +18,7 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            proguardFiles 'proguard-android.txt-3.2.1', 'proguard-project.txt'
         }
     }
 
@@ -58,6 +58,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    packagingOptions {
+        exclude '/META-INF/*.version'
+        exclude '/fabric/*.properties'
+        exclude '/assets/crashlytics-build.properties'
+    }
 }
 
 dependencies {
@@ -65,6 +70,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.preference:preference:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
+    implementation project(':genuine')
 }
 
 task copyReleaseApk(type: Copy) {
@@ -76,3 +82,20 @@ afterEvaluate {
     assembleRelease.finalizedBy copyReleaseApk
     installRelease.finalizedBy copyReleaseApk
 }
+
+project.gradle.addListener(new TaskExecutionListener() {
+
+    void beforeExecute(Task task) {
+        if (task.name.startsWith('transformClassesAndResourcesWithProguard')) {
+            println android.getDefaultProguardFile('proguard-android.txt')
+            task.transform.configuration.useMixedCaseClassNames = true
+        }
+    }
+
+    void afterExecute(Task task, TaskState state) {
+        if (task.name.startsWith('transformClassesAndResourcesWithProguard')) {
+            assert task.transform.configuration.useMixedCaseClassNames
+        }
+    }
+
+})

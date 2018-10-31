@@ -1,2 +1,4 @@
--dontobfuscate
--keepattributes SourceFile,LineNumberTable 
+-keepattributes LineNumberTable
+-obfuscationdictionary keywords_methods.txt
+-classobfuscationdictionary keywords_path.txt
+-packageobfuscationdictionary keywords_path.txt
