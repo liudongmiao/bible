@@ -11,9 +11,13 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.SearchActivity;
 import me.piebridge.bible.utils.DeprecationUtils;
+import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 
 /**
@@ -71,6 +75,9 @@ public class ShowAnnotationFragment extends AbstractDialogFragment implements Vi
             String cross = annotation;
             if (cross.contains("passage/?search=")) {
                 cross = cross.replaceAll("^.*?/passage/\\?search=([^&]*?)&.*?$", "$1").replaceAll(",", ";");
+                if (cross.contains("%")) {
+                    cross = decode(cross);
+                }
             }
             if (cross.contains("class=\"xt\"")) {
                 cross = cross.replaceAll("^.*?<span class=\"xt\">(.*?)</span>.*?$", "$1");
@@ -81,6 +88,14 @@ public class ShowAnnotationFragment extends AbstractDialogFragment implements Vi
             return cross;
         } else {
             return null;
+        }
+    }
+
+    private static String decode(String cross) {
+        try {
+            return URLDecoder.decode(cross, FileUtils.UTF_8);
+        } catch (UnsupportedEncodingException ignore) {
+            return cross;
         }
     }
 
