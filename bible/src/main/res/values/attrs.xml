@@ -5,6 +5,8 @@
 
     <attr name="backgroundHighlight" format="reference" />
 
+    <attr name="backgroundCell" format="reference" />
+
     <attr name="textColorRed" format="reference" />
 
     <attr name="textColorNormal" format="reference" />

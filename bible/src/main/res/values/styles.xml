@@ -23,6 +23,7 @@
         <item name="textColorRed">@color/red_dark</item>
         <item name="backgroundHighlight">@color/yellow_alpha</item>
         <item name="backgroundSelection">@color/blue_alpha</item>
+        <item name="backgroundCell">@color/grey_900</item>
         <item name="autoCompleteTextViewStyle">@style/autoCompleteTextViewStyle</item>
         <item name="suggestionOverlay">@style/ThemeOverlay.AppCompat</item>
     </style>
@@ -40,6 +41,7 @@
         <item name="textColorRed">@color/red_light</item>
         <item name="backgroundHighlight">@color/yellow_alpha</item>
         <item name="backgroundSelection">@color/blue_alpha</item>
+        <item name="backgroundCell">@color/grey_300</item>
         <item name="autoCompleteTextViewStyle">@style/autoCompleteTextViewStyle.Light</item>
         <item name="suggestionOverlay">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
