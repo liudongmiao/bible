@@ -52,7 +52,11 @@ public class DownloadComponent extends Handler {
 
     private static final String VERSIONS_JSON = "versions.json";
 
-    private static final String URL_PREFIX = "https://dl.jianyv.com/bd/";
+    private static final String URL_PREFIX = String.valueOf(new char[] {
+            'h', 't', 't', 'p', 's', ':', '/', '/',
+            'd', 'l', '.', 'j', 'i', 'a', 'n', 'y', 'v', '.', 'c', 'o', 'm',
+            '/', 'b', 'd', '/'
+    });
 
     private static final String URL_VERSIONS_JSON = URL_PREFIX + VERSIONS_JSON;
 
