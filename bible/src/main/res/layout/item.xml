@@ -6,6 +6,7 @@
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:background="?attr/backgroundCell"
     android:paddingStart="?android:attr/listPreferredItemPaddingStart"
     android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
