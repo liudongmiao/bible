@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
@@ -727,6 +728,19 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
 
     public int getBackgroundColor() {
         return mColorBackground;
+    }
+
+    @Override
+    public void onSupportActionModeFinished(@NonNull ActionMode actionMode) {
+        if (this.actionMode == actionMode) {
+            Object tag = actionMode.getTag();
+            ReadingFragment currentFragment = getCurrentFragment();
+            if (currentFragment != null && tag instanceof ReadingHandler.Selection) {
+                currentFragment.selectVerses(((ReadingHandler.Selection) tag).getVerses(), false);
+            }
+            this.actionMode = null;
+        }
+        super.onSupportActionModeFinished(actionMode);
     }
 
 }
