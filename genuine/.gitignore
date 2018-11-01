@@ -1,4 +1,4 @@
 /build
 /.externalNativeBuild
-/src/main/objs
+/src/main/obj
 /src/main/libs
