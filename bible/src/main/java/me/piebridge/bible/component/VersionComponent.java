@@ -15,7 +15,6 @@ import java.util.Map;
 
 import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.provider.VersionProvider;
-import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
 
 /**
@@ -23,7 +22,7 @@ import me.piebridge.bible.utils.LogUtils;
  */
 public class VersionComponent {
 
-    public static final int DATABASE_FLAGS = SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS;
+    private static final int DATABASE_FLAGS = SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS;
 
     public static final String INTRO = "int";
 
