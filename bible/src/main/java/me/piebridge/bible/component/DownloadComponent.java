@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -30,6 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import me.piebridge.bible.BibleApplication;
+import me.piebridge.bible.BuildConfig;
 import me.piebridge.bible.R;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
@@ -50,15 +52,30 @@ public class DownloadComponent extends Handler {
 
     private final Object downloadsLock = new Object();
 
-    private static final String VERSIONS_JSON = "versions.json";
-
-    private static final String URL_PREFIX = String.valueOf(new char[] {
+    private static final char[] HTTPS = new char[] {
             'h', 't', 't', 'p', 's', ':', '/', '/',
+    };
+
+    private static final char[] HTTP = new char[] {
+            'h', 't', 't', 'p', ':', '/', '/',
+    };
+
+    private static final char[] URL_PREFIX = new char[] {
             'd', 'l', '.', 'j', 'i', 'a', 'n', 'y', 'v', '.', 'c', 'o', 'm',
             '/', 'b', 'd', '/'
+    };
+
+    private static final String VERSIONS_JSON = String.valueOf(new char[] {
+            'v', 'e', 'r', 's', 'i', 'o', 'n', 's', '.', 'j', 's', 'o', 'n'
     });
 
-    private static final String URL_VERSIONS_JSON = URL_PREFIX + VERSIONS_JSON;
+    private static final String X_SDK = String.valueOf(new char[] {
+            'X', '-', 'S', 'D', 'K'
+    });
+
+    private static final String X_VERSION = String.valueOf(new char[] {
+            'X', '-', 'V', 'E', 'R', 'S', 'I', 'O', 'N'
+    });
 
     private Context mContext;
 
@@ -131,11 +148,20 @@ public class DownloadComponent extends Handler {
         if (externalCacheDir == null) {
             return 0;
         }
-        String url = URL_PREFIX + filename;
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        StringBuilder url = new StringBuilder();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // https for 5.X
+            url.append(HTTPS);
+        } else {
+            url.append(HTTP);
+        }
+        url.append(URL_PREFIX);
+        url.append(filename);
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url.toString()));
         request.setTitle(filename);
         File file = new File(externalCacheDir, filename);
         request.setDestinationUri(Uri.fromFile(file));
+        request.addRequestHeader(X_SDK, Integer.toString(Build.VERSION.SDK_INT)); // custom x-sdk
+        request.addRequestHeader(X_VERSION, Integer.toString(BuildConfig.VERSION_CODE));
         DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
         if (downloadManager != null) {
             if (downloadInfo != null) {
@@ -279,7 +305,17 @@ public class DownloadComponent extends Handler {
         if (!TextUtils.isEmpty(etag)) {
             headers.put("If-None-Match", etag);
         }
-        String json = HttpUtils.retrieveContent(URL_VERSIONS_JSON, headers);
+        StringBuilder url = new StringBuilder();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // https for 5.X
+            url.append(HTTPS);
+        } else {
+            url.append(HTTP);
+        }
+        url.append(URL_PREFIX);
+        url.append(VERSIONS_JSON);
+        headers.put(X_SDK, Integer.toString(Build.VERSION.SDK_INT)); // custom x-sdk
+        headers.put(X_VERSION, Integer.toString(BuildConfig.VERSION_CODE));
+        String json = HttpUtils.retrieveContent(url.toString(), headers);
         if (json == null) {
             return null;
         }

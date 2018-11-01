@@ -101,6 +101,5 @@
 
     <string name="shangti">Shangti</string>
     <string name="shangti_or_shen">Shangti / Shen</string>
-    <string name="ssl_exception">It\'s impossible to download Bible Data on your devices due to security reason, please download it manually from https://github.com/jianyv/bible-data .</string>
 
 </resources>

@@ -49,8 +49,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import javax.net.ssl.SSLException;
-
 import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.R;
 import me.piebridge.bible.component.DownloadComponent;
@@ -81,7 +79,6 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     private static final int UPDATE_VERSIONS = 2;
     private static final int UPDATE_ACTIONS = 3;
     private static final int ADDED_VERSION = 4;
-    private static final int SSL_EXCEPTION = 5;
 
     private BroadcastReceiver receiver;
 
@@ -281,9 +278,6 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
             if (!TextUtils.isEmpty(versions)) {
                 mainHandler.obtainMessage(UPDATE_VERSIONS, versions).sendToTarget();
             }
-        } catch (SSLException e) {
-            LogUtils.w("cannot update versions", e);
-            mainHandler.sendEmptyMessage(SSL_EXCEPTION);
         } catch (IOException e) {
             LogUtils.w("cannot update versions", e);
         }
@@ -366,10 +360,6 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         }
     }
 
-    void onSslException() {
-        showMessage(getString(R.string.ssl_exception));
-    }
-
     private void showMessage(String message) {
         final String tag = FRAGMENT_INFO;
         FragmentManager manager = getSupportFragmentManager();
@@ -426,9 +416,6 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                     break;
                 case ADDED_VERSION:
                     activity.onAddedVersion((String) msg.obj);
-                    break;
-                case SSL_EXCEPTION:
-                    activity.onSslException();
                     break;
                 default:
                     break;

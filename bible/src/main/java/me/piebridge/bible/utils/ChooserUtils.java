@@ -24,7 +24,7 @@ public class ChooserUtils {
     }
 
     public static void startActivityExcludeSelf(Context context, Intent intent, String title) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // EXTRA_EXCLUDE_COMPONENTS since 7.X
             startActivityExcludeSelfN(context, intent, title);
         } else {
             startActivityExcludeSelfDeprecated(context, intent, title);

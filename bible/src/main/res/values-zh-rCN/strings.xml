@@ -100,6 +100,5 @@
 
     <string name="shangti">上帝</string>
     <string name="shangti_or_shen">上帝/　神</string>
-    <string name="ssl_exception">您的设备上无法直接下载圣经数据。请从这里手动下载 https://github.com/jianyv/bible-data 。</string>
 
 </resources>

@@ -231,9 +231,7 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
         if (mAppBar != null) {
             mAppBar.setExpanded(true);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setTaskDescription(new ActivityManager.TaskDescription(label));
-        }
+        super.updateTaskDescription(label);
     }
 
     protected final void initialize() {

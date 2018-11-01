@@ -101,7 +101,7 @@ public abstract class ToolbarActivity extends GenuineActivity {
     }
 
     protected void updateTaskDescription(String label) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // TaskDescription since 5.X
             setTaskDescription(new ActivityManager.TaskDescription(label));
         }
     }

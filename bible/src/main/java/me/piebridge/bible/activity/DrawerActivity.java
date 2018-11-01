@@ -49,11 +49,6 @@ public abstract class DrawerActivity extends AbstractReadingActivity
         navigation = findViewById(R.id.navigation);
         navigation.setCheckedItem(R.id.menu_reading);
         navigation.setNavigationItemSelectedListener(this);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
     }
 
     @Override
