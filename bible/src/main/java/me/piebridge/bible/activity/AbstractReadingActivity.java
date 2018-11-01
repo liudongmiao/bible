@@ -1,16 +1,16 @@
 package me.piebridge.bible.activity;
 
-import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
+import android.text.ClipboardManager;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -122,6 +122,8 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
 
     private boolean mDark;
 
+    private boolean mAutoCopy;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,6 +151,7 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
     @Override
     public void onResume() {
         super.onResume();
+        mAutoCopy = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("autoCopy", false);
         if (ThemeUtils.isDark(this) != mDark) {
             recreate();
         }
@@ -712,18 +715,44 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
                 actionMode = startSupportActionMode(callback);
             }
         }
+        if (mAutoCopy) {
+            String text = getText(selection);
+            copy(text);
+        }
+    }
+
+    private void copy(String text) {
+        try {
+            //noinspection deprecation
+            ClipboardManager manager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            if (manager != null) {
+                manager.setText(text);
+            }
+        } catch (RuntimeException ignore) {
+            // do nothing
+        }
+    }
+
+    private String getText(ReadingHandler.Selection selection) {
+        ReadingFragment currentFragment = getCurrentFragment();
+        if (currentFragment == null) {
+            return null;
+        }
+        BibleApplication application = (BibleApplication) getApplication();
+        return application.getFullname(application.getVersion()) + " "
+                + currentFragment.getTitle() + ":"
+                + selection.getVerses() + "\n\n"
+                + selection.getContent();
     }
 
     public void doShare(ReadingHandler.Selection selection) {
-        BibleApplication application = (BibleApplication) getApplication();
-        String text = application.getFullname(application.getVersion()) + " "
-                + getCurrentFragment().getTitle() + ":"
-                + selection.getVerses() + "\n\n"
-                + selection.getContent();
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_TEXT, text);
-        intent.setType("text/plain");
-        ChooserUtils.startActivityExcludeSelf(this, intent, getString(R.string.share));
+        String text = getText(selection);
+        if (!TextUtils.isEmpty(text)) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, text);
+            intent.setType("text/plain");
+            ChooserUtils.startActivityExcludeSelf(this, intent, getString(R.string.share));
+        }
     }
 
     public int getBackgroundColor() {

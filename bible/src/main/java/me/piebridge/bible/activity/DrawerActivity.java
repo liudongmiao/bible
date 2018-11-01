@@ -2,10 +2,8 @@ package me.piebridge.bible.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.WindowManager;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;

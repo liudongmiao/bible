@@ -98,6 +98,8 @@
     <string name="version_no_chapter_info">“%1$s”中沒有“%2$s”。</string>
     <string name="versions_updated">版本數據已更新。</string>
 
+    <string name="auto_copy">自動複製</string>
+    <string name="auto_copy_summary">選擇經文以後，自動複製至剪貼簿</string>
     <string name="shangti">上帝</string>
     <string name="shangti_or_shen">上帝/　神</string>
 

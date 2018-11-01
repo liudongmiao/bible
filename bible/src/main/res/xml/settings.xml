@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen
-    app:iconSpaceReserved="false"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:iconSpaceReserved="false">
 
     <androidx.preference.Preference
         android:key="fontsizeDefault"
@@ -35,6 +35,13 @@
         android:defaultValue="false"
         android:key="cross"
         android:title="@string/xlink"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="autoCopy"
+        android:summary="@string/auto_copy_summary"
+        android:title="@string/auto_copy"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.SwitchPreferenceCompat

@@ -99,6 +99,8 @@
     <string name="version_no_chapter_info">\"%1$s\" has no \"%2$s\".</string>
     <string name="versions_updated">Versions metadata updated.</string>
 
+    <string name="auto_copy">Auto copy</string>
+    <string name="auto_copy_summary">Copy to Clipboard after selection</string>
     <string name="shangti">Shangti</string>
     <string name="shangti_or_shen">Shangti / Shen</string>
 
