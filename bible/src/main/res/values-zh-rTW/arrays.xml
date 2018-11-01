@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="version_fullname">
-        <item>niv1984|英文新國際版 1984</item>
-        <item>niv2011|英文新國際版 2011</item>
-        <item>niv1984demo|英文新國際版 1984（演示）</item>
-    </string-array>
-</resources>

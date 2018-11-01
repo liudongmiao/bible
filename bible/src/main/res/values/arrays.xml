@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="version_fullname">
-        <item>niv1984|New International Version 1984</item>
-        <item>niv2011|New International Version 2011</item>
-        <item>niv1984demo|New International Version 1984 (Demo)</item>
-    </string-array>
-</resources>

@@ -738,11 +738,20 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
         if (currentFragment == null) {
             return null;
         }
-        BibleApplication application = (BibleApplication) getApplication();
-        return application.getFullname(application.getVersion()) + " "
-                + currentFragment.getTitle() + ":"
-                + selection.getVerses() + "\n\n"
+        return getVersionName() + " " + currentFragment.getTitle() + ":"
+                + selection.getVerses() + "\n"
                 + selection.getContent();
+    }
+
+    private String getVersionName() {
+        BibleApplication application = (BibleApplication) getApplication();
+        String version = application.getVersion();
+        String name = application.getFullname(version);
+        if (BibleUtils.isCJK(name)) {
+            return name;
+        } else {
+            return application.getName(version);
+        }
     }
 
     public void doShare(ReadingHandler.Selection selection) {
