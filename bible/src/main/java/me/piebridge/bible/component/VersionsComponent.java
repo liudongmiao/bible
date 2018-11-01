@@ -59,9 +59,7 @@ public class VersionsComponent {
     private SharedPreferences mPreferenceVersions;
     private SharedPreferences mPreferenceBooks;
 
-    private final SimpleArrayMap<String, String> mHuman;
-
-    private final Set<String> mBooks;
+    private final SimpleArrayMap<String, String> mBooks;
 
     private boolean versionChecked;
 
@@ -74,8 +72,7 @@ public class VersionsComponent {
         mContext = context;
         mPreferenceVersions = context.getSharedPreferences(PREFERENCE_VERSIONS, Context.MODE_PRIVATE);
         mPreferenceBooks = context.getSharedPreferences(PREFERENCE_BOOKS, Context.MODE_PRIVATE);
-        mHuman = new SimpleArrayMap<>();
-        mBooks = new ArraySet<>();
+        mBooks = new SimpleArrayMap<>();
 
         Map<String, ?> books = mPreferenceBooks.getAll();
         for (Map.Entry<String, ?> entry : books.entrySet()) {
@@ -83,8 +80,8 @@ public class VersionsComponent {
             Object value = entry.getValue();
             if (value instanceof String) {
                 String book = (String) value;
-                mHuman.put(human, book);
-                mBooks.add(book);
+                mBooks.put(human.toLowerCase(Locale.US), book);
+                mBooks.put(book.toLowerCase(Locale.US), book);
             }
         }
         versionChecked = !mBooks.isEmpty();
@@ -95,10 +92,10 @@ public class VersionsComponent {
 
         loadOverride();
 
-        setResourceValuesReverse(mHuman, R.array.osiszhcn);
-        setResourceValuesReverse(mHuman, R.array.osiszhtw);
-        setResourceValuesReverse(mHuman, R.array.searchfullzhcn);
-        setResourceValuesReverse(mHuman, R.array.searchshortzhcn);
+        setResourceValuesReverse(mBooks, R.array.osiszhcn);
+        setResourceValuesReverse(mBooks, R.array.osiszhtw);
+        setResourceValuesReverse(mBooks, R.array.searchfullzhcn);
+        setResourceValuesReverse(mBooks, R.array.searchshortzhcn);
     }
 
     private void loadOverride() {
@@ -521,23 +518,15 @@ public class VersionsComponent {
         for (Map.Entry<String, String> entry : books.entrySet()) {
             String book = entry.getKey();
             String human = entry.getValue();
-            mBooks.add(book);
-            mHuman.put(human, book);
+            mBooks.put(book.toLowerCase(Locale.US), book);
+            mBooks.put(human.toLowerCase(Locale.US), book);
             editor.putString(human, book);
         }
         editor.apply();
     }
 
-    public String getOsis(String bookOrHuman) {
-        if (mBooks.contains(bookOrHuman)) {
-            return bookOrHuman;
-        }
-        String book = mHuman.get(bookOrHuman);
-        if (TextUtils.isEmpty(book)) {
-            return null;
-        } else {
-            return book;
-        }
+    public String getOsis(String query) {
+        return mBooks.get(query);
     }
 
 }

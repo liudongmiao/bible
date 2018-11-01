@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import me.piebridge.GenuineApplication;
@@ -108,7 +109,7 @@ public class BibleApplication extends GenuineApplication {
     }
 
     public String getOsis(String query) {
-        return mVersions.getOsis(query);
+        return mVersions.getOsis(query.toLowerCase(Locale.US));
     }
 
     public String getVersion() {
