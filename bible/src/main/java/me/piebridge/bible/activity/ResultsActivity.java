@@ -33,6 +33,7 @@ import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.provider.VersionProvider;
 import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.utils.ChooserUtils;
 import me.piebridge.bible.utils.ColorUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
@@ -188,10 +189,17 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
 
     private void showResults(Cursor[] cursors) {
         if (cursors[0] == null && cursors[1] == null) {
-            if (recyclerView.getItemDecorationCount() > 0) {
-                recyclerView.removeItemDecoration(itemDecoration);
+            Uri url = getIntent().getParcelableExtra(SearchActivity.URL);
+            if (url != null) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, url);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                ChooserUtils.startActivityExcludeSelf(this, intent, null);
+            } else {
+                if (recyclerView.getItemDecorationCount() > 0) {
+                    recyclerView.removeItemDecoration(itemDecoration);
+                }
+                recyclerView.setAdapter(new NoResultAdapter());
             }
-            recyclerView.setAdapter(new NoResultAdapter());
         } else {
             int color = ColorUtils.resolve(this, R.attr.backgroundSelection);
             if (recyclerView.getItemDecorationCount() == 0) {

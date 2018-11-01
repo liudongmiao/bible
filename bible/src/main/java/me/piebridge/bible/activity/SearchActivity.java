@@ -25,7 +25,6 @@ import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.SearchFragment;
 import me.piebridge.bible.provider.SearchProvider;
-import me.piebridge.bible.utils.ChooserUtils;
 import me.piebridge.bible.utils.LogUtils;
 
 /**
@@ -36,6 +35,8 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
     public static final String OSIS_FROM = "osisFrom";
 
     public static final String OSIS_TO = "osisTo";
+
+    public static final String URL = "url";
 
     public static final String CROSS = "cross";
 
@@ -104,7 +105,13 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
     @Override
     public boolean onQueryTextSubmit(String query) {
         if (!TextUtils.isEmpty(query)) {
-            doSearch(query, true, false);
+            if (query.startsWith("http://") || query.startsWith("https://")) {
+                Intent intent = new Intent(Intent.ACTION_SEARCH);
+                intent.putExtra(SearchManager.QUERY, query);
+                handleIntent(intent);
+            } else {
+                doSearch(query, true, false, null);
+            }
         }
         return true;
     }
@@ -114,7 +121,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         return false;
     }
 
-    private void doSearch(String query, boolean parse, boolean finished) {
+    private void doSearch(String query, boolean parse, boolean finished, Uri data) {
         mSuggestions.saveRecentQuery(query, null);
 
         ArrayList<OsisItem> items;
@@ -137,6 +144,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             intent.putExtra(OSIS_FROM, sharedPreferences.getString(SearchFragment.KEY_SEARCH_FROM, null));
             intent.putExtra(OSIS_TO, sharedPreferences.getString(SearchFragment.KEY_SEARCH_TO, null));
+            intent.putExtra(URL, data);
 
             LogUtils.d("intent: " + intent + ", extra: " + intent.getExtras());
             super.startActivity(setFinished(intent, finished));
@@ -214,16 +222,29 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         String version = null;
         if (data != null) {
             version = lower(data.getQueryParameter("version"));
+            if (TextUtils.isEmpty(version)) {
+                version = lower(data.getQueryParameter("qs_version"));
+            }
+            if (TextUtils.isEmpty(version)) {
+                version = lower(data.getQueryParameter("translation"));
+            }
             query = data.getQueryParameter("search");
+            if (TextUtils.isEmpty(query)) {
+                query = data.getQueryParameter("quicksearch");
+            }
             if (TextUtils.isEmpty(query)) {
                 query = data.getQueryParameter("q");
             }
             if (TextUtils.isEmpty(query) && data.getPath() != null) {
                 query = data.getPath().replaceAll("^/search/([^/]*).*$", "$1");
             }
+            LogUtils.d("data: " + data + ", query: " + query);
         }
 
         BibleApplication application = (BibleApplication) getApplication();
+        if ("niv".equals(version)) {
+            version = "niv2011";
+        }
         if (!TextUtils.isEmpty(version) && application.getVersions().contains(version) && application.setVersion(version)) {
             mSearchFragment.updateVersion(version);
         }
@@ -235,20 +256,11 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
                 LogUtils.d("items: " + items);
                 mSuggestions.saveRecentQuery(query, null);
                 showItems(items, cross, true);
-            } else if (data != null) {
-                redirect(data);
             } else {
-                doSearch(query, false, true);
+                doSearch(query, false, true, data);
             }
             finish();
         }
-    }
-
-    private void redirect(Uri data) {
-        // FIXME: use chrome tabs
-        Intent intent = new Intent(Intent.ACTION_VIEW, data);
-        intent.addCategory(Intent.CATEGORY_BROWSABLE);
-        ChooserUtils.startActivityExcludeSelf(this, intent, null);
     }
 
     private void showItems(ArrayList<OsisItem> items, boolean cross, boolean finished) {
