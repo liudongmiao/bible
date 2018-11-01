@@ -78,7 +78,15 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         handleIntent(getIntent());
     }
 
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
     private void handleIntent(Intent intent) {
+        mBooks = null;
         mQuery = intent.getStringExtra(SearchManager.QUERY);
         setTitle(mQuery);
         updateTaskDescription(mQuery);
@@ -164,7 +172,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         }
 
         BibleApplication application = (BibleApplication) getApplication();
-        if (ObjectUtils.equals(osisFrom, application.getFirstBook()) || ObjectUtils.equals(osisTo, application.getLastBook())) {
+        if (ObjectUtils.equals(osisFrom, application.getFirstBook()) && ObjectUtils.equals(osisTo, application.getLastBook())) {
             return "";
         }
 
@@ -173,18 +181,26 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         for (String book : application.getBooks().keySet()) {
             if (accepted) {
                 books.append(",");
-                books.append(book);
+                appendSql(books, book);
                 if (ObjectUtils.equals(book, osisTo)) {
                     break;
                 }
             } else if (ObjectUtils.equals(book, osisFrom)) {
                 accepted = true;
-                books.append(book);
+                appendSql(books, book);
             }
         }
 
         mBooks = books.toString();
         return mBooks;
+    }
+
+    private void appendSql(StringBuilder sb, String v) {
+        if (!v.contains("'")) { // shouldn't happen
+            sb.append("'");
+            sb.append(v);
+            sb.append("'");
+        }
     }
 
     private void showResults(Cursor[] cursors) {

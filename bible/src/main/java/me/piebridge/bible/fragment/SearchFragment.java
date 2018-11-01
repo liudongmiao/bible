@@ -162,7 +162,7 @@ public class SearchFragment extends PreferenceFragmentCompat
         preferenceSearchGospel.setChecked(searchType == SEARCH_GOSPEL);
 
         preferenceSearchFrom.setValue(osisFrom);
-        preferenceSearchTo.setSummary(application.getHuman(osisFrom));
+        preferenceSearchFrom.setSummary(application.getHuman(osisFrom));
 
         preferenceSearchTo.setValue(osisTo);
         preferenceSearchTo.setSummary(application.getHuman(osisTo));
