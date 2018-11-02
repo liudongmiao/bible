@@ -11,6 +11,12 @@
 #include <sys/system_properties.h>
 #include <inttypes.h>
 
+#if __has_include("genuine.h")
+#include "genuine.h"
+#else
+#error "please define genuine.h"
+#endif
+
 static jboolean genuine;
 
 static jmethodID original;
@@ -76,19 +82,6 @@ static inline void fill_proc_self_maps(char maps[]) {
         maps[i] ^= (i + 0xf);
     }
     maps[0xf] = '\0';
-}
-
-static inline void fill_bible(char maps[]) {
-    // bible
-    maps[0x0] = 'g';
-    maps[0x1] = 'o';
-    maps[0x2] = 'e';
-    maps[0x3] = 'd';
-    maps[0x4] = 'l';
-    for (int i = 0; i < 0x5; ++i) {
-        maps[i] ^= ((i + 0x5) % 20);
-    }
-    maps[0x5] = '\0';
 }
 
 static inline bool islibartso(const char *str) {
@@ -1022,13 +1015,13 @@ static int checkSignature(const char *path) {
             read(fd, buffer, 0x4); // certificates length
             read(fd, buffer, 0x4); // certificate length
             size = UNSIGNED(buffer);
-            if (size == 0x36c) {
+            if (size == GENUINE_SIZE) {
                 hash = 1;
                 for (unsigned i = 0; i < size; ++i) {
                     read(fd, buffer, 0x1);
                     hash = 31 * hash + static_cast<signed char>(buffer[0]);
                 }
-                if ((static_cast<unsigned>(hash) ^ 0x14131211) == 0xc62385d1) {
+                if ((static_cast<unsigned>(hash) ^ 0x14131211) == GENUINE_HASH) {
                     ret = 0;
                 }
             }
@@ -1065,21 +1058,28 @@ static inline bool isapk(const char *str) {
            && (*++dot == '\0' || *dot == '\r' || *dot == '\n');
 }
 
+static inline void fix_name(char name[], int length) {
+    for (int i = 0; i < length; ++i) {
+        name[i] ^= ((i + length) % 20);
+    }
+    name[length] = '\0';
+}
+
 static jboolean checkGenuine() {
     FILE *fp;
     char maps[16] = {0};
-    char bible[0x8] = {0};
+    char name[] = GENUINE_NAME;
     jboolean check = JNI_TRUE;
     int checkStatus = 0;
 
     fill_proc_self_maps(maps);
-    fill_bible(bible);
+    fix_name(name, sizeof(name) / sizeof(char));
 
     fp = fopen(maps, "r");
     if (fp != NULL) {
         char line[PATH_MAX];
         while (fgets(line, PATH_MAX - 1, fp) != NULL) {
-            if (strstr(line, bible) != NULL) {
+            if (strstr(line, name) != NULL) {
                 char *path = line;
                 while (*path != '/') {
                     ++path;
