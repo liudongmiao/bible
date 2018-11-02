@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.NumberUtils;
+import me.piebridge.bible.utils.ObjectUtils;
 
 public class OsisItem implements Parcelable {
 
@@ -173,6 +174,7 @@ public class OsisItem implements Parcelable {
         String prevbook = "";
         String prevchap = "";
         String prevosis = "";
+        String prevgroup = "";
         while (m.find()) {
             String group = m.group();
             if (group == null || group.length() == 0) {
@@ -186,10 +188,15 @@ public class OsisItem implements Parcelable {
 
             book = book.replace(":", "");
             if (book.startsWith(",")) {
-                book = prevbook;
-                if ("".equals(start_verse) && !"".equals(prevchap)) {
-                    start_verse = start_chapter;
-                    start_chapter = prevchap;
+                String subbook = book.substring(1);
+                if (BibleUtils.isCJK(subbook)) {
+                    book = subbook;
+                } else {
+                    book = prevbook;
+                    if ("".equals(start_verse) && !"".equals(prevchap)) {
+                        start_verse = start_chapter;
+                        start_chapter = prevchap;
+                    }
                 }
             } else if (!BibleUtils.isCJK(book) && book.length() < 2) {
                 start_chapter = book + start_chapter;
@@ -233,7 +240,6 @@ public class OsisItem implements Parcelable {
                 continue;
             }
 
-            prevosis = osis;
             if (end_chapter.equals(start_chapter)) {
                 end_chapter = end_verse;
                 end_verse = "";
@@ -241,11 +247,24 @@ public class OsisItem implements Parcelable {
 
             if ("".equals(start_chapter)) {
                 items.add(new OsisItem(osis));
-            // 3, 3:16, 3:16-17
             } else if ("".equals(end_chapter) || (!"".equals(start_verse) && "".equals(end_verse))) {
-                items.add(new OsisItem(osis, start_chapter, start_verse, end_chapter));
-            // 3-4, 3-4:5, 3:16-4:6
+                // 3, 3:16, 3:16-17
+                OsisItem newItem = new OsisItem(osis, start_chapter, start_verse, end_chapter);
+                if (ObjectUtils.equals(osis, prevosis) && prevgroup.endsWith("-") && !items.isEmpty()) {
+                    int index = items.size() - 1;
+                    OsisItem oldItem = items.get(index);
+                    if (ObjectUtils.equals(oldItem.chapter, start_chapter)
+                            && TextUtils.isEmpty(oldItem.verseEnd)
+                            && TextUtils.isEmpty(newItem.verseEnd)) {
+                        oldItem.verseEnd = newItem.verseStart;
+                        newItem = null;
+                    }
+                }
+                if (newItem != null) {
+                    items.add(newItem);
+                }
             } else if ("".equals(start_verse) || (!"".equals(start_verse) && !"".equals(end_verse))) {
+                // 3-4, 3-4:5, 3:16-4:6
                 int start = NumberUtils.parseInt(start_chapter);
                 int end = NumberUtils.parseInt(end_chapter);
                 items.add(new OsisItem(osis, start_chapter, start_verse));
@@ -256,6 +275,9 @@ public class OsisItem implements Parcelable {
                     items.add(new OsisItem(osis, end_chapter, end_verse.equals("") ? "" : "1", end_verse));
                 }
             }
+
+            prevosis = osis;
+            prevgroup = group;
         }
 
         return items;
