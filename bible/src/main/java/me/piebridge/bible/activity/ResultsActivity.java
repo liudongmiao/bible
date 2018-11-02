@@ -13,6 +13,8 @@ import android.text.Spannable;
 import android.text.TextUtils;
 import android.text.style.BackgroundColorSpan;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -37,6 +39,7 @@ import me.piebridge.bible.utils.ChooserUtils;
 import me.piebridge.bible.utils.ColorUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
+import me.piebridge.bible.utils.ThemeUtils;
 
 /**
  * Created by thom on 2018/10/24.
@@ -232,6 +235,22 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
             ((ResultAdapter) adapter).close();
         }
         super.finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.theme, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_theme) {
+            ThemeUtils.toggle(this);
+            recreate();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     String getChapter(String book, int chapterId) {
