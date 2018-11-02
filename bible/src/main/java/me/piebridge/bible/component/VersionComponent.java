@@ -193,7 +193,7 @@ public class VersionComponent {
 
     public String removeIntro(String osis) {
         final String intro = "." + INTRO;
-        if (osis.endsWith(intro)) {
+        if (!TextUtils.isEmpty(osis) && osis.endsWith(intro)) {
             return osis.substring(0, osis.lastIndexOf(intro)) + ".1";
         } else {
             return osis;

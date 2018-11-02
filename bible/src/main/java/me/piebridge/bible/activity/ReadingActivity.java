@@ -213,7 +213,8 @@ public class ReadingActivity extends DrawerActivity {
     @Override
     protected void switchToVersion(String version) {
         BibleApplication application = (BibleApplication) getApplication();
-        if (application.hasChapter(version, getCurrentOsis())) {
+        String currentOsis = getCurrentOsis();
+        if (TextUtils.isEmpty(currentOsis) || application.hasChapter(version, currentOsis)) {
             super.switchToVersion(version);
         } else {
             showSwitchToVersion(version);
