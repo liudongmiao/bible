@@ -382,18 +382,23 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.theme, menu);
+        getMenuInflater().inflate(R.menu.reading, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_theme) {
-            ThemeUtils.toggle(this);
-            recreate();
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_theme:
+                ThemeUtils.toggle(this);
+                recreate();
+                return true;
+            case R.id.search:
+                startActivity(new Intent(this, SearchActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
