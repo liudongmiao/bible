@@ -69,7 +69,6 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getItemPosition(@NonNull Object object) {
-        LogUtils.d("object: " + object);
         if (object instanceof ReadingFragment) {
             ReadingFragment fragment = (ReadingFragment) object;
             Bundle arguments = fragment.getArguments();
