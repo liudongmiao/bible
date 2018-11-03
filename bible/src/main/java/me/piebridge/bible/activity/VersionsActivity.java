@@ -305,21 +305,10 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
 
     private void onClickCopyright(VersionItem versionItem) {
         CharSequence message;
-        switch (versionItem.code) {
-            case "csbs":
-            case "csbt":
-            case "cuvmps":
-            case "cuvmpt":
-                message = DeprecationUtils.fromHtml("© 2011 Global Bible Initiative<br/>" +
-                        "© 2011 全球圣经促进会<br/><br/>" +
-                        "<a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a>");
-                break;
-            default:
-                message = null;
-                break;
-        }
-        if (TextUtils.isEmpty(message)) {
+        if (TextUtils.isEmpty(versionItem.info)) {
             message = getText(R.string.translation_copyright_message);
+        } else {
+            message = DeprecationUtils.fromHtml(versionItem.info);
         }
         showCopyright(versionItem.name, message);
     }
@@ -652,6 +641,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                 item.lang = version.optString("lang");
                 item.name = version.optString("name");
                 item.copy = formatCopy(version);
+                item.info = formatInfo(version);
                 item.action = getAction(activity, item);
                 if (item.action == R.string.translation_update && canDownload(item.copy)) {
                     activity.downloadVersion(item, true);
@@ -726,28 +716,6 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         }
 
         private int formatCopy(JSONObject version) {
-            String code = version.optString("code");
-            switch (code) {
-                case "csbs":
-                case "csbt":
-                case "cuvmps":
-                case "cuvmpt":
-                    return CC_NO_COMMERCIAL;
-                case "asv":
-                case "bjb":
-                case "lsg":
-                case "rwv":
-                case "web":
-                case "webbe":
-                case "darby":
-                case "dra":
-                case "ylt":
-                case "rva":
-                    return CC_PUBLIC_DOMAIN;
-                default:
-                    break;
-            }
-
             String copy = version.optString("copy");
             if (TextUtils.isEmpty(copy)) {
                 return CC_UNKNOWN;
@@ -760,6 +728,14 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                 default:
                     return CC_UNKNOWN;
             }
+        }
+
+        private String formatInfo(JSONObject version) {
+            String info = version.optString("info");
+            if (info == null) {
+                return null;
+            }
+            return info.intern();
         }
 
         private int getAction(VersionsActivity activity, VersionItem item) {
@@ -786,6 +762,15 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
 
         private boolean accept(VersionItem item, String lang) {
             if (TextUtils.isEmpty(mQuery)) {
+                return true;
+            }
+            if (ObjectUtils.equals("nc", mQuery) && item.copy == CC_NO_COMMERCIAL) {
+                return true;
+            }
+            if (ObjectUtils.equals("pd", mQuery) && item.copy == CC_PUBLIC_DOMAIN) {
+                return true;
+            }
+            if (ObjectUtils.equals("jy", mQuery) && item.copy == CC_JY_AUTHORIZED) {
                 return true;
             }
             if (item.code.toLowerCase(Locale.US).contains(mQuery)) {
@@ -923,6 +908,8 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         int action;
 
         int copy;
+
+        String info;
 
         @Override
         public int hashCode() {

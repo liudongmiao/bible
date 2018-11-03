@@ -65,8 +65,8 @@ public class DownloadComponent extends Handler {
             '/', 'b', 'd', '/'
     };
 
-    private static final String VERSIONS_JSON = String.valueOf(new char[] {
-            'v', 'e', 'r', 's', 'i', 'o', 'n', 's', '.', 'j', 's', 'o', 'n'
+    private static final String TRANSLATIONS_JSON = String.valueOf(new char[] {
+            't', 'r', 'a', 'n', 's', 'l', 'a', 't', 'i', 'o', 'n', 's', '.', 'j', 's', 'o', 'n'
     });
 
     private static final String X_SDK = String.valueOf(new char[] {
@@ -282,7 +282,7 @@ public class DownloadComponent extends Handler {
     }
 
     private File getVersionsJson() {
-        return new File(mContext.getFilesDir(), VERSIONS_JSON);
+        return new File(mContext.getFilesDir(), TRANSLATIONS_JSON);
     }
 
     public String getLocalVersions() throws IOException {
@@ -291,7 +291,7 @@ public class DownloadComponent extends Handler {
         if (file.isFile()) {
             is = new FileInputStream(file);
         } else {
-            is = mContext.getResources().openRawResource(R.raw.versions);
+            is = mContext.getResources().openRawResource(R.raw.translations);
         }
         return FileUtils.readAsString(is);
     }
@@ -312,7 +312,7 @@ public class DownloadComponent extends Handler {
             url.append(HTTP);
         }
         url.append(URL_PREFIX);
-        url.append(VERSIONS_JSON);
+        url.append(TRANSLATIONS_JSON);
         headers.put(X_SDK, Integer.toString(Build.VERSION.SDK_INT)); // custom x-sdk
         headers.put(X_VERSION, Integer.toString(BuildConfig.VERSION_CODE));
         String json = HttpUtils.retrieveContent(url.toString(), headers);
