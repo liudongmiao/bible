@@ -98,8 +98,9 @@ public class BibleUtils {
 
     public static boolean isDemoVersion(String version) {
         switch (version) {
-            case "cunpssdemo":
-            case "niv1984demo":
+            case "cuvmpsdemo":
+            case "cuvmptdemo":
+            case "asvdemo":
                 return true;
             default:
                 return false;
@@ -108,10 +109,12 @@ public class BibleUtils {
 
     public static String removeDemo(String version) {
         switch (version) {
-            case "cunpssdemo":
-                return "cunpss";
-            case "niv1984demo":
-                return "niv1984";
+            case "cuvmpsdemo":
+                return "cuvmps";
+            case "cuvmptdemo":
+                return "cuvmpt";
+            case "asvdemo":
+                return "asv";
             default:
                 return version;
         }

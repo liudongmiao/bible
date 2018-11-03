@@ -419,13 +419,14 @@
         <item>dark</item>
     </string-array>
 
-    <string name="niv1984">bibledata-en-niv1984.zip</string>
-    <string name="cunpss">bibledata-zh-cn-cunpss.zip</string>
+    <string name="cuvmps">bibledata-zh-cn-cuvmps.zip</string>
+    <string name="cuvmpt">bibledata-zh-tw-cuvmpt.zip</string>
+    <string name="asv">bibledata-en-asv.zip</string>
 
     <string-array name="version_fullname">
         <item>niv1984|New International Version 1984</item>
         <item>niv2011|New International Version 2011</item>
-        <item>niv1984demo|New International Version 1984 (Demo)</item>
+        <item>asvdemo|American Standard Version (Demo)</item>
     </string-array>
 
     <string-array name="version_name_zh">
@@ -434,6 +435,8 @@
         <item>cunpts|和合</item>
         <item>rcuvss|和修</item>
         <item>rcuvts|和修</item>
+        <item>cuvmps|和合</item>
+        <item>cuvmpt|和合</item>
     </string-array>
 
     <string-array name="version_fullname_zh">
@@ -442,7 +445,8 @@
         <item>cunpts|新標點和合本</item>
         <item>rcuvss|和合本修订版</item>
         <item>rcuvts|和合本修訂版</item>
-        <item>cunpssdemo|和合本新标点（演示）</item>
+        <item>cuvmpsdemo|现代标点和合本（演示）</item>
+        <item>cuvmptdemo|現代標點和合本（演示）</item>
     </string-array>
 
 </resources>

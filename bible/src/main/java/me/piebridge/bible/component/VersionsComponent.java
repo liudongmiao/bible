@@ -310,16 +310,24 @@ public class VersionsComponent {
     }
 
     private Collection<String> checkDemoVersions() {
-        final String niv1984demo = "niv1984demo";
-        final String cunpssdemo = "cunpssdemo";
-        checkDemoVersion(R.raw.niv1984demo, niv1984demo);
-        checkDemoVersion(R.raw.cunpssdemo, cunpssdemo);
+        final String asvdemo = "asvdemo";
+        final String cuvmpsdemo = "cuvmpsdemo";
+        final String cuvmptdemo = "cuvmptdemo";
+        checkDemoVersion(R.raw.asvdemo, asvdemo);
+        checkDemoVersion(R.raw.cuvmpsdemo, cuvmpsdemo);
+        checkDemoVersion(R.raw.cuvmptdemo, cuvmptdemo);
         switch (Locale.getDefault().getLanguage()) {
             case "zh":
-                return Arrays.asList(cunpssdemo, niv1984demo);
+                switch (Locale.getDefault().getCountry()) {
+                    case "TW":
+                        return Arrays.asList(cuvmptdemo, cuvmpsdemo, asvdemo);
+                    case "CN":
+                    default:
+                        return Arrays.asList(cuvmpsdemo, cuvmptdemo, asvdemo);
+                }
             case "en":
             default:
-                return Arrays.asList(niv1984demo, cunpssdemo);
+                return Arrays.asList(asvdemo, cuvmpsdemo, cuvmptdemo);
         }
     }
 
