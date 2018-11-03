@@ -308,7 +308,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         if (TextUtils.isEmpty(versionItem.info)) {
             message = getText(R.string.translation_copyright_message);
         } else {
-            message = DeprecationUtils.fromHtml(versionItem.info);
+            message = DeprecationUtils.fromHtmlLegacy(versionItem.info);
         }
         showCopyright(versionItem.name, message);
     }

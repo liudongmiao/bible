@@ -13,6 +13,14 @@ public class DeprecationUtils {
 
     }
 
+    public static Spanned fromHtmlLegacy(String source) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // Html.fromHtml with tags since 7.x
+            return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            return fromHtmlDeprecatedN(source);
+        }
+    }
+
     public static Spanned fromHtml(String source) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // Html.fromHtml with tags since 7.x
             return Html.fromHtml(source, Html.FROM_HTML_MODE_COMPACT);
