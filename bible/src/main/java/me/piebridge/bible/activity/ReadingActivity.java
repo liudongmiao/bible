@@ -4,20 +4,38 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.BuildConfig;
@@ -49,10 +67,14 @@ public class ReadingActivity extends DrawerActivity {
 
     private String mTitle;
 
+    private static final int MESSAGE_REPORT_BUG = 1;
+    private Handler workHandler;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         receiver = new Receiver(this);
+        workHandler = new WorkHandler(this, new MainHandler(this));
     }
 
     @Override
@@ -239,6 +261,63 @@ public class ReadingActivity extends DrawerActivity {
         super.switchToVersion(extra);
     }
 
+    public boolean hasEmailClient() {
+        return getPackageManager().resolveActivity(getEmailIntent(), PackageManager.MATCH_DEFAULT_ONLY) != null;
+    }
+
+    private Intent getEmailIntent() {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.setData(Uri.parse("mailto:"));
+        return intent;
+    }
+
+    public void sendEmail() {
+        Intent intent = getEmailIntent();
+        fillEmail(intent, false);
+        startActivity(intent);
+    }
+
+    private String getSubject() {
+        Locale locale = Locale.getDefault();
+        return getString(R.string.app_name) + " " + BuildConfig.VERSION_NAME +
+                "(Android " + locale.getLanguage() + "_" + locale.getCountry() + "-" + Build.VERSION.RELEASE + ")";
+    }
+
+    private void fillEmail(Intent intent, boolean fingerprint) {
+        intent.putExtra(Intent.EXTRA_SUBJECT, getSubject());
+        if (fingerprint) {
+            intent.putExtra(Intent.EXTRA_TEXT, Build.FINGERPRINT);
+        }
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[] {String.valueOf(new char[] {
+                'b', 'i', 'b', 'l', 'e', '@', 'j', 'i', 'a', 'n', 'y', 'u', '.', 'i', 'o'
+        })});
+    }
+
+    public void reportBug() {
+        workHandler.sendEmptyMessage(MESSAGE_REPORT_BUG);
+    }
+
+    void doReportBug(File path) {
+        if (path != null) {
+            Uri uri;
+            try {
+                uri = FileProvider.getUriForFile(this,
+                        BuildConfig.APPLICATION_ID + ".fileprovider", path);
+            } catch (IllegalArgumentException e) {
+                return;
+            }
+
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            fillEmail(intent, true);
+            intent.setDataAndType(null, "message/rfc822");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            }
+        }
+    }
+
     private static class Receiver extends BroadcastReceiver {
 
         private WeakReference<ReadingActivity> mReference;
@@ -255,6 +334,148 @@ public class ReadingActivity extends DrawerActivity {
             }
         }
 
+    }
+
+    static class MainHandler extends Handler {
+
+        private final WeakReference<ReadingActivity> mReference;
+
+        public MainHandler(ReadingActivity activity) {
+            super(activity.getMainLooper());
+            this.mReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MESSAGE_REPORT_BUG:
+                    ReadingActivity activity = mReference.get();
+                    if (activity != null) {
+                        activity.doReportBug((File) msg.obj);
+                    }
+                    break;
+            }
+        }
+
+    }
+
+    static class WorkHandler extends Handler {
+
+        private static final String[][] LOGS = new String[][] {
+                {"system.txt", "-b system"},
+                {"events.txt", "-b events am_pss:s"},
+                {"crash.txt", "-b crash"},
+                {"bible.txt", "-b main *:v"}
+        };
+
+        private final Handler mainHandler;
+        private final WeakReference<ReadingActivity> mReference;
+
+        WorkHandler(ReadingActivity activity, Handler handler) {
+            super(newLooper());
+            mainHandler = handler;
+            mReference = new WeakReference<>(activity);
+        }
+
+        private static Looper newLooper() {
+            HandlerThread thread = new HandlerThread("Reading");
+            thread.start();
+            return thread.getLooper();
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MESSAGE_REPORT_BUG:
+                    ReadingActivity activity = mReference.get();
+                    File log = null;
+                    if (activity != null) {
+                        log = fetchLogs(activity);
+                    }
+                    mainHandler.obtainMessage(MESSAGE_REPORT_BUG, log).sendToTarget();
+                    break;
+            }
+        }
+
+        public static File fetchLogs(Context context) {
+            File path = null;
+            File dir;
+            if (context != null && (dir = context.getExternalFilesDir("logs")) != null) {
+                DateFormat df = new SimpleDateFormat("yyyyMMdd.HHmm", Locale.US);
+                String date = df.format(Calendar.getInstance().getTime());
+                File cacheDir = context.getCacheDir();
+                try {
+                    for (String[] log : LOGS) {
+                        File file = new File(cacheDir, date + "." + log[0]);
+                        String command = "/system/bin/logcat -d -v threadtime -f "
+                                + file.getPath() + " " + log[1];
+                        Runtime.getRuntime().exec(command).waitFor();
+                    }
+                    Runtime.getRuntime().exec("sync").waitFor();
+                    path = zipLog(context, dir, date);
+                } catch (IOException | InterruptedException e) {
+                    LogUtils.w("Can't get logs", e);
+                }
+            }
+            return path;
+        }
+
+        private static File zipLog(Context context, File dir, String date) {
+            String[] names = dir.list();
+            if (names != null) {
+                for (String name : names) {
+                    File file = new File(dir, name);
+                    if (name.startsWith("logs-v") && file.isFile() && file.delete()) {
+                        LogUtils.d("delete file " + file.getName());
+                    }
+                }
+            }
+            try {
+                File path = new File(dir, "logs-v" + BuildConfig.VERSION_NAME + "-" + date + ".zip");
+                try (
+                        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(path))
+                ) {
+                    for (String[] log : LOGS) {
+                        zipLog(context, zos, date, log[0]);
+                    }
+                    File parent = context.getExternalFilesDir(null).getParentFile();
+                    names = parent.list();
+                    if (names != null) {
+                        Arrays.sort(names);
+                        for (String name : names) {
+                            if (name.startsWith("server.") && name.endsWith(".txt")) {
+                                zipLog(zos, new File(parent, name));
+                            }
+                        }
+                    }
+                }
+                return path;
+            } catch (IOException e) {
+                LogUtils.w("Can't report bug", e);
+                return null;
+            }
+        }
+
+
+        private static void zipLog(Context context, ZipOutputStream zos, String date, String path)
+                throws IOException {
+            File file = new File(context.getCacheDir(), date + "." + path);
+            if (!file.exists()) {
+                LogUtils.w("Can't find " + file.getPath());
+                return;
+            }
+            zipLog(zos, file);
+            //noinspection ResultOfMethodCallIgnored
+            file.delete();
+        }
+
+        private static void zipLog(ZipOutputStream zos, File file) throws IOException {
+            ZipEntry zipEntry = new ZipEntry(file.getName());
+            zipEntry.setTime(file.lastModified());
+            zos.putNextEntry(zipEntry);
+            FileUtils.copy(new FileInputStream(file), zos);
+            zos.closeEntry();
+        }
     }
 
 }

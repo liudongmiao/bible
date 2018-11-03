@@ -15,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 
 import me.piebridge.bible.R;
+import me.piebridge.bible.fragment.FeedbackFragment;
 
 /**
  * Created by thom on 16/7/24.
@@ -71,6 +72,9 @@ public abstract class DrawerActivity extends AbstractReadingActivity
                 break;
             case R.id.menu_download:
                 startActivity(new Intent(this, VersionsActivity.class));
+                break;
+            case R.id.menu_feedback:
+                new FeedbackFragment().show(getSupportFragmentManager(), "fragment-feedback");
                 break;
             default:
                 break;

@@ -1,0 +1,64 @@
+package me.piebridge.bible.fragment;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
+import android.widget.TextView;
+
+import me.piebridge.bible.R;
+import me.piebridge.bible.activity.ReadingActivity;
+
+/**
+ * Created by thom on 2018/11/3.
+ */
+public class FeedbackFragment extends AbstractDialogFragment implements DialogInterface.OnClickListener {
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        ReadingActivity activity = (ReadingActivity) getActivity();
+        if (activity == null) {
+            throw new UnsupportedOperationException();
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(R.string.menu_feedback);
+        builder.setMessage(R.string.feedback_message);
+        builder.setPositiveButton(R.string.feedback_email, this);
+        builder.setNeutralButton(R.string.feedback_report_bug, this);
+        return builder.create();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        AlertDialog dialog = (AlertDialog) getDialog();
+        TextView textView = dialog.findViewById(android.R.id.message);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ReadingActivity activity = (ReadingActivity) getActivity();
+        if (activity != null) {
+            boolean hasEmailClient = activity.hasEmailClient();
+            AlertDialog dialog = (AlertDialog) getDialog();
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(hasEmailClient);
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(hasEmailClient);
+        }
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        ReadingActivity activity = (ReadingActivity) getActivity();
+        if (activity == null) {
+            return;
+        }
+        if (DialogInterface.BUTTON_POSITIVE == which) {
+            activity.sendEmail();
+        } else if (DialogInterface.BUTTON_NEUTRAL == which) {
+            activity.reportBug();
+        }
+    }
+}

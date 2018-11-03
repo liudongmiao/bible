@@ -42,6 +42,11 @@
             android:title="@string/menu_settings" />
 
         <item
+            android:id="@+id/menu_feedback"
+            android:icon="@drawable/ic_feedback_black_24dp"
+            android:title="@string/menu_feedback" />
+
+        <item
             android:id="@+id/menu_about"
             android:enabled="false"
             android:icon="@drawable/ic_info_outline_black_24dp"

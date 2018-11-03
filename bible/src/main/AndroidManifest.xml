@@ -204,6 +204,16 @@
             android:authorities="me.piebridge.bible.provider.search"
             android:permission="me.piebridge.bible.permission.ACCESS" />
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
         <receiver android:name=".receiver.DownloadReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SECRET_CODE" />

@@ -38,6 +38,7 @@
     <string name="menu_notes">笔记</string>
     <string name="menu_download">下载</string>
     <string name="menu_settings">设置</string>
+    <string name="menu_feedback">反馈</string>
     <string name="menu_about">关于</string>
     <string name="menu_switch_theme">切换主题</string>
 
@@ -79,5 +80,9 @@
     <string name="settings_shangti">上帝</string>
     <string name="settings_shangti_summary">上帝/　神</string>
     <string name="settings_version">版本</string>
+
+    <string name="feedback_message">欢迎提交反馈。如果使用上有任何问题，请点按“报告错误”。\n\n如果想阅读更多译本，请在 <a href="https://www.biblegateway.com/versions/">Bible Gateway</a> 或 <a href="https://bibles.org/versions">bibles.org</a> 上寻找，然后邮件告知链接。</string>
+    <string name="feedback_email">邮件</string>
+    <string name="feedback_report_bug">报告错误</string>
 
 </resources>
