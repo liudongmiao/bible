@@ -83,4 +83,9 @@ public class SelectVersionActivity extends ToolbarActivity implements GridAdapte
         setResult(Activity.RESULT_OK, intent);
     }
 
+    @Override
+    public void setTitle(CharSequence title) {
+        super.setTitle(getString(R.string.reading_translation));
+    }
+
 }
