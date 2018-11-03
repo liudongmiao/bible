@@ -6,6 +6,7 @@
     <string name="manifest_settings">@string/menu_settings</string>
     <string name="manifest_search">@string/menu_search</string>
     <string name="manifest_search_intent">搜尋如鴿聖經</string>
+    <string name="manifest_download_manifest">添加譯本</string>
 
     <string name="reading_book">書</string>
     <string name="reading_chapter">章</string>

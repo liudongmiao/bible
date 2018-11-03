@@ -241,7 +241,7 @@ public class DownloadComponent extends Handler {
     }
 
     public static boolean isBibleData(String name) {
-        return name != null && name.startsWith("bibledata-") && name.endsWith(".zip");
+        return name != null && name.startsWith("bibledata-") && name.endsWith(".zip") && !name.contains("/");
     }
 
     public static String getVersion(File file) {

@@ -45,7 +45,7 @@
                 <action android:name="me.piebridge.bible.intent.action.DOWNLOAD" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <intent-filter>
+            <intent-filter android:label="@string/manifest_download_manifest">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -55,6 +55,17 @@
                     android:host="*"
                     android:mimeType="application/zip"
                     android:scheme="file" />
+
+                <data
+                    android:host="*"
+                    android:mimeType="application/zip"
+                    android:scheme="content" />
+            </intent-filter>
+            <intent-filter android:label="@string/manifest_download_manifest">
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/zip" />
             </intent-filter>
 
             <meta-data
@@ -118,6 +129,10 @@
             android:parentActivityName=".Chapter"
             android:theme="@style/light"
             android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="me.piebridge.bible.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
             <intent-filter android:label="@string/manifest_search_intent">
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />

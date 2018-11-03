@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--
     <shortcut
-        android:icon="@drawable/ic_file_download_black_24dp"
+        android:icon="@drawable/ic_action_search"
+        android:shortcutId="search"
+        android:shortcutShortLabel="@string/manifest_search">
+        <intent android:action="me.piebridge.bible.intent.action.SEARCH" />
+    </shortcut>
+    <shortcut
+        android:icon="@drawable/ic_action_download"
         android:shortcutId="download"
-        android:shortcutShortLabel="@string/menu_download">
+        android:shortcutShortLabel="@string/manifest_download">
         <intent android:action="me.piebridge.bible.intent.action.DOWNLOAD" />
     </shortcut>
-    -->
 </shortcuts>

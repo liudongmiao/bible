@@ -5,14 +5,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.text.Spanned;
+import android.os.ParcelFileDescriptor;
+import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,8 +42,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -54,9 +61,10 @@ import java.util.Locale;
 import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.R;
 import me.piebridge.bible.component.DownloadComponent;
-import me.piebridge.bible.fragment.DeleteVersionConfirmFragment;
 import me.piebridge.bible.fragment.CopyrightFragment;
+import me.piebridge.bible.fragment.DeleteVersionConfirmFragment;
 import me.piebridge.bible.utils.DeprecationUtils;
+import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ObjectUtils;
@@ -129,13 +137,67 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     }
 
     private void handleIntent(Intent intent) {
-        final Uri uri = intent.getData();
+        Uri uri = intent.getData();
         if (uri != null) {
-            final String path = uri.getPath();
-            final String segment = uri.getLastPathSegment();
-            if ("file".equals(uri.getScheme()) && path != null && DownloadComponent.isBibleData(segment)) {
-                workHandler.obtainMessage(ADD_VERSION, path).sendToTarget();
+            LogUtils.d("data uri: " + uri);
+            handleUri(uri);
+            return;
+        }
+        uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (uri != null) {
+            LogUtils.d("stream uri: " + uri);
+            handleUri(uri);
+        }
+    }
+
+    private void handleUri(Uri uri) {
+        String scheme = uri.getScheme();
+        if ("file".equals(scheme)) {
+            handleFile(uri);
+        } else if ("content".equals(scheme)) {
+            handleContent(uri);
+        }
+    }
+
+    private void handleContent(Uri uri) {
+        try (
+                Cursor cursor = getContentResolver().query(uri, null, null, null, null)
+        ) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                String name = cursor.getString(nameIndex);
+                LogUtils.d("name: " + name);
+                if (DownloadComponent.isBibleData(name)) {
+                    try {
+                        doHandleContent(uri, name);
+                    } catch (IOException e) {
+                        LogUtils.w("cannot get " + e + " from content", e);
+                    }
+                }
             }
+        }
+    }
+
+    private void doHandleContent(Uri uri, String name) throws IOException {
+        ParcelFileDescriptor openFileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
+        if (openFileDescriptor != null) {
+            FileDescriptor fileDescriptor = openFileDescriptor.getFileDescriptor();
+            File file = new File(getExternalFilesDir(null), name);
+            try (
+                    InputStream is = new BufferedInputStream(new FileInputStream(fileDescriptor));
+                    OutputStream os = new FileOutputStream(file)
+            ) {
+                FileUtils.copy(is, os);
+            }
+            workHandler.obtainMessage(ADD_VERSION, file.getPath()).sendToTarget();
+        }
+    }
+
+    private void handleFile(Uri uri) {
+        final String path = uri.getPath();
+        final String segment = uri.getLastPathSegment();
+        if (path != null && DownloadComponent.isBibleData(segment)) {
+            workHandler.obtainMessage(ADD_VERSION, path).sendToTarget();
         }
     }
 
