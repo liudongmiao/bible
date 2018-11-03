@@ -23,25 +23,40 @@
         android:paddingBottom="8dp"
         tools:showIn="@layout/activity_results">
 
-        <Button
+        <ImageView
+            android:id="@+id/copyright"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:contentDescription="@string/translation_copyright_message"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_copyright_nc" />
+
+        <ImageView
             android:id="@+id/action"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            tools:text="@string/translation_install" />
+            android:contentDescription="@string/translation_install"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_file_download_black_24dp" />
 
         <TextView
             android:id="@+id/code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
             android:layout_toStartOf="@id/action"
             android:layout_toLeftOf="@id/action"
+            android:layout_toEndOf="@id/copyright"
+            android:layout_toRightOf="@id/copyright"
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Title"
             tools:text="NIV1984" />
@@ -51,11 +66,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/code"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
             android:layout_marginTop="4dp"
             android:layout_toStartOf="@id/action"
             android:layout_toLeftOf="@id/action"
+            android:layout_toEndOf="@id/copyright"
+            android:layout_toRightOf="@id/copyright"
             android:gravity="center_vertical"
             android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
             tools:text="New International Version 1984" />

@@ -1,14 +1,16 @@
 package me.piebridge.bible.fragment;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.ReadingActivity;
+import me.piebridge.bible.utils.ObjectUtils;
 
 /**
  * Created by thom on 2018/11/3.
@@ -17,10 +19,7 @@ public class FeedbackFragment extends AbstractDialogFragment implements DialogIn
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        ReadingActivity activity = (ReadingActivity) getActivity();
-        if (activity == null) {
-            throw new UnsupportedOperationException();
-        }
+        ReadingActivity activity = ObjectUtils.requireNonNull((ReadingActivity) getActivity());
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.menu_feedback);
         builder.setMessage(R.string.feedback_message);
@@ -33,7 +32,7 @@ public class FeedbackFragment extends AbstractDialogFragment implements DialogIn
     public void onStart() {
         super.onStart();
         AlertDialog dialog = (AlertDialog) getDialog();
-        TextView textView = dialog.findViewById(android.R.id.message);
+        TextView textView = ObjectUtils.requireNonNull(dialog.findViewById(android.R.id.message));
         textView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 

@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
+    android:background="?attr/backgroundCell"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:background="?attr/backgroundCell"
     android:paddingStart="?android:attr/listPreferredItemPaddingStart"
     android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
@@ -16,17 +16,17 @@
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:textAppearance="?attr/textAppearancePopupMenuHeader"
         tools:text="" />
 
     <TextView
         android:id="@+id/count"
-        android:layout_width="wrap_content"
+        android:layout_width="36dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
+        android:gravity="center"
         android:textAppearance="?attr/textAppearancePopupMenuHeader"
         tools:text="10" />
 

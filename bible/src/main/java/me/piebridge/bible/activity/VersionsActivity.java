@@ -5,19 +5,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
@@ -53,7 +55,8 @@ import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.R;
 import me.piebridge.bible.component.DownloadComponent;
 import me.piebridge.bible.fragment.DeleteVersionConfirmFragment;
-import me.piebridge.bible.fragment.InfoFragment;
+import me.piebridge.bible.fragment.CopyrightFragment;
+import me.piebridge.bible.utils.DeprecationUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ObjectUtils;
@@ -61,10 +64,15 @@ import me.piebridge.bible.utils.ObjectUtils;
 public class VersionsActivity extends ToolbarActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener,
         View.OnClickListener {
 
+    private static final int CC_UNKNOWN = 0;
+    private static final int CC_PUBLIC_DOMAIN = 1;
+    private static final int CC_NO_COMMERCIAL = 2;
+    private static final int CC_JY_AUTHORIZED = 3;
+
     private static final long LATER = 250;
 
     private static final String FRAGMENT_CONFIRM = "fragment-confirm";
-    private static final String FRAGMENT_INFO = "fragment-info";
+    private static final String FRAGMENT_COPYRIGHT = "fragment-copyright";
 
     private RecyclerView recyclerView;
     private VersionAdapter versionsAdaper;
@@ -218,19 +226,53 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
             View action = v.findViewById(R.id.action);
             VersionItem versionItem = (VersionItem) action.getTag();
             launchVersion(versionItem.code);
-        } else if (v instanceof Button) {
+        } else if (v instanceof ImageView) {
             VersionItem versionItem = (VersionItem) v.getTag();
-            onClickButton(versionItem);
+            switch (v.getId()) {
+                case R.id.action:
+                    onClickAction(versionItem);
+                    break;
+                case R.id.copyright:
+                    onClickCopyright(versionItem);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
-    private void onClickButton(VersionItem versionItem) {
+    private void onClickCopyright(VersionItem versionItem) {
+        CharSequence message;
+        switch (versionItem.code) {
+            case "csbs":
+            case "csbt":
+            case "cuvmps":
+            case "cuvmpt":
+                message = DeprecationUtils.fromHtml("© 2011 Global Bible Initiative<br/>" +
+                        "© 2011 全球圣经促进会<br/><br/>" +
+                        "<a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a>");
+                break;
+            default:
+                message = null;
+                break;
+        }
+        if (TextUtils.isEmpty(message)) {
+            message = getText(R.string.translation_copyright_message);
+        }
+        showCopyright(versionItem.name, message);
+    }
+
+    private void onClickAction(VersionItem versionItem) {
         int action = versionItem.action;
         switch (action) {
             case R.string.translation_install:
             case R.string.translation_update:
-                downloadVersion(versionItem, action == R.string.translation_update);
-                updateActionsLater();
+                if (canDownload(versionItem.copy)) {
+                    downloadVersion(versionItem, action == R.string.translation_update);
+                    updateActionsLater();
+                } else {
+                    onClickCopyright(versionItem);
+                }
                 break;
             case R.string.translation_cancel:
                 BibleApplication application = (BibleApplication) getApplication();
@@ -287,7 +329,8 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     void updateVersions(String versions) {
         try {
             if (versionsAdaper.setVersions(versions)) {
-                Snackbar.make(findViewById(R.id.coordinator), R.string.translation_metadata_updated, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(findViewById(R.id.coordinator), R.string.translation_metadata_updated,
+                        Snackbar.LENGTH_LONG).show();
             }
         } catch (JSONException ignore) {
             // do nothing
@@ -359,16 +402,27 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         }
     }
 
-    private void showMessage(String message) {
-        final String tag = FRAGMENT_INFO;
+    private void showCopyright(CharSequence title, CharSequence message) {
+        final String tag = FRAGMENT_COPYRIGHT;
         FragmentManager manager = getSupportFragmentManager();
-        InfoFragment fragment = (InfoFragment) manager.findFragmentByTag(tag);
+        CopyrightFragment fragment = (CopyrightFragment) manager.findFragmentByTag(tag);
         if (fragment != null) {
             fragment.dismiss();
         }
-        fragment = new InfoFragment();
-        fragment.setMessage(getString(R.string.reading_info), message);
+        fragment = new CopyrightFragment();
+        fragment.setMessage(title, message);
         fragment.show(manager, tag);
+    }
+
+    static boolean canDownload(int copy) {
+        switch (copy) {
+            case CC_PUBLIC_DOMAIN:
+            case CC_NO_COMMERCIAL:
+                return true;
+            case CC_UNKNOWN:
+            default:
+                return false;
+        }
     }
 
     static class Receiver extends BroadcastReceiver {
@@ -535,8 +589,9 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                 item.date = version.optString("date");
                 item.lang = version.optString("lang");
                 item.name = version.optString("name");
+                item.copy = formatCopy(version);
                 item.action = getAction(activity, item);
-                if (item.action == R.string.translation_update) {
+                if (item.action == R.string.translation_update && canDownload(item.copy)) {
                     activity.downloadVersion(item, true);
                     item.action = R.string.translation_cancel;
                 }
@@ -585,6 +640,12 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                             return 1;
                         }
 
+                        if (o1.lang.startsWith("en")) {
+                            return -1;
+                        } else if (o2.lang.startsWith("en")) {
+                            return 1;
+                        }
+
                         return Collator.getInstance().compare(o1.lang, o2.lang);
                     }
                 }
@@ -599,6 +660,43 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                 mItems.clear();
                 mItems.addAll(items);
                 result.dispatchUpdatesTo(this);
+            }
+        }
+
+        private int formatCopy(JSONObject version) {
+            String code = version.optString("code");
+            switch (code) {
+                case "csbs":
+                case "csbt":
+                case "cuvmps":
+                case "cuvmpt":
+                    return CC_NO_COMMERCIAL;
+                case "asv":
+                case "bjb":
+                case "lsg":
+                case "rwv":
+                case "web":
+                case "webbe":
+                case "darby":
+                case "dra":
+                case "ylt":
+                case "rva":
+                    return CC_PUBLIC_DOMAIN;
+                default:
+                    break;
+            }
+
+            String copy = version.optString("copy");
+            if (TextUtils.isEmpty(copy)) {
+                return CC_UNKNOWN;
+            }
+            switch (copy) {
+                case "nc":
+                    return CC_NO_COMMERCIAL;
+                case "pd":
+                    return CC_PUBLIC_DOMAIN;
+                default:
+                    return CC_UNKNOWN;
             }
         }
 
@@ -658,8 +756,10 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                 case TYPE_VERSION:
                     cardView = (CardView) inflater.inflate(R.layout.item_version, parent, false);
                     VersionViewHolder holder = new VersionViewHolder(cardView);
-                    holder.cardView.setOnClickListener(mReference.get());
-                    holder.actionView.setOnClickListener(mReference.get());
+                    VersionsActivity activity = mReference.get();
+                    holder.cardView.setOnClickListener(activity);
+                    holder.actionView.setOnClickListener(activity);
+                    holder.copyrightView.setOnClickListener(activity);
                     return holder;
                 default:
                     throw new UnsupportedOperationException();
@@ -679,19 +779,47 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
             VersionItem versionItem = mItems.get(position);
             holder.codeView.setText(versionItem.code);
             holder.nameView.setText(versionItem.name);
-            holder.actionView.setText(versionItem.action);
+            VersionsActivity activity = mReference.get();
+            if (activity != null) {
+                holder.actionView.setContentDescription(activity.getString(versionItem.action));
+            } else {
+                holder.actionView.setContentDescription(null);
+            }
             holder.actionView.setTag(versionItem);
+            holder.copyrightView.setTag(versionItem);
             switch (versionItem.action) {
                 case R.string.translation_install:
+                    holder.actionView.setImageResource(R.drawable.ic_file_download_black_24dp);
+                    holder.cardView.setEnabled(false);
+                    break;
                 case R.string.translation_cancel:
+                    holder.actionView.setImageResource(R.drawable.ic_cancel_black_24dp);
                     holder.cardView.setEnabled(false);
                     break;
                 case R.string.translation_uninstall:
+                    holder.actionView.setImageResource(R.drawable.ic_delete_black_24dp);
+                    holder.cardView.setEnabled(true);
+                    break;
                 case R.string.translation_update:
+                    holder.actionView.setImageResource(R.drawable.ic_system_update_black_24dp);
                     holder.cardView.setEnabled(true);
                     break;
                 default:
                     break;
+            }
+            switch (versionItem.copy) {
+                case CC_NO_COMMERCIAL:
+                    holder.copyrightView.setImageResource(R.drawable.ic_copyright_nc);
+                    break;
+                case CC_PUBLIC_DOMAIN:
+                    holder.copyrightView.setImageResource(R.drawable.ic_copyright_pd);
+                    break;
+                case CC_JY_AUTHORIZED:
+                    holder.copyrightView.setImageResource(R.drawable.ic_copyright_black_24dp);
+                    break;
+                case CC_UNKNOWN:
+                default:
+                    holder.copyrightView.setImageResource(R.drawable.ic_copyright_cc);
             }
         }
 
@@ -731,6 +859,8 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         String name;
 
         int action;
+
+        int copy;
 
         @Override
         public int hashCode() {
@@ -809,7 +939,9 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
 
         final CardView cardView;
 
-        final Button actionView;
+        final ImageView copyrightView;
+
+        final ImageView actionView;
 
         final TextView codeView;
 
@@ -818,6 +950,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         public VersionViewHolder(CardView view) {
             super(view);
             this.cardView = view;
+            this.copyrightView = view.findViewById(R.id.copyright);
             this.actionView = view.findViewById(R.id.action);
             this.codeView = view.findViewById(R.id.code);
             this.nameView = view.findViewById(R.id.name);

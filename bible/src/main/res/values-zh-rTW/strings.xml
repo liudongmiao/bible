@@ -66,6 +66,7 @@
     <string name="translation_metadata_updated">譯本數據已更新。</string>
     <string name="translation_added">成功添加譯本: %s</string>
     <string name="translation_delete_confirm">移除譯本「%s」?</string>
+    <string name="translation_copyright_message">譯本暫時沒有獲得版權方授權。<br /><br />請協助獲取授權，或者<a href="https://github.com/jianyv/bible-data?files=1">手動下載</a>。</string>
 
     <string name="settings_fontsize">字體大小（%s）</string>
     <string name="settings_fontsize_reset">預設</string>
