@@ -38,7 +38,7 @@
         <activity
             android:name=".activity.VersionsActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:label="@string/menu_download"
+            android:label="@string/manifest_download"
             android:parentActivityName=".Chapter"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -93,7 +93,6 @@
             android:name=".activity.SelectVersionActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
-            android:label="@string/choose_version"
             android:parentActivityName=".Chapter"
             android:theme="@style/light">
             <meta-data
@@ -104,7 +103,7 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:label="@string/settings"
+            android:label="@string/manifest_settings"
             android:parentActivityName=".Chapter"
             android:theme="@style/light">
             <meta-data
@@ -115,25 +114,25 @@
         <activity
             android:name=".activity.SearchActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:label="@string/menu_search"
+            android:label="@string/manifest_search"
             android:parentActivityName=".Chapter"
             android:theme="@style/light"
             android:windowSoftInputMode="stateHidden">
-            <intent-filter android:label="@string/searchinbible">
+            <intent-filter android:label="@string/manifest_search_intent">
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <intent-filter android:label="@string/searchinbible">
+            <intent-filter android:label="@string/manifest_search_intent">
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter android:label="@string/searchinbible">
+            <intent-filter android:label="@string/manifest_search_intent">
                 <action android:name="android.intent.action.PROCESS_TEXT" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <intent-filter android:label="@string/searchinbible">
+            <intent-filter android:label="@string/manifest_search_intent">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />

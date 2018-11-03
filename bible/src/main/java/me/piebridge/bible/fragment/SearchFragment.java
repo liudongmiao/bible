@@ -86,7 +86,6 @@ public class SearchFragment extends PreferenceFragmentCompat
         String key = preference.getKey();
         switch (key) {
             case "version":
-                updateVersion();
                 break;
             default:
                 if (!Boolean.FALSE.equals(newValue)) {
@@ -168,7 +167,7 @@ public class SearchFragment extends PreferenceFragmentCompat
         preferenceSearchTo.setSummary(application.getHuman(osisTo));
     }
 
-    private void updateVersion() {
+    public void updateVersion() {
         SearchActivity activity = (SearchActivity) getActivity();
         if (activity == null) {
             return;
@@ -197,7 +196,7 @@ public class SearchFragment extends PreferenceFragmentCompat
         String humanFirst = application.getHuman(osisFirst);
         String humanLast = application.getHuman(osisLast);
         if (!TextUtils.isEmpty(humanFirst) && !TextUtils.isEmpty(humanLast)) {
-            preference.setSummary(getString(R.string.fromto, humanFirst, humanLast));
+            preference.setSummary(getString(R.string.search_from_to, humanFirst, humanLast));
         } else {
             preference.setEnabled(false);
             preference.setSummary("");

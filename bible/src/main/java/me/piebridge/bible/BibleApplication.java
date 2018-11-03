@@ -162,6 +162,10 @@ public class BibleApplication extends GenuineApplication {
         return mVersions.getFullname(version);
     }
 
+    public String getFullname() {
+        return mVersions.getFullname(getVersion());
+    }
+
     public int compareFullname(String version1, String version2) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // use android.icu.text.Collator if available
             return android.icu.text.Collator.getInstance().compare(getFullname(version1), getFullname(version2));

@@ -765,7 +765,7 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.putExtra(Intent.EXTRA_TEXT, text);
             intent.setType("text/plain");
-            ChooserUtils.startActivityExcludeSelf(this, intent, getString(R.string.share));
+            ChooserUtils.startActivityExcludeSelf(this, intent, getString(R.string.action_share_title));
         }
     }
 

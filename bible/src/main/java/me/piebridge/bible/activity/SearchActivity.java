@@ -110,7 +110,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
                 intent.putExtra(SearchManager.QUERY, query);
                 handleIntent(intent);
             } else {
-                doSearch(query, true, false, null);
+                doSearch(query, false, null);
             }
         }
         return true;
@@ -121,18 +121,15 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         return false;
     }
 
-    private void doSearch(String query, boolean parse, boolean finished, Uri data) {
+    private void doSearch(String query, boolean auto, Uri data) {
         mSuggestions.saveRecentQuery(query, null);
 
         ArrayList<OsisItem> items;
-        if (parse) {
+        if (auto) {
+            items = new ArrayList<>();
+        } else {
             items = OsisItem.parseSearch(query, (BibleApplication) getApplication());
             fixItems(items);
-            if (!items.isEmpty()) {
-                LogUtils.d("items: " + items);
-            }
-        } else {
-            items = new ArrayList<>();
         }
         if (!items.isEmpty()) {
             showItems(items, false, false);
@@ -142,12 +139,14 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
             intent.putExtra(SearchManager.QUERY, query);
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            intent.putExtra(OSIS_FROM, sharedPreferences.getString(SearchFragment.KEY_SEARCH_FROM, null));
-            intent.putExtra(OSIS_TO, sharedPreferences.getString(SearchFragment.KEY_SEARCH_TO, null));
+            if (!auto) {
+                intent.putExtra(OSIS_FROM, sharedPreferences.getString(SearchFragment.KEY_SEARCH_FROM, null));
+                intent.putExtra(OSIS_TO, sharedPreferences.getString(SearchFragment.KEY_SEARCH_TO, null));
+            }
             intent.putExtra(URL, data);
 
             LogUtils.d("intent: " + intent + ", extra: " + intent.getExtras());
-            super.startActivity(setFinished(intent, finished));
+            super.startActivity(setFinished(intent, auto));
         }
     }
 
@@ -257,7 +256,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
                 mSuggestions.saveRecentQuery(query, null);
                 showItems(items, cross, true);
             } else {
-                doSearch(query, false, true, data);
+                doSearch(query, true, data);
             }
             finish();
         }
@@ -290,6 +289,12 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
             return false;
         } else {
             return super.hasFinished();
+        }
+    }
+
+    public void updateVersion() {
+        if (mSearchFragment != null) {
+            mSearchFragment.updateVersion();
         }
     }
 

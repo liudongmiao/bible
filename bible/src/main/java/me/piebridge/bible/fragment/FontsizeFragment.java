@@ -56,7 +56,7 @@ public class FontsizeFragment extends AbstractDialogFragment implements DialogIn
         builder.setView(R.layout.fragment_dialog);
         builder.setNegativeButton(android.R.string.cancel, null);
         builder.setPositiveButton(android.R.string.ok, this);
-        builder.setNeutralButton(R.string.reset, this);
+        builder.setNeutralButton(R.string.settings_fontsize_reset, this);
         return builder.create();
     }
 

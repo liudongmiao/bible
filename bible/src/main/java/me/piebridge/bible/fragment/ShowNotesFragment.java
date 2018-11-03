@@ -28,8 +28,8 @@ public class ShowNotesFragment extends AbstractDialogFragment
         builder.setTitle(bundle.getString(NoteBundle.VERSES));
         builder.setMessage(bundle.getString(NoteBundle.CONTENT));
         builder.setPositiveButton(android.R.string.ok, null);
-        builder.setNegativeButton(R.string.editnote, this);
-        builder.setNeutralButton(R.string.deletenote, this);
+        builder.setNegativeButton(R.string.note_edit, this);
+        builder.setNeutralButton(R.string.note_delete, this);
         return builder.create();
     }
 

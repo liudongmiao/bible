@@ -1,12 +1,19 @@
 package me.piebridge.bible.preference;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.ContextThemeWrapper;
 
 import androidx.preference.ListPreference;
 import androidx.preference.PreferenceManager;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import me.piebridge.bible.BibleApplication;
+import me.piebridge.bible.activity.SearchActivity;
 import me.piebridge.bible.utils.ObjectUtils;
 
 /**
@@ -23,11 +30,13 @@ public class VersionPreference extends ListPreference {
         BibleApplication application = (BibleApplication) getContext().getApplicationContext();
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(getKey(), application.getVersion()).apply();
 
-        String[] versions = application.getVersions().toArray(new String[0]);
-        setEntryValues(versions);
-        String[] humanVersions = new String[versions.length];
-        for (int i = 0; i < versions.length; i++) {
-            humanVersions[i] = application.getFullname(versions[i]);
+        List<String> versions = new ArrayList<>(application.getVersions());
+        Collections.sort(versions, application::compareFullname);
+        setEntryValues(versions.toArray(new String[0]));
+        int length = versions.size();
+        String[] humanVersions = new String[versions.size()];
+        for (int i = 0; i < length; i++) {
+            humanVersions[i] = application.getFullname(versions.get(i));
         }
         setEntries(humanVersions);
     }
@@ -38,8 +47,19 @@ public class VersionPreference extends ListPreference {
         BibleApplication application = (BibleApplication) getContext().getApplicationContext();
         if (!ObjectUtils.equals(application.getVersion(), value)) {
             application.setVersion(value);
+            updateVersion();
         }
         super.setSummary(application.getFullname(value));
+    }
+
+    private void updateVersion() {
+        Context context = getContext();
+        while (!(context instanceof Activity)) {
+            context = ((ContextThemeWrapper) context).getBaseContext();
+        }
+        if (context instanceof SearchActivity) {
+            ((SearchActivity) context).updateVersion();
+        }
     }
 
 }

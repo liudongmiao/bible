@@ -84,7 +84,7 @@ public class SelectActivity extends ToolbarActivity
         tabs.setupWithViewPager(mPager);
 
         mAdapter = new SelectAdapter(getSupportFragmentManager(), new String[] {
-                getString(R.string.book), getString(R.string.chapter), getString(R.string.verse)
+                getString(R.string.reading_book), getString(R.string.reading_chapter), getString(R.string.reading_verse)
         }, new Fragment[] {
                 selectBook, selectChapter, selectVerse
         });
@@ -101,7 +101,7 @@ public class SelectActivity extends ToolbarActivity
         String title;
         switch (position) {
             case BOOK:
-                title = getString(R.string.books);
+                title = ((BibleApplication) getApplication()).getFullname();
                 break;
             case CHAPTER:
                 title = getBookName();
@@ -145,7 +145,7 @@ public class SelectActivity extends ToolbarActivity
         BibleApplication application = (BibleApplication) getApplication();
         Map<String, String> chapters = new LinkedHashMap<>();
         for (String chapter : application.getChapters(book)) {
-            String human = VersionComponent.INTRO.equals(chapter) ? getString(R.string.intro) : chapter;
+            String human = VersionComponent.INTRO.equals(chapter) ? getString(R.string.reading_chapter_intro) : chapter;
             chapters.put(chapter, human);
         }
         return chapters;

@@ -40,7 +40,7 @@
             android:layout_toStartOf="@+id/verse_switch"
             android:layout_toLeftOf="@+id/verse_switch"
             android:gravity="center_vertical"
-            android:text="@string/show_verses"
+            android:text="@string/reading_show_verses"
             android:textColor="@color/grey_50"
             android:textSize="@dimen/text_size_menu" />
 

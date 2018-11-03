@@ -33,8 +33,8 @@ public abstract class DrawerActivity extends AbstractReadingActivity
     protected void setupDrawer() {
         drawer = findViewById(R.id.drawer);
         if (drawerToggle == null) {
-            drawerToggle = new ActionBarDrawerToggle(this, drawer, R.string.install,
-                    R.string.uninstall);
+            drawerToggle = new ActionBarDrawerToggle(this, drawer, R.string.translation_install,
+                    R.string.translation_uninstall);
             drawer.addDrawerListener(drawerToggle);
         }
 

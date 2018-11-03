@@ -7,7 +7,7 @@
     <me.piebridge.bible.preference.VersionPreference
         android:key="version"
         android:summary="%s"
-        android:title="@string/choose_version"
+        android:title="@string/search_translation"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.CheckBoxPreference

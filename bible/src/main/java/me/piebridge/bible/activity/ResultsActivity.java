@@ -379,7 +379,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             CountViewHolder countViewHolder = (CountViewHolder) holder;
-            countViewHolder.typeView.setText(R.string.search_no_results);
+            countViewHolder.typeView.setText(R.string.search_result_none);
             countViewHolder.countView.setVisibility(View.GONE);
         }
 
@@ -486,19 +486,19 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
                 bindUnformatted(verseViewHolder.unformattedView);
             } else if (position == verseStart && verseStart >= 0) {
                 CountViewHolder countViewHolder = (CountViewHolder) holder;
-                countViewHolder.typeView.setText(activity.getString(R.string.verse));
+                countViewHolder.typeView.setText(activity.getString(R.string.reading_verse));
                 countViewHolder.countView.setText(activity.getString(R.string.count, verseEnd - verseStart));
             } else if (position > bookStart && bookStart >= 0) {
                 bookCursor.moveToPosition(position - bookStart - 1);
                 BookViewHolder bookViewHolder = (BookViewHolder) holder;
-                String bookResult = activity.getString(R.string.chapters,
+                String bookResult = activity.getString(R.string.search_result_chapters,
                         bookCursor.getString(bookHuman), bookCursor.getInt(bookChapters));
                 bookViewHolder.bookView.setText(bookResult, TextView.BufferType.SPANNABLE);
                 bookViewHolder.cardView.setTag(new OsisItem(bookCursor.getString(bookOsis)));
                 selectQuery(bookViewHolder.bookView, bookResult);
             } else if (position == bookStart && bookStart >= 0) {
                 CountViewHolder countViewHolder = (CountViewHolder) holder;
-                countViewHolder.typeView.setText(activity.getString(R.string.book));
+                countViewHolder.typeView.setText(activity.getString(R.string.reading_book));
                 countViewHolder.countView.setText(activity.getString(R.string.count, bookEnd - bookStart));
             }
         }

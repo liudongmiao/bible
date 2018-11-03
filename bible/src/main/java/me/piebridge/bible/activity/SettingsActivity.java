@@ -43,10 +43,10 @@ public class SettingsActivity extends ToolbarActivity {
 
         BibleApplication application = (BibleApplication) getApplication();
         String version = application.getVersion();
-        fontsizeTitle = getString(R.string.fontsize, application.getName(version));
+        fontsizeTitle = getString(R.string.settings_fontsize, application.getName(version));
         fontsizeKey = AbstractReadingActivity.FONT_SIZE + "-" + BibleUtils.removeDemo(version);
 
-        defaultFontsizeTitle = getString(R.string.fontsize, getString(R.string.reset));
+        defaultFontsizeTitle = getString(R.string.settings_fontsize, getString(R.string.settings_fontsize_reset));
         defaultFontsizeKey = AbstractReadingActivity.FONT_SIZE + "-default";
 
         settingsFragment = new SettingsFragment();

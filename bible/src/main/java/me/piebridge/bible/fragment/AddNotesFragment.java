@@ -30,7 +30,7 @@ public class AddNotesFragment extends AbstractDialogFragment
         builder.setPositiveButton(android.R.string.ok, this);
         builder.setNegativeButton(android.R.string.cancel, this);
         if (getNoteId() > 0) {
-            builder.setNeutralButton(R.string.deletenote, this);
+            builder.setNeutralButton(R.string.note_delete, this);
         }
         return builder.create();
     }

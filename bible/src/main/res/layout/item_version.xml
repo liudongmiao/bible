@@ -32,7 +32,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            tools:text="@string/install" />
+            tools:text="@string/translation_install" />
 
         <TextView
             android:id="@+id/code"

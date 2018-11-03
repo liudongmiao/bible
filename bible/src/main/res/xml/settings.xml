@@ -6,12 +6,12 @@
 
     <androidx.preference.Preference
         android:key="fontsizeDefault"
-        android:title="@string/fontsize"
+        android:title="@string/settings_fontsize"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
         android:key="fontsizeVersion"
-        android:title="@string/fontsize"
+        android:title="@string/settings_fontsize"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.ListPreference
@@ -21,40 +21,40 @@
         android:entryValues="@array/theme_values"
         android:key="theme"
         android:summary="%s"
-        android:title="@string/theme_title"
+        android:title="@string/settings_theme"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="red"
-        android:summary="@string/wojinred"
-        android:title="@string/red"
+        android:summary="@string/settings_red_summary"
+        android:title="@string/settings_red"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="cross"
-        android:title="@string/xlink"
+        android:title="@string/settings_cross"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="autoCopy"
-        android:summary="@string/auto_copy_summary"
-        android:title="@string/auto_copy"
+        android:summary="@string/settings_auto_copy_summary"
+        android:title="@string/settings_auto_copy"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="shangti"
-        android:summary="@string/shangti_or_shen"
-        android:title="@string/shangti"
+        android:summary="@string/settings_shangti_summary"
+        android:title="@string/settings_shangti"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.Preference
         android:key="version"
         android:summary="@string/versionName"
-        android:title="@string/version"
+        android:title="@string/settings_version"
         app:iconSpaceReserved="false" />
 
 </androidx.preference.PreferenceScreen>

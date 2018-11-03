@@ -48,7 +48,7 @@ public class BibleUtils {
     public static String getChapter(String osis, Context context) {
         String chapter = getChapter(osis);
         if (VersionComponent.INTRO.equalsIgnoreCase(chapter)) {
-            return context.getString(R.string.intro);
+            return context.getString(R.string.reading_chapter_intro);
         } else {
             return chapter;
         }

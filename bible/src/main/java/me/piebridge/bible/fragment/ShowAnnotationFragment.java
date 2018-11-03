@@ -101,9 +101,9 @@ public class ShowAnnotationFragment extends AbstractDialogFragment implements Vi
 
     private static int formatTitleRes(String link) {
         if (link.contains("!f.") || link.startsWith("f")) {
-            return R.string.flink;
+            return R.string.reading_footnote;
         } else if (link.contains("!x.") || link.startsWith("c")) {
-            return R.string.xlink;
+            return R.string.reading_cross;
         } else {
             return 0;
         }

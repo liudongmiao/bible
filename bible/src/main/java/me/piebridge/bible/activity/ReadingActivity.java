@@ -230,8 +230,8 @@ public class ReadingActivity extends DrawerActivity {
         }
         fragment = new SwitchVersionConfirmFragment();
         BibleApplication application = (BibleApplication) getApplication();
-        fragment.setMessage(getString(R.string.confirm),
-                getString(R.string.version_no_chapter_confirm, application.getFullname(version), mTitle), version);
+        fragment.setMessage(getString(R.string.reading_confirm),
+                getString(R.string.reading_no_chapter_confirm, application.getFullname(version), mTitle), version);
         fragment.show(manager, tag);
     }
 

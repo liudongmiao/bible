@@ -227,17 +227,17 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     private void onClickButton(VersionItem versionItem) {
         int action = versionItem.action;
         switch (action) {
-            case R.string.install:
-            case R.string.update:
-                downloadVersion(versionItem, action == R.string.update);
+            case R.string.translation_install:
+            case R.string.translation_update:
+                downloadVersion(versionItem, action == R.string.translation_update);
                 updateActionsLater();
                 break;
-            case R.string.cancel_install:
+            case R.string.translation_cancel:
                 BibleApplication application = (BibleApplication) getApplication();
                 application.cancelDownload(versionItem.filename());
                 updateActionsLater();
                 break;
-            case R.string.uninstall:
+            case R.string.translation_uninstall:
                 showDelete(versionItem);
                 break;
             default:
@@ -287,7 +287,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     void updateVersions(String versions) {
         try {
             if (versionsAdaper.setVersions(versions)) {
-                Snackbar.make(findViewById(R.id.coordinator), R.string.versions_updated, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(findViewById(R.id.coordinator), R.string.translation_metadata_updated, Snackbar.LENGTH_LONG).show();
             }
         } catch (JSONException ignore) {
             // do nothing
@@ -341,8 +341,8 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
             fragment.dismiss();
         }
         fragment = new DeleteVersionConfirmFragment();
-        fragment.setMessage(getString(R.string.confirm),
-                getString(R.string.deleteversion, item.name), item.code);
+        fragment.setMessage(getString(R.string.reading_confirm),
+                getString(R.string.translation_delete_confirm, item.name), item.code);
         fragment.show(manager, tag);
     }
 
@@ -354,8 +354,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         BibleApplication application = (BibleApplication) getApplication();
         String fullname = application.getFullname(version);
         if (!TextUtils.isEmpty(fullname)) {
-            String message = getString(R.string.new_version, fullname);
-            LogUtils.d("message: " + message);
+            String message = getString(R.string.translation_added, fullname);
             Snackbar.make(findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG).show();
         }
     }
@@ -368,7 +367,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
             fragment.dismiss();
         }
         fragment = new InfoFragment();
-        fragment.setMessage(getString(R.string.info), message);
+        fragment.setMessage(getString(R.string.reading_info), message);
         fragment.show(manager, tag);
     }
 
@@ -537,9 +536,9 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                 item.lang = version.optString("lang");
                 item.name = version.optString("name");
                 item.action = getAction(activity, item);
-                if (item.action == R.string.update) {
+                if (item.action == R.string.translation_update) {
                     activity.downloadVersion(item, true);
-                    item.action = R.string.cancel_install;
+                    item.action = R.string.translation_cancel;
                 }
 
                 String lang = jsonLanguages.optString(item.lang);
@@ -606,14 +605,14 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         private int getAction(VersionsActivity activity, VersionItem item) {
             String date = activity.getVersionDate(item);
             if (activity.isDownloading(item)) {
-                return R.string.cancel_install;
+                return R.string.translation_cancel;
             } else if (TextUtils.isEmpty(date)) {
-                return R.string.install;
+                return R.string.translation_install;
             } else if (isNewer(item.date, date)) {
                 LogUtils.d("version: " + item.code + ", current: " + date + ", latest: " + item.date);
-                return R.string.update;
+                return R.string.translation_update;
             } else {
-                return R.string.uninstall;
+                return R.string.translation_uninstall;
             }
         }
 
@@ -638,7 +637,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
             if (lang.toLowerCase(Locale.US).contains(mQuery)) {
                 return true;
             }
-            if ("uninstall".equals(mQuery) && item.action == R.string.uninstall) {
+            if ("uninstall".equals(mQuery) && item.action == R.string.translation_uninstall) {
                 return true;
             }
             if (ObjectUtils.equals(mQuery, mReference.get().getString(item.action).toLowerCase(Locale.US))) {
@@ -683,12 +682,12 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
             holder.actionView.setText(versionItem.action);
             holder.actionView.setTag(versionItem);
             switch (versionItem.action) {
-                case R.string.install:
-                case R.string.cancel_install:
+                case R.string.translation_install:
+                case R.string.translation_cancel:
                     holder.cardView.setEnabled(false);
                     break;
-                case R.string.uninstall:
-                case R.string.update:
+                case R.string.translation_uninstall:
+                case R.string.translation_update:
                     holder.cardView.setEnabled(true);
                     break;
                 default:
