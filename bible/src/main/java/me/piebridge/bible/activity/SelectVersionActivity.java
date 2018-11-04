@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
@@ -86,6 +88,24 @@ public class SelectVersionActivity extends ToolbarActivity implements GridAdapte
     @Override
     public void setTitle(CharSequence title) {
         super.setTitle(getString(R.string.reading_translation));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.translation, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_manage_translations:
+                startActivity(new Intent(this, VersionsActivity.class));
+                return true;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

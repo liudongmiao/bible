@@ -38,14 +38,14 @@
         <activity
             android:name=".activity.VersionsActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:label="@string/manifest_download"
+            android:label="@string/manifest_translation"
             android:parentActivityName=".Chapter"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="me.piebridge.bible.intent.action.DOWNLOAD" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <intent-filter android:label="@string/manifest_download_manifest">
+            <intent-filter android:label="@string/manifest_translation_manifest">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -61,7 +61,7 @@
                     android:mimeType="application/zip"
                     android:scheme="content" />
             </intent-filter>
-            <intent-filter android:label="@string/manifest_download_manifest">
+            <intent-filter android:label="@string/manifest_translation_manifest">
                 <action android:name="android.intent.action.SEND" />
 
                 <category android:name="android.intent.category.DEFAULT" />
