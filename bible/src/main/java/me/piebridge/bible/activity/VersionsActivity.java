@@ -605,19 +605,21 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         public synchronized void updateActions() {
             VersionsActivity activity = mReference.get();
             boolean changed = false;
-            for (VersionItem item : mItems) {
+            List<VersionItem> items = new ArrayList<>(mItems);
+            for (VersionItem item : items) {
                 if (item.isVersion()) {
                     int action = getAction(activity, item);
                     if (action != item.action) {
                         LogUtils.d("item: " + item.code + ", old: " + item.action + ", new: " + action);
                         item.action = action;
-                        item.shouldUpdate = true;
                         changed = true;
                     }
                 }
             }
             if (changed) {
-                DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffCallback(mItems, mItems));
+                DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffCallback(mItems, items));
+                mItems.clear();
+                mItems.addAll(items);
                 result.dispatchUpdatesTo(this);
             }
         }
@@ -895,8 +897,6 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
 
     private static class VersionItem {
 
-        boolean shouldUpdate;
-
         String code;
 
         String date;
@@ -922,16 +922,23 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                 return true;
             }
             if (other instanceof VersionItem) {
-                return isSame((VersionItem) other);
+                return equals((VersionItem) other);
             } else {
                 return false;
             }
         }
 
-        private boolean isSame(VersionItem other) {
+        private boolean equals(VersionItem other) {
             return ObjectUtils.equals(code, other.code)
                     && ObjectUtils.equals(lang, other.lang)
                     && ObjectUtils.equals(name, other.name);
+        }
+
+        public boolean isSame(VersionItem other) {
+            return !ObjectUtils.equals(date, other.date)
+                    || !ObjectUtils.equals(action, other.action)
+                    || !ObjectUtils.equals(copy, other.copy)
+                    || !ObjectUtils.equals(info, info);
         }
 
         public boolean isVersion() {
@@ -975,11 +982,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
             VersionItem oldItem = mOldList.get(oldItemPosition);
             VersionItem newItem = mNewList.get(newItemPosition);
-            try {
-                return oldItem.equals(newItem) && !oldItem.shouldUpdate;
-            } finally {
-                oldItem.shouldUpdate = false;
-            }
+            return oldItem.equals(newItem) && oldItem.isSame(newItem);
         }
 
     }
