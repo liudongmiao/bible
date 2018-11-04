@@ -94,8 +94,8 @@ task minifyJs(type: Exec) {
 
 afterEvaluate {
     compileReleaseSources.dependsOn minifyJs
-    assembleRelease.finalizedBy copyReleaseApk
-    installRelease.finalizedBy copyReleaseApk
+    packageRelease.finalizedBy copyReleaseApk
+    compileReleaseNdk.dependsOn ':genuine:externalNativeBuildCleanRelease'
 }
 
 project.gradle.addListener(new TaskExecutionListener() {
