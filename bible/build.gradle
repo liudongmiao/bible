@@ -61,8 +61,12 @@ android {
     packagingOptions {
         exclude '/META-INF/*.version'
         exclude '/fabric/*.properties'
-        exclude '/assets/crashlytics-build.properties'
     }
+
+    aaptOptions {
+        ignoreAssetsPattern '!translations.full.json:!reader.full.js'
+    }
+
 }
 
 dependencies {
@@ -78,7 +82,18 @@ task copyReleaseApk(type: Copy) {
     into rootProject.file('.')
 }
 
+task minifyJs(type: Exec) {
+    def input = file('src/main/assets/reader.full.js')
+    def output = file('src/main/assets/reader.js')
+    inputs.file input
+    outputs.file output
+    outputs.upToDateWhen { output.lastModified() > input.lastModified() }
+    commandLine 'uglifyjs', '--timings',
+            input.path, '-c', '-m', '-o', output.path
+}
+
 afterEvaluate {
+    compileReleaseSources.dependsOn minifyJs
     assembleRelease.finalizedBy copyReleaseApk
     installRelease.finalizedBy copyReleaseApk
 }
