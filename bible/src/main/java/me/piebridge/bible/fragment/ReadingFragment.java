@@ -112,7 +112,6 @@ public class ReadingFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_reading, container, false);
         nestedView = view.findViewById(R.id.nested);
         webView = view.findViewById(R.id.webview);
-        webView.setBackgroundColor(getBackgroundColor());
         webView.setFocusableInTouchMode(false);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.getSettings().setSupportZoom(true);
@@ -144,6 +143,18 @@ public class ReadingFragment extends Fragment {
             saveState();
         }
         String body = getBody();
+        if (false && getContext() != null) {
+            java.io.File output = new java.io.File(getContext().getExternalFilesDir(null),
+                    currentOsis + ".html");
+            try (
+                    java.io.FileOutputStream fos = new java.io.FileOutputStream(output);
+            ) {
+                FileUtils.copy(new java.io.ByteArrayInputStream(body.getBytes(FileUtils.UTF_8)), fos);
+                LogUtils.d("save to " + output);
+            } catch (java.io.IOException e) {
+                LogUtils.d("cannot save " + output, e);
+            }
+        }
         if (!TextUtils.isEmpty(body)) {
             int fontSize = bundle.getInt(FONT_SIZE);
             webView.getSettings().setDefaultFontSize(fontSize);
@@ -201,10 +212,6 @@ public class ReadingFragment extends Fragment {
                 verseBegin, verseStart, verseEnd,
                 search, selectedVerses, highlighted,
                 Arrays.toString(notes), title, body);
-    }
-
-    public int getBackgroundColor() {
-        return ((AbstractReadingActivity) getActivity()).getBackgroundColor();
     }
 
     private String[] keys(Bundle bundle) {

@@ -7,7 +7,6 @@
     android:keepScreenOn="true">
 
     <androidx.core.widget.NestedScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/nested"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,11 +15,9 @@
         android:paddingRight="8dp">
 
         <WebView
-            xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/webview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?android:attr/colorBackground"
             android:scrollbars="none" />
 
     </androidx.core.widget.NestedScrollView>
