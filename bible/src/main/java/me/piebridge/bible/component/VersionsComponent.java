@@ -80,8 +80,7 @@ public class VersionsComponent {
             Object value = entry.getValue();
             if (value instanceof String) {
                 String book = (String) value;
-                mBooks.put(human.toLowerCase(Locale.US), book);
-                mBooks.put(book.toLowerCase(Locale.US), book);
+                put(book, human);
             }
         }
         versionChecked = !mBooks.isEmpty();
@@ -526,11 +525,29 @@ public class VersionsComponent {
         for (Map.Entry<String, String> entry : books.entrySet()) {
             String book = entry.getKey();
             String human = entry.getValue();
-            mBooks.put(book.toLowerCase(Locale.US), book);
-            mBooks.put(human.toLowerCase(Locale.US), book);
+            put(book, human);
             editor.putString(human, book);
         }
         editor.apply();
+    }
+
+    private void put(String book, String human) {
+        String bookLower = book.toLowerCase(Locale.US);
+        String humanLower = human.toLowerCase(Locale.US);
+        mBooks.put(bookLower, book);
+        mBooks.put(humanLower, book);
+        mBooks.put(removeSpace(bookLower), book);
+        mBooks.put(removeSpace(humanLower), book);
+    }
+
+    private String removeSpace(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : s.toCharArray()) {
+            if (c > ' ') {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     public String getOsis(String query) {
