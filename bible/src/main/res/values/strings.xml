@@ -28,7 +28,6 @@
     <string name="note_delete">Delete</string>
 
     <string name="action_highlight">@string/menu_highlight</string>
-    <string name="action_unhighlight">Unhighlight</string>
     <string name="action_notes">@string/menu_notes</string>
     <string name="action_share">Share</string>
     <string name="action_share_title">Share Bible verses to..</string>
@@ -69,13 +68,13 @@
     <string name="translation_delete_confirm">Delete Translation \"%s\"?</string>
     <string name="translation_copyright_message">Translation isn\'t authorized by copyright owner.<br /><br />Please help to get authorized or <a href="https://github.com/jianyv/bible-data?files=1">download for personal usage</a>.</string>
 
-    <string name="settings_fontsize">Font Size (%s)</string>
+    <string name="settings_fontsize">Font size (%s)</string>
     <string name="settings_fontsize_reset">Default</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
-    <string name="settings_red">Red Letter</string>
-    <string name="settings_red_summary">For Words of Jesus if available</string>
+    <string name="settings_red">Red letter</string>
+    <string name="settings_red_summary">For words of Jesus if available</string>
     <string name="settings_cross">@string/reading_cross</string>
     <string name="settings_justify">Text justified</string>
     <string name="settings_font_family">Font family</string>

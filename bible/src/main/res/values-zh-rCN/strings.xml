@@ -28,7 +28,6 @@
     <string name="note_delete">删除</string>
 
     <string name="action_highlight">@string/menu_highlight</string>
-    <string name="action_unhighlight">取消高亮</string>
     <string name="action_notes">@string/menu_notes</string>
     <string name="action_share">分享</string>
     <string name="action_share_title">分享圣经经句</string>

@@ -1,26 +1,42 @@
 (function () {
     if (typeof window.android === "undefined") {
+        var debug = false;
         window.android = {
             setVerse: function (verse) {
-                console.log("android.setVerse: " + verse);
+                if (debug) {
+                    console.log("android.setVerse: " + verse);
+                }
             },
             setHighlight: function (verse) {
-                console.log("android.setHighlight: " + verse);
+                if (debug) {
+                    console.log("android.setHighlight: " + verse);
+                }
             },
             setCopyText: function (selected) {
-                console.log("android.setCopyText: " + selected);
+                if (debug) {
+                    console.log("android.setCopyText: " + selected);
+                }
             },
             showAnnotation: function (link, annotation) {
-                console.log("android.showAnnotation: " + link + ", " + annotation);
+                if (debug) {
+                    console.log("android.showAnnotation: " + link + ", " + annotation);
+                }
             },
             showNote: function (note) {
-                console.log("android.showNote: " + note);
+                if (debug) {
+                    console.log("android.showNote: " + note);
+
+                }
             },
             setTop: function (top) {
-                console.log("android.setTop: " + top);
+                if (debug) {
+                    console.log("android.setTop: " + top);
+                }
             },
             onLoaded: function () {
-                console.log("android.onLoaded");
+                if (debug) {
+                    console.log("android.onLoaded");
+                }
             }
         };
     }
@@ -184,11 +200,22 @@
         return {verse: verse, text: text};
     }
 
+    function isAllHighlight(selector) {
+        var i, length, elements;
+        elements = document.querySelectorAll(selector);
+        length = elements.length;
+        for (i = 0; i < length; ++i) {
+            if (!hasClass(elements.item(i), "highlight")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     function getCopyText() {
-        var highlightSelection, verses = getVerses("." + selection);
+        var verses = getVerses("." + selection);
         if (verses.text) {
-            highlightSelection = document.querySelectorAll(".highlight." + selection).length;
-            android.setCopyText(empty + highlightSelection + "\n" + verses.verse + "\n" + verses.text);
+            android.setCopyText(empty + isAllHighlight("." + selection) + "\n" + verses.verse + "\n" + verses.text);
         } else {
             android.setCopyText(empty);
         }
@@ -466,6 +493,8 @@
 
     function addClass(node, className) {
         if (!node) {
+        } else if (node.classList) {
+            node.classList.add(className);
         } else if (!node.className) {
             node.className = className;
         } else if (!hasClass(node, className)) {
@@ -475,7 +504,11 @@
 
     function hasClass(node, className, strict) {
         var reg;
-        if (!node || !node.className) {
+        if (!node) {
+            return false;
+        } else if (node.classList) {
+            return node.classList.contains(className);
+        } else if (!node.className) {
             return false;
         } else if (strict === false) {
             reg = new RegExp(classPrefix + className);
@@ -487,7 +520,11 @@
 
     function removeClass(node, className) {
         var reg;
-        if (node && node.className) {
+        if (!node) {
+            // do nothing
+        } else if (node.classList) {
+            node.classList.remove(className);
+        } else if (node.className) {
             reg = new RegExp(classPrefix + className + "(?!\\S)");
             if (node.className.match(reg)) {
                 node.className = node.className.replace(reg, empty).trim();

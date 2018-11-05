@@ -93,7 +93,7 @@ task minifyJs(type: Exec) {
 }
 
 afterEvaluate {
-    compileReleaseSources.dependsOn minifyJs
+    generateReleaseAssets.dependsOn minifyJs
     packageRelease.finalizedBy copyReleaseApk
     compileReleaseNdk.dependsOn ':genuine:externalNativeBuildCleanRelease'
 }

@@ -9,12 +9,6 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/action_unhighlight"
-        android:icon="@drawable/ic_unlighlight_24dp"
-        android:title="@string/action_unhighlight"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/action_notes"
         android:icon="@drawable/ic_notes_24dp"
         android:title="@string/action_notes"

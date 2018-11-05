@@ -184,10 +184,7 @@ public class ReadingHandler extends Handler {
             Selection selection = (Selection) mode.getTag();
             switch (item.getItemId()) {
                 case R.id.action_highlight:
-                    activity.setHighlight(selection.verses, true);
-                    return true;
-                case R.id.action_unhighlight:
-                    activity.setHighlight(selection.verses, false);
+                    activity.setHighlight(selection.verses, !selection.isHighlight());
                     return true;
                 case R.id.action_notes:
                     activity.addNotes(selection.verses);

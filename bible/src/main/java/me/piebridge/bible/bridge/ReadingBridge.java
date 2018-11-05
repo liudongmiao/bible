@@ -54,7 +54,7 @@ public class ReadingBridge {
         String[] fields = text.split("\n", FIELDS_COPY_TEXT);
         // highlight selected's length
         if (fields.length == FIELDS_COPY_TEXT) {
-            highlightSelected = NumberUtils.parseInt(fields[FIELD_HIGHLIGHT]) > 0;
+            highlightSelected = Boolean.parseBoolean(fields[FIELD_HIGHLIGHT]);
             selectedVerses = fields[FIELD_SELECTED];
             selectedContent = fields[FIELD_CONTENT];
         } else {
