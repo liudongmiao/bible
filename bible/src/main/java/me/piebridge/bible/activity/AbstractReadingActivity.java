@@ -75,6 +75,8 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
     public static final String SEARCH = "search";
     public static final String HIGHLIGHTED = "highlighted";
     public static final String RED = "red";
+    public static final String JUSTIFY = "justify";
+    public static final String FONT_FAMILY = "fontFamily";
 
     public static final String COLOR_TEXT = "colorText";
     public static final String COLOR_LINK = "colorLink";
@@ -317,6 +319,8 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
         bundle.putBoolean(CROSS, sharedPreferences.getBoolean(CROSS, false));
         bundle.putBoolean(SHANGTI, sharedPreferences.getBoolean(SHANGTI, false));
         bundle.putBoolean(RED, sharedPreferences.getBoolean(RED, true));
+        bundle.putBoolean(JUSTIFY, sharedPreferences.getBoolean(JUSTIFY, true));
+        bundle.putString(FONT_FAMILY, sharedPreferences.getString(FONT_FAMILY, "serif"));
         updateBundle(bundle);
         return bundle;
     }
@@ -330,7 +334,9 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
                 || !ObjectUtils.equals(bundle.getInt(FONT_SIZE), fontSize)
                 || !ObjectUtils.equals(bundle.getBoolean(CROSS), sharedPreferences.getBoolean(CROSS, false))
                 || !ObjectUtils.equals(bundle.getBoolean(SHANGTI), sharedPreferences.getBoolean(SHANGTI, false))
-                || !ObjectUtils.equals(bundle.getBoolean(RED), sharedPreferences.getBoolean(RED, true));
+                || !ObjectUtils.equals(bundle.getBoolean(RED), sharedPreferences.getBoolean(RED, true))
+                || !ObjectUtils.equals(bundle.getBoolean(JUSTIFY), sharedPreferences.getBoolean(JUSTIFY, true))
+                || !ObjectUtils.equals(bundle.getString(FONT_FAMILY), sharedPreferences.getString(FONT_FAMILY, "serif"));
     }
 
     private int getFontsize(SharedPreferences sharedPreferences, String version) {

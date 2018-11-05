@@ -419,6 +419,20 @@
         <item>dark</item>
     </string-array>
 
+    <string-array name="font_family_values">
+        <item>serif</item>
+        <item>sans-serif</item>
+        <item>sans-serif-light</item>
+        <item>sans-serif-condensed</item>
+    </string-array>
+
+    <string-array name="font_family_entries">
+        <item>Serif</item>
+        <item>Sans Serif</item>
+        <item>Sans Serif Light</item>
+        <item>Sans Serif Condensed</item>
+    </string-array>
+
     <string name="cuvmps">bibledata-zh-cn-cuvmps.zip</string>
     <string name="cuvmpt">bibledata-zh-tw-cuvmpt.zip</string>
     <string name="asv">bibledata-en-asv.zip</string>

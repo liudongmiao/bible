@@ -77,6 +77,8 @@
     <string name="settings_red">Red Letter</string>
     <string name="settings_red_summary">For Words of Jesus if available</string>
     <string name="settings_cross">@string/reading_cross</string>
+    <string name="settings_justify">Text justified</string>
+    <string name="settings_font_family">Font family</string>
     <string name="settings_auto_copy">Auto copy</string>
     <string name="settings_auto_copy_summary">Copy to Clipboard after selection</string>
     <string name="settings_shangti">Shangti</string>

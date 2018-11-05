@@ -38,10 +38,12 @@ import static me.piebridge.bible.activity.AbstractReadingActivity.CONTENT;
 import static me.piebridge.bible.activity.AbstractReadingActivity.CROSS;
 import static me.piebridge.bible.activity.AbstractReadingActivity.CSS;
 import static me.piebridge.bible.activity.AbstractReadingActivity.CURR;
+import static me.piebridge.bible.activity.AbstractReadingActivity.FONT_FAMILY;
 import static me.piebridge.bible.activity.AbstractReadingActivity.FONT_PATH;
 import static me.piebridge.bible.activity.AbstractReadingActivity.FONT_SIZE;
 import static me.piebridge.bible.activity.AbstractReadingActivity.HIGHLIGHTED;
 import static me.piebridge.bible.activity.AbstractReadingActivity.HUMAN;
+import static me.piebridge.bible.activity.AbstractReadingActivity.JUSTIFY;
 import static me.piebridge.bible.activity.AbstractReadingActivity.NOTES;
 import static me.piebridge.bible.activity.AbstractReadingActivity.RED;
 import static me.piebridge.bible.activity.AbstractReadingActivity.SEARCH;
@@ -206,7 +208,8 @@ public class ReadingFragment extends Fragment {
         String backgroundSelection = getString(bundle, COLOR_BACKGROUND_SELECTION);
         String backgroundHighlight = getString(bundle, COLOR_BACKGROUND_HIGHLIGHT);
         String backgroundHighlightSelection = getString(bundle, COLOR_BACKGROUND_HIGHLIGHT_SELECTION);
-        return String.format(template, css,
+        String fontFamily = getString(bundle, FONT_FAMILY);
+        return String.format(template, fontFamily, css,
                 backgroundColor, textColor, linkColor,
                 backgroundSelection, backgroundHighlight, backgroundHighlightSelection,
                 verseBegin, verseStart, verseEnd,
@@ -250,6 +253,9 @@ public class ReadingFragment extends Fragment {
         }
         if (!bundle.getBoolean(CROSS, false)) {
             css.append("a.x-link, sup.crossreference { display: none }");
+        }
+        if (bundle.getBoolean(JUSTIFY, false)) {
+            css.append("body { text-align: justify; text-justify: inter-word; }");
         }
         if (bundle.getBoolean(RED, true)) {
             css.append(".wordsofchrist, .woj, .wj { color: ");

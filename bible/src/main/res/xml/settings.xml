@@ -15,7 +15,6 @@
         app:iconSpaceReserved="false" />
 
     <androidx.preference.ListPreference
-        android:layout_width="match_parent"
         android:defaultValue="light"
         android:entries="@array/theme_entries"
         android:entryValues="@array/theme_values"
@@ -35,6 +34,22 @@
         android:defaultValue="false"
         android:key="cross"
         android:title="@string/settings_cross"
+        app:iconSpaceReserved="false" />
+
+
+    <androidx.preference.SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="justify"
+        android:title="@string/settings_justify"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.ListPreference
+        android:defaultValue="serif"
+        android:entries="@array/font_family_entries"
+        android:entryValues="@array/font_family_values"
+        android:key="fontFamily"
+        android:summary="%s"
+        android:title="@string/settings_font_family"
         app:iconSpaceReserved="false" />
 
     <androidx.preference.SwitchPreferenceCompat

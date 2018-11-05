@@ -77,6 +77,8 @@
     <string name="settings_red">紅字</string>
     <string name="settings_red_summary">可用時適用耶穌的話</string>
     <string name="settings_cross">@string/reading_cross</string>
+    <string name="settings_justify">文字分散對齊</string>
+    <string name="settings_font_family">英文字體</string>
     <string name="settings_auto_copy">自動複製</string>
     <string name="settings_auto_copy_summary">選擇經文以後，自動複製至剪貼簿</string>
     <string name="settings_shangti">上帝</string>
