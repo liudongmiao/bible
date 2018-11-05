@@ -64,7 +64,7 @@ android {
     }
 
     aaptOptions {
-        ignoreAssetsPattern '!translations.full.json:!reader.full.js'
+        ignoreAssetsPattern '!translations.full.json:!reader.full.js:!demo.*.html'
     }
 
 }

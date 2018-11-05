@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,7 +37,6 @@ import me.piebridge.bible.R;
 import me.piebridge.bible.provider.VersionProvider;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ChooserUtils;
-import me.piebridge.bible.utils.ColorUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 import me.piebridge.bible.utils.ThemeUtils;
@@ -220,7 +220,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
                 recyclerView.setAdapter(new NoResultAdapter());
             }
         } else {
-            int color = ColorUtils.resolve(this, R.attr.backgroundSelection);
+            int color = ContextCompat.getColor(this, R.color.blue_alpha);
             if (recyclerView.getItemDecorationCount() == 0) {
                 recyclerView.addItemDecoration(itemDecoration);
             }

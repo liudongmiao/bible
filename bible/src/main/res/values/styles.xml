@@ -22,8 +22,6 @@
         <item name="android:textColorPrimary">@color/text_dark</item>
         <item name="textColorNormal">?android:attr/textColorPrimary</item>
         <item name="textColorRed">@color/red_dark</item>
-        <item name="backgroundHighlight">@color/yellow_alpha</item>
-        <item name="backgroundSelection">@color/blue_alpha</item>
         <item name="backgroundCell">@color/grey_850</item>
         <item name="autoCompleteTextViewStyle">@style/autoCompleteTextViewStyle</item>
         <item name="suggestionOverlay">@style/ThemeOverlay.AppCompat</item>
@@ -40,8 +38,6 @@
         <item name="android:textColorPrimary">@color/text_light</item>
         <item name="textColorNormal">@color/text_light</item>
         <item name="textColorRed">@color/red_light</item>
-        <item name="backgroundHighlight">@color/yellow_alpha</item>
-        <item name="backgroundSelection">@color/blue_alpha</item>
         <item name="backgroundCell">@color/grey_50</item>
         <item name="autoCompleteTextViewStyle">@style/autoCompleteTextViewStyle.Light</item>
         <item name="suggestionOverlay">@style/ThemeOverlay.AppCompat.Light</item>
@@ -56,8 +52,6 @@
         <item name="android:textColorPrimary">@color/text_dark</item>
         <item name="textColorNormal">@color/text_dark</item>
         <item name="textColorRed">@color/red_dark</item>
-        <item name="backgroundHighlight">@color/yellow_alpha</item>
-        <item name="backgroundSelection">@color/blue_alpha</item>
     </style>
 
     <style name="light.dialog" parent="@style/Theme.AppCompat.Light.Dialog">
@@ -69,8 +63,6 @@
         <item name="android:textColorPrimary">@color/text_light</item>
         <item name="textColorNormal">?android:attr/textColorPrimary</item>
         <item name="textColorRed">@color/red_light</item>
-        <item name="backgroundHighlight">@color/yellow_alpha</item>
-        <item name="backgroundSelection">@color/blue_alpha</item>
     </style>
 
     <style name="SelectableButton">

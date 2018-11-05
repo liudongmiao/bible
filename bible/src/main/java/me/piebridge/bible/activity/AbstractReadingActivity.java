@@ -83,9 +83,6 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
     public static final String COLOR_RED = "colorRed";
 
     public static final String COLOR_BACKGROUND = "colorBackground";
-    public static final String COLOR_BACKGROUND_HIGHLIGHT = "backgroundHighlight";
-    public static final String COLOR_BACKGROUND_SELECTION = "backgroundSelection";
-    public static final String COLOR_BACKGROUND_HIGHLIGHT_SELECTION = "backgroundHighlightSelection";
 
     protected static final int POSITION_UNKNOWN = -1;
 
@@ -114,9 +111,6 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
 
     private int mColorBackground;
     private String mBackground;
-    private String mBackgroundHighlight;
-    private String mBackgroundSelection;
-    private String mBackgroundHighlightSelection;
 
     private String fontPath;
 
@@ -166,11 +160,6 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
 
         mColorBackground = ColorUtils.resolve(this, android.R.attr.colorBackground);
         mBackground = ColorUtils.rgba(mColorBackground);
-        int backgroundHighlight = ColorUtils.resolve(this, R.attr.backgroundHighlight);
-        int backgroundSelection = ColorUtils.resolve(this, R.attr.backgroundSelection);
-        mBackgroundHighlight = ColorUtils.rgba(backgroundHighlight);
-        mBackgroundSelection = ColorUtils.rgba(backgroundSelection);
-        mBackgroundHighlightSelection = ColorUtils.blend(backgroundHighlight, backgroundSelection);
     }
 
     protected View findHeader() {
@@ -427,9 +416,6 @@ public abstract class AbstractReadingActivity extends ToolbarActivity
         bundle.putString(COLOR_RED, mTextColorRed);
 
         bundle.putString(COLOR_BACKGROUND, mBackground);
-        bundle.putString(COLOR_BACKGROUND_HIGHLIGHT, mBackgroundHighlight);
-        bundle.putString(COLOR_BACKGROUND_SELECTION, mBackgroundSelection);
-        bundle.putString(COLOR_BACKGROUND_HIGHLIGHT_SELECTION, mBackgroundHighlightSelection);
         if (!TextUtils.isEmpty(fontPath)) {
             bundle.putString(FONT_PATH, fontPath);
         }

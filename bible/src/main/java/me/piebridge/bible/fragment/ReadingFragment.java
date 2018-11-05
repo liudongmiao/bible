@@ -28,9 +28,6 @@ import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
 import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_BACKGROUND;
-import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_BACKGROUND_HIGHLIGHT;
-import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_BACKGROUND_HIGHLIGHT_SELECTION;
-import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_BACKGROUND_SELECTION;
 import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_LINK;
 import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_RED;
 import static me.piebridge.bible.activity.AbstractReadingActivity.COLOR_TEXT;
@@ -145,9 +142,9 @@ public class ReadingFragment extends Fragment {
             saveState();
         }
         String body = getBody();
-        if (false && getContext() != null) {
-            java.io.File output = new java.io.File(getContext().getExternalFilesDir(null),
-                    currentOsis + ".html");
+        if (false && getActivity() != null) {
+            java.io.File output = new java.io.File(getActivity().getExternalFilesDir(null),
+                    currentOsis + (me.piebridge.bible.utils.ThemeUtils.isDark(getActivity()) ? ".dark" : "") + ".html");
             try (
                     java.io.FileOutputStream fos = new java.io.FileOutputStream(output);
             ) {
@@ -206,13 +203,9 @@ public class ReadingFragment extends Fragment {
         String backgroundColor = getString(bundle, COLOR_BACKGROUND);
         String textColor = getString(bundle, COLOR_TEXT);
         String linkColor = getString(bundle, COLOR_LINK);
-        String backgroundSelection = getString(bundle, COLOR_BACKGROUND_SELECTION);
-        String backgroundHighlight = getString(bundle, COLOR_BACKGROUND_HIGHLIGHT);
-        String backgroundHighlightSelection = getString(bundle, COLOR_BACKGROUND_HIGHLIGHT_SELECTION);
         String fontFamily = getString(bundle, FONT_FAMILY);
         return String.format(template, fontFamily, css,
                 backgroundColor, textColor, linkColor,
-                backgroundSelection, backgroundHighlight, backgroundHighlightSelection,
                 verseBegin, verseStart, verseEnd,
                 search, formatSelected(verseStart, verseEnd), highlighted,
                 Arrays.toString(notes), title, body);
