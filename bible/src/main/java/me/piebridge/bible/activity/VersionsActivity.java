@@ -313,6 +313,10 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         showCopyright(versionItem.name, message);
     }
 
+    private void showCopyright(VersionItem versionItem) {
+        showCopyright(versionItem.name, getText(R.string.translation_copyright_message));
+    }
+
     private void onClickAction(VersionItem versionItem) {
         int action = versionItem.action;
         switch (action) {
@@ -322,7 +326,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                     downloadVersion(versionItem, action == R.string.translation_update);
                     updateActionsLater();
                 } else {
-                    onClickCopyright(versionItem);
+                    showCopyright(versionItem);
                 }
                 break;
             case R.string.translation_cancel:
@@ -734,10 +738,14 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
 
         private String formatInfo(JSONObject version) {
             String info = version.optString("info");
-            if (info == null) {
-                return null;
+            if (!TextUtils.isEmpty(info)) {
+                return info;
             }
-            return info.intern();
+            info = version.optString("meta");
+            if (!TextUtils.isEmpty(info)) {
+                return info;
+            }
+            return null;
         }
 
         private int getAction(VersionsActivity activity, VersionItem item) {
