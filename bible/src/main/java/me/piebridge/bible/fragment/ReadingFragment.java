@@ -198,7 +198,8 @@ public class ReadingFragment extends Fragment {
         int verseEnd = NumberUtils.parseInt(getString(bundle, VERSE_END));
         int verseBegin = getVerseBegin(bundle);
         LogUtils.d("title: " + title + ", forceVerse: " + forceVerse + ", verse: " + verse
-                + ", verseStart: " + verseStart + ", VERSE: " + getString(bundle, VERSE)
+                + ", verseStart: " + verseStart + ", verseEnd: " + verseEnd
+                + ", VERSE: " + getString(bundle, VERSE)
                 + ", notes: " + Arrays.toString(notes));
         String search = getString(bundle, SEARCH);
         String highlighted = getString(bundle, HIGHLIGHTED);
@@ -213,8 +214,16 @@ public class ReadingFragment extends Fragment {
                 backgroundColor, textColor, linkColor,
                 backgroundSelection, backgroundHighlight, backgroundHighlightSelection,
                 verseBegin, verseStart, verseEnd,
-                search, selectedVerses, highlighted,
+                search, formatSelected(verseStart, verseEnd), highlighted,
                 Arrays.toString(notes), title, body);
+    }
+
+    private String formatSelected(int verseStart, int verseEnd) {
+        if (verseStart > 0 && verseEnd > 0 && verseEnd > verseStart) {
+            return verseStart + "-" + verseEnd;
+        } else {
+            return selectedVerses;
+        }
     }
 
     private String[] keys(Bundle bundle) {

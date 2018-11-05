@@ -309,7 +309,6 @@
         }
         if (selected) {
             selectVerses(selected);
-            getCopyText();
         }
         if (Object.prototype.toString.call(notes) == "[object Array]") {
             notes.forEach(function (note) {
