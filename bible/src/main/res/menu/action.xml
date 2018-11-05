@@ -4,20 +4,23 @@
 
     <item
         android:id="@+id/action_highlight"
-        android:icon="@drawable/ic_highlight_24dp"
+        android:icon="@drawable/ic_star_black_24dp"
         android:title="@string/action_highlight"
-        app:showAsAction="always" />
+        app:iconTint="@color/grey_50"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_notes"
-        android:icon="@drawable/ic_notes_24dp"
+        android:icon="@drawable/ic_speaker_notes_black_24dp"
         android:title="@string/action_notes"
-        app:showAsAction="always" />
+        app:iconTint="@color/grey_50"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_share"
-        android:icon="@drawable/ic_share_24dp"
+        android:icon="@drawable/ic_share_black_24dp"
         android:title="@string/action_share"
-        app:showAsAction="always" />
+        app:iconTint="@color/grey_50"
+        app:showAsAction="ifRoom" />
 
 </menu>
