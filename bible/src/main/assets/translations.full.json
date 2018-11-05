@@ -3,6 +3,7 @@
   "af":"Afrikaans",
   "ar":"ﺎﻠﻋﺮﺒﻳﺓ(Arabic)",
   "bc":"Central Bicolano",
+  "btx":"Batak Karo",
   "cb":"Cebuano",
   "cnh":"Hakha (Chin: Hakha)",
   "cy":"Cymraeg (Welsh)",
@@ -117,6 +118,13 @@
    "date":"20151216",
    "lang":"bc",
    "name":"Marahay na Bareta Biblia"
+  },
+  {
+   "code":"btx",
+   "date":"20181105",
+   "lang":"btx",
+   "meta":"<p>This translation, published by the Indonesian Bible Society, was first published in 1987 and last revised in 2003.</p><p>If you are interested in obtaining a printed copy, please contact the Indonesian Bible Society at <a href=\"http://www.alkitab.or.id/\">www.alkitab.or.id</a> or email to <a href=\"mailto:info@alkitab.or.id\">info@alkitab.or.id</a></p>🔗<a href=\"https://bibles.org/versions/btx-BTX\">bibles.org</a>",
+   "name":"Pustaka Si Badia"
   },
   {
    "code":"apsd",
@@ -381,8 +389,8 @@
   {
    "code":"niv1984",
    "date":"20181105",
-   "info":"<p>The NIV text may be quoted in any form (written, visual, electronic or audio), up to and inclusive of five hundred (500) verses without express written permission of the publisher, providing the verses do not amount to a complete book of the Bible nor do the verses quoted account for twenty-five percent (25%) or more of the total text of the work in which they are quoted.</p><p>When the NIV is quoted in works that exercise the above fair use clause, notice of copyright must appear on the title or copyright page or opening screen of the work (whichever is appropriate) as follows:</p><<blockquote>Scripture taken from the HOLY BIBLE, NEW INTERNATIONAL VERSION®. Copyright © 1973, 1978, 1984 Biblica. Used by permission of Zondervan. All rights reserved.<p>The \"NIV\" and \"New International Version\" trademarks are registered in the United States Patent and Trademark Office by Biblica. Use of either trademark requires the permission of Biblica.</p></blockquote><p>These Scriptures have been made available on the Internet for your personal use only. Any other use including, but not limited to, copying or re-posting the Scripture on the Internet is prohibited. These Scriptures may not be altered or modified in any form but must remain in their original context. These Scriptures may not be sold or otherwise offered for sale--to include online banner ads that encapsulate linkages to these Scriptures for the purpose of selling online ad space. These Scriptures are free for all online use. These Scriptures are not public domain. These Scriptures are not shareware and may not be duplicated.</p><p>When quotations from the NIV text are used in non-salable media such as church bulletins, orders of service, posters, transparencies or similar media, a complete copyright notice is not required, but the initial NIV must appear at the end of each quotation.</p><p>Any commentary or other Biblical reference work produced for commercial sale that uses the New International Version must obtain written permission for the use of the NIV text.</p><p>Permission requests for commercial use within the U.S. and Canada that exceed the above guidelines must be directed to, and approved in writing by, Zondervan, 5300 Patterson Avenue SE, Grand Rapids, MI 49530.</p><p>Permission requests for commercial use within the U.K., EEC, and EFTA countries that exceed the above guidelines must be directed to, and approved in writing by, Hodder &amp; Stoughton Ltd., a member of the Hodder Headline Plc. Group, 338 Euston Road, London NW1 3BH.</p>🔗<a href=\"https://web.archive.org/web/20121011212533/www.biblegateway.com/versions/index.php?action=getVersionInfo&vid=102\">Bible Gateway (Internet Archive on 2012/10/11)</a>",
    "lang":"en",
+   "meta":"<p>The NIV text may be quoted in any form (written, visual, electronic or audio), up to and inclusive of five hundred (500) verses without express written permission of the publisher, providing the verses do not amount to a complete book of the Bible nor do the verses quoted account for twenty-five percent (25%) or more of the total text of the work in which they are quoted.</p><p>When the NIV is quoted in works that exercise the above fair use clause, notice of copyright must appear on the title or copyright page or opening screen of the work (whichever is appropriate) as follows:</p><<blockquote>Scripture taken from the HOLY BIBLE, NEW INTERNATIONAL VERSION®. Copyright © 1973, 1978, 1984 Biblica. Used by permission of Zondervan. All rights reserved.<p>The \"NIV\" and \"New International Version\" trademarks are registered in the United States Patent and Trademark Office by Biblica. Use of either trademark requires the permission of Biblica.</p></blockquote><p>These Scriptures have been made available on the Internet for your personal use only. Any other use including, but not limited to, copying or re-posting the Scripture on the Internet is prohibited. These Scriptures may not be altered or modified in any form but must remain in their original context. These Scriptures may not be sold or otherwise offered for sale--to include online banner ads that encapsulate linkages to these Scriptures for the purpose of selling online ad space. These Scriptures are free for all online use. These Scriptures are not public domain. These Scriptures are not shareware and may not be duplicated.</p><p>When quotations from the NIV text are used in non-salable media such as church bulletins, orders of service, posters, transparencies or similar media, a complete copyright notice is not required, but the initial NIV must appear at the end of each quotation.</p><p>Any commentary or other Biblical reference work produced for commercial sale that uses the New International Version must obtain written permission for the use of the NIV text.</p><p>Permission requests for commercial use within the U.S. and Canada that exceed the above guidelines must be directed to, and approved in writing by, Zondervan, 5300 Patterson Avenue SE, Grand Rapids, MI 49530.</p><p>Permission requests for commercial use within the U.K., EEC, and EFTA countries that exceed the above guidelines must be directed to, and approved in writing by, Hodder &amp; Stoughton Ltd., a member of the Hodder Headline Plc. Group, 338 Euston Road, London NW1 3BH.</p>🔗<a href=\"https://web.archive.org/web/20121011212533/www.biblegateway.com/versions/index.php?action=getVersionInfo&vid=102\">Bible Gateway (Internet Archive on 2012/10/11)</a>",
    "name":"New International Version 1984"
   },
   {
@@ -491,7 +499,7 @@
    "code":"web",
    "copy":"pd",
    "date":"20151216",
-   "info":"<p>The World English Bible (WEB) is a Public Domain (no copyright) Modern English translation of the Holy Bible. That means that you may freely copy it in any form, including electronic and print formats. The World English Bible is based on the American Standard Version of the Holy Bible first published in 1901, the Biblia Hebraica Stutgartensa Old Testament, and the Greek Majority Text New Testament. It is in draft form, and currently being edited for accuracy and readability.</p>🔗<a href=\"http://bibles.org/versions/eng-WEB\">bibles.org</a>",
+   "info":"<p>The World English Bible (WEB) is a Public Domain (no copyright) Modern English translation of the Holy Bible. That means that you may freely copy it in any form, including electronic and print formats. The World English Bible is based on the American Standard Version of the Holy Bible first published in 1901, the Biblia Hebraica Stutgartensa Old Testament, and the Greek Majority Text New Testament. It is in draft form, and currently being edited for accuracy and readability.</p>🔗<a href=\"https://bibles.org/versions/eng-WEB\">bibles.org</a>",
    "lang":"en",
    "name":"World English Bible"
   },
@@ -499,7 +507,7 @@
    "code":"webbe",
    "copy":"pd",
    "date":"20161223",
-   "info":"<p>The World English Bible British Edition is a free, public domain (not copyrighted) translation of the Holy Bible created by updating the language of the American Standard Version of 1901. Where there are significant variations between the Greek Majority Text, the Textus Receptus, and the Nestle/Aland critical text, the Majority text reading is used in the main text, but the other variations are noted in footnotes. This translation is made freely available without copyright restrictions because of countless hours of volunteer prayer and labor. This edition uses British/International spelling.</p><p>The World English Bible British Edition is available for free reading and download at <a href=\"http://eBible.org/be/\">eBible.org/be</a>. This text matches the eBible.org text as of 8 May 2015.</p>🔗<a href=\"http://bibles.org/versions/eng-WEBBE\">bibles.org</a>",
+   "info":"<p>The World English Bible British Edition is a free, public domain (not copyrighted) translation of the Holy Bible created by updating the language of the American Standard Version of 1901. Where there are significant variations between the Greek Majority Text, the Textus Receptus, and the Nestle/Aland critical text, the Majority text reading is used in the main text, but the other variations are noted in footnotes. This translation is made freely available without copyright restrictions because of countless hours of volunteer prayer and labor. This edition uses British/International spelling.</p><p>The World English Bible British Edition is available for free reading and download at <a href=\"http://eBible.org/be/\">eBible.org/be</a>. This text matches the eBible.org text as of 8 May 2015.</p>🔗<a href=\"https://bibles.org/versions/eng-WEBBE\">bibles.org</a>",
    "lang":"en",
    "name":"World English Bible British Edition"
   },
@@ -593,7 +601,7 @@
    "code":"lsg",
    "copy":"pd",
    "date":"20151216",
-   "info":"<p>The first edition of the Bible Segond was published in 1910</p>🔗<a href=\"http://bibles.org/versions/fra-LSG\">bibles.org</a>",
+   "info":"<p>The first edition of the Bible Segond was published in 1910</p>🔗<a href=\"https://bibles.org/versions/fra-LSG\">bibles.org</a>",
    "lang":"fr",
    "name":"Bible Segond 1910"
   },
@@ -751,7 +759,7 @@
    "code":"bjb",
    "copy":"pd",
    "date":"20151216",
-   "info":"<p>© 1933 McGuire revision (public domain)</p>🔗<a href=\"http://bibles.org/versions/mya-BJB\">bibles.org</a>",
+   "info":"<p>© 1933 McGuire revision (public domain)</p>🔗<a href=\"https://bibles.org/versions/mya-BJB\">bibles.org</a>",
    "lang":"my",
    "name":"Judson Bible"
   },
@@ -999,7 +1007,7 @@
    "code":"rwv",
    "copy":"pd",
    "date":"20150830",
-   "info":"<p>This translation is a free, public domain (not copyrighted) translation of the Holy Bible created by updating the Tongan West Version. It has been dedicated to the Public Domain by the translator, James Baxley. You may copy it freely.</p><p>The Tongan Bible, Revised West Translation is available for free reading and download at <a href=\"http://eBible.org/web/\">eBible.org/web</a> and at <a href=\"http://MissionTonga.org\">MissionTonga.org</a></p>🔗<a href=\"http://bibles.org/versions/ton-TONRWV\">bibles.org</a>",
+   "info":"<p>This translation is a free, public domain (not copyrighted) translation of the Holy Bible created by updating the Tongan West Version. It has been dedicated to the Public Domain by the translator, James Baxley. You may copy it freely.</p><p>The Tongan Bible, Revised West Translation is available for free reading and download at <a href=\"http://eBible.org/web/\">eBible.org/web</a> and at <a href=\"http://MissionTonga.org\">MissionTonga.org</a></p>🔗<a href=\"https://bibles.org/versions/ton-TONRWV\">bibles.org</a>",
    "lang":"to",
    "name":"Tongan Bible (Revised West Version)"
   },
