@@ -1,5 +1,10 @@
 apply plugin: 'com.android.application'
 
+def getBuildVersion = { ->
+    def version = 'v' + rootProject.versionName + ' (' + new Date().format('yyyy/MM/dd') + ')'
+    return version
+}
+
 android {
     compileSdkVersion rootProject.compileSdkVersion
     buildToolsVersion rootProject.buildToolsVersion
@@ -11,7 +16,7 @@ android {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         vectorDrawables.useSupportLibrary = true
-        resValue "string", "versionName", rootProject.versionName
+        resValue 'string', 'build_version', getBuildVersion()
     }
 
     buildTypes {

@@ -82,7 +82,6 @@
     <string name="settings_auto_copy_summary">選擇經文以後，自動複製至剪貼簿</string>
     <string name="settings_shangti">上帝</string>
     <string name="settings_shangti_summary">上帝/　神</string>
-    <string name="settings_version">版本</string>
 
     <string name="feedback_message">歡迎提交回饋。如果使用上有任何問題，請點按「報告錯誤」。\n\n如果想閱讀更多譯本，請在 <a href="https://www.biblegateway.com/versions/">Bible Gateway</a> 或 <a href="https://bibles.org/versions">bibles.org</a> 上尋找，然後郵件告知鏈接。</string>
     <string name="feedback_email">郵件</string>

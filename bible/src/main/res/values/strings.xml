@@ -82,7 +82,6 @@
     <string name="settings_auto_copy_summary">Copy to Clipboard after selection</string>
     <string name="settings_shangti">Shangti</string>
     <string name="settings_shangti_summary">Shangti / Shen (for Chinese Translation)</string>
-    <string name="settings_version">Version</string>
 
     <string name="feedback_message">Feel free to send feedback. If you find any bugs, please tap \"Report bug\".\n\nIf you want read more Translations, please find on <a href="https://www.biblegateway.com/versions/">Bible Gateway</a> or <a href="https://bibles.org/versions">bibles.org</a>, then email with the link.</string>
     <string name="feedback_email">Email</string>

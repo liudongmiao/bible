@@ -52,4 +52,12 @@
             android:title="@string/menu_about" />
     </group>
 
+    <group android:id="@+id/about">
+
+        <item
+            android:enabled="false"
+            android:title="@string/build_version" />
+
+    </group>
+
 </menu>

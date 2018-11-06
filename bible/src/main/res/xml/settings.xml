@@ -66,10 +66,4 @@
         android:title="@string/settings_shangti"
         app:iconSpaceReserved="false" />
 
-    <androidx.preference.Preference
-        android:key="version"
-        android:summary="@string/versionName"
-        android:title="@string/settings_version"
-        app:iconSpaceReserved="false" />
-
 </androidx.preference.PreferenceScreen>
