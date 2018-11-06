@@ -186,4 +186,9 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         fragment.show(manager, tag);
     }
 
+    @Override
+    public void onSelected(boolean highlight, String verses, String content) {
+        // do nothing
+    }
+
 }

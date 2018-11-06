@@ -48,7 +48,7 @@ import me.piebridge.bible.utils.ThemeUtils;
 /**
  * Created by thom on 15/10/18.
  */
-public abstract class AbstractReadingActivity extends ToolbarActivity
+public abstract class AbstractReadingActivity extends DrawerActivity
         implements ReadingBridge.Bridge, View.OnClickListener, ViewPager.OnPageChangeListener,
         AppBarLayout.OnOffsetChangedListener {
 

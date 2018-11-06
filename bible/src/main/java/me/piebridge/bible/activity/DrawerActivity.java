@@ -20,7 +20,7 @@ import me.piebridge.bible.fragment.FeedbackFragment;
 /**
  * Created by thom on 16/7/24.
  */
-public abstract class DrawerActivity extends AbstractReadingActivity
+public abstract class DrawerActivity extends ToolbarActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int DELAY = 250;

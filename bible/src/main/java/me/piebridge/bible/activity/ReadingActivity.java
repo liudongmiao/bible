@@ -51,7 +51,7 @@ import me.piebridge.bible.utils.ObjectUtils;
 /**
  * Created by thom on 15/10/18.
  */
-public class ReadingActivity extends DrawerActivity {
+public class ReadingActivity extends AbstractReadingActivity {
 
     public static final String WEBVIEW_DATA = "webview-data";
 
