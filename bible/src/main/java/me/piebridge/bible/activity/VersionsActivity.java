@@ -304,13 +304,11 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     }
 
     private void onClickCopyright(VersionItem versionItem) {
-        CharSequence message;
         if (TextUtils.isEmpty(versionItem.info)) {
-            message = getText(R.string.translation_copyright_message);
+            showCopyright(versionItem);
         } else {
-            message = DeprecationUtils.fromHtmlLegacy(versionItem.info);
+            showCopyright(versionItem.name, DeprecationUtils.fromHtmlLegacy(versionItem.info));
         }
-        showCopyright(versionItem.name, message);
     }
 
     private void showCopyright(VersionItem versionItem) {

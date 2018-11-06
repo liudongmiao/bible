@@ -66,7 +66,7 @@
     <string name="translation_metadata_updated">Translations metadata updated.</string>
     <string name="translation_added">Translation added: %s</string>
     <string name="translation_delete_confirm">Delete Translation \"%s\"?</string>
-    <string name="translation_copyright_message">Translation isn\'t authorized by copyright owner.<br /><br />Please help to get authorized or <a href="https://github.com/jianyv/bible-data?files=1">download for personal usage</a>.</string>
+    <string name="translation_copyright_message">Translation isn\'t authorized by copyright owner.\n\nPlease help to get authorized or <a href="https://github.com/jianyv/bible-data?files=1">download for personal usage</a>.</string>
 
     <string name="settings_fontsize">Font size (%s)</string>
     <string name="settings_fontsize_reset">Default</string>
