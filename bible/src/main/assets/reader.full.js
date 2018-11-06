@@ -502,11 +502,20 @@
     }
 
     function hasClass(node, className, strict) {
-        var reg;
+        var reg, i;
         if (!node) {
             return false;
         } else if (node.classList) {
-            return node.classList.contains(className);
+            if (strict === false) {
+                for (i = 0; i < node.classList.length; ++i) {
+                    if (node.classList.item(i).indexOf(className) === 0) {
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                return node.classList.contains(className);
+            }
         } else if (!node.className) {
             return false;
         } else if (strict === false) {
