@@ -129,4 +129,29 @@ public class BibleUtils {
         return false;
     }
 
+    public static String getVerse(String verses) {
+        int index1 = verses.indexOf('-');
+        int index2 = verses.indexOf(',');
+        if (index1 > 0 && index2 > 0) {
+            return verses.substring(0, Math.min(index1, index2));
+        } else if (index1 > 0) {
+            return verses.substring(0, index1);
+        } else if (index2 > 0) {
+            return verses.substring(0, index2);
+        } else {
+            return verses;
+        }
+    }
+
+    public static String getLastVerse(String verses) {
+        int index1 = verses.lastIndexOf('-');
+        int index2 = verses.lastIndexOf(',');
+        int index = Math.max(index1, index2);
+        if (index < 0) {
+            return verses;
+        } else {
+            return verses.substring(index + 1);
+        }
+    }
+
 }

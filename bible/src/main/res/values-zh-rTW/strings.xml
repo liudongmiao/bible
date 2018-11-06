@@ -88,4 +88,8 @@
     <string name="feedback_email">郵件</string>
     <string name="feedback_report_bug">報告錯誤</string>
 
+    <string name="annotation_sort_by_time">按時間排序</string>
+    <string name="annotation_sort_by_book">按目錄排序</string>
+    <string name="annotation_no_book">譯本「%2$s」中無法找到「%1$s」。</string>
+
 </resources>

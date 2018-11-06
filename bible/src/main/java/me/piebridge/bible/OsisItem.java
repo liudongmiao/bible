@@ -34,12 +34,14 @@ public class OsisItem implements Parcelable {
     public String chapter = "";
     public String verseStart = "";
     public String verseEnd = "";
+    public String verses = "";
 
     OsisItem(Parcel parcel) {
         this.book = parcel.readString();
         this.chapter = parcel.readString();
         this.verseStart = parcel.readString();
         this.verseEnd = parcel.readString();
+        this.verses = parcel.readString();
     }
 
     public OsisItem(String book) {
@@ -292,6 +294,7 @@ public class OsisItem implements Parcelable {
         parcel.writeString(chapter);
         parcel.writeString(verseStart);
         parcel.writeString(verseEnd);
+        parcel.writeString(verses);
     }
 
     public static final Parcelable.Creator<OsisItem> CREATOR = new Parcelable.Creator<OsisItem>() {

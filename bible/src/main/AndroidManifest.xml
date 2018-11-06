@@ -209,6 +209,30 @@
                 android:value=".activity.SearchActivity" />
         </activity>
 
+        <activity
+            android:name=".activity.HighlightActivity"
+            android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:exported="false"
+            android:label="@string/menu_highlight"
+            android:parentActivityName=".Chapter"
+            android:theme="@style/light">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Chapter" />
+        </activity>
+
+        <activity
+            android:name=".activity.NotesActivity"
+            android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:exported="false"
+            android:label="@string/menu_notes"
+            android:parentActivityName=".Chapter"
+            android:theme="@style/light">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Chapter" />
+        </activity>
+
         <provider
             android:name=".provider.VersionProvider"
             android:authorities="me.piebridge.bible.provider"

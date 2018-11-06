@@ -59,4 +59,9 @@ public class ReadingCrossActivity extends ReadingItemsActivity {
         return false;
     }
 
+    @Override
+    public void onSelected(boolean highlight, String verses, String content) {
+        // do nothing
+    }
+
 }

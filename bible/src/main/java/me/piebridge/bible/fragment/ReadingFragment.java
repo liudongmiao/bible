@@ -45,6 +45,7 @@ import static me.piebridge.bible.activity.AbstractReadingActivity.NOTES;
 import static me.piebridge.bible.activity.AbstractReadingActivity.RED;
 import static me.piebridge.bible.activity.AbstractReadingActivity.SEARCH;
 import static me.piebridge.bible.activity.AbstractReadingActivity.SHANGTI;
+import static me.piebridge.bible.activity.AbstractReadingActivity.VERSES;
 import static me.piebridge.bible.activity.AbstractReadingActivity.VERSE_END;
 import static me.piebridge.bible.activity.AbstractReadingActivity.VERSE_START;
 import static me.piebridge.bible.activity.AbstractReadingActivity.VERSION;
@@ -204,14 +205,21 @@ public class ReadingFragment extends Fragment {
         String textColor = getString(bundle, COLOR_TEXT);
         String linkColor = getString(bundle, COLOR_LINK);
         String fontFamily = getString(bundle, FONT_FAMILY);
+        String verses = getString(bundle, VERSES);
         return String.format(template, fontFamily, css,
                 backgroundColor, textColor, linkColor,
                 verseBegin, verseStart, verseEnd,
-                search, formatSelected(verseStart, verseEnd), highlighted,
+                search, formatSelected(highlighted, verses, verseStart, verseEnd), highlighted,
                 Arrays.toString(notes), title, body);
     }
 
-    private String formatSelected(int verseStart, int verseEnd) {
+    private String formatSelected(String highlighted, String verses, int verseStart, int verseEnd) {
+        if (ObjectUtils.equals(highlighted, verses)) {
+            return "";
+        }
+        if (!TextUtils.isEmpty(verses)) {
+            return verses;
+        }
         if (verseStart > 0 && verseEnd > 0 && verseEnd > verseStart) {
             return verseStart + "-" + verseEnd;
         } else {

@@ -2,6 +2,7 @@ package me.piebridge.bible.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -71,6 +72,7 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         bundle.putString(PREV, getOsis(position - 1));
         bundle.putString(NEXT, getOsis(position + 1));
         bundle.putString(SEARCH, search);
+        bundle.putString(VERSES, item.verses);
         return bundle;
     }
 
@@ -110,7 +112,7 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         CharSequence[] values = new CharSequence[size];
         for (int i = 0; i < size; ++i) {
             OsisItem item = items.get(i);
-            values[i] = getTitle(item.toBundle(), item.toOsis());
+            values[i] = getTitle(item);
         }
         return values;
     }
@@ -131,8 +133,26 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         String book = BibleUtils.getBook(osis);
         BibleApplication application = (BibleApplication) getApplication();
         String bookName = application.getHuman(book);
-        String chapterVerse = BibleUtils.getChapterVerse(this, bundle);
-        return BibleUtils.getBookChapterVerse(bookName, chapterVerse);
+        String verses = bundle.getString(VERSES);
+        if (TextUtils.isEmpty(verses)) {
+            String chapterVerse = BibleUtils.getChapterVerse(this, bundle);
+            return BibleUtils.getBookChapterVerse(bookName, chapterVerse);
+        } else {
+            return bookName + " " + BibleUtils.getChapter(osis, this) + ":" + verses;
+        }
+    }
+
+    protected String getTitle(OsisItem item) {
+        String book = BibleUtils.getBook(item.toOsis());
+        BibleApplication application = (BibleApplication) getApplication();
+        String bookName = application.getHuman(book);
+        String verses = item.verses;
+        if (TextUtils.isEmpty(verses)) {
+            String chapterVerse = BibleUtils.getChapterVerse(this, item.toBundle());
+            return BibleUtils.getBookChapterVerse(bookName, chapterVerse);
+        } else {
+            return bookName + " " + BibleUtils.getChapter(item.toOsis(), this) + ":" + verses;
+        }
     }
 
     @Override
@@ -184,11 +204,6 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         fragment.setMessage(getString(R.string.reading_info),
                 getString(R.string.reading_no_chapter_info, application.getFullname(version), human));
         fragment.show(manager, tag);
-    }
-
-    @Override
-    public void onSelected(boolean highlight, String verses, String content) {
-        // do nothing
     }
 
 }

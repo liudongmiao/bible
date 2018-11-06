@@ -1,5 +1,6 @@
 package me.piebridge.bible;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
@@ -93,6 +94,14 @@ public class BibleApplication extends GenuineApplication {
 
     public void saveHighlight(String osis, String verses) {
         mAnnotation.saveHighlight(osis, verses);
+    }
+
+    public Cursor searchHighlight(String book, String sort) {
+        return mAnnotation.searchHighlight(book, sort);
+    }
+
+    public Cursor searchNotes(String book, String query, String sort) {
+        return mAnnotation.searchNotes(book, query, sort);
     }
 
     public boolean unpackZip(File file, String version) {

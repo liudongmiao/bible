@@ -64,8 +64,17 @@ public abstract class DrawerActivity extends ToolbarActivity
 
     protected void navigate(final int itemId) {
         switch (itemId) {
+            case R.id.menu_reading:
+                onSupportNavigateUp();
+                break;
             case R.id.menu_search:
                 startActivity(new Intent(this, SearchActivity.class));
+                break;
+            case R.id.menu_highlight:
+                startActivity(new Intent(this, HighlightActivity.class));
+                break;
+            case R.id.menu_notes:
+                startActivity(new Intent(this, NotesActivity.class));
                 break;
             case R.id.menu_settings:
                 openSettings();

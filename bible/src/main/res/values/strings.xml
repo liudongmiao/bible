@@ -23,7 +23,7 @@
 
     <string name="note">Note</string>
     <string name="note_save">Save</string>
-    <string name="note_hint">Note Content</string>
+    <string name="note_hint">Note content</string>
     <string name="note_edit">Edit</string>
     <string name="note_delete">Delete</string>
 
@@ -87,5 +87,10 @@
     <string name="feedback_message">Feel free to send feedback. If you find any bugs, please tap \"Report bug\".\n\nIf you want read more Translations, please find on <a href="https://www.biblegateway.com/versions/">Bible Gateway</a> or <a href="https://bibles.org/versions">bibles.org</a>, then email with the link.</string>
     <string name="feedback_email">Email</string>
     <string name="feedback_report_bug">Report bug</string>
+
+    <string name="annotation_search">@string/note_hint</string>
+    <string name="annotation_sort_by_time">Sort by time</string>
+    <string name="annotation_sort_by_book">Sort by books</string>
+    <string name="annotation_no_book">No \"%1$s\" in Translation \"%2$s\".</string>
 
 </resources>

@@ -1,7 +1,6 @@
 package me.piebridge.bible.utils;
 
 import android.os.Build;
-import android.os.Bundle;
 
 import java.util.Objects;
 

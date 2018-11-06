@@ -366,30 +366,6 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
 
     }
 
-    private static class NoResultAdapter extends RecyclerView.Adapter {
-
-        @NonNull
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            View view = inflater.inflate(R.layout.item, parent, false);
-            return new CountViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            CountViewHolder countViewHolder = (CountViewHolder) holder;
-            countViewHolder.typeView.setText(R.string.search_result_none);
-            countViewHolder.countView.setVisibility(View.GONE);
-        }
-
-        @Override
-        public int getItemCount() {
-            return 1;
-        }
-
-    }
-
     private static class ResultAdapter extends RecyclerView.Adapter {
 
         private static final int TYPE_COUNT = 0;

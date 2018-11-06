@@ -67,6 +67,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     public static final String VERSE = "verse";
     public static final String VERSE_START = "verseStart";
     public static final String VERSE_END = "verseEnd";
+    public static final String VERSES = "verses";
     public static final String FONT_SIZE = "fontsize";
     public static final String FONT_PATH = "fontPath";
     public static final String CROSS = "cross";
@@ -596,22 +597,10 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         handler.obtainMessage(ReadingHandler.SHARE, selection).sendToTarget();
     }
 
-    public String getVerse(String verses) {
-        int index = verses.indexOf('-');
-        if (index < 0) {
-            index = verses.indexOf(',');
-        }
-        if (index < 0) {
-            return verses;
-        } else {
-            return verses.substring(0, index);
-        }
-    }
-
     public void doAddNotes(String verses) {
         String osis = getCurrentOsis();
         LogUtils.d("osis: " + osis + ", update notes: " + verses);
-        String verse = getVerse(verses);
+        String verse = BibleUtils.getVerse(verses);
         Bundle note = fetchNote(verse);
 
         final String tag = FRAGMENT_ADD_NOTES;
@@ -627,7 +616,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
     public void saveNotes(long id, String verses, String content) {
         String osis = getCurrentOsis();
-        String verse = getVerse(verses);
+        String verse = BibleUtils.getVerse(verses);
         BibleApplication application = (BibleApplication) getApplication();
         application.saveNote(id, osis, verse, verses, content);
         getCurrentFragment().getArguments().putBundle(NOTES, application.getNoteVerses(osis));
@@ -637,7 +626,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
     public void deleteNote(long id, String verses) {
         String osis = getCurrentOsis();
-        String verse = getVerse(verses);
+        String verse = BibleUtils.getVerse(verses);
         BibleApplication application = (BibleApplication) getApplication();
         application.deleteNote(id);
         getCurrentFragment().getArguments().putBundle(NOTES, application.getNoteVerses(osis));
@@ -768,11 +757,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     @Override
     public void onSupportActionModeFinished(@NonNull ActionMode actionMode) {
         if (this.actionMode == actionMode) {
-            Object tag = actionMode.getTag();
-            ReadingFragment currentFragment = getCurrentFragment();
-            if (currentFragment != null && tag instanceof ReadingHandler.Selection) {
-                currentFragment.selectVerses(((ReadingHandler.Selection) tag).getVerses(), false);
-            }
             this.actionMode = null;
         }
         super.onSupportActionModeFinished(actionMode);
