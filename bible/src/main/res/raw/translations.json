@@ -3,6 +3,7 @@
     "en": "English",
     "fr": "Français (French)",
     "my": "ဗမာစာ(Burmese)",
+    "tl": "Tagalog (Tagalog)",
     "to": "lea fakatonga (Tongan)",
     "zh-cn": "简体中文 (Simplified Chinese)",
     "zh-tw": "繁體中文 (Traditional Chinese)"
@@ -79,6 +80,14 @@
       "info": "<p>© 1933 McGuire revision (public domain)</p>🔗<a href=\"https://bibles.org/versions/mya-BJB\">bibles.org</a>",
       "lang": "my",
       "name": "Judson Bible"
+    },
+    {
+      "code": "adb1905",
+      "copy": "pd",
+      "date": "20181101",
+      "lang": "tl",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/Ang-Dating-Biblia-1905-ADB1905/\">Bible Gateway</a>",
+      "name": "Ang Dating Biblia (1905)"
     },
     {
       "code": "rwv",
