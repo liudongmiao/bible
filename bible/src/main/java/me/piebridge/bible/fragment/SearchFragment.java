@@ -8,6 +8,8 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import me.piebridge.bible.BibleApplication;
@@ -187,9 +189,67 @@ public class SearchFragment extends PreferenceFragmentCompat
         String osisFirst = application.getFirstBook();
         String osisLast = application.getLastBook();
         updateSearch(preferenceSearchAll, application, osisFirst, osisLast);
-        updateSearch(preferenceSearchOld, application, OLD_FIRST, OLD_LAST);
-        updateSearch(preferenceSearchNew, application, NEW_FIRST, NEW_LAST);
-        updateSearch(preferenceSearchGospel, application, GOSPEL_FIRST, GOSPEL_LAST);
+        updateSearch(preferenceSearchOld, application, getOldFirst(books), getOldLast(books));
+        updateSearch(preferenceSearchNew, application, getNewFirst(books), getNewLast(books));
+        updateSearch(preferenceSearchGospel, application, getGospelFirst(books), getGospelLast(books));
+    }
+
+    private String getGospelLast(Map<String, String> books) {
+        if (books.containsKey(GOSPEL_LAST)) {
+            return GOSPEL_LAST;
+        } else {
+            return "";
+        }
+    }
+
+    private String getGospelFirst(Map<String, String> books) {
+        if (books.containsKey(GOSPEL_FIRST)) {
+            return GOSPEL_FIRST;
+        } else {
+            return "";
+        }
+    }
+
+    private String getNewLast(Map<String, String> books) {
+        if (books.containsKey(NEW_LAST)) {
+            return NEW_LAST;
+        } else {
+            return "";
+        }
+    }
+
+    private String getNewFirst(Map<String, String> books) {
+        if (books.containsKey(NEW_FIRST)) {
+            return NEW_FIRST;
+        } else {
+            return "";
+        }
+    }
+
+    private String getOldLast(Map<String, String> books) {
+        if (books.containsKey(OLD_LAST)) {
+            return OLD_LAST;
+        }
+        List<String> list = new ArrayList<>(books.keySet());
+        int index = list.indexOf(NEW_FIRST);
+        if (index == 0) {
+            return "";
+        } else {
+            return list.get(index - 1);
+        }
+    }
+
+    private String getOldFirst(Map<String, String> books) {
+        if (books.containsKey(OLD_FIRST)) {
+            return OLD_FIRST;
+        }
+        List<String> list = new ArrayList<>(books.keySet());
+        int index = list.indexOf(NEW_FIRST);
+        if (index == 0) {
+            return "";
+        } else {
+            return list.get(0);
+        }
     }
 
     private void updateSearch(CheckBoxPreference preference, BibleApplication application, String osisFirst, String osisLast) {

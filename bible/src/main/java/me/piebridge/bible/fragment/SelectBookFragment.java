@@ -59,7 +59,7 @@ public class SelectBookFragment extends AbstractSelectFragment {
         int gen = keys.indexOf("Gen");
         List<String> oldData;
         List<String> newData;
-        if (gen > -1 && matt > -1) {
+        if (matt > -1) {
             oldData = keys.subList(0, matt);
             newData = keys.subList(matt, keys.size());
         } else if (gen > -1) {
