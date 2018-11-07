@@ -2,6 +2,7 @@ package me.piebridge.bible.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -112,6 +113,7 @@ public class ReadingFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_reading, container, false);
         nestedView = view.findViewById(R.id.nested);
         webView = view.findViewById(R.id.webview);
+        webView.setBackgroundColor(Color.TRANSPARENT);
         webView.setFocusableInTouchMode(false);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.getSettings().setSupportZoom(true);
