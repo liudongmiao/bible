@@ -17,7 +17,6 @@ import android.view.View;
 import androidx.appcompat.widget.SearchView;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Locale;
 
 import me.piebridge.bible.BibleApplication;
@@ -25,6 +24,7 @@ import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.SearchFragment;
 import me.piebridge.bible.provider.SearchProvider;
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
 
 /**
@@ -129,7 +129,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
             items = new ArrayList<>();
         } else {
             items = OsisItem.parseSearch(query, (BibleApplication) getApplication());
-            fixItems(items);
+            BibleUtils.fixItems(items);
         }
         if (!items.isEmpty()) {
             showItems(items, false, false);
@@ -147,16 +147,6 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
 
             LogUtils.d("intent: " + intent + ", extra: " + intent.getExtras());
             super.startActivity(setFinished(intent, auto));
-        }
-    }
-
-    private void fixItems(ArrayList<OsisItem> items) {
-        Iterator<OsisItem> it = items.iterator();
-        while (it.hasNext()) {
-            OsisItem item = it.next();
-            if (TextUtils.isEmpty(item.chapter)) {
-                it.remove();
-            }
         }
     }
 
@@ -241,16 +231,13 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         }
 
         BibleApplication application = (BibleApplication) getApplication();
-        if ("niv".equals(version)) {
-            version = "niv2011";
-        }
-        if (!TextUtils.isEmpty(version) && application.getVersions().contains(version) && application.setVersion(version)) {
+        if (!TextUtils.isEmpty(version) && application.hasVersion(version) && application.setVersion(version)) {
             mSearchFragment.updateVersion(version);
         }
 
         if (query != null) {
             ArrayList<OsisItem> items = OsisItem.parseSearch(query, (BibleApplication) getApplication());
-            fixItems(items);
+            BibleUtils.fixItems(items);
             if (!items.isEmpty() && !application.checkItems(items)) {
                 LogUtils.d("items: " + items);
                 mSuggestions.saveRecentQuery(query, null);

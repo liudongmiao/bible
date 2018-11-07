@@ -2,9 +2,12 @@ package me.piebridge.bible.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.MenuItem;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -22,6 +25,8 @@ import me.piebridge.bible.fragment.FeedbackFragment;
  */
 public abstract class DrawerActivity extends ToolbarActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    static final int REQUEST_CODE_SETTINGS = 1190;
 
     private static final int DELAY = 250;
 
@@ -48,6 +53,8 @@ public abstract class DrawerActivity extends ToolbarActivity
         navigation = findViewById(R.id.navigation);
         navigation.setCheckedItem(R.id.menu_reading);
         navigation.setNavigationItemSelectedListener(this);
+
+        updateOdb();
     }
 
     @Override
@@ -76,6 +83,9 @@ public abstract class DrawerActivity extends ToolbarActivity
             case R.id.menu_notes:
                 startActivity(new Intent(this, NotesActivity.class));
                 break;
+            case R.id.menu_webview:
+                startActivity(new Intent(this, WebViewActivity.class));
+                break;
             case R.id.menu_settings:
                 openSettings();
                 break;
@@ -91,7 +101,22 @@ public abstract class DrawerActivity extends ToolbarActivity
     }
 
     protected void openSettings() {
-        startActivity(new Intent(this, SettingsActivity.class));
+        startActivityForResult(new Intent(this, SettingsActivity.class), REQUEST_CODE_SETTINGS);
+    }
+
+    @Override
+    @CallSuper
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_SETTINGS) {
+            updateOdb();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    protected void updateOdb() {
+        boolean odb = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                && PreferenceManager.getDefaultSharedPreferences(this).getBoolean("odb", false);
+        navigation.getMenu().setGroupVisible(R.id.odb, odb);
     }
 
     @Override

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <group
         android:id="@+id/main_items"
@@ -30,6 +31,18 @@
             android:icon="@drawable/ic_file_download_black_24dp"
             android:title="@string/menu_translations" />
     </group>
+
+    <group
+        android:id="@+id/odb"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/menu_webview"
+            android:icon="@drawable/ic_local_florist_black_24dp"
+            android:title="@string/menu_odb_link" />
+
+    </group>
+
 
     <group
         android:id="@+id/option_items"

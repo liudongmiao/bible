@@ -1,10 +1,13 @@
 package me.piebridge.bible.fragment;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+
+import java.util.Objects;
 
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.SettingsActivity;
@@ -44,12 +47,16 @@ public class SettingsFragment extends PreferenceFragmentCompat
             fontsizeDefaultPreference.setSummary(Integer.toString(defaultFontsizeValue));
             fontsizeVersionPreference.setSummary(Integer.toString(versionFontsizeValue));
         }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            removePreferences(findPreference("odb"));
+        }
     }
 
     private void removePreferences(Preference... preferences) {
         for (Preference preference : preferences) {
             if (preference != null) {
-                preference.getParent().removePreference(preference);
+                Objects.requireNonNull(preference.getParent()).removePreference(preference);
             }
         }
     }

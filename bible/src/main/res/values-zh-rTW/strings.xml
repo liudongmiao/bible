@@ -37,6 +37,7 @@
     <string name="menu_highlight">明亮</string>
     <string name="menu_notes">筆記</string>
     <string name="menu_translations">管理譯本</string>
+    <string name="menu_odb_link">靈命日糧</string>
     <string name="menu_settings">設定</string>
     <string name="menu_feedback">回饋</string>
     <string name="menu_about">關於</string>
@@ -90,5 +91,10 @@
     <string name="annotation_sort_by_time">按時間排序</string>
     <string name="annotation_sort_by_book">按目錄排序</string>
     <string name="annotation_no_book">譯本「%2$s」中無法找到「%1$s」。</string>
+
+    <string name="odb_url_prefix">traditional-odb</string>
+    <string name="odb_yesterday">昨天</string>
+    <string name="odb_tomorrow">明天</string>
+    <string name="odb_about_detail">《靈命日糧》是靈命日糧事工的主要出版刊物，以英文寫作，目前已經翻譯超過 40 種語文，包括：中文（簡、繁體版）、西班牙文、法文、德文、俄文、波蘭文、馬來文、淡米爾文、日文、印尼文、泰文等等，供應全球千万讀者每日靈修的需要。</string>
 
 </resources>

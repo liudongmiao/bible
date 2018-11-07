@@ -27,6 +27,10 @@ import me.piebridge.bible.utils.LogUtils;
  */
 public class BibleApplication extends GenuineApplication {
 
+    private static final String VERSION_NIV = "niv";
+    private static final String VERSION_NIV1984 = "niv1984";
+    private static final String VERSION_NIV2011 = "niv2011";
+
     private DownloadComponent mDownload;
 
     private AnnotationComponent mAnnotation;
@@ -126,12 +130,20 @@ public class BibleApplication extends GenuineApplication {
     }
 
     public boolean setVersion(String version) {
-        if (mVersions.getVersions().contains(version)) {
+        Collection<String> versions = mVersions.getVersions();
+        if (versions.contains(version)) {
             return setVersion(version, false);
-        } else {
-            return false;
         }
+        if (VERSION_NIV.equals(version)) {
+            if (versions.contains(VERSION_NIV1984)) {
+                return setVersion(VERSION_NIV1984, false);
+            } else if (versions.contains(VERSION_NIV2011)) {
+                return setVersion(VERSION_NIV2011, false);
+            }
+        }
+        return false;
     }
+
 
     public boolean setVersion(String version, boolean force) {
         boolean updated = mVersion.setVersion(version, force);
@@ -227,6 +239,14 @@ public class BibleApplication extends GenuineApplication {
 
     public boolean hasChapter(String version, String osis) {
         return mVersion.hasChapter(version, osis);
+    }
+
+    public boolean hasVersion(String version) {
+        Collection<String> versions = getVersions();
+        if (version.equals(VERSION_NIV) && (versions.contains(VERSION_NIV1984) || versions.contains(VERSION_NIV2011))) {
+            return true;
+        }
+        return versions.contains(version);
     }
 
 }

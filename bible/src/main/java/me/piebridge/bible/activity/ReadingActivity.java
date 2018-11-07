@@ -61,8 +61,6 @@ public class ReadingActivity extends AbstractReadingActivity {
     private TextView bookView;
     private TextView chapterView;
 
-    private static final int REQUEST_CODE_SETTINGS = 1190;
-
     private BroadcastReceiver receiver;
 
     private String mTitle;
@@ -209,9 +207,8 @@ public class ReadingActivity extends AbstractReadingActivity {
                 LogUtils.d("settings changed, refresh");
                 refresh();
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

@@ -37,6 +37,7 @@
     <string name="menu_highlight">高亮</string>
     <string name="menu_notes">笔记</string>
     <string name="menu_translations">管理译本</string>
+    <string name="menu_odb_link">灵命日粮</string>
     <string name="menu_settings">设置</string>
     <string name="menu_feedback">反馈</string>
     <string name="menu_about">关于</string>
@@ -90,5 +91,10 @@
     <string name="annotation_sort_by_time">按时间排序</string>
     <string name="annotation_sort_by_book">按目录排序</string>
     <string name="annotation_no_book">译本“%2$s”中无法找到“%1$s”。</string>
+
+    <string name="odb_url_prefix">simplified-odb</string>
+    <string name="odb_yesterday">昨天</string>
+    <string name="odb_tomorrow">明天</string>
+    <string name="odb_about_detail">《灵命日粮》是灵命日粮事工的主要出版刊物，以英文写作，目前已经翻译超过 40 种语文，包括：中文（简、繁体版）、西班牙文、法文、德文、俄文、波兰文、马来文、淡米尔文、日文、印尼文、泰文等等，供应全球千万读者每日灵修的需要。</string>
 
 </resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_yesterday"
+        android:icon="@drawable/ic_navigate_before_black_24dp"
+        android:title="@string/odb_yesterday"
+        app:iconTint="@color/grey_50"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_tomorrow"
+        android:icon="@drawable/ic_navigate_next_black_24dp"
+        android:title="@string/odb_tomorrow"
+        app:iconTint="@color/grey_50"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_about"
+        android:title="@string/odb_about"
+        app:showAsAction="never" />
+
+</menu>

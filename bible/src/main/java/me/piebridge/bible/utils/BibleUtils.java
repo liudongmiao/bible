@@ -2,12 +2,16 @@ package me.piebridge.bible.utils;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
 
+import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.component.VersionComponent;
@@ -151,6 +155,16 @@ public class BibleUtils {
             return verses;
         } else {
             return verses.substring(index + 1);
+        }
+    }
+
+    public static void fixItems(ArrayList<OsisItem> items) {
+        Iterator<OsisItem> it = items.iterator();
+        while (it.hasNext()) {
+            OsisItem item = it.next();
+            if (TextUtils.isEmpty(item.chapter)) {
+                it.remove();
+            }
         }
     }
 

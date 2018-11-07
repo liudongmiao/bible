@@ -66,4 +66,10 @@
         android:title="@string/settings_shangti"
         app:iconSpaceReserved="false" />
 
+    <androidx.preference.SwitchPreferenceCompat
+        android:defaultValue="odb"
+        android:key="odb"
+        android:title="@string/menu_odb_link"
+        app:iconSpaceReserved="false" />
+
 </androidx.preference.PreferenceScreen>
