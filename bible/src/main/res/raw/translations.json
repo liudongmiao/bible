@@ -78,6 +78,14 @@
       "name": "Bible Segond 1910"
     },
     {
+      "code": "sblgnt",
+      "copy": "nc",
+      "date": "20151201",
+      "lang": "grc",
+      "meta": "<p>Copyright 2010 by the <a href=\"http://sbl-site.org/\">Society of Biblical Literature</a> and <a href=\"http://www.logos.com/\">Logos Bible Software</a>.<br />You may freely distribute the SBL Greek New Testament (SBLGNT), but you are not permitted to sell it on its own, either in print or electronic format.</p><p>The <a href=\"http://sbl-site.org/\">Society of Biblical Literature</a>, in keeping with its mission to foster biblical scholarship, is pleased to sponsor, in association with <a href=\"http://www.logos.com/\">Logos Bible Software</a>, a new, critically edited edition of the Greek New Testament. The Greek New Testament: SBL Edition (SBLGNT), which is <a href=\"http://www.sblgnt.com/download\">freely available in electronic form</a>, will be useful to students, teachers, translators, and scholars in a wide variety of settings and contexts.</p><p><a href=\"http://www.sblgnt.com/about/\">Learn more about the SBLGNT</a>.</p>🔗<a href=\"https://www.biblegateway.com/versions/SBL-Greek-New-Testament-SBLGNT/\">Bible Gateway</a>",
+      "name": "SBL Greek New Testament"
+    },
+    {
       "code": "tr1550",
       "copy": "pd",
       "date": "20181107",
