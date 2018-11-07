@@ -1,124 +1,124 @@
 {
- "languages":{
-  "en":"English",
-  "fr":"Français (French)",
-  "my":"ဗမာစာ(Burmese)",
-  "to":"lea fakatonga (Tongan)",
-  "zh-cn":"简体中文 (Simplified Chinese)",
-  "zh-tw":"繁體中文 (Traditional Chinese)"
- },
- "versions":[
-  {
-   "code":"asv",
-   "copy":"pd",
-   "date":"20181103",
-   "info":"<p>From Wikipedia: The American Standard Version (ASV) is rooted in the work that was done with the Revised Version (RV) (a late 19th-century British revision of the King James Version of 1611). In 1870, an invitation was extended to American religious leaders for scholars to work on the RV project. A year later, Protestant theologian Philip Schaff chose 30 scholars representing the denominations of Baptist, Congregationalist, Dutch Reformed, Friends, Methodist, Episcopal, Presbyterian, Protestant Episcopal, and Unitarian. These scholars began work in 1872.</p><p>The RV New Testament was released In 1881; the Old Testament was published in 1885. The ASV was published in 1901 by Thomas Nelson &amp; Sons. In 1928, the International Council of Religious Education (the body that later merged with the Federal Council of Churches to form the National Council of Churches) acquired the copyright from Nelson and renewed it the following year.</p><p>The divine name of the Almighty (the Tetragrammaton) is consistently rendered Jehovah in the ASV Old Testament, rather than LORD as it appears in the King James Bible.</p><p>The ASV was the basis of four revisions. They were the Revised Standard Version, 1971, the Amplified Bible, 1965, the New American Standard Bible, 1995, and the Recovery Version, 1999. A fifth revision, known as the World English Bible, was published in 2000 and was placed in the public domain. The ASV was also the basis for Kenneth N. Taylor's Bible paraphrase, The Living Bible, 1971.</p><p>This Bible is in the public domain in the United States. We are making it available in the same format in which we acquired it as a public service.</p>🔗<a href=\"https://www.biblegateway.com/versions/American-Standard-Version-ASV-Bible/\">Bible Gateway</a>",
-   "lang":"en",
-   "name":"American Standard Version"
+  "languages": {
+    "en": "English",
+    "fr": "Français (French)",
+    "my": "ဗမာစာ(Burmese)",
+    "to": "lea fakatonga (Tongan)",
+    "zh-cn": "简体中文 (Simplified Chinese)",
+    "zh-tw": "繁體中文 (Traditional Chinese)"
   },
-  {
-   "code":"darby",
-   "copy":"pd",
-   "date":"20151216",
-   "info":"<p>The Darby Bible was first published in 1890 by John Nelson Darby, an Anglo-Irish Bible teacher associated with the early years of the Plymouth Brethren. Darby also published translations of the Bible in French and German.</p><p>J. N. Darby's purpose was, as he states in the preface to his English New Testament, to make a modern translation for the unlearned who have neither access to manuscript texts nor training and knowledge of ancient languages of the Scriptures. Darby's translation work was not intended to be read aloud. His work was for study and private use. In his own oral ministry he generally used the English KJV Bible.</p><p>This Bible is in the public domain in the United States. We are making it available in the same format in which we acquired it as a public service.</p>🔗<a href=\"https://www.biblegateway.com/versions/Darby-Translation-Bible/\">Bible Gateway</a>",
-   "lang":"en",
-   "name":"Darby Translation"
-  },
-  {
-   "code":"dra",
-   "copy":"pd",
-   "date":"20151216",
-   "info":"<p>The Douay–Rheims Bible is a translation of the Bible from the Latin Vulgate into English made by members of the Catholic seminary English College, Douai, France. It is the foundation on which nearly all English Catholic versions are still based.</p><p>It was translated principally by Gregory Martin, an Oxford-trained scholar, working in the circle of English Catholic exiles on the Continent, under the sponsorship of William (later Cardinal) Allen. The New Testament appeared at Rheims in 1582; the Old Testament at Douai in 1609.</p><p>The translation, although competent, exhibited a taste for Latinisms that was not uncommon in English writing of the time but seemed excessive in the eyes of later generations. The New Testament influenced the Authorized Version.</p><p>Between 1749 and 1752, English bishop Richard Challoner substantially revised the translation with an aim to improve readability and comprehensibility. It was first published in America in 1790 by Mathew Carey of Philadelphia. Several American editions followed in the 19th and early 20th centuries; prominent among them the Douay-Rheims 1899 American Edition Version.</p>🔗<a href=\"https://www.biblegateway.com/versions/Darby-Translation-Bible/\">Bible Gateway</a>",
-   "lang":"en",
-   "name":"Douay-Rheims 1899 American Edition"
-  },
-  {
-   "code":"kjv",
-   "copy":"pd",
-   "date":"20181104",
-   "info":"<p>In 1604, King James I of England authorized that a new translation of the Bible into English be started. It was finished in 1611, just 85 years after the first translation of the New Testament into English appeared (Tyndale, 1526). The Authorized Version, or King James Version, quickly became the standard for English-speaking Protestants. Its flowing language and prose rhythm has had a profound influence on the literature of the past 400 years. The King James Version present on the Bible Gateway matches the 1987 printing. The KJV is public domain in the United States.</p>🔗<a href=\"https://www.biblegateway.com/versions/King-James-Version-KJV-Bible/\">Bible Gateway</a>",
-   "lang":"en",
-   "name":"King James Version"
-  },
-  {
-   "code":"web",
-   "copy":"pd",
-   "date":"20151216",
-   "info":"<p>The World English Bible (WEB) is a Public Domain (no copyright) Modern English translation of the Holy Bible. That means that you may freely copy it in any form, including electronic and print formats. The World English Bible is based on the American Standard Version of the Holy Bible first published in 1901, the Biblia Hebraica Stutgartensa Old Testament, and the Greek Majority Text New Testament. It is in draft form, and currently being edited for accuracy and readability.</p>🔗<a href=\"https://bibles.org/versions/eng-WEB\">bibles.org</a>",
-   "lang":"en",
-   "name":"World English Bible"
-  },
-  {
-   "code":"webbe",
-   "copy":"pd",
-   "date":"20161223",
-   "info":"<p>The World English Bible British Edition is a free, public domain (not copyrighted) translation of the Holy Bible created by updating the language of the American Standard Version of 1901. Where there are significant variations between the Greek Majority Text, the Textus Receptus, and the Nestle/Aland critical text, the Majority text reading is used in the main text, but the other variations are noted in footnotes. This translation is made freely available without copyright restrictions because of countless hours of volunteer prayer and labor. This edition uses British/International spelling.</p><p>The World English Bible British Edition is available for free reading and download at <a href=\"http://eBible.org/be/\">eBible.org/be</a>. This text matches the eBible.org text as of 8 May 2015.</p>🔗<a href=\"https://bibles.org/versions/eng-WEBBE\">bibles.org</a>",
-   "lang":"en",
-   "name":"World English Bible British Edition"
-  },
-  {
-   "code":"ylt",
-   "copy":"pd",
-   "date":"20181028",
-   "info":"<p>The Bible text designated YLT is from the 1898 Young's Literal Translation by Robert Young who also compiled Young's Analytical Concordance. This is an extremely literal translation that attempts to preserve the tense and word usage as found in the original Greek and Hebrew writings. The text was scanned from a reprint of the 1898 edition as published by Baker Book House, Grand Rapids Michigan. The book is still in print and may be ordered from Baker Book House. Obvious errors in spelling or inconsistent spellings of the same word were corrected in the computer edition of the text.</p>🔗<a href=\"https://www.biblegateway.com/versions/Youngs-Literal-Translation-YLT-Bible/\">Bible Gateway</a>",
-   "lang":"en",
-   "name":"Young's Literal Translation"
-  },
-  {
-   "code":"lsg",
-   "copy":"pd",
-   "date":"20151216",
-   "info":"<p>The first edition of the Bible Segond was published in 1910</p>🔗<a href=\"https://bibles.org/versions/fra-LSG\">bibles.org</a>",
-   "lang":"fr",
-   "name":"Bible Segond 1910"
-  },
-  {
-   "code":"bjb",
-   "copy":"pd",
-   "date":"20151216",
-   "info":"<p>© 1933 McGuire revision (public domain)</p>🔗<a href=\"https://bibles.org/versions/mya-BJB\">bibles.org</a>",
-   "lang":"my",
-   "name":"Judson Bible"
-  },
-  {
-   "code":"rwv",
-   "copy":"pd",
-   "date":"20150830",
-   "info":"<p>This translation is a free, public domain (not copyrighted) translation of the Holy Bible created by updating the Tongan West Version. It has been dedicated to the Public Domain by the translator, James Baxley. You may copy it freely.</p><p>The Tongan Bible, Revised West Translation is available for free reading and download at <a href=\"http://eBible.org/web/\">eBible.org/web</a> and at <a href=\"http://MissionTonga.org\">MissionTonga.org</a></p>🔗<a href=\"https://bibles.org/versions/ton-TONRWV\">bibles.org</a>",
-   "lang":"to",
-   "name":"Tongan Bible (Revised West Version)"
-  },
-  {
-   "code":"csbs",
-   "copy":"nc",
-   "date":"20181101",
-   "info":"<p>© 2011 Global Bible Initiative<br />© 2011 全球圣经促进会<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p><a href=\"http://www.chinesestandardbible.com/\">《中文标准译本》</a>是一本全新的中文圣经译本；是从圣经原文（希伯来文、亚兰文和希腊文）直接翻译过来，最大程度上忠实于原文，保持原有的语言风格，符合现代汉语规范，适合于各种文化程度的人士；是现今最为准确、可读性最强的中文圣经译本之一。《中文标准译本》是由<a href=\"http://www.globalbibleinitiative.org/\">全球圣经促进会</a> (Global Bible Initiative) 和<a href=\"http://www.bhpublishinggroup.com\">霍尔曼圣经出版社</a> (Holman Bible Publishers) 组织的海内外圣经学者和语言专家团队，配合先进的计算机技术，倾注多年心血的项目。</p>🔗<a href=\"https://www.biblegateway.com/versions/Youngs-Literal-Translation-YLT-Bible/\">Bible Gateway</a>",
-   "lang":"zh-cn",
-   "name":"中文标准译本"
-  },
-  {
-   "code":"cuvmps",
-   "copy":"nc",
-   "date":"20181031",
-   "info":"<p>© 2011 Global Bible Initiative<br />© 2011 全球圣经促进会<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p>《和合本》是华人中占权威地位的中文圣经译本。《现代标点和合本》在《和合本》的基础上采用了现代标点规范。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Union-Version-Modern-Punctuation-Simplified-CUVMPS/\">Bible Gateway</a>",
-   "lang":"zh-cn",
-   "name":"现代标点和合本"
-  },
-  {
-   "code":"csbt",
-   "copy":"nc",
-   "date":"20181101",
-   "info":"<p>© 2011 Global Bible Initiative<br />© 2011 全球聖經促進會<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p><a href=\"http://www.chinesestandardbible.com/\">《中文標準譯本》</a>是一本全新的中文聖經譯本；是從聖經原文（希伯來文、亞蘭文和希臘文）直接翻譯過來，最大程度上忠實於原文，保持原有的語言風格，符合現代漢語規範，適合於各種文化程度的人士；是現今最為準確、可讀性最強的中文聖經譯本之一。《中文標準譯本》是由<a href=\"http://www.globalbibleinitiative.org/\">全球聖經促進會</a> (Global Bible Initiative) 和<a href=\"http://www.bhpublishinggroup.com\">霍爾曼聖經出版社</a> (Holman Bible Publishers) 組織的海內外聖經學者和語言專家團隊，配合先進的電腦技術，傾注多年心血的項目。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Standard-Bible-Traditional-CSBT/\">Bible Gateway</a>",
-   "lang":"zh-tw",
-   "name":"中文標準譯本"
-  },
-  {
-   "code":"cuvmpt",
-   "copy":"nc",
-   "date":"20181031",
-   "info":"<p>© 2011 Global Bible Initiative<br />© 2011 全球聖經促進會<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p>《和合本》是華人中占權威地位的中文聖經譯本。《現代標點和合本》在《和合本》的基礎上採用了現代標點規範。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Union-Version-Modern-Punctuation-Traditional-CUVMPT/\">Bible Gateway</a>",
-   "lang":"zh-tw",
-   "name":"現代標點和合本"
-  }
- ]
+  "versions": [
+    {
+      "code": "asv",
+      "copy": "pd",
+      "date": "20181103",
+      "info": "<p>From Wikipedia: The American Standard Version (ASV) is rooted in the work that was done with the Revised Version (RV) (a late 19th-century British revision of the King James Version of 1611). In 1870, an invitation was extended to American religious leaders for scholars to work on the RV project. A year later, Protestant theologian Philip Schaff chose 30 scholars representing the denominations of Baptist, Congregationalist, Dutch Reformed, Friends, Methodist, Episcopal, Presbyterian, Protestant Episcopal, and Unitarian. These scholars began work in 1872.</p><p>The RV New Testament was released In 1881; the Old Testament was published in 1885. The ASV was published in 1901 by Thomas Nelson &amp; Sons. In 1928, the International Council of Religious Education (the body that later merged with the Federal Council of Churches to form the National Council of Churches) acquired the copyright from Nelson and renewed it the following year.</p><p>The divine name of the Almighty (the Tetragrammaton) is consistently rendered Jehovah in the ASV Old Testament, rather than LORD as it appears in the King James Bible.</p><p>The ASV was the basis of four revisions. They were the Revised Standard Version, 1971, the Amplified Bible, 1965, the New American Standard Bible, 1995, and the Recovery Version, 1999. A fifth revision, known as the World English Bible, was published in 2000 and was placed in the public domain. The ASV was also the basis for Kenneth N. Taylor's Bible paraphrase, The Living Bible, 1971.</p><p>This Bible is in the public domain in the United States. We are making it available in the same format in which we acquired it as a public service.</p>🔗<a href=\"https://www.biblegateway.com/versions/American-Standard-Version-ASV-Bible/\">Bible Gateway</a>",
+      "lang": "en",
+      "name": "American Standard Version"
+    },
+    {
+      "code": "darby",
+      "copy": "pd",
+      "date": "20151216",
+      "info": "<p>The Darby Bible was first published in 1890 by John Nelson Darby, an Anglo-Irish Bible teacher associated with the early years of the Plymouth Brethren. Darby also published translations of the Bible in French and German.</p><p>J. N. Darby's purpose was, as he states in the preface to his English New Testament, to make a modern translation for the unlearned who have neither access to manuscript texts nor training and knowledge of ancient languages of the Scriptures. Darby's translation work was not intended to be read aloud. His work was for study and private use. In his own oral ministry he generally used the English KJV Bible.</p><p>This Bible is in the public domain in the United States. We are making it available in the same format in which we acquired it as a public service.</p>🔗<a href=\"https://www.biblegateway.com/versions/Darby-Translation-Bible/\">Bible Gateway</a>",
+      "lang": "en",
+      "name": "Darby Translation"
+    },
+    {
+      "code": "dra",
+      "copy": "pd",
+      "date": "20151216",
+      "info": "<p>The Douay–Rheims Bible is a translation of the Bible from the Latin Vulgate into English made by members of the Catholic seminary English College, Douai, France. It is the foundation on which nearly all English Catholic versions are still based.</p><p>It was translated principally by Gregory Martin, an Oxford-trained scholar, working in the circle of English Catholic exiles on the Continent, under the sponsorship of William (later Cardinal) Allen. The New Testament appeared at Rheims in 1582; the Old Testament at Douai in 1609.</p><p>The translation, although competent, exhibited a taste for Latinisms that was not uncommon in English writing of the time but seemed excessive in the eyes of later generations. The New Testament influenced the Authorized Version.</p><p>Between 1749 and 1752, English bishop Richard Challoner substantially revised the translation with an aim to improve readability and comprehensibility. It was first published in America in 1790 by Mathew Carey of Philadelphia. Several American editions followed in the 19th and early 20th centuries; prominent among them the Douay-Rheims 1899 American Edition Version.</p>🔗<a href=\"https://www.biblegateway.com/versions/Darby-Translation-Bible/\">Bible Gateway</a>",
+      "lang": "en",
+      "name": "Douay-Rheims 1899 American Edition"
+    },
+    {
+      "code": "kjv",
+      "copy": "pd",
+      "date": "20181104",
+      "info": "<p>In 1604, King James I of England authorized that a new translation of the Bible into English be started. It was finished in 1611, just 85 years after the first translation of the New Testament into English appeared (Tyndale, 1526). The Authorized Version, or King James Version, quickly became the standard for English-speaking Protestants. Its flowing language and prose rhythm has had a profound influence on the literature of the past 400 years. The King James Version present on the Bible Gateway matches the 1987 printing. The KJV is public domain in the United States.</p>🔗<a href=\"https://www.biblegateway.com/versions/King-James-Version-KJV-Bible/\">Bible Gateway</a>",
+      "lang": "en",
+      "name": "King James Version"
+    },
+    {
+      "code": "web",
+      "copy": "pd",
+      "date": "20151216",
+      "info": "<p>The World English Bible (WEB) is a Public Domain (no copyright) Modern English translation of the Holy Bible. That means that you may freely copy it in any form, including electronic and print formats. The World English Bible is based on the American Standard Version of the Holy Bible first published in 1901, the Biblia Hebraica Stutgartensa Old Testament, and the Greek Majority Text New Testament. It is in draft form, and currently being edited for accuracy and readability.</p>🔗<a href=\"https://bibles.org/versions/eng-WEB\">bibles.org</a>",
+      "lang": "en",
+      "name": "World English Bible"
+    },
+    {
+      "code": "webbe",
+      "copy": "pd",
+      "date": "20161223",
+      "info": "<p>The World English Bible British Edition is a free, public domain (not copyrighted) translation of the Holy Bible created by updating the language of the American Standard Version of 1901. Where there are significant variations between the Greek Majority Text, the Textus Receptus, and the Nestle/Aland critical text, the Majority text reading is used in the main text, but the other variations are noted in footnotes. This translation is made freely available without copyright restrictions because of countless hours of volunteer prayer and labor. This edition uses British/International spelling.</p><p>The World English Bible British Edition is available for free reading and download at <a href=\"http://eBible.org/be/\">eBible.org/be</a>. This text matches the eBible.org text as of 8 May 2015.</p>🔗<a href=\"https://bibles.org/versions/eng-WEBBE\">bibles.org</a>",
+      "lang": "en",
+      "name": "World English Bible British Edition"
+    },
+    {
+      "code": "ylt",
+      "copy": "pd",
+      "date": "20181028",
+      "info": "<p>The Bible text designated YLT is from the 1898 Young's Literal Translation by Robert Young who also compiled Young's Analytical Concordance. This is an extremely literal translation that attempts to preserve the tense and word usage as found in the original Greek and Hebrew writings. The text was scanned from a reprint of the 1898 edition as published by Baker Book House, Grand Rapids Michigan. The book is still in print and may be ordered from Baker Book House. Obvious errors in spelling or inconsistent spellings of the same word were corrected in the computer edition of the text.</p>🔗<a href=\"https://www.biblegateway.com/versions/Youngs-Literal-Translation-YLT-Bible/\">Bible Gateway</a>",
+      "lang": "en",
+      "name": "Young's Literal Translation"
+    },
+    {
+      "code": "lsg",
+      "copy": "pd",
+      "date": "20151216",
+      "info": "<p>The first edition of the Bible Segond was published in 1910</p>🔗<a href=\"https://bibles.org/versions/fra-LSG\">bibles.org</a>",
+      "lang": "fr",
+      "name": "Bible Segond 1910"
+    },
+    {
+      "code": "bjb",
+      "copy": "pd",
+      "date": "20151216",
+      "info": "<p>© 1933 McGuire revision (public domain)</p>🔗<a href=\"https://bibles.org/versions/mya-BJB\">bibles.org</a>",
+      "lang": "my",
+      "name": "Judson Bible"
+    },
+    {
+      "code": "rwv",
+      "copy": "pd",
+      "date": "20150830",
+      "info": "<p>This translation is a free, public domain (not copyrighted) translation of the Holy Bible created by updating the Tongan West Version. It has been dedicated to the Public Domain by the translator, James Baxley. You may copy it freely.</p><p>The Tongan Bible, Revised West Translation is available for free reading and download at <a href=\"http://eBible.org/web/\">eBible.org/web</a> and at <a href=\"http://MissionTonga.org\">MissionTonga.org</a></p>🔗<a href=\"https://bibles.org/versions/ton-TONRWV\">bibles.org</a>",
+      "lang": "to",
+      "name": "Tongan Bible (Revised West Version)"
+    },
+    {
+      "code": "csbs",
+      "copy": "nc",
+      "date": "20181101",
+      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球圣经促进会<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p><a href=\"http://www.chinesestandardbible.com/\">《中文标准译本》</a>是一本全新的中文圣经译本；是从圣经原文（希伯来文、亚兰文和希腊文）直接翻译过来，最大程度上忠实于原文，保持原有的语言风格，符合现代汉语规范，适合于各种文化程度的人士；是现今最为准确、可读性最强的中文圣经译本之一。《中文标准译本》是由<a href=\"http://www.globalbibleinitiative.org/\">全球圣经促进会</a> (Global Bible Initiative) 和<a href=\"http://www.bhpublishinggroup.com\">霍尔曼圣经出版社</a> (Holman Bible Publishers) 组织的海内外圣经学者和语言专家团队，配合先进的计算机技术，倾注多年心血的项目。</p>🔗<a href=\"https://www.biblegateway.com/versions/Youngs-Literal-Translation-YLT-Bible/\">Bible Gateway</a>",
+      "lang": "zh-cn",
+      "name": "中文标准译本"
+    },
+    {
+      "code": "cuvmps",
+      "copy": "nc",
+      "date": "20181031",
+      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球圣经促进会<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p>《和合本》是华人中占权威地位的中文圣经译本。《现代标点和合本》在《和合本》的基础上采用了现代标点规范。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Union-Version-Modern-Punctuation-Simplified-CUVMPS/\">Bible Gateway</a>",
+      "lang": "zh-cn",
+      "name": "现代标点和合本"
+    },
+    {
+      "code": "csbt",
+      "copy": "nc",
+      "date": "20181101",
+      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球聖經促進會<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p><a href=\"http://www.chinesestandardbible.com/\">《中文標準譯本》</a>是一本全新的中文聖經譯本；是從聖經原文（希伯來文、亞蘭文和希臘文）直接翻譯過來，最大程度上忠實於原文，保持原有的語言風格，符合現代漢語規範，適合於各種文化程度的人士；是現今最為準確、可讀性最強的中文聖經譯本之一。《中文標準譯本》是由<a href=\"http://www.globalbibleinitiative.org/\">全球聖經促進會</a> (Global Bible Initiative) 和<a href=\"http://www.bhpublishinggroup.com\">霍爾曼聖經出版社</a> (Holman Bible Publishers) 組織的海內外聖經學者和語言專家團隊，配合先進的電腦技術，傾注多年心血的項目。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Standard-Bible-Traditional-CSBT/\">Bible Gateway</a>",
+      "lang": "zh-tw",
+      "name": "中文標準譯本"
+    },
+    {
+      "code": "cuvmpt",
+      "copy": "nc",
+      "date": "20181031",
+      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球聖經促進會<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p>《和合本》是華人中占權威地位的中文聖經譯本。《現代標點和合本》在《和合本》的基礎上採用了現代標點規範。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Union-Version-Modern-Punctuation-Traditional-CUVMPT/\">Bible Gateway</a>",
+      "lang": "zh-tw",
+      "name": "現代標點和合本"
+    }
+  ]
 }
