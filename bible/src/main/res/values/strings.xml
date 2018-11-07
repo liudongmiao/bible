@@ -75,8 +75,9 @@
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_red">Red letter</string>
-    <string name="settings_red_summary">For words of Jesus if available</string>
+    <string name="settings_red_summary">For words of Jesus, If available</string>
     <string name="settings_cross">@string/reading_cross</string>
+    <string name="settings_cross_summary">If available</string>
     <string name="settings_justify">Text justified</string>
     <string name="settings_font_family">Font family</string>
     <string name="settings_auto_copy">Auto copy</string>
@@ -98,5 +99,10 @@
     <string name="odb_tomorrow">Tomorrow</string>
     <string name="odb_about">@string/menu_about</string>
     <string name="odb_about_detail">Our Daily Bread® is trademark of Our Daily Bread Ministries.</string>
+    <string name="odb_copyright">© Our Daily Bread Ministries</string>
+
+    <string name="settings_interface">Interface</string>
+    <string name="settings_translation">Translation</string>
+    <string name="settings_other">Other</string>
 
 </resources>

@@ -75,8 +75,8 @@
     <string name="settings_theme_light">淺色</string>
     <string name="settings_theme_dark">深色</string>
     <string name="settings_red">紅字</string>
-    <string name="settings_red_summary">可用時適用耶穌的話</string>
-    <string name="settings_cross">@string/reading_cross</string>
+    <string name="settings_red_summary">耶穌的話使用紅字，僅適用部分譯本</string>
+    <string name="settings_cross_summary">僅適用部分譯本</string>
     <string name="settings_justify">文字分散對齊</string>
     <string name="settings_font_family">英文字體</string>
     <string name="settings_auto_copy">自動複製</string>
@@ -96,5 +96,10 @@
     <string name="odb_yesterday">昨天</string>
     <string name="odb_tomorrow">明天</string>
     <string name="odb_about_detail">《靈命日糧》是靈命日糧事工的主要出版刊物，以英文寫作，目前已經翻譯超過 40 種語文，包括：中文（簡、繁體版）、西班牙文、法文、德文、俄文、波蘭文、馬來文、淡米爾文、日文、印尼文、泰文等等，供應全球千万讀者每日靈修的需要。</string>
+    <string name="odb_copyright">© 靈命日糧事工</string>
+
+    <string name="settings_interface">介面</string>
+    <string name="settings_translation">譯本</string>
+    <string name="settings_other">其他</string>
 
 </resources>

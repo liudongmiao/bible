@@ -1,75 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:iconSpaceReserved="false">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.preference.Preference
-        android:key="fontsizeDefault"
-        android:title="@string/settings_fontsize"
-        app:iconSpaceReserved="false" />
+    <androidx.preference.PreferenceCategory
+        android:key="key_interface"
+        android:title="@string/settings_interface">
 
-    <androidx.preference.Preference
-        android:key="fontsizeVersion"
-        android:title="@string/settings_fontsize"
-        app:iconSpaceReserved="false" />
+        <androidx.preference.ListPreference
+            android:defaultValue="light"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            android:key="theme"
+            android:summary="%s"
+            android:title="@string/settings_theme" />
 
-    <androidx.preference.ListPreference
-        android:defaultValue="light"
-        android:entries="@array/theme_entries"
-        android:entryValues="@array/theme_values"
-        android:key="theme"
-        android:summary="%s"
-        android:title="@string/settings_theme"
-        app:iconSpaceReserved="false" />
+        <androidx.preference.ListPreference
+            android:defaultValue="serif"
+            android:entries="@array/font_family_entries"
+            android:entryValues="@array/font_family_values"
+            android:key="fontFamily"
+            android:summary="%s"
+            android:title="@string/settings_font_family" />
 
-    <androidx.preference.SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="red"
-        android:summary="@string/settings_red_summary"
-        android:title="@string/settings_red"
-        app:iconSpaceReserved="false" />
+        <androidx.preference.Preference
+            android:key="fontsizeDefault"
+            android:title="@string/settings_fontsize" />
 
-    <androidx.preference.SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:key="cross"
-        android:title="@string/settings_cross"
-        app:iconSpaceReserved="false" />
+        <androidx.preference.Preference
+            android:key="fontsizeVersion"
+            android:title="@string/settings_fontsize" />
 
+        <androidx.preference.SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="justify"
+            android:title="@string/settings_justify" />
 
-    <androidx.preference.SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="justify"
-        android:title="@string/settings_justify"
-        app:iconSpaceReserved="false" />
+    </androidx.preference.PreferenceCategory>
 
-    <androidx.preference.ListPreference
-        android:defaultValue="serif"
-        android:entries="@array/font_family_entries"
-        android:entryValues="@array/font_family_values"
-        android:key="fontFamily"
-        android:summary="%s"
-        android:title="@string/settings_font_family"
-        app:iconSpaceReserved="false" />
+    <androidx.preference.PreferenceCategory
+        android:key="key_translation"
+        android:title="@string/settings_translation">
 
-    <androidx.preference.SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:key="autoCopy"
-        android:summary="@string/settings_auto_copy_summary"
-        android:title="@string/settings_auto_copy"
-        app:iconSpaceReserved="false" />
+        <androidx.preference.SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="red"
+            android:summary="@string/settings_red_summary"
+            android:title="@string/settings_red" />
 
-    <androidx.preference.SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:key="shangti"
-        android:summary="@string/settings_shangti_summary"
-        android:title="@string/settings_shangti"
-        app:iconSpaceReserved="false" />
+        <androidx.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="cross"
+            android:summary="@string/settings_cross_summary"
+            android:title="@string/settings_cross" />
 
-    <androidx.preference.SwitchPreferenceCompat
-        android:defaultValue="odb"
-        android:key="odb"
-        android:title="@string/menu_odb_link"
-        app:iconSpaceReserved="false" />
+        <androidx.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="shangti"
+            android:summary="@string/settings_shangti_summary"
+            android:title="@string/settings_shangti" />
+
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory
+        android:key="key_other"
+        android:title="@string/settings_other">
+
+        <androidx.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="autoCopy"
+            android:summary="@string/settings_auto_copy_summary"
+            android:title="@string/settings_auto_copy" />
+
+        <androidx.preference.SwitchPreferenceCompat
+            android:defaultValue="odb"
+            android:key="odb"
+            android:summary="@string/odb_copyright"
+            android:title="@string/menu_odb_link" />
+
+    </androidx.preference.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

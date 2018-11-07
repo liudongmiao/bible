@@ -75,8 +75,8 @@
     <string name="settings_theme_light">浅色</string>
     <string name="settings_theme_dark">深色</string>
     <string name="settings_red">红字</string>
-    <string name="settings_red_summary">可用时适用耶稣的话</string>
-    <string name="settings_cross">@string/reading_cross</string>
+    <string name="settings_red_summary">耶稣的话使用红字，仅适用部分译本</string>
+    <string name="settings_cross_summary">仅适用部分译本</string>
     <string name="settings_justify">文字分散对齐</string>
     <string name="settings_font_family">英文字体</string>
     <string name="settings_auto_copy">自动复制</string>
@@ -96,5 +96,10 @@
     <string name="odb_yesterday">昨天</string>
     <string name="odb_tomorrow">明天</string>
     <string name="odb_about_detail">《灵命日粮》是灵命日粮事工的主要出版刊物，以英文写作，目前已经翻译超过 40 种语文，包括：中文（简、繁体版）、西班牙文、法文、德文、俄文、波兰文、马来文、淡米尔文、日文、印尼文、泰文等等，供应全球千万读者每日灵修的需要。</string>
+    <string name="odb_copyright">© 灵命日粮事工</string>
+
+    <string name="settings_interface">界面</string>
+    <string name="settings_translation">译本</string>
+    <string name="settings_other">其他</string>
 
 </resources>
