@@ -2,7 +2,11 @@
   "languages": {
     "en": "English",
     "fr": "Français (French)",
+    "grc": "Κοινη (Greek)",
+    "he": "עברית (Hebrew)",
+    "mi": "Maori",
     "my": "ဗမာစာ(Burmese)",
+    "no": "Norsk (Norwegian)",
     "tl": "Tagalog (Tagalog)",
     "to": "lea fakatonga (Tongan)",
     "zh-cn": "简体中文 (Simplified Chinese)",
@@ -74,12 +78,60 @@
       "name": "Bible Segond 1910"
     },
     {
+      "code": "tr1550",
+      "copy": "pd",
+      "date": "20181107",
+      "lang": "grc",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/1550-Stephanus-Greek-New-Testament-TR1550/\">Bible Gateway</a>",
+      "name": "1550 Stephanus New Testament"
+    },
+    {
+      "code": "tr1894",
+      "copy": "pd",
+      "date": "20181107",
+      "lang": "grc",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/1894-Scrivener-Greek-New-Testament-TR1894/\">Bible Gateway</a>",
+      "name": "1894 Scrivener New Testament"
+    },
+    {
+      "code": "whnu",
+      "copy": "pd",
+      "date": "20181107",
+      "lang": "grc",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/1881-Westcott-Hort-Greek-New-Testament-WHNU/\">Bible Gateway</a>",
+      "name": "1881 Westcott-Hort New Testament"
+    },
+    {
+      "code": "wlc",
+      "copy": "pd",
+      "date": "20151201",
+      "lang": "he",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/The-Westminster-Leningrad-Codex-WLC/\">Bible Gateway</a>",
+      "name": "The Westminster Leningrad Codex"
+    },
+    {
+      "code": "maori",
+      "copy": "pd",
+      "date": "20150830",
+      "lang": "mi",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/Maori-Bible/\">Bible Gateway</a>",
+      "name": "Maori Bible"
+    },
+    {
       "code": "bjb",
       "copy": "pd",
       "date": "20151216",
       "info": "<p>© 1933 McGuire revision (public domain)</p>🔗<a href=\"https://bibles.org/versions/mya-BJB\">bibles.org</a>",
       "lang": "my",
       "name": "Judson Bible"
+    },
+    {
+      "code": "dnb1930",
+      "copy": "pd",
+      "date": "20151202",
+      "lang": "no",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/Det-Norsk-Bibelselskap-1930-DNB1930/\">Bible Gateway</a>",
+      "name": "Det Norsk Bibelselskap 1930"
     },
     {
       "code": "adb1905",

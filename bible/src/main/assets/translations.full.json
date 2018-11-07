@@ -9,12 +9,11 @@
     "cy": "Cymraeg (Welsh)",
     "de": "Deutsch (German)",
     "dt": "Central Dusun / Kadazan (Boros Dusun)",
-    "el": "ελληνικά(Greek)",
     "en": "English",
     "es": "Español (Spanish)",
     "fj": "Fijian",
     "fr": "Français (French)",
-    "gr": "Κοινη (Greek)",
+    "grc": "Κοινη (Greek)",
     "ha": "Hausa",
     "he": "עברית (Hebrew)",
     "hi": "हिन्दी (Hindi)",
@@ -167,18 +166,6 @@
       "date": "20151216",
       "lang": "dt",
       "name": "Buuk Do Kinorohingan"
-    },
-    {
-      "code": "tr1550",
-      "date": "20151216",
-      "lang": "el",
-      "name": "1550 Stephanus New Testament"
-    },
-    {
-      "code": "tr1894",
-      "date": "20151216",
-      "lang": "el",
-      "name": "1894 Scrivener New Testament"
     },
     {
       "code": "akjv",
@@ -620,8 +607,32 @@
     {
       "code": "sblgnt",
       "date": "20151201",
-      "lang": "gr",
+      "lang": "grc",
       "name": "SBL Greek New Testament"
+    },
+    {
+      "code": "tr1550",
+      "copy": "pd",
+      "date": "20181107",
+      "lang": "grc",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/1550-Stephanus-Greek-New-Testament-TR1550/\">Bible Gateway</a>",
+      "name": "1550 Stephanus New Testament"
+    },
+    {
+      "code": "tr1894",
+      "copy": "pd",
+      "date": "20181107",
+      "lang": "grc",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/1894-Scrivener-Greek-New-Testament-TR1894/\">Bible Gateway</a>",
+      "name": "1894 Scrivener New Testament"
+    },
+    {
+      "code": "whnu",
+      "copy": "pd",
+      "date": "20181107",
+      "lang": "grc",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/1881-Westcott-Hort-Greek-New-Testament-WHNU/\">Bible Gateway</a>",
+      "name": "1881 Westcott-Hort New Testament"
     },
     {
       "code": "hau",
@@ -637,8 +648,10 @@
     },
     {
       "code": "wlc",
+      "copy": "pd",
       "date": "20151201",
       "lang": "he",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/The-Westminster-Leningrad-Codex-WLC/\">Bible Gateway</a>",
       "name": "The Westminster Leningrad Codex"
     },
     {
@@ -733,8 +746,10 @@
     },
     {
       "code": "maori",
+      "copy": "pd",
       "date": "20150830",
       "lang": "mi",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/Maori-Bible/\">Bible Gateway</a>",
       "name": "Maori Bible"
     },
     {
@@ -795,8 +810,10 @@
     },
     {
       "code": "dnb1930",
+      "copy": "pd",
       "date": "20151202",
       "lang": "no",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/Det-Norsk-Bibelselskap-1930-DNB1930/\">Bible Gateway</a>",
       "name": "Det Norsk Bibelselskap 1930"
     },
     {
