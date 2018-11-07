@@ -1,1191 +1,1198 @@
 {
- "languages":{
-  "af":"Afrikaans",
-  "ar":"ﺎﻠﻋﺮﺒﻳﺓ(Arabic)",
-  "bc":"Central Bicolano",
-  "btx":"Batak Karo",
-  "cb":"Cebuano",
-  "cnh":"Hakha (Chin: Hakha)",
-  "cy":"Cymraeg (Welsh)",
-  "de":"Deutsch (German)",
-  "dt":"Central Dusun / Kadazan (Boros Dusun)",
-  "el":"ελληνικά(Greek)",
-  "en":"English",
-  "es":"Español (Spanish)",
-  "fj":"Fijian",
-  "fr":"Français (French)",
-  "gr":"Κοινη (Greek)",
-  "ha":"Hausa",
-  "he":"עברית (Hebrew)",
-  "hi":"हिन्दी (Hindi)",
-  "hl":"Ilonggo (Hiligaynon)",
-  "hr":"Hrvatski (Croatian)",
-  "ht":"Kreyòl ayisyen (Haitian Creole)",
-  "ib":"Iban",
-  "id":"Bahasa Indonesia (Indonesian)",
-  "ig":"Asụsụ Igbo (Igbo)",
-  "il":"Iloko",
-  "it":"Italiano (Italian)",
-  "ja":"日本語 (Japanese)",
-  "jr":"Jarai",
-  "kj":"Kuanyama (Kwanyama)",
-  "kp":"Mountain Koiali",
-  "kr":"한국어 (Korean)",
-  "mi":"Maori",
-  "ml":"മലയാളം (Malayalam)",
-  "mr":"मराठी(Marathi)",
-  "ms":"Melayu (Malay)",
-  "my":"ဗမာစာ(Burmese)",
-  "nb":"isiNdebele (Southern Ndebele)",
-  "ne":"नेपाली (Nepali)",
-  "ng":"Owambo (Ndonga)",
-  "nl":"Nederlands (Dutch)",
-  "no":"Norsk (Norwegian)",
-  "ns":"Sesotho sa Leboa (Northern Sotho)",
-  "ny":"chiCheŵa (Chichewa)",
-  "nz":"Zeme Naga",
-  "or":"ଓଡ଼ିଆ (Oriya)",
-  "pa":"ਪੰਜਾਬੀ(Punjabi)",
-  "pg":"Pangasinan",
-  "pm":"Kapampangan",
-  "pt":"Português (Portuguese)",
-  "ro":"Română (Romanian)",
-  "ru":"русский язык(Russian)",
-  "rw":"Kinyarwanda",
-  "sk":"Slovenčina (Slovak)",
-  "sn":"chiShona (Shona)",
-  "so":"Sesotho (Southern Sotho)",
-  "sp":"Kalenjin (Sabaot)",
-  "ss":"SiSwati (Swati)",
-  "sw":"Kiswahili (Swahili)",
-  "ta":"தமிழ் (Tamil)",
-  "te":"తెలుగు (Telugu)",
-  "th":"ไทย (Thai)",
-  "tl":"Tagalog (Tagalog)",
-  "tn":"Setswana (Tswana)",
-  "to":"lea fakatonga (Tongan)",
-  "tr":"Türkçe (Turkish)",
-  "ts":"Xitsonga (Tsonga)",
-  "tw":"Twi",
-  "ve":"Tshivenḓa (Venda)",
-  "vi":"Tiếng Việt (Vietnamese)",
-  "xh":"isiXhosa (Xhosa)",
-  "yo":"Yorùbá (Yoruba)",
-  "zh-cn":"简体中文 (Simplified Chinese)",
-  "zh-tw":"繁體中文 (Traditional Chinese)",
-  "zo":"Zou",
-  "zu":"isiZulu (Zulu)"
- },
- "versions":[
-  {
-   "code":"afr53",
-   "date":"20181020",
-   "lang":"af",
-   "name":"Afrikaans 1933/1953"
-  },
-  {
-   "code":"afr83",
-   "date":"20151216",
-   "lang":"af",
-   "name":"Afrikaans 1983"
-  },
-  {
-   "code":"alab",
-   "date":"20151216",
-   "lang":"ar",
-   "name":"Arabic Life Application Bible"
-  },
-  {
-   "code":"avddv",
-   "date":"20160114",
-   "lang":"ar",
-   "name":"New Van Dyck Bible (Reduced Vocalization with Helps)"
-  },
-  {
-   "code":"ervar",
-   "date":"20151216",
-   "lang":"ar",
-   "name":"Arabic Bible: Easy-to-Read Version"
-  },
-  {
-   "code":"nav",
-   "date":"20151216",
-   "lang":"ar",
-   "name":"Ketab El Hayat"
-  },
-  {
-   "code":"bpv",
-   "date":"20151216",
-   "lang":"bc",
-   "name":"Marahay na Bareta Biblia"
-  },
-  {
-   "code":"btx",
-   "date":"20181105",
-   "lang":"btx",
-   "meta":"<p>This translation, published by the Indonesian Bible Society, was first published in 1987 and last revised in 2003.</p><p>If you are interested in obtaining a printed copy, please contact the Indonesian Bible Society at <a href=\"http://www.alkitab.or.id/\">www.alkitab.or.id</a> or email to <a href=\"mailto:info@alkitab.or.id\">info@alkitab.or.id</a></p>🔗<a href=\"https://bibles.org/versions/btx-BTX\">bibles.org</a>",
-   "name":"Pustaka Si Badia"
-  },
-  {
-   "code":"apsd",
-   "date":"20151216",
-   "lang":"cb",
-   "name":"Ang Pulong Sa Dios"
-  },
-  {
-   "code":"rcpv",
-   "date":"20151216",
-   "lang":"cb",
-   "name":"Ang Bag-ong Maayong Balita Biblia"
-  },
-  {
-   "code":"hcl",
-   "date":"20181101",
-   "lang":"cnh",
-   "name":"Hakha Common Language Bible"
-  },
-  {
-   "code":"bcnd",
-   "date":"20161223",
-   "lang":"cy",
-   "name":"Beibl Cymraeg Newydd Diwygiedig 2004"
-  },
-  {
-   "code":"ngude",
-   "date":"20151216",
-   "lang":"de",
-   "name":"Neue Genfer Übersetzung"
-  },
-  {
-   "code":"sch2000",
-   "date":"20151216",
-   "lang":"de",
-   "name":"Schlachter 2000"
-  },
-  {
-   "code":"bdk",
-   "date":"20151216",
-   "lang":"dt",
-   "name":"Buuk Do Kinorohingan"
-  },
-  {
-   "code":"tr1550",
-   "date":"20151216",
-   "lang":"el",
-   "name":"1550 Stephanus New Testament"
-  },
-  {
-   "code":"tr1894",
-   "date":"20151216",
-   "lang":"el",
-   "name":"1894 Scrivener New Testament"
-  },
-  {
-   "code":"akjv",
-   "date":"20161108",
-   "lang":"en",
-   "name":"Authorized (King James) Version"
-  },
-  {
-   "code":"amp",
-   "date":"20150911",
-   "lang":"en",
-   "name":"Amplified Bible"
-  },
-  {
-   "code":"ampc",
-   "date":"20181030",
-   "lang":"en",
-   "name":"Amplified Bible, Classic Edition"
-  },
-  {
-   "code":"asv",
-   "copy":"pd",
-   "date":"20181103",
-   "info":"<p>From Wikipedia: The American Standard Version (ASV) is rooted in the work that was done with the Revised Version (RV) (a late 19th-century British revision of the King James Version of 1611). In 1870, an invitation was extended to American religious leaders for scholars to work on the RV project. A year later, Protestant theologian Philip Schaff chose 30 scholars representing the denominations of Baptist, Congregationalist, Dutch Reformed, Friends, Methodist, Episcopal, Presbyterian, Protestant Episcopal, and Unitarian. These scholars began work in 1872.</p><p>The RV New Testament was released In 1881; the Old Testament was published in 1885. The ASV was published in 1901 by Thomas Nelson &amp; Sons. In 1928, the International Council of Religious Education (the body that later merged with the Federal Council of Churches to form the National Council of Churches) acquired the copyright from Nelson and renewed it the following year.</p><p>The divine name of the Almighty (the Tetragrammaton) is consistently rendered Jehovah in the ASV Old Testament, rather than LORD as it appears in the King James Bible.</p><p>The ASV was the basis of four revisions. They were the Revised Standard Version, 1971, the Amplified Bible, 1965, the New American Standard Bible, 1995, and the Recovery Version, 1999. A fifth revision, known as the World English Bible, was published in 2000 and was placed in the public domain. The ASV was also the basis for Kenneth N. Taylor's Bible paraphrase, The Living Bible, 1971.</p><p>This Bible is in the public domain in the United States. We are making it available in the same format in which we acquired it as a public service.</p>🔗<a href=\"https://www.biblegateway.com/versions/American-Standard-Version-ASV-Bible/\">Bible Gateway</a>",
-   "lang":"en",
-   "name":"American Standard Version"
-  },
-  {
-   "code":"ceb",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Common English Bible"
-  },
-  {
-   "code":"cev",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Contemporary English Version (US Version)"
-  },
-  {
-   "code":"cevd",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Contemporary English Version (US Version)"
-  },
-  {
-   "code":"cjb",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Complete Jewish Bible"
-  },
-  {
-   "code":"csb",
-   "date":"20181031",
-   "lang":"en",
-   "name":"Christian Standard Bible"
-  },
-  {
-   "code":"darby",
-   "copy":"pd",
-   "date":"20151216",
-   "info":"<p>The Darby Bible was first published in 1890 by John Nelson Darby, an Anglo-Irish Bible teacher associated with the early years of the Plymouth Brethren. Darby also published translations of the Bible in French and German.</p><p>J. N. Darby's purpose was, as he states in the preface to his English New Testament, to make a modern translation for the unlearned who have neither access to manuscript texts nor training and knowledge of ancient languages of the Scriptures. Darby's translation work was not intended to be read aloud. His work was for study and private use. In his own oral ministry he generally used the English KJV Bible.</p><p>This Bible is in the public domain in the United States. We are making it available in the same format in which we acquired it as a public service.</p>🔗<a href=\"https://www.biblegateway.com/versions/Darby-Translation-Bible/\">Bible Gateway</a>",
-   "lang":"en",
-   "name":"Darby Translation"
-  },
-  {
-   "code":"dlnt",
-   "date":"20181026",
-   "lang":"en",
-   "name":"Disciples’ Literal New Testament"
-  },
-  {
-   "code":"dra",
-   "copy":"pd",
-   "date":"20151216",
-   "info":"<p>The Douay–Rheims Bible is a translation of the Bible from the Latin Vulgate into English made by members of the Catholic seminary English College, Douai, France. It is the foundation on which nearly all English Catholic versions are still based.</p><p>It was translated principally by Gregory Martin, an Oxford-trained scholar, working in the circle of English Catholic exiles on the Continent, under the sponsorship of William (later Cardinal) Allen. The New Testament appeared at Rheims in 1582; the Old Testament at Douai in 1609.</p><p>The translation, although competent, exhibited a taste for Latinisms that was not uncommon in English writing of the time but seemed excessive in the eyes of later generations. The New Testament influenced the Authorized Version.</p><p>Between 1749 and 1752, English bishop Richard Challoner substantially revised the translation with an aim to improve readability and comprehensibility. It was first published in America in 1790 by Mathew Carey of Philadelphia. Several American editions followed in the 19th and early 20th centuries; prominent among them the Douay-Rheims 1899 American Edition Version.</p>🔗<a href=\"https://www.biblegateway.com/versions/Darby-Translation-Bible/\">Bible Gateway</a>",
-   "lang":"en",
-   "name":"Douay-Rheims 1899 American Edition"
-  },
-  {
-   "code":"erv",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Easy-to-Read Version"
-  },
-  {
-   "code":"esv",
-   "date":"20181104",
-   "lang":"en",
-   "name":"English Standard Version"
-  },
-  {
-   "code":"exb",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Expanded Bible"
-  },
-  {
-   "code":"gnt",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Good News Translation"
-  },
-  {
-   "code":"gnv",
-   "date":"20151216",
-   "lang":"en",
-   "name":"1599 Geneva Bible"
-  },
-  {
-   "code":"gw",
-   "date":"20151216",
-   "lang":"en",
-   "name":"GOD’S WORD Translation"
-  },
-  {
-   "code":"hcsb",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Holman Christian Standard Bible"
-  },
-  {
-   "code":"icb",
-   "date":"20150616",
-   "lang":"en",
-   "name":"International Children’s Bible"
-  },
-  {
-   "code":"isv",
-   "date":"20151216",
-   "lang":"en",
-   "name":"International Standard Version"
-  },
-  {
-   "code":"jub",
-   "date":"20150918",
-   "lang":"en",
-   "name":"Jubilee Bible 2000"
-  },
-  {
-   "code":"kj21",
-   "date":"20151216",
-   "lang":"en",
-   "name":"21st Century King James Version"
-  },
-  {
-   "code":"kjv",
-   "copy":"pd",
-   "date":"20181104",
-   "info":"<p>In 1604, King James I of England authorized that a new translation of the Bible into English be started. It was finished in 1611, just 85 years after the first translation of the New Testament into English appeared (Tyndale, 1526). The Authorized Version, or King James Version, quickly became the standard for English-speaking Protestants. Its flowing language and prose rhythm has had a profound influence on the literature of the past 400 years. The King James Version present on the Bible Gateway matches the 1987 printing. The KJV is public domain in the United States.</p>🔗<a href=\"https://www.biblegateway.com/versions/King-James-Version-KJV-Bible/\">Bible Gateway</a>",
-   "lang":"en",
-   "name":"King James Version"
-  },
-  {
-   "code":"leb",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Lexham English Bible"
-  },
-  {
-   "code":"mev",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Modern English Version"
-  },
-  {
-   "code":"mounce",
-   "date":"20151007",
-   "lang":"en",
-   "name":"Mounce Reverse-Interlinear New Testament"
-  },
-  {
-   "code":"msg",
-   "date":"20151216",
-   "lang":"en",
-   "name":"The Message"
-  },
-  {
-   "code":"nabre",
-   "date":"20151216",
-   "lang":"en",
-   "name":"New American Bible, Revised Edition"
-  },
-  {
-   "code":"nasb",
-   "date":"20151216",
-   "lang":"en",
-   "name":"New American Standard Bible"
-  },
-  {
-   "code":"ncv",
-   "date":"20151216",
-   "lang":"en",
-   "name":"New Century Version"
-  },
-  {
-   "code":"net",
-   "date":"20151216",
-   "lang":"en",
-   "name":"New English Translation"
-  },
-  {
-   "code":"nirv",
-   "date":"20151216",
-   "lang":"en",
-   "name":"New International Reader's Version"
-  },
-  {
-   "code":"niv1984",
-   "date":"20181105",
-   "lang":"en",
-   "meta":"<p>The NIV text may be quoted in any form (written, visual, electronic or audio), up to and inclusive of five hundred (500) verses without express written permission of the publisher, providing the verses do not amount to a complete book of the Bible nor do the verses quoted account for twenty-five percent (25%) or more of the total text of the work in which they are quoted.</p><p>When the NIV is quoted in works that exercise the above fair use clause, notice of copyright must appear on the title or copyright page or opening screen of the work (whichever is appropriate) as follows:</p><<blockquote>Scripture taken from the HOLY BIBLE, NEW INTERNATIONAL VERSION®. Copyright © 1973, 1978, 1984 Biblica. Used by permission of Zondervan. All rights reserved.<p>The \"NIV\" and \"New International Version\" trademarks are registered in the United States Patent and Trademark Office by Biblica. Use of either trademark requires the permission of Biblica.</p></blockquote><p>These Scriptures have been made available on the Internet for your personal use only. Any other use including, but not limited to, copying or re-posting the Scripture on the Internet is prohibited. These Scriptures may not be altered or modified in any form but must remain in their original context. These Scriptures may not be sold or otherwise offered for sale--to include online banner ads that encapsulate linkages to these Scriptures for the purpose of selling online ad space. These Scriptures are free for all online use. These Scriptures are not public domain. These Scriptures are not shareware and may not be duplicated.</p><p>When quotations from the NIV text are used in non-salable media such as church bulletins, orders of service, posters, transparencies or similar media, a complete copyright notice is not required, but the initial NIV must appear at the end of each quotation.</p><p>Any commentary or other Biblical reference work produced for commercial sale that uses the New International Version must obtain written permission for the use of the NIV text.</p><p>Permission requests for commercial use within the U.S. and Canada that exceed the above guidelines must be directed to, and approved in writing by, Zondervan, 5300 Patterson Avenue SE, Grand Rapids, MI 49530.</p><p>Permission requests for commercial use within the U.K., EEC, and EFTA countries that exceed the above guidelines must be directed to, and approved in writing by, Hodder &amp; Stoughton Ltd., a member of the Hodder Headline Plc. Group, 338 Euston Road, London NW1 3BH.</p>🔗<a href=\"https://web.archive.org/web/20121011212533/www.biblegateway.com/versions/index.php?action=getVersionInfo&vid=102\">Bible Gateway (Internet Archive on 2012/10/11)</a>",
-   "name":"New International Version 1984"
-  },
-  {
-   "code":"niv2011",
-   "date":"20151216",
-   "lang":"en",
-   "name":"New International Version 2011"
-  },
-  {
-   "code":"nivuk",
-   "date":"20151027",
-   "lang":"en",
-   "name":"New International Version - UK"
-  },
-  {
-   "code":"nkjv",
-   "date":"20151216",
-   "lang":"en",
-   "name":"New King James Version"
-  },
-  {
-   "code":"nlt",
-   "date":"20151216",
-   "lang":"en",
-   "name":"New Living Translation"
-  },
-  {
-   "code":"nlt2013",
-   "date":"20151216",
-   "lang":"en",
-   "name":"New Living Translation 2013"
-  },
-  {
-   "code":"nlv",
-   "date":"20151216",
-   "lang":"en",
-   "name":"New Life Version"
-  },
-  {
-   "code":"nog",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Names of God Bible"
-  },
-  {
-   "code":"nrsv",
-   "date":"20151216",
-   "lang":"en",
-   "name":"New Revised Standard Version"
-  },
-  {
-   "code":"nrsva",
-   "date":"20151216",
-   "lang":"en",
-   "name":"New Revised Standard Version, Anglicised"
-  },
-  {
-   "code":"ojb",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Orthodox Jewish Bible"
-  },
-  {
-   "code":"phillips",
-   "date":"20150828",
-   "lang":"en",
-   "name":"J.B. Phillips New Testament"
-  },
-  {
-   "code":"rsv",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Revised Standard Version"
-  },
-  {
-   "code":"rsvce",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Revised Standard Version Catholic Edition"
-  },
-  {
-   "code":"tlb",
-   "date":"20151216",
-   "lang":"en",
-   "name":"Living Bible"
-  },
-  {
-   "code":"tlv",
-   "date":"20160405",
-   "lang":"en",
-   "name":"Tree of Life Version"
-  },
-  {
-   "code":"tpt",
-   "date":"20181102",
-   "lang":"en",
-   "name":"The Passion Translation"
-  },
-  {
-   "code":"voice",
-   "date":"20151216",
-   "lang":"en",
-   "name":"The Voice"
-  },
-  {
-   "code":"web",
-   "copy":"pd",
-   "date":"20151216",
-   "info":"<p>The World English Bible (WEB) is a Public Domain (no copyright) Modern English translation of the Holy Bible. That means that you may freely copy it in any form, including electronic and print formats. The World English Bible is based on the American Standard Version of the Holy Bible first published in 1901, the Biblia Hebraica Stutgartensa Old Testament, and the Greek Majority Text New Testament. It is in draft form, and currently being edited for accuracy and readability.</p>🔗<a href=\"https://bibles.org/versions/eng-WEB\">bibles.org</a>",
-   "lang":"en",
-   "name":"World English Bible"
-  },
-  {
-   "code":"webbe",
-   "copy":"pd",
-   "date":"20161223",
-   "info":"<p>The World English Bible British Edition is a free, public domain (not copyrighted) translation of the Holy Bible created by updating the language of the American Standard Version of 1901. Where there are significant variations between the Greek Majority Text, the Textus Receptus, and the Nestle/Aland critical text, the Majority text reading is used in the main text, but the other variations are noted in footnotes. This translation is made freely available without copyright restrictions because of countless hours of volunteer prayer and labor. This edition uses British/International spelling.</p><p>The World English Bible British Edition is available for free reading and download at <a href=\"http://eBible.org/be/\">eBible.org/be</a>. This text matches the eBible.org text as of 8 May 2015.</p>🔗<a href=\"https://bibles.org/versions/eng-WEBBE\">bibles.org</a>",
-   "lang":"en",
-   "name":"World English Bible British Edition"
-  },
-  {
-   "code":"ylt",
-   "copy":"pd",
-   "date":"20181028",
-   "info":"<p>The Bible text designated YLT is from the 1898 Young's Literal Translation by Robert Young who also compiled Young's Analytical Concordance. This is an extremely literal translation that attempts to preserve the tense and word usage as found in the original Greek and Hebrew writings. The text was scanned from a reprint of the 1898 edition as published by Baker Book House, Grand Rapids Michigan. The book is still in print and may be ordered from Baker Book House. Obvious errors in spelling or inconsistent spellings of the same word were corrected in the computer edition of the text.</p>🔗<a href=\"https://www.biblegateway.com/versions/Youngs-Literal-Translation-YLT-Bible/\">Bible Gateway</a>",
-   "lang":"en",
-   "name":"Young's Literal Translation"
-  },
-  {
-   "code":"bhti",
-   "date":"20151216",
-   "lang":"es",
-   "name":"La Biblia Hispanoamericana (Traducción Interconfesional, versión hispanoamericana)"
-  },
-  {
-   "code":"dhh",
-   "date":"20151216",
-   "lang":"es",
-   "name":"Biblia Dios Habla Hoy (sin notas ni ayudas)"
-  },
-  {
-   "code":"nblh",
-   "date":"20151216",
-   "lang":"es",
-   "name":"Nueva Biblia Latinoamericana de Hoy"
-  },
-  {
-   "code":"ntv",
-   "date":"20151216",
-   "lang":"es",
-   "name":"Nueva Traducción Viviente"
-  },
-  {
-   "code":"nvi",
-   "date":"20151216",
-   "lang":"es",
-   "name":"Nueva Versión Internacional"
-  },
-  {
-   "code":"rvc",
-   "date":"20151216",
-   "lang":"es",
-   "name":"Reina Valera Contemporánea"
-  },
-  {
-   "code":"rvr1995",
-   "date":"20160127",
-   "lang":"es",
-   "name":"Reina-Valera 1995"
-  },
-  {
-   "code":"rvr60",
-   "date":"20151216",
-   "lang":"es",
-   "name":"Biblia Reina Valera 1960"
-  },
-  {
-   "code":"rvr95",
-   "date":"20151216",
-   "lang":"es",
-   "name":"Biblia Reina Valera 1995"
-  },
-  {
-   "code":"tla",
-   "date":"20151216",
-   "lang":"es",
-   "name":"Traducción en Lenguaje Actual"
-  },
-  {
-   "code":"fnvdc",
-   "date":"20150830",
-   "lang":"fj",
-   "name":"Vakavakadewa Vou kei na iVola tale eso"
-  },
-  {
-   "code":"bds",
-   "date":"20151216",
-   "lang":"fr",
-   "name":"La Bible du Semeur"
-  },
-  {
-   "code":"frc97",
-   "date":"20170808",
-   "lang":"fr",
-   "name":"La Bible en français courant"
-  },
-  {
-   "code":"lsg",
-   "copy":"pd",
-   "date":"20151216",
-   "info":"<p>The first edition of the Bible Segond was published in 1910</p>🔗<a href=\"https://bibles.org/versions/fra-LSG\">bibles.org</a>",
-   "lang":"fr",
-   "name":"Bible Segond 1910"
-  },
-  {
-   "code":"neg1979",
-   "date":"20160724",
-   "lang":"fr",
-   "name":"Nouvelle Edition de Genève – NEG1979"
-  },
-  {
-   "code":"sg21",
-   "date":"20151216",
-   "lang":"fr",
-   "name":"Segond 21"
-  },
-  {
-   "code":"sblgnt",
-   "date":"20151201",
-   "lang":"gr",
-   "name":"SBL Greek New Testament"
-  },
-  {
-   "code":"hau",
-   "date":"20151216",
-   "lang":"ha",
-   "name":"Littafi Mai Tsarki"
-  },
-  {
-   "code":"hhh",
-   "date":"20151216",
-   "lang":"he",
-   "name":"Habrit Hakhadasha/Haderekh"
-  },
-  {
-   "code":"wlc",
-   "date":"20151201",
-   "lang":"he",
-   "name":"The Westminster Leningrad Codex"
-  },
-  {
-   "code":"ervhi",
-   "date":"20151216",
-   "lang":"hi",
-   "name":"Hindi Bible: Easy-to-Read Version"
-  },
-  {
-   "code":"hlgn",
-   "date":"20151216",
-   "lang":"hl",
-   "name":"Ang Pulong Sang Dios"
-  },
-  {
-   "code":"hnzri",
-   "date":"20160620",
-   "lang":"hr",
-   "name":"Hrvatski Novi Zavjet – Rijeka 2001"
-  },
-  {
-   "code":"hcv",
-   "date":"20151216",
-   "lang":"ht",
-   "name":"Haitian Creole Version"
-  },
-  {
-   "code":"bk",
-   "date":"20151216",
-   "lang":"ib",
-   "name":"Bup Kudus"
-  },
-  {
-   "code":"bimk",
-   "date":"20151216",
-   "lang":"id",
-   "name":"Alkitab dalam Bahasa Indonesia Masa Kini"
-  },
-  {
-   "code":"tb",
-   "date":"20151216",
-   "lang":"id",
-   "name":"Alkitab Terjemahan Baru"
-  },
-  {
-   "code":"igbob",
-   "date":"20151216",
-   "lang":"ig",
-   "name":"Bible Nso"
-  },
-  {
-   "code":"ripv",
-   "date":"20151216",
-   "lang":"il",
-   "name":"Ti Baro a Naimbag a Damag Biblia"
-  },
-  {
-   "code":"nr2006",
-   "date":"20151202",
-   "lang":"it",
-   "name":"Nuova Riveduta 2006"
-  },
-  {
-   "code":"jlb",
-   "date":"20181019",
-   "lang":"ja",
-   "name":"リビングバイブル"
-  },
-  {
-   "code":"jnt",
-   "date":"20151216",
-   "lang":"jr",
-   "name":"Jarai NT"
-  },
-  {
-   "code":"okyb",
-   "date":"20150605",
-   "lang":"kj",
-   "name":"Ombibeli Iyapuki"
-  },
-  {
-   "code":"kpxnt",
-   "date":"20150830",
-   "lang":"kp",
-   "name":"Iesu Keliso Hotoe Tumu"
-  },
-  {
-   "code":"rnksv",
-   "date":"20151216",
-   "lang":"kr",
-   "name":"Revised New Korean Standard Version"
-  },
-  {
-   "code":"maori",
-   "date":"20150830",
-   "lang":"mi",
-   "name":"Maori Bible"
-  },
-  {
-   "code":"mal",
-   "date":"20181031",
-   "lang":"ml",
-   "name":"മലയാളം ബൈബിള്"
-  },
-  {
-   "code":"ervmr",
-   "date":"20151216",
-   "lang":"mr",
-   "name":"Marathi Bible: Easy-to-Read Version"
-  },
-  {
-   "code":"bmdc",
-   "date":"20151216",
-   "lang":"ms",
-   "name":"Alkitab Berita Baik (+Deuterokanonika)"
-  },
-  {
-   "code":"bjb",
-   "copy":"pd",
-   "date":"20151216",
-   "info":"<p>© 1933 McGuire revision (public domain)</p>🔗<a href=\"https://bibles.org/versions/mya-BJB\">bibles.org</a>",
-   "lang":"my",
-   "name":"Judson Bible"
-  },
-  {
-   "code":"snd12",
-   "date":"20151216",
-   "lang":"nb",
-   "name":"IsiNdebele 2012 Translation"
-  },
-  {
-   "code":"ervne",
-   "date":"20151216",
-   "lang":"ne",
-   "name":"Nepali Bible: Easy-to-Read Version"
-  },
-  {
-   "code":"ondb",
-   "date":"20151216",
-   "lang":"ng",
-   "name":"Ombiimbeli Ondjapuki"
-  },
-  {
-   "code":"htb",
-   "date":"20151202",
-   "lang":"nl",
-   "name":"Het Boek"
-  },
-  {
-   "code":"nbg51",
-   "date":"20151216",
-   "lang":"nl",
-   "name":"NBG-vertaling 1951"
-  },
-  {
-   "code":"dnb1930",
-   "date":"20151202",
-   "lang":"no",
-   "name":"Det Norsk Bibelselskap 1930"
-  },
-  {
-   "code":"n11bm",
-   "date":"20150707",
-   "lang":"no",
-   "name":"Bibelen 2011 bokmål"
-  },
-  {
-   "code":"n78bm",
-   "date":"20150707",
-   "lang":"no",
-   "name":"The Bible in Norwegian 1978/85 bokmål"
-  },
-  {
-   "code":"nso00",
-   "date":"20151216",
-   "lang":"ns",
-   "name":"BIBELE Taba yea Botse"
-  },
-  {
-   "code":"nso51",
-   "date":"20151216",
-   "lang":"ns",
-   "name":"BIBELE"
-  },
-  {
-   "code":"bl92",
-   "date":"20151216",
-   "lang":"ny",
-   "name":"Buku Lopatulika 1992"
-  },
-  {
-   "code":"nagz",
-   "date":"20181019",
-   "lang":"nz",
-   "name":"KEMCI BIBLE"
-  },
-  {
-   "code":"ervor",
-   "date":"20151216",
-   "lang":"or",
-   "name":"Oriya Bible: Easy-to-Read Version"
-  },
-  {
-   "code":"ervpa",
-   "date":"20151216",
-   "lang":"pa",
-   "name":"Punjabi Bible: Easy-to-Read Version"
-  },
-  {
-   "code":"pnpv",
-   "date":"20151216",
-   "lang":"pg",
-   "name":"Maung a Balita Biblia"
-  },
-  {
-   "code":"pmpv",
-   "date":"20151216",
-   "lang":"pm",
-   "name":"Ing Mayap a Balita Biblia"
-  },
-  {
-   "code":"arc09",
-   "date":"20161108",
-   "lang":"pt",
-   "name":"Edição Revista e Corrigida de João Ferreira de Almeida"
-  },
-  {
-   "code":"bpt09",
-   "date":"20181031",
-   "lang":"pt",
-   "name":"a BÍBLIA para todos"
-  },
-  {
-   "code":"nvipt",
-   "date":"20151216",
-   "lang":"pt",
-   "name":"Nova Versão Internacional"
-  },
-  {
-   "code":"bdc",
-   "date":"20161108",
-   "lang":"ro",
-   "name":"Biblia sau Sfânta Scriptură cu Trimiteri 1924 (Dumitru Cornilescu), corectată 2016"
-  },
-  {
-   "code":"ntlr",
-   "date":"20151216",
-   "lang":"ro",
-   "name":"Nouă Traducere În Limba Română"
-  },
-  {
-   "code":"nrt",
-   "date":"20151228",
-   "lang":"ru",
-   "name":"New Russian Translation"
-  },
-  {
-   "code":"synod",
-   "date":"20150927",
-   "lang":"ru",
-   "name":"Синодальный перевод"
-  },
-  {
-   "code":"bysb",
-   "date":"20150829",
-   "lang":"rw",
-   "name":"Bibiliya Yera"
-  },
-  {
-   "code":"seb",
-   "date":"20160705",
-   "lang":"sk",
-   "name":"Slovenský Ekumenický Biblia"
-  },
-  {
-   "code":"sub1949",
-   "date":"20181102",
-   "lang":"sn",
-   "name":"Baiberi Magwaro Matȿene aMŋari 1949 (Doke)"
-  },
-  {
-   "code":"sso89so",
-   "date":"20151216",
-   "lang":"so",
-   "name":"BIBELE"
-  },
-  {
-   "code":"spynt",
-   "date":"20151019",
-   "lang":"sp",
-   "name":"Biibilya Nyēē Tiliil"
-  },
-  {
-   "code":"swt",
-   "date":"20151216",
-   "lang":"ss",
-   "name":"Siswati 1996 Bible"
-  },
-  {
-   "code":"bhn",
-   "date":"20151216",
-   "lang":"sw",
-   "name":"Biblia Habari Njema"
-  },
-  {
-   "code":"suv",
-   "date":"20151216",
-   "lang":"sw",
-   "name":"Swahili Union Version"
-  },
-  {
-   "code":"ervta",
-   "date":"20151216",
-   "lang":"ta",
-   "name":"Tamil Bible: Easy-to-Read Version"
-  },
-  {
-   "code":"tbov",
-   "date":"20160119",
-   "lang":"ta",
-   "name":"பரிசுத்த வேதாகமம் தமிழ்"
-  },
-  {
-   "code":"tel",
-   "date":"20181030",
-   "lang":"te",
-   "name":"తెలుగు బైబిల్"
-  },
-  {
-   "code":"th1971",
-   "date":"20151019",
-   "lang":"th",
-   "name":"ฉบับ1971"
-  },
-  {
-   "code":"adb1905",
-   "date":"20181101",
-   "lang":"tl",
-   "name":"Ang Dating Biblia (1905)"
-  },
-  {
-   "code":"mbb05",
-   "date":"20151216",
-   "lang":"tl",
-   "name":"Magandang Balita Biblia (2005)"
-  },
-  {
-   "code":"snd",
-   "date":"20160620",
-   "lang":"tl",
-   "name":"Ang Salita ng Diyos"
-  },
-  {
-   "code":"tsw08no",
-   "date":"20151216",
-   "lang":"tn",
-   "name":"BAEBELE e e Boitshepo"
-  },
-  {
-   "code":"tsw70",
-   "date":"20151216",
-   "lang":"tn",
-   "name":"BEIBELE"
-  },
-  {
-   "code":"rwv",
-   "copy":"pd",
-   "date":"20150830",
-   "info":"<p>This translation is a free, public domain (not copyrighted) translation of the Holy Bible created by updating the Tongan West Version. It has been dedicated to the Public Domain by the translator, James Baxley. You may copy it freely.</p><p>The Tongan Bible, Revised West Translation is available for free reading and download at <a href=\"http://eBible.org/web/\">eBible.org/web</a> and at <a href=\"http://MissionTonga.org\">MissionTonga.org</a></p>🔗<a href=\"https://bibles.org/versions/ton-TONRWV\">bibles.org</a>",
-   "lang":"to",
-   "name":"Tongan Bible (Revised West Version)"
-  },
-  {
-   "code":"tcl02",
-   "date":"20161108",
-   "lang":"tr",
-   "name":"Kutsal Kitap Yeni Ceviri"
-  },
-  {
-   "code":"tso29no",
-   "date":"20151216",
-   "lang":"ts",
-   "name":"Xitsonga (Bibele)"
-  },
-  {
-   "code":"tso89",
-   "date":"20151216",
-   "lang":"ts",
-   "name":"BIBELE Mahungu Lamanene"
-  },
-  {
-   "code":"natwi",
-   "date":"20150921",
-   "lang":"tw",
-   "name":"Nkwa Asem"
-  },
-  {
-   "code":"ervur",
-   "date":"20151216",
-   "lang":"ur",
-   "name":"Urdu Bible: Easy-to-Read Version"
-  },
-  {
-   "code":"urd",
-   "date":"20151216",
-   "lang":"ur",
-   "name":"Revised Urdu Bible"
-  },
-  {
-   "code":"ven98",
-   "date":"20151216",
-   "lang":"ve",
-   "name":"BIVHILI KHETHWA Mafhungo Madifha"
-  },
-  {
-   "code":"bpt",
-   "date":"20161108",
-   "lang":"vi",
-   "name":"Vietnamese Bible: Easy-to-Read Version"
-  },
-  {
-   "code":"rvv11",
-   "date":"20151216",
-   "lang":"vi",
-   "name":"Revised Vietnamese Version Bible"
-  },
-  {
-   "code":"xho75",
-   "date":"20151216",
-   "lang":"xh",
-   "name":"IZIBHALO EZINGCWELE"
-  },
-  {
-   "code":"xho96",
-   "date":"20151216",
-   "lang":"xh",
-   "name":"IBHAYIBHILE"
-  },
-  {
-   "code":"bm",
-   "date":"20151202",
-   "lang":"yo",
-   "name":"BIBELI MIMỌ"
-  },
-  {
-   "code":"ccb",
-   "date":"20151216",
-   "lang":"zh-cn",
-   "name":"当代译本"
-  },
-  {
-   "code":"cnvs",
-   "date":"20181101",
-   "lang":"zh-cn",
-   "name":"圣经新译本"
-  },
-  {
-   "code":"csbs",
-   "copy":"nc",
-   "date":"20181101",
-   "info":"<p>© 2011 Global Bible Initiative<br />© 2011 全球圣经促进会<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p><a href=\"http://www.chinesestandardbible.com/\">《中文标准译本》</a>是一本全新的中文圣经译本；是从圣经原文（希伯来文、亚兰文和希腊文）直接翻译过来，最大程度上忠实于原文，保持原有的语言风格，符合现代汉语规范，适合于各种文化程度的人士；是现今最为准确、可读性最强的中文圣经译本之一。《中文标准译本》是由<a href=\"http://www.globalbibleinitiative.org/\">全球圣经促进会</a> (Global Bible Initiative) 和<a href=\"http://www.bhpublishinggroup.com\">霍尔曼圣经出版社</a> (Holman Bible Publishers) 组织的海内外圣经学者和语言专家团队，配合先进的计算机技术，倾注多年心血的项目。</p>🔗<a href=\"https://www.biblegateway.com/versions/Youngs-Literal-Translation-YLT-Bible/\">Bible Gateway</a>",
-   "lang":"zh-cn",
-   "name":"中文标准译本"
-  },
-  {
-   "code":"cunpss",
-   "date":"20150607",
-   "lang":"zh-cn",
-   "name":"新标点和合本"
-  },
-  {
-   "code":"cuvmps",
-   "copy":"nc",
-   "date":"20181031",
-   "info":"<p>© 2011 Global Bible Initiative<br />© 2011 全球圣经促进会<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p>《和合本》是华人中占权威地位的中文圣经译本。《现代标点和合本》在《和合本》的基础上采用了现代标点规范。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Union-Version-Modern-Punctuation-Simplified-CUVMPS/\">Bible Gateway</a>",
-   "lang":"zh-cn",
-   "name":"现代标点和合本"
-  },
-  {
-   "code":"rcu17ss",
-   "date":"20181031",
-   "lang":"zh-cn",
-   "name":"和合本修订版 2017"
-  },
-  {
-   "code":"rcuvss",
-   "date":"20151216",
-   "lang":"zh-cn",
-   "name":"和合本修订版"
-  },
-  {
-   "code":"ccbt",
-   "date":"20181031",
-   "lang":"zh-tw",
-   "name":"當代譯本"
-  },
-  {
-   "code":"cnvt",
-   "date":"20181101",
-   "lang":"zh-tw",
-   "name":"聖經新譯本"
-  },
-  {
-   "code":"csbt",
-   "copy":"nc",
-   "date":"20181101",
-   "info":"<p>© 2011 Global Bible Initiative<br />© 2011 全球聖經促進會<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p><a href=\"http://www.chinesestandardbible.com/\">《中文標準譯本》</a>是一本全新的中文聖經譯本；是從聖經原文（希伯來文、亞蘭文和希臘文）直接翻譯過來，最大程度上忠實於原文，保持原有的語言風格，符合現代漢語規範，適合於各種文化程度的人士；是現今最為準確、可讀性最強的中文聖經譯本之一。《中文標準譯本》是由<a href=\"http://www.globalbibleinitiative.org/\">全球聖經促進會</a> (Global Bible Initiative) 和<a href=\"http://www.bhpublishinggroup.com\">霍爾曼聖經出版社</a> (Holman Bible Publishers) 組織的海內外聖經學者和語言專家團隊，配合先進的電腦技術，傾注多年心血的項目。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Standard-Bible-Traditional-CSBT/\">Bible Gateway</a>",
-   "lang":"zh-tw",
-   "name":"中文標準譯本"
-  },
-  {
-   "code":"cunpts",
-   "date":"20160720",
-   "lang":"zh-tw",
-   "name":"新標點和合本"
-  },
-  {
-   "code":"cuvmpt",
-   "copy":"nc",
-   "date":"20181031",
-   "info":"<p>© 2011 Global Bible Initiative<br />© 2011 全球聖經促進會<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p>《和合本》是華人中占權威地位的中文聖經譯本。《現代標點和合本》在《和合本》的基礎上採用了現代標點規範。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Union-Version-Modern-Punctuation-Traditional-CUVMPT/\">Bible Gateway</a>",
-   "lang":"zh-tw",
-   "name":"現代標點和合本"
-  },
-  {
-   "code":"rcu17ts",
-   "date":"20181031",
-   "lang":"zh-tw",
-   "name":"和合本修訂版 2017"
-  },
-  {
-   "code":"rcuvts",
-   "date":"20151216",
-   "lang":"zh-tw",
-   "name":"和合本修訂版"
-  },
-  {
-   "code":"zomi",
-   "date":"20161108",
-   "lang":"zo",
-   "name":"LAISIENGTHOU"
-  },
-  {
-   "code":"zul59",
-   "date":"20151216",
-   "lang":"zu",
-   "name":"IBHAYIBHELI ELINGCWELE"
-  }
- ]
+  "languages": {
+    "af": "Afrikaans",
+    "ar": "ﺎﻠﻋﺮﺒﻳﺓ(Arabic)",
+    "bc": "Central Bicolano",
+    "btx": "Batak Karo",
+    "cb": "Cebuano",
+    "cnh": "Hakha (Chin: Hakha)",
+    "cy": "Cymraeg (Welsh)",
+    "de": "Deutsch (German)",
+    "dt": "Central Dusun / Kadazan (Boros Dusun)",
+    "el": "ελληνικά(Greek)",
+    "en": "English",
+    "es": "Español (Spanish)",
+    "fj": "Fijian",
+    "fr": "Français (French)",
+    "gr": "Κοινη (Greek)",
+    "ha": "Hausa",
+    "he": "עברית (Hebrew)",
+    "hi": "हिन्दी (Hindi)",
+    "hl": "Ilonggo (Hiligaynon)",
+    "hr": "Hrvatski (Croatian)",
+    "ht": "Kreyòl ayisyen (Haitian Creole)",
+    "ib": "Iban",
+    "id": "Bahasa Indonesia (Indonesian)",
+    "ig": "Asụsụ Igbo (Igbo)",
+    "il": "Iloko",
+    "it": "Italiano (Italian)",
+    "ja": "日本語 (Japanese)",
+    "jr": "Jarai",
+    "kj": "Kuanyama (Kwanyama)",
+    "kp": "Mountain Koiali",
+    "kr": "한국어 (Korean)",
+    "mi": "Maori",
+    "ml": "മലയാളം (Malayalam)",
+    "mr": "मराठी(Marathi)",
+    "ms": "Melayu (Malay)",
+    "my": "ဗမာစာ(Burmese)",
+    "nb": "isiNdebele (Southern Ndebele)",
+    "ne": "नेपाली (Nepali)",
+    "ng": "Owambo (Ndonga)",
+    "nl": "Nederlands (Dutch)",
+    "no": "Norsk (Norwegian)",
+    "ns": "Sesotho sa Leboa (Northern Sotho)",
+    "ny": "chiCheŵa (Chichewa)",
+    "nz": "Zeme Naga",
+    "or": "ଓଡ଼ିଆ (Oriya)",
+    "pa": "ਪੰਜਾਬੀ(Punjabi)",
+    "pg": "Pangasinan",
+    "pm": "Kapampangan",
+    "pt": "Português (Portuguese)",
+    "ro": "Română (Romanian)",
+    "ru": "русский язык(Russian)",
+    "rw": "Kinyarwanda",
+    "sk": "Slovenčina (Slovak)",
+    "sn": "chiShona (Shona)",
+    "so": "Sesotho (Southern Sotho)",
+    "sp": "Kalenjin (Sabaot)",
+    "ss": "SiSwati (Swati)",
+    "sw": "Kiswahili (Swahili)",
+    "ta": "தமிழ் (Tamil)",
+    "te": "తెలుగు (Telugu)",
+    "th": "ไทย (Thai)",
+    "tl": "Tagalog (Tagalog)",
+    "tn": "Setswana (Tswana)",
+    "to": "lea fakatonga (Tongan)",
+    "tr": "Türkçe (Turkish)",
+    "ts": "Xitsonga (Tsonga)",
+    "tw": "Twi",
+    "ve": "Tshivenḓa (Venda)",
+    "vi": "Tiếng Việt (Vietnamese)",
+    "xh": "isiXhosa (Xhosa)",
+    "yo": "Yorùbá (Yoruba)",
+    "zh-cn": "简体中文 (Simplified Chinese)",
+    "zh-tw": "繁體中文 (Traditional Chinese)",
+    "zo": "Zou",
+    "zu": "isiZulu (Zulu)"
+  },
+  "versions": [
+    {
+      "code": "afr53",
+      "date": "20181020",
+      "lang": "af",
+      "name": "Afrikaans 1933/1953"
+    },
+    {
+      "code": "afr83",
+      "date": "20151216",
+      "lang": "af",
+      "name": "Afrikaans 1983"
+    },
+    {
+      "code": "alab",
+      "date": "20151216",
+      "lang": "ar",
+      "name": "Arabic Life Application Bible"
+    },
+    {
+      "code": "avddv",
+      "date": "20160114",
+      "lang": "ar",
+      "name": "New Van Dyck Bible (Reduced Vocalization with Helps)"
+    },
+    {
+      "code": "ervar",
+      "date": "20151216",
+      "lang": "ar",
+      "name": "Arabic Bible: Easy-to-Read Version"
+    },
+    {
+      "code": "nav",
+      "date": "20151216",
+      "lang": "ar",
+      "name": "Ketab El Hayat"
+    },
+    {
+      "code": "bpv",
+      "date": "20151216",
+      "lang": "bc",
+      "name": "Marahay na Bareta Biblia"
+    },
+    {
+      "code": "btx",
+      "date": "20181105",
+      "lang": "btx",
+      "meta": "<p>This translation, published by the Indonesian Bible Society, was first published in 1987 and last revised in 2003.</p><p>If you are interested in obtaining a printed copy, please contact the Indonesian Bible Society at <a href=\"http://www.alkitab.or.id/\">www.alkitab.or.id</a> or email to <a href=\"mailto:info@alkitab.or.id\">info@alkitab.or.id</a></p>🔗<a href=\"https://bibles.org/versions/btx-BTX\">bibles.org</a>",
+      "name": "Pustaka Si Badia"
+    },
+    {
+      "code": "apsd",
+      "date": "20151216",
+      "lang": "cb",
+      "name": "Ang Pulong Sa Dios"
+    },
+    {
+      "code": "rcpv",
+      "date": "20151216",
+      "lang": "cb",
+      "name": "Ang Bag-ong Maayong Balita Biblia"
+    },
+    {
+      "code": "hcl",
+      "date": "20181101",
+      "lang": "cnh",
+      "name": "Hakha Common Language Bible"
+    },
+    {
+      "code": "bcnd",
+      "date": "20161223",
+      "lang": "cy",
+      "name": "Beibl Cymraeg Newydd Diwygiedig 2004"
+    },
+    {
+      "code": "ngude",
+      "date": "20151216",
+      "lang": "de",
+      "name": "Neue Genfer Übersetzung"
+    },
+    {
+      "code": "sch2000",
+      "date": "20151216",
+      "lang": "de",
+      "name": "Schlachter 2000"
+    },
+    {
+      "code": "bdk",
+      "date": "20151216",
+      "lang": "dt",
+      "name": "Buuk Do Kinorohingan"
+    },
+    {
+      "code": "tr1550",
+      "date": "20151216",
+      "lang": "el",
+      "name": "1550 Stephanus New Testament"
+    },
+    {
+      "code": "tr1894",
+      "date": "20151216",
+      "lang": "el",
+      "name": "1894 Scrivener New Testament"
+    },
+    {
+      "code": "akjv",
+      "date": "20161108",
+      "lang": "en",
+      "name": "Authorized (King James) Version"
+    },
+    {
+      "code": "amp",
+      "date": "20150911",
+      "lang": "en",
+      "name": "Amplified Bible"
+    },
+    {
+      "code": "ampc",
+      "date": "20181030",
+      "lang": "en",
+      "name": "Amplified Bible, Classic Edition"
+    },
+    {
+      "code": "asv",
+      "copy": "pd",
+      "date": "20181103",
+      "info": "<p>From Wikipedia: The American Standard Version (ASV) is rooted in the work that was done with the Revised Version (RV) (a late 19th-century British revision of the King James Version of 1611). In 1870, an invitation was extended to American religious leaders for scholars to work on the RV project. A year later, Protestant theologian Philip Schaff chose 30 scholars representing the denominations of Baptist, Congregationalist, Dutch Reformed, Friends, Methodist, Episcopal, Presbyterian, Protestant Episcopal, and Unitarian. These scholars began work in 1872.</p><p>The RV New Testament was released In 1881; the Old Testament was published in 1885. The ASV was published in 1901 by Thomas Nelson &amp; Sons. In 1928, the International Council of Religious Education (the body that later merged with the Federal Council of Churches to form the National Council of Churches) acquired the copyright from Nelson and renewed it the following year.</p><p>The divine name of the Almighty (the Tetragrammaton) is consistently rendered Jehovah in the ASV Old Testament, rather than LORD as it appears in the King James Bible.</p><p>The ASV was the basis of four revisions. They were the Revised Standard Version, 1971, the Amplified Bible, 1965, the New American Standard Bible, 1995, and the Recovery Version, 1999. A fifth revision, known as the World English Bible, was published in 2000 and was placed in the public domain. The ASV was also the basis for Kenneth N. Taylor's Bible paraphrase, The Living Bible, 1971.</p><p>This Bible is in the public domain in the United States. We are making it available in the same format in which we acquired it as a public service.</p>🔗<a href=\"https://www.biblegateway.com/versions/American-Standard-Version-ASV-Bible/\">Bible Gateway</a>",
+      "lang": "en",
+      "name": "American Standard Version"
+    },
+    {
+      "code": "ceb",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Common English Bible"
+    },
+    {
+      "code": "cev",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Contemporary English Version (US Version)"
+    },
+    {
+      "code": "cevd",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Contemporary English Version (US Version)"
+    },
+    {
+      "code": "cjb",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Complete Jewish Bible"
+    },
+    {
+      "code": "csb",
+      "date": "20181031",
+      "lang": "en",
+      "name": "Christian Standard Bible"
+    },
+    {
+      "code": "darby",
+      "copy": "pd",
+      "date": "20151216",
+      "info": "<p>The Darby Bible was first published in 1890 by John Nelson Darby, an Anglo-Irish Bible teacher associated with the early years of the Plymouth Brethren. Darby also published translations of the Bible in French and German.</p><p>J. N. Darby's purpose was, as he states in the preface to his English New Testament, to make a modern translation for the unlearned who have neither access to manuscript texts nor training and knowledge of ancient languages of the Scriptures. Darby's translation work was not intended to be read aloud. His work was for study and private use. In his own oral ministry he generally used the English KJV Bible.</p><p>This Bible is in the public domain in the United States. We are making it available in the same format in which we acquired it as a public service.</p>🔗<a href=\"https://www.biblegateway.com/versions/Darby-Translation-Bible/\">Bible Gateway</a>",
+      "lang": "en",
+      "name": "Darby Translation"
+    },
+    {
+      "code": "dlnt",
+      "date": "20181026",
+      "lang": "en",
+      "name": "Disciples’ Literal New Testament"
+    },
+    {
+      "code": "dra",
+      "copy": "pd",
+      "date": "20151216",
+      "info": "<p>The Douay–Rheims Bible is a translation of the Bible from the Latin Vulgate into English made by members of the Catholic seminary English College, Douai, France. It is the foundation on which nearly all English Catholic versions are still based.</p><p>It was translated principally by Gregory Martin, an Oxford-trained scholar, working in the circle of English Catholic exiles on the Continent, under the sponsorship of William (later Cardinal) Allen. The New Testament appeared at Rheims in 1582; the Old Testament at Douai in 1609.</p><p>The translation, although competent, exhibited a taste for Latinisms that was not uncommon in English writing of the time but seemed excessive in the eyes of later generations. The New Testament influenced the Authorized Version.</p><p>Between 1749 and 1752, English bishop Richard Challoner substantially revised the translation with an aim to improve readability and comprehensibility. It was first published in America in 1790 by Mathew Carey of Philadelphia. Several American editions followed in the 19th and early 20th centuries; prominent among them the Douay-Rheims 1899 American Edition Version.</p>🔗<a href=\"https://www.biblegateway.com/versions/Darby-Translation-Bible/\">Bible Gateway</a>",
+      "lang": "en",
+      "name": "Douay-Rheims 1899 American Edition"
+    },
+    {
+      "code": "erv",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Easy-to-Read Version"
+    },
+    {
+      "code": "esv",
+      "date": "20181104",
+      "lang": "en",
+      "name": "English Standard Version"
+    },
+    {
+      "code": "exb",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Expanded Bible"
+    },
+    {
+      "code": "gnt",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Good News Translation"
+    },
+    {
+      "code": "gnv",
+      "date": "20151216",
+      "lang": "en",
+      "name": "1599 Geneva Bible"
+    },
+    {
+      "code": "gw",
+      "date": "20151216",
+      "lang": "en",
+      "name": "GOD’S WORD Translation"
+    },
+    {
+      "code": "hcsb",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Holman Christian Standard Bible"
+    },
+    {
+      "code": "icb",
+      "date": "20150616",
+      "lang": "en",
+      "name": "International Children’s Bible"
+    },
+    {
+      "code": "isv",
+      "date": "20151216",
+      "lang": "en",
+      "name": "International Standard Version"
+    },
+    {
+      "code": "jub",
+      "date": "20150918",
+      "lang": "en",
+      "name": "Jubilee Bible 2000"
+    },
+    {
+      "code": "kj21",
+      "date": "20151216",
+      "lang": "en",
+      "name": "21st Century King James Version"
+    },
+    {
+      "code": "kjv",
+      "copy": "pd",
+      "date": "20181104",
+      "info": "<p>In 1604, King James I of England authorized that a new translation of the Bible into English be started. It was finished in 1611, just 85 years after the first translation of the New Testament into English appeared (Tyndale, 1526). The Authorized Version, or King James Version, quickly became the standard for English-speaking Protestants. Its flowing language and prose rhythm has had a profound influence on the literature of the past 400 years. The King James Version present on the Bible Gateway matches the 1987 printing. The KJV is public domain in the United States.</p>🔗<a href=\"https://www.biblegateway.com/versions/King-James-Version-KJV-Bible/\">Bible Gateway</a>",
+      "lang": "en",
+      "name": "King James Version"
+    },
+    {
+      "code": "leb",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Lexham English Bible"
+    },
+    {
+      "code": "mev",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Modern English Version"
+    },
+    {
+      "code": "mounce",
+      "date": "20151007",
+      "lang": "en",
+      "name": "Mounce Reverse-Interlinear New Testament"
+    },
+    {
+      "code": "msg",
+      "date": "20151216",
+      "lang": "en",
+      "name": "The Message"
+    },
+    {
+      "code": "nabre",
+      "date": "20151216",
+      "lang": "en",
+      "name": "New American Bible, Revised Edition"
+    },
+    {
+      "code": "nasb",
+      "date": "20151216",
+      "lang": "en",
+      "name": "New American Standard Bible"
+    },
+    {
+      "code": "ncv",
+      "date": "20151216",
+      "lang": "en",
+      "name": "New Century Version"
+    },
+    {
+      "code": "net",
+      "date": "20151216",
+      "lang": "en",
+      "name": "New English Translation"
+    },
+    {
+      "code": "nirv",
+      "date": "20151216",
+      "lang": "en",
+      "name": "New International Reader's Version"
+    },
+    {
+      "code": "niv1984",
+      "date": "20181105",
+      "lang": "en",
+      "meta": "<p>The NIV text may be quoted in any form (written, visual, electronic or audio), up to and inclusive of five hundred (500) verses without express written permission of the publisher, providing the verses do not amount to a complete book of the Bible nor do the verses quoted account for twenty-five percent (25%) or more of the total text of the work in which they are quoted.</p><p>When the NIV is quoted in works that exercise the above fair use clause, notice of copyright must appear on the title or copyright page or opening screen of the work (whichever is appropriate) as follows:</p><<blockquote>Scripture taken from the HOLY BIBLE, NEW INTERNATIONAL VERSION®. Copyright © 1973, 1978, 1984 Biblica. Used by permission of Zondervan. All rights reserved.<p>The \"NIV\" and \"New International Version\" trademarks are registered in the United States Patent and Trademark Office by Biblica. Use of either trademark requires the permission of Biblica.</p></blockquote><p>These Scriptures have been made available on the Internet for your personal use only. Any other use including, but not limited to, copying or re-posting the Scripture on the Internet is prohibited. These Scriptures may not be altered or modified in any form but must remain in their original context. These Scriptures may not be sold or otherwise offered for sale--to include online banner ads that encapsulate linkages to these Scriptures for the purpose of selling online ad space. These Scriptures are free for all online use. These Scriptures are not public domain. These Scriptures are not shareware and may not be duplicated.</p><p>When quotations from the NIV text are used in non-salable media such as church bulletins, orders of service, posters, transparencies or similar media, a complete copyright notice is not required, but the initial NIV must appear at the end of each quotation.</p><p>Any commentary or other Biblical reference work produced for commercial sale that uses the New International Version must obtain written permission for the use of the NIV text.</p><p>Permission requests for commercial use within the U.S. and Canada that exceed the above guidelines must be directed to, and approved in writing by, Zondervan, 5300 Patterson Avenue SE, Grand Rapids, MI 49530.</p><p>Permission requests for commercial use within the U.K., EEC, and EFTA countries that exceed the above guidelines must be directed to, and approved in writing by, Hodder &amp; Stoughton Ltd., a member of the Hodder Headline Plc. Group, 338 Euston Road, London NW1 3BH.</p>🔗<a href=\"https://web.archive.org/web/20121011212533/www.biblegateway.com/versions/index.php?action=getVersionInfo&vid=102\">Bible Gateway (Internet Archive on 2012/10/11)</a>",
+      "name": "New International Version 1984"
+    },
+    {
+      "code": "niv2011",
+      "date": "20151216",
+      "lang": "en",
+      "name": "New International Version 2011"
+    },
+    {
+      "code": "nivuk",
+      "date": "20151027",
+      "lang": "en",
+      "name": "New International Version - UK"
+    },
+    {
+      "code": "nkjv",
+      "date": "20151216",
+      "lang": "en",
+      "name": "New King James Version"
+    },
+    {
+      "code": "nlt",
+      "date": "20151216",
+      "lang": "en",
+      "name": "New Living Translation"
+    },
+    {
+      "code": "nlt2013",
+      "date": "20151216",
+      "lang": "en",
+      "name": "New Living Translation 2013"
+    },
+    {
+      "code": "nlv",
+      "date": "20151216",
+      "lang": "en",
+      "name": "New Life Version"
+    },
+    {
+      "code": "nog",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Names of God Bible"
+    },
+    {
+      "code": "nrsv",
+      "date": "20151216",
+      "lang": "en",
+      "name": "New Revised Standard Version"
+    },
+    {
+      "code": "nrsva",
+      "date": "20151216",
+      "lang": "en",
+      "name": "New Revised Standard Version, Anglicised"
+    },
+    {
+      "code": "ojb",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Orthodox Jewish Bible"
+    },
+    {
+      "code": "phillips",
+      "date": "20150828",
+      "lang": "en",
+      "name": "J.B. Phillips New Testament"
+    },
+    {
+      "code": "rsv",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Revised Standard Version"
+    },
+    {
+      "code": "rsvce",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Revised Standard Version Catholic Edition"
+    },
+    {
+      "code": "tlb",
+      "date": "20151216",
+      "lang": "en",
+      "name": "Living Bible"
+    },
+    {
+      "code": "tlv",
+      "date": "20160405",
+      "lang": "en",
+      "name": "Tree of Life Version"
+    },
+    {
+      "code": "tpt",
+      "date": "20181102",
+      "lang": "en",
+      "name": "The Passion Translation"
+    },
+    {
+      "code": "voice",
+      "date": "20151216",
+      "lang": "en",
+      "name": "The Voice"
+    },
+    {
+      "code": "web",
+      "copy": "pd",
+      "date": "20151216",
+      "info": "<p>The World English Bible (WEB) is a Public Domain (no copyright) Modern English translation of the Holy Bible. That means that you may freely copy it in any form, including electronic and print formats. The World English Bible is based on the American Standard Version of the Holy Bible first published in 1901, the Biblia Hebraica Stutgartensa Old Testament, and the Greek Majority Text New Testament. It is in draft form, and currently being edited for accuracy and readability.</p>🔗<a href=\"https://bibles.org/versions/eng-WEB\">bibles.org</a>",
+      "lang": "en",
+      "name": "World English Bible"
+    },
+    {
+      "code": "webbe",
+      "copy": "pd",
+      "date": "20161223",
+      "info": "<p>The World English Bible British Edition is a free, public domain (not copyrighted) translation of the Holy Bible created by updating the language of the American Standard Version of 1901. Where there are significant variations between the Greek Majority Text, the Textus Receptus, and the Nestle/Aland critical text, the Majority text reading is used in the main text, but the other variations are noted in footnotes. This translation is made freely available without copyright restrictions because of countless hours of volunteer prayer and labor. This edition uses British/International spelling.</p><p>The World English Bible British Edition is available for free reading and download at <a href=\"http://eBible.org/be/\">eBible.org/be</a>. This text matches the eBible.org text as of 8 May 2015.</p>🔗<a href=\"https://bibles.org/versions/eng-WEBBE\">bibles.org</a>",
+      "lang": "en",
+      "name": "World English Bible British Edition"
+    },
+    {
+      "code": "ylt",
+      "copy": "pd",
+      "date": "20181028",
+      "info": "<p>The Bible text designated YLT is from the 1898 Young's Literal Translation by Robert Young who also compiled Young's Analytical Concordance. This is an extremely literal translation that attempts to preserve the tense and word usage as found in the original Greek and Hebrew writings. The text was scanned from a reprint of the 1898 edition as published by Baker Book House, Grand Rapids Michigan. The book is still in print and may be ordered from Baker Book House. Obvious errors in spelling or inconsistent spellings of the same word were corrected in the computer edition of the text.</p>🔗<a href=\"https://www.biblegateway.com/versions/Youngs-Literal-Translation-YLT-Bible/\">Bible Gateway</a>",
+      "lang": "en",
+      "name": "Young's Literal Translation"
+    },
+    {
+      "code": "bhti",
+      "date": "20151216",
+      "lang": "es",
+      "name": "La Biblia Hispanoamericana (Traducción Interconfesional, versión hispanoamericana)"
+    },
+    {
+      "code": "dhh",
+      "date": "20151216",
+      "lang": "es",
+      "name": "Biblia Dios Habla Hoy (sin notas ni ayudas)"
+    },
+    {
+      "code": "nblh",
+      "date": "20151216",
+      "lang": "es",
+      "name": "Nueva Biblia Latinoamericana de Hoy"
+    },
+    {
+      "code": "ntv",
+      "date": "20151216",
+      "lang": "es",
+      "name": "Nueva Traducción Viviente"
+    },
+    {
+      "code": "nvi",
+      "date": "20151216",
+      "lang": "es",
+      "name": "Nueva Versión Internacional"
+    },
+    {
+      "code": "rvc",
+      "date": "20151216",
+      "lang": "es",
+      "name": "Reina Valera Contemporánea"
+    },
+    {
+      "code": "rvr1995",
+      "date": "20160127",
+      "lang": "es",
+      "name": "Reina-Valera 1995"
+    },
+    {
+      "code": "rvr60",
+      "date": "20151216",
+      "lang": "es",
+      "name": "Biblia Reina Valera 1960"
+    },
+    {
+      "code": "rvr95",
+      "date": "20151216",
+      "lang": "es",
+      "name": "Biblia Reina Valera 1995"
+    },
+    {
+      "code": "tla",
+      "date": "20151216",
+      "lang": "es",
+      "name": "Traducción en Lenguaje Actual"
+    },
+    {
+      "code": "fnvdc",
+      "date": "20150830",
+      "lang": "fj",
+      "name": "Vakavakadewa Vou kei na iVola tale eso"
+    },
+    {
+      "code": "bds",
+      "date": "20151216",
+      "lang": "fr",
+      "name": "La Bible du Semeur"
+    },
+    {
+      "code": "frc97",
+      "date": "20170808",
+      "lang": "fr",
+      "name": "La Bible en français courant"
+    },
+    {
+      "code": "lsg",
+      "copy": "pd",
+      "date": "20151216",
+      "info": "<p>The first edition of the Bible Segond was published in 1910</p>🔗<a href=\"https://bibles.org/versions/fra-LSG\">bibles.org</a>",
+      "lang": "fr",
+      "name": "Bible Segond 1910"
+    },
+    {
+      "code": "neg1979",
+      "date": "20160724",
+      "lang": "fr",
+      "name": "Nouvelle Edition de Genève – NEG1979"
+    },
+    {
+      "code": "sg21",
+      "date": "20151216",
+      "lang": "fr",
+      "name": "Segond 21"
+    },
+    {
+      "code": "sblgnt",
+      "date": "20151201",
+      "lang": "gr",
+      "name": "SBL Greek New Testament"
+    },
+    {
+      "code": "hau",
+      "date": "20151216",
+      "lang": "ha",
+      "name": "Littafi Mai Tsarki"
+    },
+    {
+      "code": "hhh",
+      "date": "20151216",
+      "lang": "he",
+      "name": "Habrit Hakhadasha/Haderekh"
+    },
+    {
+      "code": "wlc",
+      "date": "20151201",
+      "lang": "he",
+      "name": "The Westminster Leningrad Codex"
+    },
+    {
+      "code": "ervhi",
+      "date": "20151216",
+      "lang": "hi",
+      "name": "Hindi Bible: Easy-to-Read Version"
+    },
+    {
+      "code": "hlgn",
+      "date": "20151216",
+      "lang": "hl",
+      "name": "Ang Pulong Sang Dios"
+    },
+    {
+      "code": "hnzri",
+      "date": "20160620",
+      "lang": "hr",
+      "name": "Hrvatski Novi Zavjet – Rijeka 2001"
+    },
+    {
+      "code": "hcv",
+      "date": "20151216",
+      "lang": "ht",
+      "name": "Haitian Creole Version"
+    },
+    {
+      "code": "bk",
+      "date": "20151216",
+      "lang": "ib",
+      "name": "Bup Kudus"
+    },
+    {
+      "code": "bimk",
+      "date": "20151216",
+      "lang": "id",
+      "name": "Alkitab dalam Bahasa Indonesia Masa Kini"
+    },
+    {
+      "code": "tb",
+      "date": "20151216",
+      "lang": "id",
+      "name": "Alkitab Terjemahan Baru"
+    },
+    {
+      "code": "igbob",
+      "date": "20151216",
+      "lang": "ig",
+      "name": "Bible Nso"
+    },
+    {
+      "code": "ripv",
+      "date": "20151216",
+      "lang": "il",
+      "name": "Ti Baro a Naimbag a Damag Biblia"
+    },
+    {
+      "code": "nr2006",
+      "date": "20151202",
+      "lang": "it",
+      "name": "Nuova Riveduta 2006"
+    },
+    {
+      "code": "jlb",
+      "date": "20181019",
+      "lang": "ja",
+      "name": "リビングバイブル"
+    },
+    {
+      "code": "jnt",
+      "date": "20151216",
+      "lang": "jr",
+      "name": "Jarai NT"
+    },
+    {
+      "code": "okyb",
+      "date": "20150605",
+      "lang": "kj",
+      "name": "Ombibeli Iyapuki"
+    },
+    {
+      "code": "kpxnt",
+      "date": "20150830",
+      "lang": "kp",
+      "name": "Iesu Keliso Hotoe Tumu"
+    },
+    {
+      "code": "rnksv",
+      "date": "20151216",
+      "lang": "kr",
+      "name": "Revised New Korean Standard Version"
+    },
+    {
+      "code": "maori",
+      "date": "20150830",
+      "lang": "mi",
+      "name": "Maori Bible"
+    },
+    {
+      "code": "mal",
+      "date": "20181031",
+      "lang": "ml",
+      "name": "മലയാളം ബൈബിള്"
+    },
+    {
+      "code": "ervmr",
+      "date": "20151216",
+      "lang": "mr",
+      "name": "Marathi Bible: Easy-to-Read Version"
+    },
+    {
+      "code": "bmdc",
+      "date": "20151216",
+      "lang": "ms",
+      "name": "Alkitab Berita Baik (+Deuterokanonika)"
+    },
+    {
+      "code": "bjb",
+      "copy": "pd",
+      "date": "20151216",
+      "info": "<p>© 1933 McGuire revision (public domain)</p>🔗<a href=\"https://bibles.org/versions/mya-BJB\">bibles.org</a>",
+      "lang": "my",
+      "name": "Judson Bible"
+    },
+    {
+      "code": "snd12",
+      "date": "20151216",
+      "lang": "nb",
+      "name": "IsiNdebele 2012 Translation"
+    },
+    {
+      "code": "ervne",
+      "date": "20151216",
+      "lang": "ne",
+      "name": "Nepali Bible: Easy-to-Read Version"
+    },
+    {
+      "code": "ondb",
+      "date": "20151216",
+      "lang": "ng",
+      "name": "Ombiimbeli Ondjapuki"
+    },
+    {
+      "code": "htb",
+      "date": "20151202",
+      "lang": "nl",
+      "name": "Het Boek"
+    },
+    {
+      "code": "nbg51",
+      "date": "20151216",
+      "lang": "nl",
+      "name": "NBG-vertaling 1951"
+    },
+    {
+      "code": "dnb1930",
+      "date": "20151202",
+      "lang": "no",
+      "name": "Det Norsk Bibelselskap 1930"
+    },
+    {
+      "code": "n11bm",
+      "date": "20150707",
+      "lang": "no",
+      "name": "Bibelen 2011 bokmål"
+    },
+    {
+      "code": "n78bm",
+      "date": "20150707",
+      "lang": "no",
+      "name": "The Bible in Norwegian 1978/85 bokmål"
+    },
+    {
+      "code": "nso00",
+      "date": "20151216",
+      "lang": "ns",
+      "name": "BIBELE Taba yea Botse"
+    },
+    {
+      "code": "nso51",
+      "date": "20151216",
+      "lang": "ns",
+      "name": "BIBELE"
+    },
+    {
+      "code": "bl92",
+      "date": "20151216",
+      "lang": "ny",
+      "name": "Buku Lopatulika 1992"
+    },
+    {
+      "code": "nagz",
+      "date": "20181019",
+      "lang": "nz",
+      "name": "KEMCI BIBLE"
+    },
+    {
+      "code": "ervor",
+      "date": "20151216",
+      "lang": "or",
+      "name": "Oriya Bible: Easy-to-Read Version"
+    },
+    {
+      "code": "ervpa",
+      "date": "20151216",
+      "lang": "pa",
+      "name": "Punjabi Bible: Easy-to-Read Version"
+    },
+    {
+      "code": "pnpv",
+      "date": "20151216",
+      "lang": "pg",
+      "name": "Maung a Balita Biblia"
+    },
+    {
+      "code": "pmpv",
+      "date": "20151216",
+      "lang": "pm",
+      "name": "Ing Mayap a Balita Biblia"
+    },
+    {
+      "code": "arc09",
+      "date": "20161108",
+      "lang": "pt",
+      "name": "Edição Revista e Corrigida de João Ferreira de Almeida"
+    },
+    {
+      "code": "bpt09",
+      "date": "20181031",
+      "lang": "pt",
+      "name": "a BÍBLIA para todos"
+    },
+    {
+      "code": "nvipt",
+      "date": "20151216",
+      "lang": "pt",
+      "name": "Nova Versão Internacional"
+    },
+    {
+      "code": "bdc",
+      "date": "20161108",
+      "lang": "ro",
+      "name": "Biblia sau Sfânta Scriptură cu Trimiteri 1924 (Dumitru Cornilescu), corectată 2016"
+    },
+    {
+      "code": "ntlr",
+      "date": "20151216",
+      "lang": "ro",
+      "name": "Nouă Traducere În Limba Română"
+    },
+    {
+      "code": "nrt",
+      "date": "20151228",
+      "lang": "ru",
+      "name": "New Russian Translation"
+    },
+    {
+      "code": "synod",
+      "date": "20150927",
+      "lang": "ru",
+      "name": "Синодальный перевод"
+    },
+    {
+      "code": "bysb",
+      "date": "20150829",
+      "lang": "rw",
+      "name": "Bibiliya Yera"
+    },
+    {
+      "code": "seb",
+      "date": "20160705",
+      "lang": "sk",
+      "name": "Slovenský Ekumenický Biblia"
+    },
+    {
+      "code": "sub1949",
+      "date": "20181102",
+      "lang": "sn",
+      "name": "Baiberi Magwaro Matȿene aMŋari 1949 (Doke)"
+    },
+    {
+      "code": "sso89so",
+      "date": "20151216",
+      "lang": "so",
+      "name": "BIBELE"
+    },
+    {
+      "code": "spynt",
+      "date": "20151019",
+      "lang": "sp",
+      "name": "Biibilya Nyēē Tiliil"
+    },
+    {
+      "code": "swt",
+      "date": "20151216",
+      "lang": "ss",
+      "name": "Siswati 1996 Bible"
+    },
+    {
+      "code": "bhn",
+      "date": "20151216",
+      "lang": "sw",
+      "name": "Biblia Habari Njema"
+    },
+    {
+      "code": "suv",
+      "date": "20151216",
+      "lang": "sw",
+      "name": "Swahili Union Version"
+    },
+    {
+      "code": "ervta",
+      "date": "20151216",
+      "lang": "ta",
+      "name": "Tamil Bible: Easy-to-Read Version"
+    },
+    {
+      "code": "tbov",
+      "date": "20160119",
+      "lang": "ta",
+      "name": "பரிசுத்த வேதாகமம் தமிழ்"
+    },
+    {
+      "code": "tel",
+      "date": "20181030",
+      "lang": "te",
+      "name": "తెలుగు బైబిల్"
+    },
+    {
+      "code": "th1971",
+      "date": "20151019",
+      "lang": "th",
+      "name": "ฉบับ1971"
+    },
+    {
+      "code": "abtag2001",
+      "date": "20181107",
+      "lang": "tl",
+      "meta": "<p>The new <em>Ang Biblia</em> (<em>AB</em>) is the latest revision of the Holy Bible in the <em>Tagalog </em>language.</p><p>In 1902, the American Bible Society (ABS) and British and Foreign Bible Society (BFBS) published the first-ever New Testament in <em>Tagalog</em>. Not long after, the whole Bible was printed in 1905. The translation was called the <em>Ang Biblia</em>. This version was patronized by users of the <em>Tagalog</em> language for a long time.</p><p>Like the first <em>Ang Biblia</em>, this revision is a formal translation. This means that the translators strived to faithfully reflect the form of the original biblical languages into <em>Tagalog</em>, insofar as its grammar and syntax allow. The Biblia Hebraica Stuttgartensia was used as basis for the translation of the Old Testament for this revision. Although the Greek text of Westcott-Hort of 1881 was used for the New Testament of the first <em>Ang Biblia</em>, the translators of this revision used the 4th edition of the United Bible Societies's Greek New Testament.</p><h5>Quotation Rights</h5><p>The <em>AB </em>text may be quoted (in written, visual, or electronic form) without requesting permission from the Philippine Bible Society provided that the number of verses does not exceed five hundred (500) and that the verses quoted represent less than half a complete book of the Bible. In all other cases, the user must first get permission from the Philippine Bible Society. Permission requests must be directed to: <a href=\"mailto:translations@bible.org.ph\">translations@bible.org.ph</a>.</p><p>Acknowledgment must appear as follows on the copyright page of printed works using the AB text, or in a corresponding location when the <em>AB </em>is quoted in other media:<blockquote>“Scripture texts are from the Ang Biblia © 2001 Philippine Bible Society, used with permission”</blockquote></p><p>When quotations from the <em>AB </em>are used for non-commercial or non-saleable media, such as church bulletins, orders of service, posters, presentation slides, and similar formats, a complete copyright acknowledgment is not required, but the initials “<em>AB</em>” must appear at the end of the quotation.</p>🔗<a href=\"https://www.biblegateway.com/versions/Ang-Biblia-2001-ABTAG2001/\">Bible Gateway</a>",
+      "name": "Ang Biblia, 2001"
+    },
+    {
+      "code": "adb1905",
+      "date": "20181101",
+      "lang": "tl",
+      "name": "Ang Dating Biblia (1905)"
+    },
+    {
+      "code": "mbb05",
+      "date": "20151216",
+      "lang": "tl",
+      "name": "Magandang Balita Biblia (2005)"
+    },
+    {
+      "code": "snd",
+      "date": "20160620",
+      "lang": "tl",
+      "name": "Ang Salita ng Diyos"
+    },
+    {
+      "code": "tsw08no",
+      "date": "20151216",
+      "lang": "tn",
+      "name": "BAEBELE e e Boitshepo"
+    },
+    {
+      "code": "tsw70",
+      "date": "20151216",
+      "lang": "tn",
+      "name": "BEIBELE"
+    },
+    {
+      "code": "rwv",
+      "copy": "pd",
+      "date": "20150830",
+      "info": "<p>This translation is a free, public domain (not copyrighted) translation of the Holy Bible created by updating the Tongan West Version. It has been dedicated to the Public Domain by the translator, James Baxley. You may copy it freely.</p><p>The Tongan Bible, Revised West Translation is available for free reading and download at <a href=\"http://eBible.org/web/\">eBible.org/web</a> and at <a href=\"http://MissionTonga.org\">MissionTonga.org</a></p>🔗<a href=\"https://bibles.org/versions/ton-TONRWV\">bibles.org</a>",
+      "lang": "to",
+      "name": "Tongan Bible (Revised West Version)"
+    },
+    {
+      "code": "tcl02",
+      "date": "20161108",
+      "lang": "tr",
+      "name": "Kutsal Kitap Yeni Ceviri"
+    },
+    {
+      "code": "tso29no",
+      "date": "20151216",
+      "lang": "ts",
+      "name": "Xitsonga (Bibele)"
+    },
+    {
+      "code": "tso89",
+      "date": "20151216",
+      "lang": "ts",
+      "name": "BIBELE Mahungu Lamanene"
+    },
+    {
+      "code": "natwi",
+      "date": "20150921",
+      "lang": "tw",
+      "name": "Nkwa Asem"
+    },
+    {
+      "code": "ervur",
+      "date": "20151216",
+      "lang": "ur",
+      "name": "Urdu Bible: Easy-to-Read Version"
+    },
+    {
+      "code": "urd",
+      "date": "20151216",
+      "lang": "ur",
+      "name": "Revised Urdu Bible"
+    },
+    {
+      "code": "ven98",
+      "date": "20151216",
+      "lang": "ve",
+      "name": "BIVHILI KHETHWA Mafhungo Madifha"
+    },
+    {
+      "code": "bpt",
+      "date": "20161108",
+      "lang": "vi",
+      "name": "Vietnamese Bible: Easy-to-Read Version"
+    },
+    {
+      "code": "rvv11",
+      "date": "20151216",
+      "lang": "vi",
+      "name": "Revised Vietnamese Version Bible"
+    },
+    {
+      "code": "xho75",
+      "date": "20151216",
+      "lang": "xh",
+      "name": "IZIBHALO EZINGCWELE"
+    },
+    {
+      "code": "xho96",
+      "date": "20151216",
+      "lang": "xh",
+      "name": "IBHAYIBHILE"
+    },
+    {
+      "code": "bm",
+      "date": "20151202",
+      "lang": "yo",
+      "name": "BIBELI MIMỌ"
+    },
+    {
+      "code": "ccb",
+      "date": "20151216",
+      "lang": "zh-cn",
+      "name": "当代译本"
+    },
+    {
+      "code": "cnvs",
+      "date": "20181101",
+      "lang": "zh-cn",
+      "name": "圣经新译本"
+    },
+    {
+      "code": "csbs",
+      "copy": "nc",
+      "date": "20181101",
+      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球圣经促进会<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p><a href=\"http://www.chinesestandardbible.com/\">《中文标准译本》</a>是一本全新的中文圣经译本；是从圣经原文（希伯来文、亚兰文和希腊文）直接翻译过来，最大程度上忠实于原文，保持原有的语言风格，符合现代汉语规范，适合于各种文化程度的人士；是现今最为准确、可读性最强的中文圣经译本之一。《中文标准译本》是由<a href=\"http://www.globalbibleinitiative.org/\">全球圣经促进会</a> (Global Bible Initiative) 和<a href=\"http://www.bhpublishinggroup.com\">霍尔曼圣经出版社</a> (Holman Bible Publishers) 组织的海内外圣经学者和语言专家团队，配合先进的计算机技术，倾注多年心血的项目。</p>🔗<a href=\"https://www.biblegateway.com/versions/Youngs-Literal-Translation-YLT-Bible/\">Bible Gateway</a>",
+      "lang": "zh-cn",
+      "name": "中文标准译本"
+    },
+    {
+      "code": "cunpss",
+      "date": "20150607",
+      "lang": "zh-cn",
+      "name": "新标点和合本"
+    },
+    {
+      "code": "cuvmps",
+      "copy": "nc",
+      "date": "20181031",
+      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球圣经促进会<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p>《和合本》是华人中占权威地位的中文圣经译本。《现代标点和合本》在《和合本》的基础上采用了现代标点规范。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Union-Version-Modern-Punctuation-Simplified-CUVMPS/\">Bible Gateway</a>",
+      "lang": "zh-cn",
+      "name": "现代标点和合本"
+    },
+    {
+      "code": "rcu17ss",
+      "date": "20181031",
+      "lang": "zh-cn",
+      "name": "和合本修订版 2017"
+    },
+    {
+      "code": "rcuvss",
+      "date": "20151216",
+      "lang": "zh-cn",
+      "name": "和合本修订版"
+    },
+    {
+      "code": "ccbt",
+      "date": "20181031",
+      "lang": "zh-tw",
+      "name": "當代譯本"
+    },
+    {
+      "code": "cnvt",
+      "date": "20181101",
+      "lang": "zh-tw",
+      "name": "聖經新譯本"
+    },
+    {
+      "code": "csbt",
+      "copy": "nc",
+      "date": "20181101",
+      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球聖經促進會<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p><a href=\"http://www.chinesestandardbible.com/\">《中文標準譯本》</a>是一本全新的中文聖經譯本；是從聖經原文（希伯來文、亞蘭文和希臘文）直接翻譯過來，最大程度上忠實於原文，保持原有的語言風格，符合現代漢語規範，適合於各種文化程度的人士；是現今最為準確、可讀性最強的中文聖經譯本之一。《中文標準譯本》是由<a href=\"http://www.globalbibleinitiative.org/\">全球聖經促進會</a> (Global Bible Initiative) 和<a href=\"http://www.bhpublishinggroup.com\">霍爾曼聖經出版社</a> (Holman Bible Publishers) 組織的海內外聖經學者和語言專家團隊，配合先進的電腦技術，傾注多年心血的項目。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Standard-Bible-Traditional-CSBT/\">Bible Gateway</a>",
+      "lang": "zh-tw",
+      "name": "中文標準譯本"
+    },
+    {
+      "code": "cunpts",
+      "date": "20160720",
+      "lang": "zh-tw",
+      "name": "新標點和合本"
+    },
+    {
+      "code": "cuvmpt",
+      "copy": "nc",
+      "date": "20181031",
+      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球聖經促進會<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p>《和合本》是華人中占權威地位的中文聖經譯本。《現代標點和合本》在《和合本》的基礎上採用了現代標點規範。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Union-Version-Modern-Punctuation-Traditional-CUVMPT/\">Bible Gateway</a>",
+      "lang": "zh-tw",
+      "name": "現代標點和合本"
+    },
+    {
+      "code": "rcu17ts",
+      "date": "20181031",
+      "lang": "zh-tw",
+      "name": "和合本修訂版 2017"
+    },
+    {
+      "code": "rcuvts",
+      "date": "20151216",
+      "lang": "zh-tw",
+      "name": "和合本修訂版"
+    },
+    {
+      "code": "zomi",
+      "date": "20161108",
+      "lang": "zo",
+      "name": "LAISIENGTHOU"
+    },
+    {
+      "code": "zul59",
+      "date": "20151216",
+      "lang": "zu",
+      "name": "IBHAYIBHELI ELINGCWELE"
+    }
+  ]
 }
