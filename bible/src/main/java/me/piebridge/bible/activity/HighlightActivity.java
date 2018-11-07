@@ -47,6 +47,9 @@ public class HighlightActivity extends AbstractAnnotationActivity {
         }
         int chapter = NumberUtils.parseInt(BibleUtils.getChapter(osis));
         List<String> chapters = application.getChapters(book);
+        if (chapters.isEmpty()) {
+            return getString(R.string.annotation_no_book, book, application.getFullname());
+        }
         boolean hasIntro = VersionComponent.INTRO.equals(chapters.get(0));
         if (hasIntro) {
             chapter += 1;
