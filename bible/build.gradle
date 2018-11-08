@@ -39,6 +39,9 @@ android {
                 keyPassword properties['key.alias.password']
             }
         }
+        defaultConfig {
+            buildConfigField 'byte[]', 'PLAY', properties['build.play']
+        }
 
         buildTypes {
             release {

@@ -37,7 +37,7 @@
     <string name="menu_highlight">Highlight</string>
     <string name="menu_notes">Notes</string>
     <string name="menu_translations">Translations</string>
-    <string name="menu_odb_link">Our Daily Bread</string>
+    <string name="menu_odb_link">Our Daily Bread&#174;</string>
     <string name="menu_plan">Bible in a year</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_feedback">Feedback</string>
@@ -108,6 +108,15 @@
     <string name="settings_translation">Translation</string>
     <string name="settings_other">Other</string>
 
+    <string name="about_donate">Donate</string>
+    <string name="about_donate_hide">Hide donate</string>
+    <string name="about_donate_show">Show donate</string>
+    <string name="about_donate_title">Feel free to Donate</string>
+    <string name="about_donate_1">1 Manna</string>
+    <string name="about_donate_3">3 Manna</string>
+    <string name="about_donate_5">5 Manna</string>
+    <string name="about_donate_play">Thanks for donating %d Manna via Play Store</string>
+    <string name="about_donate_of_stock">%d Manna is out of stock</string>
     <string name="about_detail">
         <![CDATA[
         <h1>Dove Bible is clearly offline, and just free.</h1>
@@ -116,10 +125,10 @@
         <p>Most modern Bible Translations (including TPT) are copyrighted to make sure that translators are fairly reimbursed for their hard work. You cannot download copyrighted Bible Translations in Dove Bible directly.</p>
         <p>Normally, you can just unzip <code>bibledata-&lt;lang&gt;-&lt;translation&gt;.zip</code>, and put the <code>.sqlite3</code> file into <code>&lt;SDCARD&gt;/Android/data/me.piebridge.bible/files</code>.</p>
 
+        <p>Our Daily Bread&reg; is from <a href="https://ourdailybread.org/">Our Daily Bread Ministries</a>, and thanks them for &quot;Bible in a year&quot;.</p>
         <p>Dove Bible is developed by Jianyu Studio since 2012, and renamed in 2018. Dove Bible depends on <a href="https://developer.android.com/studio/">Android&trade; SDK</a>, <a href="https://developer.android.com/jetpack/androidx/">AndroidX</a>, some features require <a href="https://open.weixin.qq.com">Wechat SDK for Android</a>. Creative Commons License Icons (in Translations page) are from <a href="https://creativecommons.org/about/downloads/">Downloads - Creative Commons</a>.</p>
-        <p>Our Daily Bread&reg; is from <a href="https://ourdailybread.org/">Our Daily Bread Ministries</a>, and thanks them for "Bible in a year".</p>
 
-        <p>Android is a trademark of Google LLC. Our Daily Bread is a trademark of Our Daily Bread Ministries.</p>
+        <p>Our Daily Bread is a trademark of Our Daily Bread Ministries. Android is a trademark of Google LLC. </p>
         &copy; 2018 Nanjing Jianyu Network Technology Studio
         ]]>
     </string>

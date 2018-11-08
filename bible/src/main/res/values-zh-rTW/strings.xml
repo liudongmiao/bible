@@ -105,6 +105,13 @@
     <string name="settings_translation">譯本</string>
     <string name="settings_other">其他</string>
 
+    <string name="about_donate">奉獻</string>
+    <string name="about_donate_title">請隨意奉獻</string>
+    <string name="about_donate_1">1 嗎哪</string>
+    <string name="about_donate_3">3 嗎哪</string>
+    <string name="about_donate_5">5 嗎哪</string>
+    <string name="about_donate_play">感謝您透過 Play 商店奉獻 %d 嗎哪</string>
+    <string name="about_donate_of_stock">無法繼續奉獻 %d 嗎哪</string>
     <string name="about_detail">
         <![CDATA[
         <h1>如鴿聖經，真正離線，完全免費。</h1>
@@ -113,11 +120,10 @@
         <p>絕大部分現代聖經譯本都有版權，用於補貼翻譯人員的辛苦工作。您無法在如鴿聖經中直接下載受版權保護的譯本。 </p>
         <p>手動安裝也比較簡單，解壓 <code>bibledata-&lt;lang&gt;-&lt;translation&gt;.zip</code>，把 <code>.sqlite3</code> 文件放入 <code>&lt;SDCARD&gt;/Android/data/me.piebridge.bible/files</code> 即可。</p>
 
+        <p>靈命日糧源自 <a href="https://ourdailybread.org/">靈命日糧事工</a>，同時感謝他們為如鴿聖經提供「全年讀經」。</p>
         <p>如鴿聖經由簡域工作室開發，始自 2012 年，於 2018 年更名。如鴿聖經依賴 <a href="https://developer.android.com/studio/">Android&trade; SDK</a>，<a href="https://developer.android.com/jetpack/androidx/">AndroidX</a>，部分功能依賴 <a href="https://open.weixin.qq.com">微信 SDK</a>。知識共享許可圖標（譯本頁面）從 <a href="https://creativecommons.org/about/downloads/">Downloads - Creative Commons</a> 下載。</p>
-        <p>靈命日糧源自 <a href="https://ourdailybread.org/">靈命日糧事工</a>，非常感謝他們為如鴿聖經提供「全年讀經」。</p>
 
         <p>Android 為 Google LLC 的商標。</p>
-
         &copy; 2018 南京簡域網絡科技工作室
         ]]>
     </string>

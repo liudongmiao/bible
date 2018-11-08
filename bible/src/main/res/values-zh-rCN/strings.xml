@@ -105,19 +105,27 @@
     <string name="settings_translation">译本</string>
     <string name="settings_other">其他</string>
 
+    <string name="about_donate">奉献</string>
+    <string name="about_donate_hide">隐藏奉献</string>
+    <string name="about_donate_show">显示奉献</string>
+    <string name="about_donate_title">请随意奉献</string>
+    <string name="about_donate_1">1 吗哪</string>
+    <string name="about_donate_3">3 吗哪</string>
+    <string name="about_donate_5">5 吗哪</string>
+    <string name="about_donate_play">感谢您通过 Play 商店奉献 %d 吗哪</string>
+    <string name="about_donate_of_stock">无法继续奉献 %d 吗哪</string>
     <string name="about_detail">
         <![CDATA[
         <h1>如鸽圣经，真正离线，完全免费。</h1>
         <p>鸽子是温柔和纯洁的象征，圣灵曾像鸽子一样降临在耶稣身上。 —— TPT, 马太福音 3:16</p>
 
-        <p>绝大部分现代圣经译本都有版权，用于补贴翻译人员的辛苦工作。您无法在如鸽圣经中直接下载受版权保持的译本。</p>
+        <p>绝大部分现代圣经译本都有版权，用于补贴翻译人员的辛苦工作。您无法在如鸽圣经中直接下载受版权保护的译本。</p>
         <p>手动安装也比较简单，解压 <code>bibledata-&lt;lang&gt;-&lt;translation&gt;.zip</code>，把 <code>.sqlite3</code> 文件放入 <code>&lt;SDCARD&gt;/Android/data/me.piebridge.bible/files</code> 即可。</p>
 
+        <p>灵命日粮源自 <a href="https://ourdailybread.org/">灵命日粮事工</a>，同时感谢他们为如鸽圣经提供“全年读经”。</p>
         <p>如鸽圣经由简域工作室开发，始自 2012 年，于 2018 年更名。如鸽圣经依赖 <a href="https://developer.android.com/studio/">Android&trade; SDK</a>，<a href="https://developer.android.com/jetpack/androidx/">AndroidX</a>，部分功能依赖 <a href="https://open.weixin.qq.com">微信 SDK</a>。知识共享许可图标（译本页面）从 <a href="https://creativecommons.org/about/downloads/">Downloads - Creative Commons</a> 下载。</p>
-        <p>灵命日粮源自 <a href="https://ourdailybread.org/">灵命日粮事工</a>，非常感谢他们为如鸽圣经提供“全年读经”。</p>
 
         <p>Android 为 Google LLC 的商标。</p>
-
         &copy; 2018 南京简域网络科技工作室
         ]]>
     </string>

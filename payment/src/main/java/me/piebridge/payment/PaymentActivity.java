@@ -113,7 +113,7 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
     }
 
     protected boolean usePlayCache() {
-        return true;
+        return false;
     }
 
     public final void showPayment(boolean showPayment) {
@@ -329,16 +329,7 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
         }
     }
 
-    protected List<String> getAllSkus() {
-        List<String> skus = new ArrayList<>();
-        for (int i = 0x1; i <= 0x3; ++i) {
-            for (int j = 0; j < 0x5; ++j) {
-                char a = (char) ('a' + j);
-                skus.add("brevent" + i + a + "_" + i);
-            }
-        }
-        return skus;
-    }
+    protected abstract List<String> getAllSkus();
 
     @NonNull
     protected List<String> getPlaySkus() {
