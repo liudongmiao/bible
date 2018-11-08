@@ -15,6 +15,7 @@
     <application
         android:name=".BibleApplication"
         android:allowBackup="true"
+        android:extractNativeLibs="false"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_bible"
         android:label="@string/app_name"
