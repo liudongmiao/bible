@@ -34,6 +34,7 @@ import java.util.zip.ZipInputStream;
 import me.piebridge.bible.R;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
+import me.piebridge.bible.utils.LocaleUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
@@ -99,7 +100,7 @@ public class VersionsComponent {
     }
 
     private void loadOverride() {
-        Locale locale = Locale.getDefault();
+        Locale locale = LocaleUtils.getOverrideLocale(mContext);
         if (!ObjectUtils.equals(mLocale, locale)) {
             mLocale = locale;
             setResourceValues(mOverrideNames, R.array.version_name_zh);
@@ -316,9 +317,10 @@ public class VersionsComponent {
         checkDemoVersion(R.raw.asvdemo, asvdemo);
         checkDemoVersion(R.raw.cuvmpsdemo, cuvmpsdemo);
         checkDemoVersion(R.raw.cuvmptdemo, cuvmptdemo);
-        switch (Locale.getDefault().getLanguage()) {
+        Locale locale = LocaleUtils.getOverrideLocale(mContext);
+        switch (locale.getLanguage()) {
             case "zh":
-                switch (Locale.getDefault().getCountry()) {
+                switch (locale.getCountry()) {
                     case "TW":
                         return Arrays.asList(cuvmptdemo, cuvmpsdemo, asvdemo);
                     case "CN":
@@ -356,7 +358,7 @@ public class VersionsComponent {
     }
 
     private String getMetadata(String version, String name, String defaultValue) {
-        Locale locale = Locale.getDefault();
+        Locale locale = LocaleUtils.getOverrideLocale(mContext);
         String key = version + "_" + name;
         String keyLanguage = key + "_" + locale.getLanguage();
         String keyCountry = keyLanguage + "_" + locale.getCountry();

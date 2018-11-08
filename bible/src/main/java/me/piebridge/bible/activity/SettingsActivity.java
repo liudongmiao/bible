@@ -3,7 +3,6 @@ package me.piebridge.bible.activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
@@ -19,7 +18,7 @@ import me.piebridge.bible.utils.LogUtils;
  * Created by thom on 2017/6/26.
  */
 
-public class SettingsActivity extends ToolbarActivity {
+public class SettingsActivity extends DrawerActivity {
 
     private static final String FRAGMENT_FONT_SIZE = "font-size";
 
@@ -34,12 +33,8 @@ public class SettingsActivity extends ToolbarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        setContentView(R.layout.drawer_settings);
+        setupDrawer();
 
         BibleApplication application = (BibleApplication) getApplication();
         String version = application.getVersion();
@@ -108,6 +103,13 @@ public class SettingsActivity extends ToolbarActivity {
 
     public void updateFontsize() {
         settingsFragment.updateFontsize();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setTitle(getString(R.string.manifest_settings));
+        setCheckedItem(R.id.menu_settings);
     }
 
 }

@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
 import me.piebridge.bible.R;
-import me.piebridge.bible.activity.ReadingActivity;
+import me.piebridge.bible.activity.DrawerActivity;
 import me.piebridge.bible.utils.ObjectUtils;
 
 /**
@@ -19,7 +19,7 @@ public class FeedbackFragment extends AbstractDialogFragment implements DialogIn
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        ReadingActivity activity = ObjectUtils.requireNonNull((ReadingActivity) getActivity());
+        DrawerActivity activity = ObjectUtils.requireNonNull((DrawerActivity) getActivity());
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.menu_feedback);
         builder.setMessage(R.string.feedback_message);
@@ -39,7 +39,7 @@ public class FeedbackFragment extends AbstractDialogFragment implements DialogIn
     @Override
     public void onResume() {
         super.onResume();
-        ReadingActivity activity = (ReadingActivity) getActivity();
+        DrawerActivity activity = (DrawerActivity) getActivity();
         if (activity != null) {
             boolean hasEmailClient = activity.hasEmailClient();
             AlertDialog dialog = (AlertDialog) getDialog();
@@ -50,7 +50,7 @@ public class FeedbackFragment extends AbstractDialogFragment implements DialogIn
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        ReadingActivity activity = (ReadingActivity) getActivity();
+        DrawerActivity activity = (DrawerActivity) getActivity();
         if (activity == null) {
             return;
         }

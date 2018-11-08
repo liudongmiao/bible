@@ -65,11 +65,12 @@ import me.piebridge.bible.fragment.CopyrightFragment;
 import me.piebridge.bible.fragment.DeleteVersionConfirmFragment;
 import me.piebridge.bible.utils.DeprecationUtils;
 import me.piebridge.bible.utils.FileUtils;
+import me.piebridge.bible.utils.LocaleUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
-public class VersionsActivity extends ToolbarActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener,
+public class VersionsActivity extends DrawerActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener,
         View.OnClickListener {
 
     private static final int CC_UNKNOWN = 0;
@@ -101,8 +102,8 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_versions);
-        showBack(true);
+        setContentView(R.layout.drawer_versions);
+        setupDrawer();
 
         versionsAdaper = new VersionAdapter(this);
 
@@ -478,6 +479,13 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        setTitle(getString(R.string.manifest_translation));
+        setCheckedItem(R.id.menu_download);
+    }
+
     static class Receiver extends BroadcastReceiver {
 
         private final WeakReference<VersionsActivity> mReference;
@@ -681,7 +689,7 @@ public class VersionsActivity extends ToolbarActivity implements SearchView.OnQu
                     if (ObjectUtils.equals(o1.lang, o2.lang)) {
                         return Collator.getInstance().compare(o1.code, o2.code);
                     } else {
-                        final Locale locale = Locale.getDefault();
+                        final Locale locale = LocaleUtils.getOverrideLocale(mReference.get());
                         final String lang = locale.getLanguage().toLowerCase(Locale.US);
                         final String langFull = lang + "-" + locale.getCountry().toLowerCase(Locale.US);
                         if (ObjectUtils.equals(langFull, o1.lang)) {

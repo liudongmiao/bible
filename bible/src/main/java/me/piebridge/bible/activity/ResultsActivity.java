@@ -37,6 +37,7 @@ import me.piebridge.bible.R;
 import me.piebridge.bible.provider.VersionProvider;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ChooserUtils;
+import me.piebridge.bible.utils.LocaleUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 import me.piebridge.bible.utils.ThemeUtils;
@@ -459,7 +460,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
                 VerseViewHolder verseViewHolder = (VerseViewHolder) holder;
                 verseViewHolder.humanView.setText(verseCursor.getString(verseHuman));
                 verseViewHolder.cardView.setTag(bindVerse(verseViewHolder.verseView));
-                bindUnformatted(verseViewHolder.unformattedView);
+                bindUnformatted(activity, verseViewHolder.unformattedView);
             } else if (position == verseStart && verseStart >= 0) {
                 CountViewHolder countViewHolder = (CountViewHolder) holder;
                 countViewHolder.typeView.setText(activity.getString(R.string.reading_verse));
@@ -479,9 +480,9 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
             }
         }
 
-        private void bindUnformatted(TextView textView) {
+        private void bindUnformatted(ResultsActivity activity, TextView textView) {
             String content = verseCursor.getString(verseUnformatted);
-            if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE)) {
+            if (LocaleUtils.getOverrideLocale(activity).equals(Locale.SIMPLIFIED_CHINESE)) {
                 content = content.replaceAll("「", "“").replaceAll("」", "”");
                 content = content.replaceAll("『", "‘").replaceAll("』", "’");
             }

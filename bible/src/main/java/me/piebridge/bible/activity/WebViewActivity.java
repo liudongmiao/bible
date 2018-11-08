@@ -27,6 +27,7 @@ import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.InfoFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.ObjectUtils;
 
 /**
  * Created by thom on 2018/11/7.
@@ -36,6 +37,10 @@ public class WebViewActivity extends DrawerActivity implements AppBarLayout.OnOf
     private WebView webView;
 
     private Calendar calendar;
+
+    private boolean loading;
+
+    private String mTitle;
 
     private static final char[] JIANYV_COM = new char[] {
             'j', 'i', 'a', 'n', 'y', 'v', '.', 'c', 'o', 'm'
@@ -90,6 +95,8 @@ public class WebViewActivity extends DrawerActivity implements AppBarLayout.OnOf
         String url = sb.toString();
         LogUtils.d("load url: " + url);
         setTitle(getString(R.string.menu_odb_link) + " " + date);
+        loading = true;
+        invalidateOptionsMenu();
         webView.loadUrl(sb.toString());
     }
 
@@ -113,7 +120,7 @@ public class WebViewActivity extends DrawerActivity implements AppBarLayout.OnOf
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.odb, menu);
-        return true;
+        return !loading;
     }
 
     @Override
@@ -149,6 +156,16 @@ public class WebViewActivity extends DrawerActivity implements AppBarLayout.OnOf
         startActivity(setFinished(intent, false));
     }
 
+    void onPageFinished(String title) {
+        LogUtils.d("onPageFinished, title: " + title + ", previous: " + title);
+        if (!TextUtils.isEmpty(title) && !ObjectUtils.equals(title, mTitle) && !title.startsWith("http")) {
+            mTitle = title;
+            setTitle(title);
+            loading = false;
+            invalidateOptionsMenu();
+        }
+    }
+
     private static class BibleWebViewClient extends WebViewClient {
 
         private final WeakReference<WebViewActivity> mReference;
@@ -161,7 +178,7 @@ public class WebViewActivity extends DrawerActivity implements AppBarLayout.OnOf
         public void onPageFinished(WebView view, String url) {
             WebViewActivity webViewActivity = mReference.get();
             if (webViewActivity != null) {
-                webViewActivity.setTitle(view.getTitle());
+                webViewActivity.onPageFinished(view.getTitle());
             }
         }
 

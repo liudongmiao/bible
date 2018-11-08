@@ -37,6 +37,7 @@ import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.component.AnnotationComponent;
 import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.utils.LocaleUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
@@ -388,7 +389,7 @@ public abstract class AbstractAnnotationActivity extends DrawerActivity implemen
 
         private void bindContent(AbstractAnnotationActivity activity, AnnotationViewHolder holder) {
             String content = activity.prepareContent(mCursor);
-            if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE)) {
+            if (LocaleUtils.getOverrideLocale(activity).equals(Locale.SIMPLIFIED_CHINESE)) {
                 content = content.replaceAll("「", "“").replaceAll("」", "”");
                 content = content.replaceAll("『", "‘").replaceAll("』", "’");
             }

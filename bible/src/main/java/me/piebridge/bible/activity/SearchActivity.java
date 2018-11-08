@@ -30,7 +30,7 @@ import me.piebridge.bible.utils.LogUtils;
 /**
  * Created by thom on 2018/10/19.
  */
-public class SearchActivity extends ToolbarActivity implements SearchView.OnQueryTextListener, View.OnFocusChangeListener {
+public class SearchActivity extends DrawerActivity implements SearchView.OnQueryTextListener, View.OnFocusChangeListener {
 
     public static final String OSIS_FROM = "osisFrom";
 
@@ -51,9 +51,8 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-
-        showBack(true);
+        setContentView(R.layout.drawer_search);
+        setupDrawer();
 
         mSuggestions = new SearchRecentSuggestions(this,
                 SearchProvider.AUTHORITY, SearchProvider.MODE);
@@ -283,6 +282,13 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         if (mSearchFragment != null) {
             mSearchFragment.updateVersion();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setTitle(getString(R.string.manifest_search));
+        setCheckedItem(R.id.menu_search);
     }
 
 }

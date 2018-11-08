@@ -69,6 +69,8 @@
     <string name="translation_delete_confirm">移除譯本「%s」?</string>
     <string name="translation_copyright_message">譯本暫時沒有獲得版權方授權。\n\n請協助獲取授權，或者<a href="https://github.com/jianyv/bible-data?files=1">手動下載</a>。</string>
 
+    <string name="settings_language">語言</string>
+    <string name="settings_language_auto">與系統同步</string>
     <string name="settings_fontsize">字體大小（%s）</string>
     <string name="settings_fontsize_reset">預設</string>
     <string name="settings_theme">主題</string>
@@ -93,9 +95,9 @@
     <string name="annotation_no_book">譯本「%2$s」中無法找到「%1$s」。</string>
 
     <string name="odb_url_prefix">traditional-odb</string>
-    <string name="odb_yesterday">昨天</string>
-    <string name="odb_tomorrow">明天</string>
-    <string name="odb_about_detail">《靈命日糧》是靈命日糧事工的主要出版刊物，以英文寫作，目前已經翻譯超過 40 種語文，包括：中文（簡、繁體版）、西班牙文、法文、德文、俄文、波蘭文、馬來文、淡米爾文、日文、印尼文、泰文等等，供應全球千万讀者每日靈修的需要。</string>
+    <string name="odb_previous">前一天</string>
+    <string name="odb_next">后一天</string>
+    <string name="odb_about_detail">英文《靈命日糧》始於 1956 年，如今全球有數百萬的讀者以《靈命日糧》作為每日的靈修材料。第一本中文《靈命日糧》於 1995 年出版，其中改變生命、激勵人心的小品幫助讀者每日閱讀上帝的話語，與上帝同行，並從祂永不改變的話語中認識祂的智慧與應許。\n\n《靈命日糧》是靈命日糧事工的主要出版刊物，以英文寫作，目前已經翻譯超過 40 種語文，供應全球千万讀者每日靈修的需要。</string>
     <string name="odb_copyright">© 靈命日糧事工</string>
 
     <string name="settings_interface">介面</string>

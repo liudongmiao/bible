@@ -1,5 +1,6 @@
 package me.piebridge.bible;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
@@ -20,6 +21,7 @@ import me.piebridge.bible.component.DownloadComponent;
 import me.piebridge.bible.component.VersionComponent;
 import me.piebridge.bible.component.VersionsComponent;
 import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.utils.LocaleUtils;
 import me.piebridge.bible.utils.LogUtils;
 
 /**
@@ -247,6 +249,11 @@ public class BibleApplication extends GenuineApplication {
             return true;
         }
         return versions.contains(version);
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleUtils.updateResources(base));
     }
 
 }

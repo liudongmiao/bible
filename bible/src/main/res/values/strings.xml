@@ -69,6 +69,8 @@
     <string name="translation_delete_confirm">Delete Translation \"%s\"?</string>
     <string name="translation_copyright_message">Translation isn\'t authorized by copyright owner.\n\nPlease help to get authorized or <a href="https://github.com/jianyv/bible-data?files=1">download for personal usage</a>.</string>
 
+    <string name="settings_language">Language</string>
+    <string name="settings_language_auto">Auto</string>
     <string name="settings_fontsize">Font size (%s)</string>
     <string name="settings_fontsize_reset">Default</string>
     <string name="settings_theme">Theme</string>
@@ -95,10 +97,10 @@
     <string name="annotation_no_book">No \"%1$s\" in Translation \"%2$s\".</string>
 
     <string name="odb_url_prefix">odb</string>
-    <string name="odb_yesterday">Yesterday</string>
-    <string name="odb_tomorrow">Tomorrow</string>
+    <string name="odb_previous">Previous day</string>
+    <string name="odb_next">Next day</string>
     <string name="odb_about">@string/menu_about</string>
-    <string name="odb_about_detail">Our Daily Bread® is trademark of Our Daily Bread Ministries.</string>
+    <string name="odb_about_detail">Throughout the day, in countless locations and in dozens of countries around the world, Our Daily Bread is read by millions of people. And for every person who opens its pages, one thing is always true: It points to the joy of a relationship with Jesus Christ and the timeless wisdom found in God’s holy Word.\n\nOur Daily Bread is published and distributed worldwide in more than 55 languages by affiliated ministries around the globe.</string>
     <string name="odb_copyright">© Our Daily Bread Ministries</string>
 
     <string name="settings_interface">Interface</string>

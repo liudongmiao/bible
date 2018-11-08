@@ -69,6 +69,8 @@
     <string name="translation_delete_confirm">删除译本“%s”?</string>
     <string name="translation_copyright_message">译本暂时没有获得版权方授权。\n\n请协助获取授权，或者<a href="https://github.com/jianyv/bible-data?files=1">手动下载</a>。</string>
 
+    <string name="settings_language">语言</string>
+    <string name="settings_language_auto">跟随系统</string>
     <string name="settings_fontsize">字体大小（%s）</string>
     <string name="settings_fontsize_reset">默认</string>
     <string name="settings_theme">主题</string>
@@ -93,9 +95,9 @@
     <string name="annotation_no_book">译本“%2$s”中无法找到“%1$s”。</string>
 
     <string name="odb_url_prefix">simplified-odb</string>
-    <string name="odb_yesterday">昨天</string>
-    <string name="odb_tomorrow">明天</string>
-    <string name="odb_about_detail">《灵命日粮》是灵命日粮事工的主要出版刊物，以英文写作，目前已经翻译超过 40 种语文，包括：中文（简、繁体版）、西班牙文、法文、德文、俄文、波兰文、马来文、淡米尔文、日文、印尼文、泰文等等，供应全球千万读者每日灵修的需要。</string>
+    <string name="odb_previous">前一天</string>
+    <string name="odb_next">后一天</string>
+    <string name="odb_about_detail">英文《灵命日粮》始于 1956 年，如今全球有数百万的读者以《灵命日粮》作为每日的灵修材料。第一本中文《灵命日粮》于 1995 年出版，其中改变生命、激励人心的小品帮助读者每日阅读上帝的话语，与上帝同行，并从祂永不改变的话语中认识祂的智慧与应许。\n\n《灵命日粮》是灵命日粮事工的主要出版刊物，以英文写作，目前已经翻译超过 40 种语文，供应全球千万读者每日灵修的需要。</string>
     <string name="odb_copyright">© 灵命日粮事工</string>
 
     <string name="settings_interface">界面</string>

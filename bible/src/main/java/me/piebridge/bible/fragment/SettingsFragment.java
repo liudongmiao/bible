@@ -11,7 +11,9 @@ import java.util.Objects;
 
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.SettingsActivity;
+import me.piebridge.bible.utils.LocaleUtils;
 import me.piebridge.bible.utils.NumberUtils;
+import me.piebridge.bible.utils.ObjectUtils;
 
 /**
  * Created by thom on 2017/6/26.
@@ -27,6 +29,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         // Load the preferences from an XML resource
         setPreferencesFromResource(R.xml.settings, rootKey);
+        findPreference("language").setOnPreferenceChangeListener(this);
         findPreference("theme").setOnPreferenceChangeListener(this);
 
         fontsizeDefaultPreference = findPreference("fontsizeDefault");
@@ -63,8 +66,17 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
+        SettingsActivity activity = ObjectUtils.requireNonNull((SettingsActivity) getActivity());
         if ("theme".equals(preference.getKey())) {
-            getActivity().recreate();
+            activity.updateTheme();
+        } else if ("language".equals(preference.getKey())) {
+            String language = String.valueOf(newValue);
+            if ("auto".equals(language)) {
+                language = "";
+            }
+            if (LocaleUtils.setOverrideLanguage(activity, language)) {
+                activity.updateLocale();
+            }
         }
         return true;
     }
@@ -73,7 +85,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
     public boolean onPreferenceTreeClick(Preference preference) {
         String key = preference.getKey();
         if (key != null && key.startsWith("fontsize")) {
-            ((SettingsActivity) getActivity()).showFontsizeDialog(key, preference.getTitle().toString(), getIntValue(preference));
+            ((SettingsActivity) getActivity()).showFontsizeDialog(key, preference.getTitle().toString(),
+                    getIntValue(preference));
             return true;
         }
         return super.onPreferenceTreeClick(preference);

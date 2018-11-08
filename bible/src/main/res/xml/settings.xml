@@ -7,6 +7,14 @@
         android:title="@string/settings_interface">
 
         <androidx.preference.ListPreference
+            android:defaultValue="auto"
+            android:entries="@array/language_entries"
+            android:entryValues="@array/language_values"
+            android:key="language"
+            android:summary="%s"
+            android:title="@string/settings_language" />
+
+        <androidx.preference.ListPreference
             android:defaultValue="light"
             android:entries="@array/theme_entries"
             android:entryValues="@array/theme_values"

@@ -25,6 +25,7 @@ public class NotesActivity extends AbstractAnnotationActivity {
     public void onResume() {
         super.onResume();
         setCheckedItem(R.id.menu_notes);
+        setTitle(getString(R.string.menu_notes));
     }
 
 }

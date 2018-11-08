@@ -5,14 +5,14 @@
     <item
         android:id="@+id/action_yesterday"
         android:icon="@drawable/ic_navigate_before_black_24dp"
-        android:title="@string/odb_yesterday"
+        android:title="@string/odb_previous"
         app:iconTint="@color/grey_50"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_tomorrow"
         android:icon="@drawable/ic_navigate_next_black_24dp"
-        android:title="@string/odb_tomorrow"
+        android:title="@string/odb_next"
         app:iconTint="@color/grey_50"
         app:showAsAction="ifRoom" />
 

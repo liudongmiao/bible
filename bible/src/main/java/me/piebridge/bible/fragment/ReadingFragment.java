@@ -24,6 +24,7 @@ import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.bridge.ReadingBridge;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
+import me.piebridge.bible.utils.LocaleUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ObjectUtils;
@@ -281,7 +282,7 @@ public class ReadingFragment extends Fragment {
     private String fixIfNeeded(Bundle bundle, String content) {
         String body = content;
         String version = bundle.getString(VERSION);
-        if (Locale.getDefault().equals(Locale.SIMPLIFIED_CHINESE)
+        if (LocaleUtils.getOverrideLocale(getActivity()).equals(Locale.SIMPLIFIED_CHINESE)
                 || "CCB".equalsIgnoreCase(version)
                 || (!TextUtils.isEmpty(version) && version.endsWith("ss"))) {
             body = body.replaceAll("「", "“").replaceAll("」", "”").replaceAll("『", "‘").replaceAll("』",

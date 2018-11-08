@@ -35,6 +35,7 @@ public class HighlightActivity extends AbstractAnnotationActivity {
     public void onResume() {
         super.onResume();
         setCheckedItem(R.id.menu_highlight);
+        setTitle(getString(R.string.menu_highlight));
     }
 
     @Override
