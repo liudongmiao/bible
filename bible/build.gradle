@@ -55,7 +55,7 @@ android {
         applicationVariants.all { variant ->
             variant.outputs.all { output ->
                 if (variant.buildType.name == 'release') {
-                    output.outputFileName = "bb-v${rootProject.simpleVersionName}.apk"
+                    output.outputFileName = "db-v${rootProject.simpleVersionName}.apk"
                 }
             }
         }
@@ -99,7 +99,7 @@ if (rootProject.isIde) {
 }
 
 task copyReleaseApk(type: Copy) {
-    from file("build/outputs/apk/release/bb-v${rootProject.simpleVersionName}.apk")
+    from file("build/outputs/apk/release/db-v${rootProject.simpleVersionName}.apk")
     into rootProject.file('.')
 }
 
