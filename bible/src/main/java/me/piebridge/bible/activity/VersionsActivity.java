@@ -206,7 +206,7 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
         BibleApplication application = (BibleApplication) getApplication();
         File file = new File(path);
         String version = DownloadComponent.getVersion(file);
-        LogUtils.d("file: " + file + ", version: " + version);
+        LogUtils.d("checkZip, file: " + file + ", version: " + version);
         if (!TextUtils.isEmpty(version) && application.addBibleData(file)) {
             application.cancelDownload(file.getName());
             mainHandler.obtainMessage(ADDED_VERSION, version).sendToTarget();

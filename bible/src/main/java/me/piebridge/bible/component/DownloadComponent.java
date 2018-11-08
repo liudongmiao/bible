@@ -226,6 +226,7 @@ public class DownloadComponent extends Handler {
             if (mContext instanceof BibleApplication) {
                 BibleApplication application = (BibleApplication) mContext;
                 String version = getVersion(file);
+                LogUtils.d("addBibleData, file: " + file + ", version: " + version);
                 if (!TextUtils.isEmpty(version) && application.unpackZip(file, version)) {
                     Collection<String> versions = application.getVersions();
                     if (versions.contains(version) && version.equals(BibleUtils.removeDemo(application.getVersion()))) {
@@ -252,7 +253,18 @@ public class DownloadComponent extends Handler {
         final String suffix = ".zip";
         String name = file.getName();
         if (name.startsWith(prefix) && name.endsWith(suffix)) {
-            return name.substring(name.lastIndexOf('-') + 1, name.lastIndexOf(suffix)).toLowerCase(Locale.US);
+            int begin = name.lastIndexOf('-');
+            int end = name.lastIndexOf(suffix);
+            int index;
+            index = name.indexOf(' ');
+            if (index > 0 && index < end) {
+                end = index;
+            }
+            index = name.indexOf('(');
+            if (index > 0 && index < end) {
+                end = index;
+            }
+            return name.substring(begin + 1, end).toLowerCase(Locale.US);
         }
         return null;
     }
