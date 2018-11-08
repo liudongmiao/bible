@@ -1,6 +1,7 @@
 package me.piebridge.bible.activity;
 
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 import org.json.JSONObject;
@@ -19,6 +20,7 @@ public class AboutActivity extends ToolbarPaymentActivity {
         setContentView(R.layout.activity_about);
         showBack(true);
         TextView textView = findViewById(R.id.about_detail);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
         textView.setText(DeprecationUtils.fromHtmlLegacy(getString(R.string.about_detail)));
     }
 
