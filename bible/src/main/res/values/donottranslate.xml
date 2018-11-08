@@ -409,6 +409,74 @@
         <item>Jude|猶</item>
         <item>Rev|啟</item>
     </string-array>
+    <string-array name="osis">
+        <item>Gen|Gen.</item>
+        <item>Exod|Ex.</item>
+        <item>Lev|Lev.</item>
+        <item>Num|Num.</item>
+        <item>Deut|Dt.</item>
+        <item>Josh|Josh.</item>
+        <item>Judg|Jud.</item>
+        <item>Ruth|Ruth</item>
+        <item>1Sam|1 Sam.</item>
+        <item>2Sam|2 Sam.</item>
+        <item>1Kgs|1 Ki.</item>
+        <item>2Kgs|2 Ki.</item>
+        <item>1Chr|1 Chr.</item>
+        <item>2Chr|2 Chr.</item>
+        <item>Ezra|Ezra</item>
+        <item>Neh|Neh.</item>
+        <item>Esth|Est.</item>
+        <item>Job|Job</item>
+        <item>Ps|Ps.</item>
+        <item>Prov|Prov.</item>
+        <item>Eccl|Eccl.</item>
+        <item>Song|Song</item>
+        <item>Isa|Isa.</item>
+        <item>Jer|Jer.</item>
+        <item>Lam|Lam.</item>
+        <item>Ezek|Ezek.</item>
+        <item>Dan|Dan.</item>
+        <item>Hos|Hos.</item>
+        <item>Joel|Joel</item>
+        <item>Amos|Amos</item>
+        <item>Obad|Obadiah</item>
+        <item>Jonah|Jonah</item>
+        <item>Mic|Mic.</item>
+        <item>Nah|Nahum</item>
+        <item>Hab|Habakkuk</item>
+        <item>Zeph|Zephaniah</item>
+        <item>Hag|Haggai</item>
+        <item>Zech|Zech.</item>
+        <item>Mal|Malachi</item>
+        <item>Matt|Mt.</item>
+        <item>Mark|Mk.</item>
+        <item>Luke|Lk.</item>
+        <item>John|Jn.</item>
+        <item>Acts|Acts</item>
+        <item>Rom|Rom.</item>
+        <item>1Cor|1 Cor.</item>
+        <item>2Cor|2 Cor.</item>
+        <item>Gal|Gal.</item>
+        <item>Eph|Eph.</item>
+        <item>Phil|Phil.</item>
+        <item>Col|Col.</item>
+        <item>1Thess|1 Th.</item>
+        <item>2Thess|2 Th.</item>
+        <item>1Tim|1 Tim.</item>
+        <item>2Tim|2 Tim.</item>
+        <item>Titus|Ti.</item>
+        <item>Phlm|Philemon</item>
+        <item>Heb|Heb.</item>
+        <item>Jas|Jas.</item>
+        <item>1Pet|1 Pet.</item>
+        <item>2Pet|2 Pet.</item>
+        <item>1John|1 Jn.</item>
+        <item>2John|2 John</item>
+        <item>3John|3 John</item>
+        <item>Jude|Jude</item>
+        <item>Rev|Rev.</item>
+    </string-array>
 
     <string-array name="theme_entries">
         <item>@string/settings_theme_light</item>
