@@ -1,2 +1,3 @@
 include ':bible', ':genuine'
 include ':payment'
+include ':hidden-api'

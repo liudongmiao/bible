@@ -24,10 +24,27 @@ import me.piebridge.bible.BuildConfig;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.DonateFragment;
 import me.piebridge.bible.utils.DeprecationUtils;
+import me.piebridge.bible.utils.HideApiWrapper;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.payment.NetworkResponse;
 
 public class AboutActivity extends ToolbarPaymentActivity {
+
+    private static final String KEY_PLAY = String.valueOf(new char[] {
+            'd', 'e', 'b', 'u', 'g', '.',
+            'm', 'e', '.', 'p', 'i', 'e', 'b', 'r', 'i', 'd', 'g', 'e', '.', 'b', 'i', 'b', 'l', 'e', '.',
+            'p', 'l', 'a', 'y'
+    });
+
+    private static final String KEY_GSM = String.valueOf(new char[] {
+            'g', 's', 'm', '.',
+            'o', 'p', 'e', 'r', 'a', 't', 'o', 'r', '.', 'n', 'u', 'm', 'e', 'r', 'i', 'c'
+    });
+
+    private static final String KEY_GSM_SIM = String.valueOf(new char[] {
+            'g', 's', 'm', '.', 's', 'i', 'm', '.',
+            'o', 'p', 'e', 'r', 'a', 't', 'o', 'r', '.', 'n', 'u', 'm', 'e', 'r', 'i', 'c'
+    });
 
     private static final String KEY_DONATE_SHOW = "donate_show";
     private static final String KEY_DONATE_AMOUNT = "donate_amount";
@@ -64,7 +81,7 @@ public class AboutActivity extends ToolbarPaymentActivity {
             toggle.setTitle(R.string.about_donate_hide);
             donate.setVisible(true);
             super.showPayment(true);
-            return mPlayAvailable;
+            return mPlayAvailable && isPlayAvailable();
         } else {
             toggle.setTitle(R.string.about_donate_show);
             donate.setVisible(false);
@@ -130,12 +147,6 @@ public class AboutActivity extends ToolbarPaymentActivity {
     @Override
     protected BigInteger getPlayModulus() {
         return new BigInteger(1, BuildConfig.PLAY);
-    }
-
-    @Override
-    public void showPlayCheck() {
-        super.showPlayCheck();
-        LogUtils.d("show play check");
     }
 
     @Override
@@ -245,6 +256,15 @@ public class AboutActivity extends ToolbarPaymentActivity {
             String text = getString(R.string.about_donate_of_stock, value);
             Toast.makeText(this, text, Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    protected boolean isPlayAvailable() {
+        if ("true".equals(HideApiWrapper.getProperty(KEY_PLAY, ""))) {
+            return true;
+        }
+        return !HideApiWrapper.getProperty(KEY_GSM, "").startsWith("460")
+                && !HideApiWrapper.getProperty(KEY_GSM_SIM, "").startsWith("460");
     }
 
 }

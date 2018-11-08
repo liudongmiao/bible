@@ -49,5 +49,23 @@ if (rootProject.file('ant.properties').exists()) {
     }
 }
 
+def isIde = { ->
+    def ide = false
+    def taskRequests = project.gradle.startParameter.taskRequests
+    if (taskRequests?.empty) {
+        ide = true
+    } else {
+        taskRequests[0].args.any {
+            if (it.endsWith('generateDebugSources') || it.endsWith('Debug')) {
+                ide = true
+                return true
+            }
+        }
+        return ide
+    }
+}
+
 // view-source:https://jcenter.bintray.com/com/tencent/mm/opensdk/wechat-sdk-android-without-mta/maven-metadata.xml
 project.ext.wechatVersion = '5.1.6'
+project.ext.hiddenApi = files()
+project.ext.isIde = isIde()
