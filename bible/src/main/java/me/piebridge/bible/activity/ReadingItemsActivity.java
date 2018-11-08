@@ -10,7 +10,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.fragment.app.FragmentManager;
 
 import java.util.List;
 
@@ -18,7 +17,6 @@ import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.adapter.HiddenArrayAdapter;
-import me.piebridge.bible.fragment.InfoFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
 
@@ -29,7 +27,6 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
 
     public static final String ITEMS = "items";
     public static final String SEARCH = "search";
-    private static final String FRAGMENT_INFO = "fragment-info";
 
     private String search;
     private List<OsisItem> items;
@@ -190,34 +187,6 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         } else {
             super.onClick(v);
         }
-    }
-
-    @Override
-    protected void switchToVersion(String version) {
-        for (OsisItem item : items) {
-            String osis = item.toOsis();
-            BibleApplication application = (BibleApplication) getApplication();
-            if (!application.hasChapter(version, osis)) {
-                Bundle bundle = item.toBundle();
-                showSwitchToVersion(version, getTitle(bundle, osis));
-                return;
-            }
-        }
-        super.switchToVersion(version);
-    }
-
-    private void showSwitchToVersion(String version, String human) {
-        final String tag = FRAGMENT_INFO;
-        FragmentManager manager = getSupportFragmentManager();
-        InfoFragment fragment = (InfoFragment) manager.findFragmentByTag(tag);
-        if (fragment != null) {
-            fragment.dismiss();
-        }
-        fragment = new InfoFragment();
-        BibleApplication application = (BibleApplication) getApplication();
-        fragment.setMessage(getString(R.string.reading_info),
-                getString(R.string.reading_no_chapter_info, application.getFullname(version), human));
-        fragment.show(manager, tag);
     }
 
 }
