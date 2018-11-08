@@ -212,7 +212,6 @@
         <item>Num|min</item>
         <item>Deut|shen</item>
         <item>Josh|shu</item>
-        <item>Judg|shi</item>
         <item>Ruth|de</item>
         <item>1Sam|sashang</item>
         <item>2Sam|saxia</item>
@@ -224,7 +223,6 @@
         <item>Neh|ni</item>
         <item>Esth|si</item>
         <item>Job|bo</item>
-        <item>Ps|shi</item>
         <item>Prov|zhen</item>
         <item>Eccl|chuan</item>
         <item>Song|ge</item>
@@ -243,7 +241,6 @@
         <item>Hab|ha</item>
         <item>Zeph|fan</item>
         <item>Hag|gai</item>
-        <item>Zech|ya</item>
         <item>Mal|ma</item>
         <item>Matt|tai</item>
         <item>Mark|ke</item>
@@ -264,7 +261,6 @@
         <item>Titus|duo</item>
         <item>Phlm|men</item>
         <item>Heb|lai</item>
-        <item>Jas|ya</item>
         <item>1Pet|biqian</item>
         <item>2Pet|bihou</item>
         <item>1John|yueyi</item>
@@ -544,6 +540,374 @@
         <item>English</item>
         <item>简体中文</item>
         <item>繁體中文（台灣）</item>
+    </string-array>
+
+    <string-array name="plan">
+        <item>0101|Gen. 1–3; Mt. 1</item>
+        <item>0102|Gen. 4–6; Mt. 2</item>
+        <item>0103|Gen. 7–9; Mt. 3</item>
+        <item>0104|Gen. 10–12; Mt. 4</item>
+        <item>0105|Gen. 13–15; Mt. 5:1–26</item>
+        <item>0106|Gen. 16–17; Mt. 5:27–48</item>
+        <item>0107|Gen. 18–19; Mt. 6:1–18</item>
+        <item>0108|Gen. 20–22; Mt. 6:19–34</item>
+        <item>0109|Gen. 23–24; Mt. 7</item>
+        <item>0110|Gen. 25–26; Mt. 8:1–17</item>
+        <item>0111|Gen. 27–28; Mt. 8:18–34</item>
+        <item>0112|Gen. 29–30; Mt. 9:1–17</item>
+        <item>0113|Gen. 31–32; Mt. 9:18–38</item>
+        <item>0114|Gen. 33–35; Mt. 10:1–20</item>
+        <item>0115|Gen. 36–38; Mt. 10:21–42</item>
+        <item>0116|Gen. 39–40; Mt. 11</item>
+        <item>0117|Gen. 41–42; Mt. 12:1–23</item>
+        <item>0118|Gen. 43–45; Mt. 12:24–50</item>
+        <item>0119|Gen. 46–48; Mt. 13:1–30</item>
+        <item>0120|Gen. 49–50; Mt. 13:31–58</item>
+        <item>0121|Ex. 1–3; Mt. 14:1–21</item>
+        <item>0122|Ex. 4–6; Mt. 14:22–36</item>
+        <item>0123|Ex. 7–8; Mt. 15:1–20</item>
+        <item>0124|Ex. 9–11; Mt. 15:21–39</item>
+        <item>0125|Ex. 12–13; Mt. 16</item>
+        <item>0126|Ex. 14–15; Mt. 17</item>
+        <item>0127|Ex. 16–18; Mt. 18:1–20</item>
+        <item>0128|Ex. 19–20; Mt. 18:21–35</item>
+        <item>0129|Ex. 21–22; Mt. 19</item>
+        <item>0130|Ex. 23–24; Mt. 20:1–16</item>
+        <item>0131|Ex. 25–26; Mt. 20:17–34</item>
+        <item>0201|Ex. 27–28; Mt. 21:1–22</item>
+        <item>0202|Ex. 29–30; Mt. 21:23–46</item>
+        <item>0203|Ex. 31–33; Mt. 22:1–22</item>
+        <item>0204|Ex. 34–35; Mt. 22:23–46</item>
+        <item>0205|Ex. 36–38; Mt. 23:1–22</item>
+        <item>0206|Ex. 39–40; Mt. 23:23–39</item>
+        <item>0207|Lev. 1–3; Mt. 24:1–28</item>
+        <item>0208|Lev. 4–5; Mt. 24:29–51</item>
+        <item>0209|Lev. 6–7; Mt. 25:1–30</item>
+        <item>0210|Lev. 8–10; Mt. 25:31–46</item>
+        <item>0211|Lev. 11–12; Mt. 26:1–25</item>
+        <item>0212|Lev. 13; Mt. 26:26–50</item>
+        <item>0213|Lev. 14; Mt. 26:51–75</item>
+        <item>0214|Lev. 15–16; Mt. 27:1–26</item>
+        <item>0215|Lev. 17–18; Mt. 27:27–50</item>
+        <item>0216|Lev. 19–20; Mt. 27:51–66</item>
+        <item>0217|Lev. 21–22; Mt. 28</item>
+        <item>0218|Lev. 23–24; Mk. 1:1–22</item>
+        <item>0219|Lev. 25; Mk. 1:23–45</item>
+        <item>0220|Lev. 26–27; Mk. 2</item>
+        <item>0221|Num. 1–3; Mk. 3</item>
+        <item>0222|Num. 4–6; Mk. 4:1–20</item>
+        <item>0223|Num. 7–8; Mk. 4:21–41</item>
+        <item>0224|Num. 9–11; Mk. 5:1–20</item>
+        <item>0225|Num. 12–14; Mk. 5:21–43</item>
+        <item>0226|Num. 15–16; Mk. 6:1–29</item>
+        <item>0227|Num. 17–19; Mk. 6:30–56</item>
+        <item>0228|Num. 20–22; Mk. 7:1–13</item>
+        <item>0301|Num. 23–25; Mk. 7:14–37</item>
+        <item>0302|Num. 26–27; Mk. 8:1–21</item>
+        <item>0303|Num. 28–30; Mk. 8:22–38</item>
+        <item>0304|Num. 31–33; Mk. 9:1–29</item>
+        <item>0305|Num. 34–36; Mk. 9:30–50</item>
+        <item>0306|Dt. 1–2; Mk. 10:1–31</item>
+        <item>0307|Dt. 3–4; Mk. 10:32–52</item>
+        <item>0308|Dt. 5–7; Mk. 11:1–18</item>
+        <item>0309|Dt. 8–10; Mk. 11:19–33</item>
+        <item>0310|Dt. 11–13; Mk. 12:1–27</item>
+        <item>0311|Dt. 14–16; Mk. 12:28–44</item>
+        <item>0312|Dt. 17–19; Mk. 13:1–20</item>
+        <item>0313|Dt. 20–22; Mk. 13:21–37</item>
+        <item>0314|Dt. 23–25; Mk. 14:1–26</item>
+        <item>0315|Dt. 26–27; Mk. 14:27–53</item>
+        <item>0316|Dt. 28–29; Mk. 14:54–72</item>
+        <item>0317|Dt. 30–31; Mk. 15:1–25</item>
+        <item>0318|Dt. 32–34; Mk. 15:26–47</item>
+        <item>0319|Josh. 1–3; Mk. 16</item>
+        <item>0320|Josh. 4–6; Lk. 1:1–20</item>
+        <item>0321|Josh. 7–9; Lk. 1:21–38</item>
+        <item>0322|Josh. 10–12; Lk. 1:39–56</item>
+        <item>0323|Josh. 13–15; Lk. 1:57–80</item>
+        <item>0324|Josh. 16–18; Lk. 2:1–24</item>
+        <item>0325|Josh. 19–21; Lk. 2:25–52</item>
+        <item>0326|Josh. 22–24; Lk. 3</item>
+        <item>0327|Jud. 1–3; Lk. 4:1–30</item>
+        <item>0328|Jud. 4–6; Lk. 4:31–44</item>
+        <item>0329|Jud. 7–8; Lk. 5:1–16</item>
+        <item>0330|Jud. 9–10; Lk. 5:17–39</item>
+        <item>0331|Jud. 11–12; Lk. 6:1–26</item>
+        <item>0401|Jud. 13–15; Lk. 6:27–49</item>
+        <item>0402|Jud. 16–18; Lk. 7:1–30</item>
+        <item>0403|Jud. 19–21; Lk. 7:31–50</item>
+        <item>0404|Ruth 1–4; Lk. 8:1–25</item>
+        <item>0405|1 Sam. 1–3; Lk. 8:26–56</item>
+        <item>0406|1 Sam. 4–6; Lk. 9:1–17</item>
+        <item>0407|1 Sam. 7–9; Lk. 9:18–36</item>
+        <item>0408|1 Sam. 10–12; Lk. 9:37–62</item>
+        <item>0409|1 Sam. 13–14; Lk. 10:1–24</item>
+        <item>0410|1 Sam. 15–16; Lk. 10:25–42</item>
+        <item>0411|1 Sam. 17–18; Lk. 11:1–28</item>
+        <item>0412|1 Sam. 19–21; Lk. 11:29–54</item>
+        <item>0413|1 Sam. 22–24; Lk. 12:1–31</item>
+        <item>0414|1 Sam. 25–26; Lk. 12:32–59</item>
+        <item>0415|1 Sam. 27–29; Lk. 13:1–22</item>
+        <item>0416|1 Sam. 30–31; Lk. 13:23–35</item>
+        <item>0417|2 Sam. 1–2; Lk. 14:1–24</item>
+        <item>0418|2 Sam. 3–5; Lk. 14:25–35</item>
+        <item>0419|2 Sam. 6–8; Lk. 15:1–10</item>
+        <item>0420|2 Sam. 9–11; Lk. 15:11–32</item>
+        <item>0421|2 Sam. 12–13; Lk. 16</item>
+        <item>0422|2 Sam. 14–15; Lk. 17:1–19</item>
+        <item>0423|2 Sam. 16–18; Lk. 17:20–37</item>
+        <item>0424|2 Sam. 19–20; Lk. 18:1–23</item>
+        <item>0425|2 Sam. 21–22; Lk. 18:24–43</item>
+        <item>0426|2 Sam. 23–24; Lk. 19:1–27</item>
+        <item>0427|1 Ki. 1–2; Lk. 19:28–48</item>
+        <item>0428|1 Ki. 3–5; Lk. 20:1–26</item>
+        <item>0429|1 Ki. 6–7; Lk. 20:27–47</item>
+        <item>0430|1 Ki. 8–9; Lk. 21:1–19</item>
+        <item>0501|1 Ki. 10–11; Lk. 21:20–38</item>
+        <item>0502|1 Ki. 12–13; Lk. 22:1–20</item>
+        <item>0503|1 Ki. 14–15; Lk. 22:21–46</item>
+        <item>0504|1 Ki. 16–18; Lk. 22:47–71</item>
+        <item>0505|1 Ki. 19–20; Lk. 23:1–25</item>
+        <item>0506|1 Ki. 21–22; Lk. 23:26–56</item>
+        <item>0507|2 Ki. 1–3; Lk. 24:1–35</item>
+        <item>0508|2 Ki. 4–6; Lk. 24:36–53</item>
+        <item>0509|2 Ki. 7–9; Jn. 1:1–28</item>
+        <item>0510|2 Ki. 10–12; Jn. 1:29–51</item>
+        <item>0511|2 Ki. 13–14; Jn. 2</item>
+        <item>0512|2 Ki. 15–16; Jn. 3:1–18</item>
+        <item>0513|2 Ki. 17–18; Jn. 3:19–36</item>
+        <item>0514|2 Ki. 19–21; Jn. 4:1–30</item>
+        <item>0515|2 Ki. 22–23; Jn. 4:31–54</item>
+        <item>0516|2 Ki. 24–25; Jn. 5:1–24</item>
+        <item>0517|1 Chr. 1–3; Jn. 5:25–47</item>
+        <item>0518|1 Chr. 4–6; Jn. 6:1–21</item>
+        <item>0519|1 Chr. 7–9; Jn. 6:22–44</item>
+        <item>0520|1 Chr. 10–12; Jn. 6:45–71</item>
+        <item>0521|1 Chr. 13–15; Jn. 7:1–27</item>
+        <item>0522|1 Chr. 16–18; Jn. 7:28–53</item>
+        <item>0523|1 Chr. 19–21; Jn. 8:1–27</item>
+        <item>0524|1 Chr. 22–24; Jn. 8:28–59</item>
+        <item>0525|1 Chr. 25–27; Jn. 9:1–23</item>
+        <item>0526|1 Chr. 28–29; Jn. 9:24–41</item>
+        <item>0527|2 Chr. 1–3; Jn. 10:1–23</item>
+        <item>0528|2 Chr. 4–6; Jn. 10:24–42</item>
+        <item>0529|2 Chr. 7–9; Jn. 11:1–29</item>
+        <item>0530|2 Chr. 10–12; Jn. 11:30–57</item>
+        <item>0531|2 Chr. 13–14; Jn. 12:1–26</item>
+        <item>0601|2 Chr. 15–16; Jn. 12:27–50</item>
+        <item>0602|2 Chr. 17–18; Jn. 13:1–20</item>
+        <item>0603|2 Chr. 19–20; Jn. 13:21–38</item>
+        <item>0604|2 Chr. 21–22; Jn. 14</item>
+        <item>0605|2 Chr. 23–24; Jn. 15</item>
+        <item>0606|2 Chr. 25–27; Jn. 16</item>
+        <item>0607|2 Chr. 28–29; Jn. 17</item>
+        <item>0608|2 Chr. 30–31; Jn. 18:1–18</item>
+        <item>0609|2 Chr. 32–33; Jn. 18:19–40</item>
+        <item>0610|2 Chr. 34–36; Jn. 19:1–22</item>
+        <item>0611|Ezra 1–2; Jn. 19:23–42</item>
+        <item>0612|Ezra 3–5; Jn. 20</item>
+        <item>0613|Ezra 6–8; Jn. 21</item>
+        <item>0614|Ezra 9–10; Acts 1</item>
+        <item>0615|Neh. 1–3; Acts 2:1–21</item>
+        <item>0616|Neh. 4–6; Acts 2:22–47</item>
+        <item>0617|Neh. 7–9; Acts 3</item>
+        <item>0618|Neh. 10–11; Acts 4:1–22</item>
+        <item>0619|Neh. 12–13; Acts 4:23–37</item>
+        <item>0620|Est. 1–2; Acts 5:1–21</item>
+        <item>0621|Est. 3–5; Acts 5:22–42</item>
+        <item>0622|Est. 6–8; Acts 6</item>
+        <item>0623|Est. 9–10; Acts 7:1–21</item>
+        <item>0624|Job 1–2; Acts 7:22–43</item>
+        <item>0625|Job 3–4; Acts 7:44–60</item>
+        <item>0626|Job 5–7; Acts 8:1–25</item>
+        <item>0627|Job 8–10; Acts 8:26–40</item>
+        <item>0628|Job 11–13; Acts 9:1–21</item>
+        <item>0629|Job 14–16; Acts 9:22–43</item>
+        <item>0630|Job 17–19; Acts 10:1–23</item>
+        <item>0701|Job 20–21; Acts 10:24–48</item>
+        <item>0702|Job 22–24; Acts 11</item>
+        <item>0703|Job 25–27; Acts 12</item>
+        <item>0704|Job 28–29; Acts 13:1–25</item>
+        <item>0705|Job 30–31; Acts 13:26–52</item>
+        <item>0706|Job 32–33; Acts 14</item>
+        <item>0707|Job 34–35; Acts 15:1–21</item>
+        <item>0708|Job 36–37; Acts 15:22–41</item>
+        <item>0709|Job 38–40; Acts 16:1–21</item>
+        <item>0710|Job 41–42; Acts 16:22–40</item>
+        <item>0711|Ps. 1–3; Acts 17:1–15</item>
+        <item>0712|Ps. 4–6; Acts 17:16–34</item>
+        <item>0713|Ps. 7–9; Acts 18</item>
+        <item>0714|Ps. 10–12; Acts 19:1–20</item>
+        <item>0715|Ps. 13–15; Acts 19:21–41</item>
+        <item>0716|Ps. 16–17; Acts 20:1–16</item>
+        <item>0717|Ps. 18–19; Acts 20:17–38</item>
+        <item>0718|Ps. 20–22; Acts 21:1–17</item>
+        <item>0719|Ps. 23–25; Acts 21:18–40</item>
+        <item>0720|Ps. 26–28; Acts 22</item>
+        <item>0721|Ps. 29–30; Acts 23:1–15</item>
+        <item>0722|Ps. 31–32; Acts 23:16–35</item>
+        <item>0723|Ps. 33–34; Acts 24</item>
+        <item>0724|Ps. 35–36; Acts 25</item>
+        <item>0725|Ps. 37–39; Acts 26</item>
+        <item>0726|Ps. 40–42; Acts 27:1–26</item>
+        <item>0727|Ps. 43–45; Acts 27:27–44</item>
+        <item>0728|Ps. 46–48; Acts 28</item>
+        <item>0729|Ps. 49–50; Rom. 1</item>
+        <item>0730|Ps. 51–53; Rom. 2</item>
+        <item>0731|Ps. 54–56; Rom. 3</item>
+        <item>0801|Ps. 57–59; Rom. 4</item>
+        <item>0802|Ps. 60–62; Rom. 5</item>
+        <item>0803|Ps. 63–65; Rom. 6</item>
+        <item>0804|Ps. 66–67; Rom. 7</item>
+        <item>0805|Ps. 68–69; Rom. 8:1–21</item>
+        <item>0806|Ps. 70–71; Rom. 8:22–39</item>
+        <item>0807|Ps. 72–73; Rom. 9:1–15</item>
+        <item>0808|Ps. 74–76; Rom. 9:16–33</item>
+        <item>0809|Ps. 77–78; Rom. 10</item>
+        <item>0810|Ps. 79–80; Rom. 11:1–18</item>
+        <item>0811|Ps. 81–83; Rom. 11:19–36</item>
+        <item>0812|Ps. 84–86; Rom. 12</item>
+        <item>0813|Ps. 87–88; Rom. 13</item>
+        <item>0814|Ps. 89–90; Rom. 14</item>
+        <item>0815|Ps. 91–93; Rom. 15:1–13</item>
+        <item>0816|Ps. 94–96; Rom. 15:14–33</item>
+        <item>0817|Ps. 97–99; Rom. 16</item>
+        <item>0818|Ps. 100–102; 1 Cor. 1</item>
+        <item>0819|Ps. 103–104; 1 Cor. 2</item>
+        <item>0820|Ps. 105–106; 1 Cor. 3</item>
+        <item>0821|Ps. 107–109; 1 Cor. 4</item>
+        <item>0822|Ps. 110–112; 1 Cor. 5</item>
+        <item>0823|Ps. 113–115; 1 Cor. 6</item>
+        <item>0824|Ps. 116–118; 1 Cor. 7:1–19</item>
+        <item>0825|Ps. 119:1–88; 1 Cor. 7:20–40</item>
+        <item>0826|Ps. 119:89–176; 1 Cor. 8</item>
+        <item>0827|Ps. 120–122; 1 Cor. 9</item>
+        <item>0828|Ps. 123–125; 1 Cor. 10:1–18</item>
+        <item>0829|Ps. 126–128; 1 Cor. 10:19–33</item>
+        <item>0830|Ps. 129–131; 1 Cor. 11:1–16</item>
+        <item>0831|Ps. 132–134; 1 Cor. 11:17–34</item>
+        <item>0901|Ps. 135–136; 1 Cor. 12</item>
+        <item>0902|Ps. 137–139; 1 Cor. 13</item>
+        <item>0903|Ps. 140–142; 1 Cor. 14:1–20</item>
+        <item>0904|Ps. 143–145; 1 Cor. 14:21–40</item>
+        <item>0905|Ps. 146–147; 1 Cor. 15:1–28</item>
+        <item>0906|Ps. 148–150; 1 Cor. 15:29–58</item>
+        <item>0907|Prov. 1–2; 1 Cor. 16</item>
+        <item>0908|Prov. 3–5; 2 Cor. 1</item>
+        <item>0909|Prov. 6–7; 2 Cor. 2</item>
+        <item>0910|Prov. 8–9; 2 Cor. 3</item>
+        <item>0911|Prov. 10–12; 2 Cor. 4</item>
+        <item>0912|Prov. 13–15; 2 Cor. 5</item>
+        <item>0913|Prov. 16–18; 2 Cor. 6</item>
+        <item>0914|Prov. 19–21; 2 Cor. 7</item>
+        <item>0915|Prov. 22–24; 2 Cor. 8</item>
+        <item>0916|Prov. 25–26; 2 Cor. 9</item>
+        <item>0917|Prov. 27–29; 2 Cor. 10</item>
+        <item>0918|Prov. 30–31; 2 Cor. 11:1–15</item>
+        <item>0919|Eccl. 1–3; 2 Cor. 11:16–33</item>
+        <item>0920|Eccl. 4–6; 2 Cor. 12</item>
+        <item>0921|Eccl. 7–9; 2 Cor. 13</item>
+        <item>0922|Eccl. 10–12; Gal. 1</item>
+        <item>0923|Song 1–3; Gal. 2</item>
+        <item>0924|Song 4–5; Gal. 3</item>
+        <item>0925|Song 6–8; Gal. 4</item>
+        <item>0926|Isa. 1–2; Gal. 5</item>
+        <item>0927|Isa. 3–4; Gal. 6</item>
+        <item>0928|Isa. 5–6; Eph. 1</item>
+        <item>0929|Isa. 7–8; Eph. 2</item>
+        <item>0930|Isa. 9–10; Eph. 3</item>
+        <item>1001|Isa. 11–13; Eph. 4</item>
+        <item>1002|Isa. 14–16; Eph. 5:1–16</item>
+        <item>1003|Isa. 17–19; Eph. 5:17–33</item>
+        <item>1004|Isa. 20–22; Eph. 6</item>
+        <item>1005|Isa. 23–25; Phil. 1</item>
+        <item>1006|Isa. 26–27; Phil. 2</item>
+        <item>1007|Isa. 28–29; Phil. 3</item>
+        <item>1008|Isa. 30–31; Phil 4</item>
+        <item>1009|Isa. 32–33; Col. 1</item>
+        <item>1010|Isa. 34–36; Col. 2</item>
+        <item>1011|Isa. 37–38; Col. 3</item>
+        <item>1012|Isa. 39–40; Col. 4</item>
+        <item>1013|Isa. 41–42; 1 Th. 1</item>
+        <item>1014|Isa. 43–44; 1 Th. 2</item>
+        <item>1015|Isa. 45–46; 1 Th. 3</item>
+        <item>1016|Isa. 47–49; 1 Th. 4</item>
+        <item>1017|Isa. 50–52; 1 Th. 5</item>
+        <item>1018|Isa. 53–55; 2 Th. 1</item>
+        <item>1019|Isa. 56–58; 2 Th. 2</item>
+        <item>1020|Isa. 59–61; 2 Th. 3</item>
+        <item>1021|Isa. 62–64; 1 Tim. 1</item>
+        <item>1022|Isa. 65–66; 1 Tim. 2</item>
+        <item>1023|Jer. 1–2; 1 Tim. 3</item>
+        <item>1024|Jer. 3–5; 1 Tim. 4</item>
+        <item>1025|Jer. 6–8; 1 Tim. 5</item>
+        <item>1026|Jer. 9–11; 1 Tim. 6</item>
+        <item>1027|Jer. 12–14; 2 Tim. 1</item>
+        <item>1028|Jer. 15–17; 2 Tim. 2</item>
+        <item>1029|Jer. 18–19; 2 Tim. 3</item>
+        <item>1030|Jer. 20–21; 2 Tim. 4</item>
+        <item>1031|Jer. 22–23; Ti. 1</item>
+        <item>1101|Jer. 24–26; Ti. 2</item>
+        <item>1102|Jer. 27–29; Ti. 3</item>
+        <item>1103|Jer. 30–31; Philemon</item>
+        <item>1104|Jer. 32–33; Heb. 1</item>
+        <item>1105|Jer. 34–36; Heb. 2</item>
+        <item>1106|Jer. 37–39; Heb. 3</item>
+        <item>1107|Jer. 40–42; Heb. 4</item>
+        <item>1108|Jer. 43–45; Heb. 5</item>
+        <item>1109|Jer. 46–47; Heb. 6</item>
+        <item>1110|Jer. 48–49; Heb. 7</item>
+        <item>1111|Jer. 50; Heb. 8</item>
+        <item>1112|Jer. 51–52; Heb. 9</item>
+        <item>1113|Lam. 1–2; Heb. 10:1–18</item>
+        <item>1114|Lam. 3–5; Heb. 10:19–39</item>
+        <item>1115|Ezek. 1–2; Heb. 11:1–19</item>
+        <item>1116|Ezek. 3–4; Heb. 11:20–40</item>
+        <item>1117|Ezek. 5–7; Heb. 12</item>
+        <item>1118|Ezek. 8–10; Heb. 13</item>
+        <item>1119|Ezek. 11–13; Jas. 1</item>
+        <item>1120|Ezek. 14–15; Jas. 2</item>
+        <item>1121|Ezek. 16–17; Jas. 3</item>
+        <item>1122|Ezek. 18–19; Jas. 4</item>
+        <item>1123|Ezek. 20–21; Jas. 5</item>
+        <item>1124|Ezek. 22–23; 1 Pet. 1</item>
+        <item>1125|Ezek. 24–26; 1 Pet. 2</item>
+        <item>1126|Ezek. 27–29; 1 Pet. 3</item>
+        <item>1127|Ezek. 30–32; 1 Pet. 4</item>
+        <item>1128|Ezek. 33–34; 1 Pet. 5</item>
+        <item>1129|Ezek. 35–36; 2 Pet. 1</item>
+        <item>1130|Ezek. 37–39; 2 Pet. 2</item>
+        <item>1201|Ezek. 40–41; 2 Pet. 3</item>
+        <item>1202|Ezek. 42–44; 1 Jn. 1</item>
+        <item>1203|Ezek. 45–46; 1 Jn. 2</item>
+        <item>1204|Ezek. 47–48; 1 Jn. 3</item>
+        <item>1205|Dan. 1–2; 1 Jn. 4</item>
+        <item>1206|Dan. 3–4; 1 Jn. 5</item>
+        <item>1207|Dan. 5–7; 2 John</item>
+        <item>1208|Dan. 8–10; 3 John</item>
+        <item>1209|Dan. 11–12; Jude</item>
+        <item>1210|Hos. 1–4; Rev. 1</item>
+        <item>1211|Hos. 5–8; Rev. 2</item>
+        <item>1212|Hos. 9–11; Rev. 3</item>
+        <item>1213|Hos. 12–14; Rev. 4</item>
+        <item>1214|Joel 1–3; Rev. 5</item>
+        <item>1215|Amos 1–3; Rev. 6</item>
+        <item>1216|Amos 4–6; Rev. 7</item>
+        <item>1217|Amos 7–9; Rev. 8</item>
+        <item>1218|Obadiah; Rev. 9</item>
+        <item>1219|Jonah 1–4; Rev. 10</item>
+        <item>1220|Mic. 1–3; Rev. 11</item>
+        <item>1221|Mic. 4–5; Rev. 12</item>
+        <item>1222|Mic. 6–7; Rev. 13</item>
+        <item>1223|Nahum 1–3; Rev. 14</item>
+        <item>1224|Habakkuk 1–3; Rev. 15</item>
+        <item>1225|Zephaniah 1–3; Rev. 16</item>
+        <item>1226|Haggai 1–2; Rev. 17</item>
+        <item>1227|Zech. 1–4; Rev. 18</item>
+        <item>1228|Zech. 5–8; Rev. 19</item>
+        <item>1229|Zech. 9–12; Rev. 20</item>
+        <item>1230|Zech. 13–14; Rev. 21</item>
+        <item>1231|Malachi 1–4; Rev. 22</item>
     </string-array>
 
 </resources>

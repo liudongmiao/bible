@@ -20,6 +20,7 @@ import me.piebridge.bible.R;
 import me.piebridge.bible.adapter.HiddenArrayAdapter;
 import me.piebridge.bible.fragment.InfoFragment;
 import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.utils.LogUtils;
 
 /**
  * Created by thom on 16/7/1.
@@ -38,14 +39,26 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Intent intent = getIntent();
-        search = intent.getStringExtra(SEARCH);
-        items = intent.getParcelableArrayListExtra(ITEMS);
+        initItems();
         super.onCreate(savedInstanceState);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    protected void initItems() {
+        Intent intent = getIntent();
+        setSearch(intent.getStringExtra(SEARCH));
+        setItems(intent.getParcelableArrayListExtra(ITEMS));
+    }
+
+    protected void setSearch(String search) {
+        this.search = search;
+    }
+
+    protected void setItems(List<OsisItem> items) {
+        this.items = items;
     }
 
     @Override
@@ -64,9 +77,10 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
     }
 
     @Override
-    public Bundle retrieveOsis(int position, String osis) {
+    public Bundle retrieveOsis(int position, String x) {
         OsisItem item = items.get(position);
         Bundle bundle = super.retrieveOsis(position, item.toOsis());
+        LogUtils.d("retrieveOsis, position: " + position + ", osis: " + item.toOsis());
         bundle.putString(VERSE_START, item.verseStart);
         bundle.putString(VERSE_END, item.verseEnd);
         bundle.putString(PREV, getOsis(position - 1));

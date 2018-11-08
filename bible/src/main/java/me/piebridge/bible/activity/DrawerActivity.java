@@ -1,12 +1,14 @@
 package me.piebridge.bible.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.CallSuper;
@@ -62,7 +64,7 @@ public abstract class DrawerActivity extends ToolbarActivity
         navigation.setCheckedItem(R.id.menu_reading);
         navigation.setNavigationItemSelectedListener(this);
 
-        updateOdb();
+        updateHeader();
     }
 
     @Override
@@ -91,8 +93,11 @@ public abstract class DrawerActivity extends ToolbarActivity
             case R.id.menu_notes:
                 startActivity(new Intent(this, NotesActivity.class));
                 break;
-            case R.id.menu_webview:
+            case R.id.menu_odb:
                 startActivity(new Intent(this, WebViewActivity.class));
+                break;
+            case R.id.menu_plan:
+                startActivity(new Intent(this, PlanActivity.class));
                 break;
             case R.id.menu_settings:
                 openSettings();
@@ -116,15 +121,20 @@ public abstract class DrawerActivity extends ToolbarActivity
     @CallSuper
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_SETTINGS) {
-            updateOdb();
+            updateHeader();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    protected void updateOdb() {
-        boolean odb = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                && PreferenceManager.getDefaultSharedPreferences(this).getBoolean("odb", false);
-        navigation.getMenu().setGroupVisible(R.id.odb, odb);
+    protected void updateHeader() {
+        Menu menu = navigation.getMenu();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        boolean odb = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && sharedPreferences.getBoolean("odb", false);
+        menu.findItem(R.id.menu_odb).setVisible(odb);
+
+        boolean plan = sharedPreferences.getBoolean("plan", true);
+        menu.findItem(R.id.menu_plan).setVisible(plan);
     }
 
     @Override

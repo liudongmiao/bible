@@ -35,6 +35,7 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
 
     public void setSize(int size) {
         mSize = size;
+        mBundles.clear();
     }
 
     @Override
@@ -95,6 +96,10 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
             mBundles.put(position, bundle);
         }
         return bundle;
+    }
+
+    public void clearData() {
+        mBundles.clear();
     }
 
 }

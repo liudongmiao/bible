@@ -18,7 +18,7 @@ import me.piebridge.bible.utils.LogUtils;
  * Created by thom on 2017/6/26.
  */
 
-public class SettingsActivity extends DrawerActivity {
+public class SettingsActivity extends ToolbarActivity {
 
     private static final String FRAGMENT_FONT_SIZE = "font-size";
 
@@ -33,8 +33,8 @@ public class SettingsActivity extends DrawerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.drawer_settings);
-        setupDrawer();
+        setContentView(R.layout.activity_settings);
+        showBack(true);
 
         BibleApplication application = (BibleApplication) getApplication();
         String version = application.getVersion();
@@ -109,7 +109,6 @@ public class SettingsActivity extends DrawerActivity {
     public void onResume() {
         super.onResume();
         setTitle(getString(R.string.manifest_settings));
-        setCheckedItem(R.id.menu_settings);
     }
 
 }

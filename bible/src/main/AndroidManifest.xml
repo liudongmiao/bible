@@ -244,6 +244,17 @@
                 android:value=".Chapter" />
         </activity>
 
+        <activity
+            android:name=".activity.PlanActivity"
+            android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:exported="false"
+            android:parentActivityName=".Chapter"
+            android:theme="@style/light">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Chapter" />
+        </activity>
+
         <provider
             android:name=".provider.VersionProvider"
             android:authorities="me.piebridge.bible.provider"

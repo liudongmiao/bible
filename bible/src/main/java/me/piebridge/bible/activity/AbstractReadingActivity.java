@@ -132,6 +132,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         mPager = findViewById(R.id.pager);
         fontPath = BibleUtils.getFontPath(this);
         mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount());
+        mPager.setAdapter(mAdapter);
+        mPager.addOnPageChangeListener(this);
         initialize();
     }
 
@@ -232,9 +234,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
     protected final void initialize() {
         initializeHeader(mHeader);
-
-        mPager.setAdapter(mAdapter);
-        mPager.addOnPageChangeListener(this);
 
         int position = getInitialPosition();
         String osis = getInitialOsis();
@@ -353,12 +352,17 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     }
 
     private void prepare(int position, String osis) {
-        LogUtils.d("prepare, position: " + position + ", osis: " + osis);
+        LogUtils.d("prepare start, position: " + position + ", osis: " + osis);
         Bundle bundle = mAdapter.getData(position);
         if (!ObjectUtils.equals(osis, bundle.getString(CURR)) || isChanged(bundle)) {
             bundle.putString(OSIS, osis);
             bundle.putAll(retrieveOsis(position, osis));
+            ReadingFragment fragment = mAdapter.getFragment(position);
+            if (fragment != null) {
+                fragment.reloadData();
+            }
         }
+        LogUtils.d("prepare end, position: " + position + ", osis: " + osis);
     }
 
     @Override
@@ -476,7 +480,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         int oldCount = mAdapter.getCount();
         int position = getCurrentPosition();
         String osis = getCurrentOsis();
-        LogUtils.d("oldCount: " + oldCount + ", newCount: " + newCount);
+        LogUtils.d("oldCount: " + oldCount + ", newCount: " + newCount
+                + ", position: " + osis);
         if (oldCount == newCount) {
             refresh(position, osis);
         } else {
@@ -502,7 +507,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         refresh(position, retrieveOsis(position, osis), true);
     }
 
-    private void refresh(int position, Bundle bundle, boolean reload) {
+    protected void refresh(int position, Bundle bundle, boolean reload) {
         mAdapter.setData(position, bundle);
         updateVersion();
         prepare(position);

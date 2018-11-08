@@ -12,9 +12,4 @@
         android:title="@string/odb_next"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_about"
-        android:title="@string/odb_about"
-        app:showAsAction="never" />
-
 </menu>

@@ -33,16 +33,20 @@
     </group>
 
     <group
-        android:id="@+id/odb"
+        android:id="@+id/other"
         android:checkableBehavior="single">
 
         <item
-            android:id="@+id/menu_webview"
+            android:id="@+id/menu_odb"
             android:icon="@drawable/ic_local_florist_black_24dp"
             android:title="@string/menu_odb_link" />
 
-    </group>
+        <item
+            android:id="@+id/menu_plan"
+            android:icon="@drawable/ic_date_range_black_24dp"
+            android:title="@string/menu_plan" />
 
+    </group>
 
     <group
         android:id="@+id/option_items"

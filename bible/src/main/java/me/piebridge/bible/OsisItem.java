@@ -126,14 +126,18 @@ public class OsisItem implements Parcelable {
         return parseSearch(s, application, previous);
     }
 
-    public static ArrayList<OsisItem> parseSearch(String s, BibleApplication application, String previous) {
+    public static String fixOsis(String s) {
+        return s.replaceAll("([A-Za-z]+)\\.", "$1")
+                .replaceAll("(\\d?)\\s*(\\D?)", "$1$2");
+    }
+
+    public static ArrayList<OsisItem> parseSearch(String query, BibleApplication application, String previous) {
         ArrayList<OsisItem> items = new ArrayList<>();
-        if (s == null) {
+        if (TextUtils.isEmpty(query)) {
             return items;
         }
 
-        s = s.replaceAll("([A-Za-z]+)\\.", "$1");
-        s = s.replaceAll("(\\d?)\\s*(\\D?)", "$1$2");
+        String s = fixOsis(query);
         s = s.replace("cf", "");
         s = s.replace("+", " ");
         s = s.replace("\uff1a", ":");

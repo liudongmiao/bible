@@ -103,7 +103,7 @@ public class WebViewActivity extends DrawerActivity implements AppBarLayout.OnOf
     @Override
     public void onResume() {
         super.onResume();
-        setCheckedItem(R.id.menu_webview);
+        setCheckedItem(R.id.menu_odb);
     }
 
     @Override

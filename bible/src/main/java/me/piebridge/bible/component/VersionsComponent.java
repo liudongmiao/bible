@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.FileUtils;
@@ -123,7 +124,7 @@ public class VersionsComponent {
             int index = entry.indexOf('|');
             String key = entry.substring(0, index);
             String value = entry.substring(index + 1);
-            map.put(value, key);
+            put(key, value);
         }
     }
 
@@ -537,24 +538,21 @@ public class VersionsComponent {
     private void put(String book, String human) {
         String bookLower = book.toLowerCase(Locale.US);
         String humanLower = human.toLowerCase(Locale.US);
-        mBooks.put(bookLower, book);
-        mBooks.put(humanLower, book);
-        mBooks.put(removeSpace(bookLower), book);
-        mBooks.put(removeSpace(humanLower), book);
+        putCheck(bookLower, book);
+        putCheck(humanLower, book);
+        putCheck(OsisItem.fixOsis(humanLower), book);
     }
 
-    private String removeSpace(String s) {
-        StringBuilder sb = new StringBuilder();
-        for (char c : s.toCharArray()) {
-            if (c > ' ') {
-                sb.append(c);
-            }
+    private void putCheck(String key, String value) {
+        String previous = mBooks.get(key);
+        if (!TextUtils.isEmpty(previous) && !ObjectUtils.equals(previous, value)) {
+            LogUtils.w("warning, " + key + ": " + previous + " != " + value);
         }
-        return sb.toString();
+        mBooks.put(key, value);
     }
 
     public String getOsis(String query) {
-        return mBooks.get(query);
+        return mBooks.get(OsisItem.fixOsis(query));
     }
 
 }

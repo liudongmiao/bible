@@ -80,6 +80,11 @@
             android:title="@string/settings_auto_copy" />
 
         <androidx.preference.SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="plan"
+            android:title="@string/menu_plan" />
+
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="odb"
             android:key="odb"
             android:summary="@string/odb_copyright"
