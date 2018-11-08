@@ -99,10 +99,19 @@
     <string name="odb_previous">前一天</string>
     <string name="odb_next">后一天</string>
     <string name="odb_about_detail">英文《靈命日糧》始於 1956 年，如今全球有數百萬的讀者以《靈命日糧》作為每日的靈修材料。第一本中文《靈命日糧》於 1995 年出版，其中改變生命、激勵人心的小品幫助讀者每日閱讀上帝的話語，與上帝同行，並從祂永不改變的話語中認識祂的智慧與應許。\n\n《靈命日糧》是靈命日糧事工的主要出版刊物，以英文寫作，目前已經翻譯超過 40 種語文，供應全球千万讀者每日靈修的需要。</string>
-    <string name="odb_copyright">© 靈命日糧事工</string>
+    <string name="odb_copyright">&#169; 靈命日糧事工</string>
 
     <string name="settings_interface">介面</string>
     <string name="settings_translation">譯本</string>
     <string name="settings_other">其他</string>
+
+    <string name="about_detail">
+        <![CDATA[
+        <h1>如鴿聖經，真正離線，完會免費。</h1>
+        <blockquote>鴿子是溫柔和純潔的象徵，聖靈曾像鴿子一樣降臨在耶穌身上。 —— TPT, 馬太福音 3:16</blockquote>
+        <p>但是，絕大部分現代聖經譯本都有版權，用於補貼翻譯人員的辛苦工作。您無法在如鴿聖經中直接下載受版權保護的譯本。 </p>
+        <p>手動安裝也比較簡單，解壓 <code>bibledata-&lt;lang&gt;-&lt;translation-&gt;.zip</code>，把 <code>.sqlite3</code> 文件放入 <code>&lt;SDCARD&gt ;/Android/data/me.piebridge.bible/files</code> 即可。</p>
+        ]]>
+    </string>
 
 </resources>

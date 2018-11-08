@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="me.piebridge.payment">
+
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+    <!--
+    <application>
+        <activity
+            android:name="me.piebridge.payment.WxApiActivity"
+            android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:exported="true"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity-alias
+            android:name="${applicationId}.wxapi.WXEntryActivity"
+            android:exported="true"
+            android:targetActivity="me.piebridge.payment.WxApiActivity" />
+
+        <activity-alias
+            android:name="${applicationId}.wxapi.WXPayEntryActivity"
+            android:exported="true"
+            android:targetActivity="me.piebridge.payment.WxApiActivity" />
+
+    </application>
+    -->
+
+</manifest>

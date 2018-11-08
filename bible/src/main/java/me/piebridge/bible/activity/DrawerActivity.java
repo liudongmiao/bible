@@ -108,6 +108,9 @@ public abstract class DrawerActivity extends ToolbarActivity
             case R.id.menu_feedback:
                 new FeedbackFragment().show(getSupportFragmentManager(), "fragment-feedback");
                 break;
+            case R.id.menu_about:
+                startActivity(new Intent(this, AboutActivity.class));
+                break;
             default:
                 break;
         }

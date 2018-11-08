@@ -102,10 +102,20 @@
     <string name="odb_next">Next day</string>
     <string name="odb_about">@string/menu_about</string>
     <string name="odb_about_detail">Throughout the day, in countless locations and in dozens of countries around the world, Our Daily Bread is read by millions of people. And for every person who opens its pages, one thing is always true: It points to the joy of a relationship with Jesus Christ and the timeless wisdom found in God’s holy Word.\n\nOur Daily Bread is published and distributed worldwide in more than 55 languages by affiliated ministries around the globe.</string>
-    <string name="odb_copyright">© Our Daily Bread Ministries</string>
+    <string name="odb_copyright">&#169; Our Daily Bread Ministries</string>
 
     <string name="settings_interface">Interface</string>
     <string name="settings_translation">Translation</string>
     <string name="settings_other">Other</string>
+
+    <string name="about_detail">
+        <![CDATA[
+        <h1>Dove Bible is clearly offline, and just free.</h1>
+        <blockquote>The dove is a symbol for both meekness and purity, and the Holy Spirit descend out of the heavens and reset upon Jesus in the form of a dove. —— TPT, Matthew 3:16</blockquote>
+
+        <p>However, most modern Bible Translations are copyrighted to make sure that translators are fairly reimbursed for their hard work. You cannot download copyrighted Bible Translations in Dove Bible directly.</p>
+        <p>Normally, you can just unzip <code>bibledata-&lt;lang&gt;-&lt;translation-&gt;.zip</code>, and put the <code>.sqlite3</code> file into <code>&lt;SDCARD&gt;/Android/data/me.piebridge.bible/files</code>.</p>
+        ]]>
+    </string>
 
 </resources>

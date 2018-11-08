@@ -48,3 +48,6 @@ if (rootProject.file('ant.properties').exists()) {
         project.ext.versionName = properties['build.codename'] + "(" + getBreventVersion() + ")"
     }
 }
+
+// view-source:https://jcenter.bintray.com/com/tencent/mm/opensdk/wechat-sdk-android-without-mta/maven-metadata.xml
+project.ext.wechatVersion = '5.1.6'

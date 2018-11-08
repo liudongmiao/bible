@@ -7,8 +7,6 @@ import android.text.TextUtils;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
-import java.util.Objects;
-
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.SettingsActivity;
 import me.piebridge.bible.utils.LocaleUtils;
@@ -59,7 +57,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
     private void removePreferences(Preference... preferences) {
         for (Preference preference : preferences) {
             if (preference != null) {
-                Objects.requireNonNull(preference.getParent()).removePreference(preference);
+                ObjectUtils.requireNonNull(preference.getParent()).removePreference(preference);
             }
         }
     }

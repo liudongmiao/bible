@@ -6,5 +6,6 @@
     <dimen name="text_size_cell">@dimen/abc_text_size_menu_material</dimen>
 
     <dimen name="content_padding">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 
 </resources>

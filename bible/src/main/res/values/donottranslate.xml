@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="count">%1$d</string>
     <string name="search_result_verse">%1$s:%2$d</string>
@@ -498,9 +498,9 @@
         <item>Sans Serif Condensed</item>
     </string-array>
 
-    <string name="cuvmps">bibledata-zh-cn-cuvmps.zip</string>
-    <string name="cuvmpt">bibledata-zh-tw-cuvmpt.zip</string>
-    <string name="asv">bibledata-en-asv.zip</string>
+    <string name="cuvmps" tools:keep="@string/cuvmps">bibledata-zh-cn-cuvmps.zip</string>
+    <string name="cuvmpt" tools:keep="@string/cuvmpt">bibledata-zh-tw-cuvmpt.zip</string>
+    <string name="asv" tools:keep="@string/asv">bibledata-en-asv.zip</string>
 
     <string-array name="version_fullname">
         <item>niv1984|New International Version 1984</item>

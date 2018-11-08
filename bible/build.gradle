@@ -80,6 +80,7 @@ dependencies {
     implementation 'androidx.preference:preference:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation project(':genuine')
+    implementation project(':payment')
 }
 
 task copyReleaseApk(type: Copy) {

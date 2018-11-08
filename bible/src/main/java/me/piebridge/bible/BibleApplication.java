@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import me.piebridge.GenuineApplication;
 import me.piebridge.bible.component.AnnotationComponent;
 import me.piebridge.bible.component.DownloadComponent;
 import me.piebridge.bible.component.VersionComponent;
@@ -23,11 +22,12 @@ import me.piebridge.bible.component.VersionsComponent;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LocaleUtils;
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.payment.PaymentApplication;
 
 /**
  * Created by thom on 2018/10/25.
  */
-public class BibleApplication extends GenuineApplication {
+public class BibleApplication extends PaymentApplication {
 
     private static final String VERSION_NIV = "niv";
     private static final String VERSION_NIV1984 = "niv1984";
