@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import androidx.core.content.ContextCompat;
-
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -82,10 +80,9 @@ public class BibleUtils {
     }
 
     public static String getFontPath(Context context) {
-        File font;
-        File[] dirs = ContextCompat.getExternalFilesDirs(context, null);
-        if (dirs.length > 0 && dirs[0] != null) {
-            font = new File(dirs[0], "custom.ttf");
+        File dir = context.getExternalFilesDir(null);
+        if (dir != null) {
+            File font = new File(dir, "custom.ttf");
             if (font.isFile()) {
                 return font.getAbsolutePath();
             }
