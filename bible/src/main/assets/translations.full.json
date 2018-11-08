@@ -11,6 +11,7 @@
     "dt": "Central Dusun / Kadazan (Boros Dusun)",
     "en": "English",
     "es": "Español (Spanish)",
+    "fi": "Suomi (Finnish)",
     "fj": "Fijian",
     "fr": "Français (French)",
     "grc": "Κοινη (Greek)",
@@ -565,6 +566,13 @@
       "date": "20151216",
       "lang": "es",
       "name": "Traducción en Lenguaje Actual"
+    },
+    {
+      "code": "kr92",
+      "date": "20181008",
+      "lang": "fi",
+      "meta": "<p>© Suomennoksen tekijänoikeudet: Kirkon keskusrahasto, Evangelical Lutheran Church of Finland</p><p>This translation has been published by the Finnish Bible Society.</p><p>If you are interested in obtaining a printed copy, please contact the Finnish Bible Society at <a href=\"http://www.piplia.fi/\"> www.piplia.fi</a>.</p>🔗<a href=\"https://bibles.org/versions/fin-FIN92\">bibles.org</a>",
+      "name": "Kirkkoraamattu 1992"
     },
     {
       "code": "fnvdc",
