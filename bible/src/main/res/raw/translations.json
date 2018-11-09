@@ -7,8 +7,10 @@
     "mi": "Maori",
     "my": "ဗမာစာ(Burmese)",
     "no": "Norsk (Norwegian)",
+    "smk": "Bolinao",
     "tl": "Tagalog (Tagalog)",
     "to": "lea fakatonga (Tongan)",
+    "vi": "Tiếng Việt (Vietnamese)",
     "zh-cn": "简体中文 (Simplified Chinese)",
     "zh-tw": "繁體中文 (Traditional Chinese)"
   },
@@ -142,6 +144,14 @@
       "name": "Det Norsk Bibelselskap 1930"
     },
     {
+      "code": "SMKNT",
+      "copy": "nc",
+      "date": "20181109",
+      "lang": "smk",
+      "meta": "<p>© 2012, Wycliffe Bible Translators, Inc. All rights reserved.<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/3.0/\">CC BY-NC-ND 3.0</a></p>🔗<a href=\"https://bibles.org/versions/smk-SMKNT\">Bibles.org</a>",
+      "name": "Si Biblia"
+    },
+    {
       "code": "adb1905",
       "copy": "pd",
       "date": "20181101",
@@ -156,6 +166,14 @@
       "info": "<p>This translation is a free, public domain (not copyrighted) translation of the Holy Bible created by updating the Tongan West Version. It has been dedicated to the Public Domain by the translator, James Baxley. You may copy it freely.</p><p>The Tongan Bible, Revised West Translation is available for free reading and download at <a href=\"http://eBible.org/web/\">eBible.org/web</a> and at <a href=\"http://MissionTonga.org\">MissionTonga.org</a></p>🔗<a href=\"https://bibles.org/versions/ton-TONRWV\">bibles.org</a>",
       "lang": "to",
       "name": "Tongan Bible (Revised West Version)"
+    },
+    {
+      "code": "viet",
+      "copy": "pd",
+      "date": "20181109",
+      "lang": "vi",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/1934-Vietnamese-Bible-VIET/\">Bible Gateway</a>",
+      "name": "1934 Vietnamese Bible"
     },
     {
       "code": "csbs",

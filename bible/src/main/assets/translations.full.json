@@ -1,6 +1,7 @@
 {
   "languages": {
     "af": "Afrikaans",
+    "akp": "Siwu",
     "ar": "ﺎﻠﻋﺮﺒﻳﺓ(Arabic)",
     "bc": "Central Bicolano",
     "btx": "Batak Karo",
@@ -31,6 +32,7 @@
     "kj": "Kuanyama (Kwanyama)",
     "kp": "Mountain Koiali",
     "kr": "한국어 (Korean)",
+    "lg": "Luganda (Ganda)",
     "mi": "Maori",
     "ml": "മലയാളം (Malayalam)",
     "mr": "मराठी(Marathi)",
@@ -43,16 +45,19 @@
     "no": "Norsk (Norwegian)",
     "ns": "Sesotho sa Leboa (Northern Sotho)",
     "ny": "chiCheŵa (Chichewa)",
+    "nyn": "Nyankole",
     "nz": "Zeme Naga",
     "or": "ଓଡ଼ିଆ (Oriya)",
     "pa": "ਪੰਜਾਬੀ(Punjabi)",
     "pg": "Pangasinan",
+    "pl": "Polski (Polish)",
     "pm": "Kapampangan",
     "pt": "Português (Portuguese)",
     "ro": "Română (Romanian)",
     "ru": "русский язык(Russian)",
     "rw": "Kinyarwanda",
     "sk": "Slovenčina (Slovak)",
+    "smk": "Bolinao",
     "sn": "chiShona (Shona)",
     "so": "Sesotho (Southern Sotho)",
     "sp": "Kalenjin (Sabaot)",
@@ -88,6 +93,13 @@
       "date": "20151216",
       "lang": "af",
       "name": "Afrikaans 1983"
+    },
+    {
+      "code": "akp",
+      "date": "20181109",
+      "lang": "akp",
+      "meta": "<p>© Wycliffe Bible Translators 2008</p>🔗<a href=\"https://bibles.org/versions/akp-AKP\">bibles.org</a>",
+      "name": "Ndamu Ɣɛtɛ Siwu"
     },
     {
       "code": "alab",
@@ -195,6 +207,13 @@
       "name": "American Standard Version"
     },
     {
+      "code": "brg",
+      "date": "20181109",
+      "lang": "en",
+      "meta": "<p>BRG Bible®<br> I John 5.7-8 \"For there are three that bear record in heaven, the Father, the Word, and the Holy Ghost: and these three are one. And there are three that bear witness in earth, the Spirit, the water, and the blood: and these three agree in one.\"</p><p>The Blue Red &amp; Gold Letter Edition of the Holy Bible, or BRG Bible, could be called an advancement of the “Red Letter” Bible popular among many for over 110 years. Beginning with the King James Version, the original Red Letter Edition lifted the spoken words of Jesus off of the page by printing Jesus’ words in the color Red--the color of his blood. The BRG Bible advances this idea by printing in heaven’s color, Blue, the spoken, quotable words of God, the Father; continuing to print the spoken words of Jesus in his blood’s color, Red; and printing in the color of fire, Gold, the name Holy Ghost (or Holy Spirit), and all references to His name including personal pronouns. With BRG Bible, the quotable words of God, the spoken words of Jesus, and the name of the Holy Ghost are lifted off the page to give a visual recognition to the Father, Son and Holy Ghost, the foundation of Christian faith. Additional features include Blue underline for the dialogue of Angels &amp; Heavenly Hosts and Red underline for messianic prophecy/ indicators of Jesus Christ.</p><p>Incorporating the three colors representing Heaven, Blood, and Fire—that is Blue, Red and Gold—produces the Blue Red and Gold Letter Edition of the Bible, BRG Bible, or KJV-BRG.</p><p>Scott Johnson<br> Author/Editor<br> BRG Bible Ministries<br> BRG Bible® is a Registered Trademark with USPTO, Washington D.C.</p>🔗<a href=\"https://www.biblegateway.com/versions/BRG-Bible/\">Bible Gateway</a>",
+      "name": "BRG Bible"
+    },
+    {
       "code": "ceb",
       "date": "20151216",
       "lang": "en",
@@ -245,6 +264,13 @@
       "info": "<p>The Douay–Rheims Bible is a translation of the Bible from the Latin Vulgate into English made by members of the Catholic seminary English College, Douai, France. It is the foundation on which nearly all English Catholic versions are still based.</p><p>It was translated principally by Gregory Martin, an Oxford-trained scholar, working in the circle of English Catholic exiles on the Continent, under the sponsorship of William (later Cardinal) Allen. The New Testament appeared at Rheims in 1582; the Old Testament at Douai in 1609.</p><p>The translation, although competent, exhibited a taste for Latinisms that was not uncommon in English writing of the time but seemed excessive in the eyes of later generations. The New Testament influenced the Authorized Version.</p><p>Between 1749 and 1752, English bishop Richard Challoner substantially revised the translation with an aim to improve readability and comprehensibility. It was first published in America in 1790 by Mathew Carey of Philadelphia. Several American editions followed in the 19th and early 20th centuries; prominent among them the Douay-Rheims 1899 American Edition Version.</p>🔗<a href=\"https://www.biblegateway.com/versions/Darby-Translation-Bible/\">Bible Gateway</a>",
       "lang": "en",
       "name": "Douay-Rheims 1899 American Edition"
+    },
+    {
+      "code": "ehv",
+      "date": "20181109",
+      "lang": "en",
+      "meta": "<p>What is the <i>Evangelical Heritage Version</i>?</p><p>Our translation is called <i>Evangelical</i> because its highest goal is to proclaim the good news of the gospel of salvation through faith in the atoning work of Jesus Christ, God’s eternal Son. Though there are many topics in the Bible, all of them are there to serve the gospel of Christ. All of our work in producing and distributing this translation is directed to the glory of God and to the eternal salvation of people’s souls.</p><p>Our translation is called <i>Heritage</i> because this word heritage looks to the past, the present, and the future.</p><p><i>Heritage</i> expresses our respect for the generations of Christians and for the faithful translators who have passed the Bible down to us. We are aware that we in the present are building on the foundation which they have laid for us. As the old saying goes: We can see so far because we are standing on the shoulders of giants.</p><p>The term <i>Heritage</i> also looks to the future. The gospel is a precious inheritance that is to be passed from generation to generation until Christ returns. It is our prayer that this translation will have a part in that great mission which the Lord has left for his church. Our goal and motto is expressed in the hymn verse:<blockquote>God’s Word is our great heritage<br />and shall be ours forever.<br />To spread its light from age to age<br />shall be our chief endeavor.<br />Through life it guides our way.<br />In death it is our stay.<br />Lord, grant, while worlds endure,<br />we keep its teaching pure<br />throughout all generations.</blockquote></p><p>To this end, our goal is to produce a <i>balanced</i> translation, suitable for all-purpose use in the church.</p><p>We seek a balance between the <i>old</i> and the<i> new.</i> We debated whether our translation should be called <i>new</i> or <i>revised.</i> Neither term tells the whole story. Our translation can be called <i>revised</i>or <i>traditional</i> insofar as it builds on the tradition of Bible translation that goes back to the King James Version, to Martin Luther, and beyond. It is <i>new</i> in that it is not based on any one template, and it introduces new terms in those places where the traditional terms no longer communicate clearly.</p><p>We seek a balance between the poles of so-called <i>literal</i> and <i>dynamic equivalent</i> theories of translation. A translator should not adhere too closely to any one theory of translation because literalistic, word-for-word translations sometimes convey the wrong meaning, or they do not communicate clearly in the receiving language. Overly free translations deprive the reader of some of the expressions, imagery, and style of the original.</p><p>We seek a balance between <i>formality</i> and <i>informality.</i> The Bible contains many types of literature and different levels of language, from the very simple to the very difficult. For this reason, the translator should not be too committed to producing one level of language but should try to reproduce the tone or “flavor” of the original.</p><p>The <i>Evangelical Heritage Version</i> is designed for <i>learning and teaching.</i> Our translators assume that their readers have the ability and the desire to learn new biblical words and to deepen their understanding of important biblical terms and concepts. Translators should not be condescending or patronizing toward their readers but should be dedicated to helping them grow. The Bible was written for ordinary people, but it is a literary work with many figures of speech and many rare words. The Bible is a book to be read, but it is also a book to be studied. Our footnotes are designed to assist in the process of learning and teaching. Our translation is in that sense a textbook.</p><p>The <i>Evangelical Heritage Version</i> is <i>not an interpretative translation.</i> On one level, every act of translation involves interpretation, but when we say that the <i>Evangelical Heritage Version</i> strives to avoid importing interpretation into the translation, we mean that our duty and goal is to understand and to reproduce as closely as possible what the original text says and to say no more and no less than what the text says.</p><p>We offer this translation to the church as a balanced translation, suitable for all-purpose use in the church.</p>🔗<a href=\"https://www.biblegateway.com/versions/Evangelical-Heritage-Version-EHV-Bible/\">Bible Gateway</a>",
+      "name": "Evangelical Heritage Version"
     },
     {
       "code": "erv",
@@ -755,6 +781,13 @@
       "name": "Revised New Korean Standard Version"
     },
     {
+      "code": "lug68",
+      "date": "20181109",
+      "lang": "lg",
+      "meta": "<p>© United Bible Societies 1968<br />© The British &amp; Foreign Bible Society, London, England, 1954, 1967, 1972, 1994<br />© The Bible Society of Uganda, 2013</p>🔗<a href=\"https://bibles.org/versions/lug-LUG68\">bibles.org</a>",
+      "name": "Luganda Bible"
+    },
+    {
       "code": "maori",
       "copy": "pd",
       "date": "20150830",
@@ -807,6 +840,13 @@
       "name": "Ombiimbeli Ondjapuki"
     },
     {
+      "code": "bb",
+      "date": "20181109",
+      "lang": "nl",
+      "meta": "<p>The BasisBijbel (literally, “Basic Bible”) is a Bible in simple Dutch, in today’s language. The BasisBijbel is based on the classic Dutch Bible translation, the “Statenvertaling”. The purpose of the BasisBijbel is to make the text intelligible to as many people as possible. To accomplish this, typical Bible words have been replaced with words from everyday Dutch, which makes the text very accessible to people who are not familiar with the Bible.</p><p>Words and sentences have been kept short, which also makes this Bible suitable for those who struggle with reading. And in some cases, words have been added in [square] brackets to clarify the text.</p><p><a href=\"http://www.basisbijbel.nl\">www.basisbijbel.nl</p><p><a href=\"http://www.stichtingbasisbijbel.nl\">www.stichtingbasisbijbel.nl</a></p>🔗<a href=\"https://www.biblegateway.com/versions/BasisBijbel-BB/\">Bible Gateway</a>",
+      "name": "BasisBijbel"
+    },
+    {
       "code": "htb",
       "date": "20151202",
       "lang": "nl",
@@ -854,7 +894,15 @@
       "code": "bl92",
       "date": "20151216",
       "lang": "ny",
+      "meta": "<p>©The Bible Society of Malawi, 1992</p><h5>Buku Lopatulika ndilo Mau A Mulungu 1992 (Nyanja/Chewa) Bible</h5><p>This translation, was published by Zambia Bible Society, Malawi Bible Society and Zimbabwe Bible Society in 1992.</p>🔗<a href=\"https://bibles.org/versions/nya-NYCB92/\">bibles.org</a>",
       "name": "Buku Lopatulika 1992"
+    },
+    {
+      "code": "rr64",
+      "date": "20181109",
+      "lang": "nyn",
+      "meta": "<p>© 1964 The Bible Society of Uganda</p><p>This translation, published by The Bible Society of Uganda, was first published in 1964.</p><p>If you are interested in obtaining a printed copy, please contact The Bible Society of Uganda at <a href=\"http://www.biblesociety-uganda.org/\">www.biblesociety-uganda.org</a>.</p>🔗<a href=\"http://bibles.org/versions/nyn-B64\">bibles.org</a>",
+      "name": "Runyankore-Rukiga Bible 1964"
     },
     {
       "code": "nagz",
@@ -879,6 +927,13 @@
       "date": "20151216",
       "lang": "pg",
       "name": "Maung a Balita Biblia"
+    },
+    {
+      "code": "szpl",
+      "date": "20181109",
+      "lang": "pl",
+      "meta": "<p>Copyright © 1991, 2005 by International Bible Society®<br />Used by permission. All rights reserved worldwide.</p>🔗<a href=\"https://www.biblegateway.com/versions/S%C5%82owo-%C5%BBycia-SZ/\">Bible Gateway</a>",
+      "name": "Słowo Życia"
     },
     {
       "code": "pmpv",
@@ -939,6 +994,14 @@
       "date": "20160705",
       "lang": "sk",
       "name": "Slovenský Ekumenický Biblia"
+    },
+    {
+      "code": "SMKNT",
+      "copy": "nc",
+      "date": "20181109",
+      "lang": "smk",
+      "meta": "<p>© 2012, Wycliffe Bible Translators, Inc. All rights reserved.<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/3.0/\">CC BY-NC-ND 3.0</a></p>🔗<a href=\"https://bibles.org/versions/smk-SMKNT\">Bibles.org</a>",
+      "name": "Si Biblia"
     },
     {
       "code": "sub1949",
@@ -1014,6 +1077,13 @@
       "lang": "tl",
       "meta": "🔗<a href=\"https://www.biblegateway.com/versions/Ang-Dating-Biblia-1905-ADB1905/\">Bible Gateway</a>",
       "name": "Ang Dating Biblia (1905)"
+    },
+    {
+      "code": "fsv",
+      "date": "20181109",
+      "lang": "tl",
+      "meta": "<p>Ang Bagong Tipan: <em>Filipino Standard Version</em> (FSV) is the first ever <em>literary-liturgical</em> version of the New Testament in the <em>Filipino</em> language, designed to perpetuate the rich liturgical heritage of Church worship. <em>FSV</em> translates faithfully the original Greek language and uses formal words and expressions, yet it is still easy to read and understand. This translation is appropriate not just for congregational reading in the church, but also for easy memorization and for a deep study of the Bible.</p><h5>Quotation Rights</h5><p>The <em>FSV</em> text may be quoted (in written, visual, or electronic form) without requesting permission from the Philippine Bible Society provided that the number of verses does not exceed five hundred (500) and that the verses quoted represent less than half a complete book of the Bible. In all other cases, the user must first get permission from the Philippine Bible Society. Permission requests must be directed to: translations@bible.org.ph.</p><p>Acknowledgment must appear as follows on the copyright page of printed works using the <em>FSV</em> text, or in a corresponding location when the <em>FSV</em> is quoted in other media:<blockquote>“Scripture texts are from the Ang Bagong Tipan: Filipino Standard Version © 2009 Philippine Bible Society, used with permission.”</blockquote></p><p>When quotations from the <em>FSV</em> are used for non-commercial or non-saleable media, such as church bulletins, orders of service, posters, presentation slides, and similar formats, a complete copyright acknowledgment is not required, but the initials “FSV” must appear at the end of the quotation.</p>🔗<a href=\"https://www.biblegateway.com/versions/Filipino-Standard-Version-Biblia-FSV/\">Bible Gateway</a>",
+      "name": "Ang Bagong Tipan: Filipino Standard Version"
     },
     {
       "code": "mbb05",
@@ -1107,6 +1177,14 @@
       "date": "20151216",
       "lang": "vi",
       "name": "Revised Vietnamese Version Bible"
+    },
+    {
+      "code": "viet",
+      "copy": "pd",
+      "date": "20181109",
+      "lang": "vi",
+      "meta": "🔗<a href=\"https://www.biblegateway.com/versions/1934-Vietnamese-Bible-VIET/\">Bible Gateway</a>",
+      "name": "1934 Vietnamese Bible"
     },
     {
       "code": "xho75",
