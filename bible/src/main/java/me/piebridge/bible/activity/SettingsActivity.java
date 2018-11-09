@@ -111,4 +111,9 @@ public class SettingsActivity extends ToolbarActivity {
         setTitle(getString(R.string.manifest_settings));
     }
 
+    @Override
+    protected boolean hasFinished() {
+        return false;
+    }
+
 }
