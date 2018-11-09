@@ -4,6 +4,7 @@
     "fr": "Français (French)",
     "grc": "Κοινη (Greek)",
     "he": "עברית (Hebrew)",
+    "la": "Latina (Latin)",
     "mi": "Maori",
     "my": "ဗမာစာ(Burmese)",
     "no": "Norsk (Norwegian)",
@@ -118,6 +119,14 @@
       "lang": "he",
       "meta": "🔗<a href=\"https://www.biblegateway.com/versions/The-Westminster-Leningrad-Codex-WLC/\">Bible Gateway</a>",
       "name": "The Westminster Leningrad Codex"
+    },
+    {
+      "code": "vulgate",
+      "copy": "pd",
+      "date": "20181109",
+      "lang": "la",
+      "meta": "<p>Jerome's translation of the Greek and Hebrew Scriptures into the common language, Latin, was completed in 405. It was recognized as authoritative during the Council of Trent (1546) and became the official Bible of the Roman Catholic Church. The widespread use of the Vulgate is also recognizable in its influence in early modern Bible translations, such as the Authorized, or King James, Version. The Vulgate continues to be of scholarly use today in the study of the textual transmission of the Bible and in the historical study of Christian theology.</p><p>The Vulgate version present on Bible Gateway is the <a href=\"http://vulsearch.sourceforge.net/gettext.html\">Clementine Text Project</a>, derived principally from the Clementine text edited by A. Colunga and L. Turrado (La Editorial Católica, Madrid, 1946) and includes consultations with the editions of C. Vercellone (Typis S. Congregationis de Propaganda Fide, Rome, 1861) and M. Hetzenauer (Pustet &amp; Co, 1914).</p><p>The text is in the public domain. Those who use it are requested to acknowledge their source, report typographical errors to the project maintainer (<a href=\"mailto:clementinevulgateproject@mail.com?Subject=Clementine%20Text%20Project\">clementinevulgateproject@mail.com</a>), and make clear any modifications they make.</p>🔗<a href=\"https://www.biblegateway.com/versions/Biblia-Sacra-Vulgata-VULGATE/\">Bible Gateway</a>",
+      "name": "Biblia Sacra Vulgata"
     },
     {
       "code": "maori",
