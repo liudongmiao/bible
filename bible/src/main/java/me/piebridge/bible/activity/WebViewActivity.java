@@ -37,6 +37,7 @@ public class WebViewActivity extends DrawerActivity implements AppBarLayout.OnOf
     private WebView webView;
 
     private Calendar calendar;
+    private String currentDate;
 
     private boolean loading;
 
@@ -89,12 +90,12 @@ public class WebViewActivity extends DrawerActivity implements AppBarLayout.OnOf
         sb.append(".");
         sb.append(JIANYV_COM);
         sb.append("/");
-        String date = new SimpleDateFormat("yyyy/MM/dd", Locale.US).format(time);
-        sb.append(date);
+        currentDate = new SimpleDateFormat("yyyy/MM/dd", Locale.US).format(time);
+        sb.append(currentDate);
         sb.append("?calendar-redirect=true&post-type=post");
         String url = sb.toString();
         LogUtils.d("load url: " + url);
-        setTitle(getString(R.string.menu_odb_link) + " " + date);
+        updateTitle();
         loading = true;
         invalidateOptionsMenu();
         webView.loadUrl(sb.toString());
@@ -104,6 +105,13 @@ public class WebViewActivity extends DrawerActivity implements AppBarLayout.OnOf
     public void onResume() {
         super.onResume();
         setCheckedItem(R.id.menu_odb);
+        if (loading && currentDate != null) {
+            updateTitle();
+        }
+    }
+
+    private void updateTitle() {
+        setTitle(getString(R.string.menu_odb_link) + " " + currentDate);
     }
 
     @Override

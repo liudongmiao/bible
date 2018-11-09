@@ -253,8 +253,12 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
     @Override
     public boolean onClose() {
         updateQuery(null);
-        setTitle(getTitle());
+        updateTitle();
         return false;
+    }
+
+    private void updateTitle() {
+        setTitle(getString(R.string.manifest_translation));
     }
 
     @Override
@@ -482,8 +486,10 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
     @Override
     public void onResume() {
         super.onResume();
-        setTitle(getString(R.string.manifest_translation));
         setCheckedItem(R.id.menu_download);
+        if (mSearchView == null || mSearchView.isIconified()) {
+            updateTitle();
+        }
     }
 
     static class Receiver extends BroadcastReceiver {
