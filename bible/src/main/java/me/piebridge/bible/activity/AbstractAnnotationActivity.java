@@ -389,14 +389,16 @@ public abstract class AbstractAnnotationActivity extends DrawerActivity implemen
 
         private void bindContent(AbstractAnnotationActivity activity, AnnotationViewHolder holder) {
             String content = activity.prepareContent(mCursor);
-            if (LocaleUtils.getOverrideLocale(activity).equals(Locale.SIMPLIFIED_CHINESE)) {
-                content = content.replaceAll("「", "“").replaceAll("」", "”");
-                content = content.replaceAll("『", "‘").replaceAll("』", "’");
-            }
             if (TextUtils.isEmpty(content)) {
-                holder.contentView.setVisibility(View.GONE);
+                BibleApplication application = (BibleApplication) activity.getApplication();
+                String bookChapterVerse = holder.humanView.getText() + " " + holder.verseView.getText();
+                content = activity.getString(R.string.annotation_no_book, bookChapterVerse, application.getFullname());
+                holder.contentView.setText(content);
             } else {
-                holder.contentView.setVisibility(View.VISIBLE);
+                if (LocaleUtils.getOverrideLocale(activity).equals(Locale.SIMPLIFIED_CHINESE)) {
+                    content = content.replaceAll("「", "“").replaceAll("」", "”");
+                    content = content.replaceAll("『", "‘").replaceAll("』", "’");
+                }
                 holder.contentView.setText(content, TextView.BufferType.SPANNABLE);
                 if (!TextUtils.isEmpty(mQuery)) {
                     selectQuery(holder.contentView, content);

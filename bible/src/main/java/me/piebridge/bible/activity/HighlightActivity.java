@@ -74,11 +74,27 @@ public class HighlightActivity extends AbstractAnnotationActivity {
         ) {
             if (cursor != null && cursor.moveToFirst()) {
                 return cursor.getString(cursor.getColumnIndex(VersionProvider.COLUMN_UNFORMATTED));
+            } else {
+                return fallback(database, book, start);
             }
         } finally {
             application.releaseDatabase(database);
         }
-        return null;
+    }
+
+    private String fallback(SQLiteDatabase database, String book, String start) {
+        try (
+                Cursor cursor = database.query(VersionProvider.TABLE_VERSE,
+                        null,
+                        "book = ? and verse < ?",
+                        new String[] {book, start}, null, null, "id desc", "1");
+        ) {
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getString(cursor.getColumnIndex(VersionProvider.COLUMN_UNFORMATTED));
+            } else {
+                return null;
+            }
+        }
     }
 
 }
