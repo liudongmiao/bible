@@ -79,14 +79,12 @@ public class AboutActivity extends ToolbarPaymentActivity {
         MenuItem toggle = menu.findItem(R.id.action_toggle);
         if (shouldShowDonate()) {
             toggle.setTitle(R.string.about_donate_hide);
-            donate.setVisible(true);
-            super.showPayment(true);
-            return mPlayAvailable && isPlayAvailable();
+            donate.setVisible(mPlayAvailable);
         } else {
             toggle.setTitle(R.string.about_donate_show);
             donate.setVisible(false);
-            return true;
         }
+        return true;
     }
 
     private boolean shouldShowDonate() {
@@ -98,6 +96,9 @@ public class AboutActivity extends ToolbarPaymentActivity {
         boolean showed = sharedPreferences.getBoolean(KEY_DONATE_SHOW, true);
         sharedPreferences.edit().putBoolean(KEY_DONATE_SHOW, !showed).apply();
         invalidateOptionsMenu();
+        if (!showed && !mPlayAvailable) {
+            super.showPayment(true);
+        }
     }
 
     @Override
@@ -152,9 +153,8 @@ public class AboutActivity extends ToolbarPaymentActivity {
     @Override
     public void showPlay(@Nullable Collection<String> purchased) {
         super.showPlay(purchased);
-        mPlayAvailable = purchased != null;
-        invalidateOptionsMenu();
         LogUtils.d("showPlay, purchased: " + purchased);
+        mPurchased.clear();
         if (purchased != null) {
             mPurchased.addAll(purchased);
             invalidateOptionsMenu();
@@ -171,6 +171,11 @@ public class AboutActivity extends ToolbarPaymentActivity {
                 Toast.makeText(this, text, Toast.LENGTH_LONG).show();
                 sharedPreferences.edit().putInt(KEY_DONATE_AMOUNT, amount).apply();
             }
+        }
+        boolean playAvailable = purchased != null;
+        if (playAvailable != mPlayAvailable) {
+            mPlayAvailable = playAvailable;
+            invalidateOptionsMenu();
         }
     }
 
