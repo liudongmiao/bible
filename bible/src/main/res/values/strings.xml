@@ -5,7 +5,7 @@
     <string name="manifest_translation">@string/menu_translations</string>
     <string name="manifest_settings">@string/menu_settings</string>
     <string name="manifest_search">@string/menu_search</string>
-    <string name="manifest_search_intent">Search in Bible</string>
+    <string name="manifest_search_intent">Search in Dove Bible</string>
     <string name="manifest_translation_manifest">Add Translation</string>
 
     <string name="reading_book">Book</string>
@@ -30,7 +30,7 @@
     <string name="action_highlight">@string/menu_highlight</string>
     <string name="action_notes">@string/menu_notes</string>
     <string name="action_share">Share</string>
-    <string name="action_share_title">Share Bible verses to..</string>
+    <string name="action_share_title">Share verses to..</string>
 
     <string name="menu_reading">Reading</string>
     <string name="menu_search">Search</string>
@@ -42,7 +42,7 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_feedback">Feedback</string>
     <string name="menu_about">About</string>
-    <string name="menu_switch_theme">Switch Theme</string>
+    <string name="menu_switch_theme">Switch theme</string>
 
     <string name="search_hint">Passage or keyword</string>
     <string name="search_translation">Translation</string>
@@ -53,14 +53,14 @@
     <string name="search_from">From book</string>
     <string name="search_to">To book</string>
     <string name="search_from_to">from %1$s to %2$s</string>
-    <string name="search_clear_history">Clear Search History</string>
+    <string name="search_clear_history">Clear search history</string>
 
     <string name="search_result_books">Books</string>
     <string name="search_result_verses">Verses</string>
-    <string name="search_result_none">No Results</string>
+    <string name="search_result_none">No results</string>
     <string name="search_result_chapters">%1$s, %2$d chapters.</string>
 
-    <string name="translation_hint">Translation or Description</string>
+    <string name="translation_hint">Translation or description</string>
     <string name="translation_install">Install</string>
     <string name="translation_update">Update</string>
     <string name="translation_cancel">Cancel</string>
@@ -78,13 +78,13 @@
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_red">Red letter</string>
-    <string name="settings_red_summary">For words of Jesus, If available</string>
+    <string name="settings_red_summary">For words of Jesus, if available</string>
     <string name="settings_cross">@string/reading_cross</string>
     <string name="settings_cross_summary">If available</string>
     <string name="settings_justify">Text justified</string>
     <string name="settings_font_family">Font family</string>
     <string name="settings_auto_copy">Auto copy</string>
-    <string name="settings_auto_copy_summary">Copy to Clipboard after selection</string>
+    <string name="settings_auto_copy_summary">Copy to clipboard after selection</string>
     <string name="settings_shangti">Shangti</string>
     <string name="settings_shangti_summary">Shangti / Shen (for Chinese Translation)</string>
 
@@ -111,7 +111,7 @@
     <string name="about_donate">Donate</string>
     <string name="about_donate_hide">Hide donate</string>
     <string name="about_donate_show">Show donate</string>
-    <string name="about_donate_title">Feel free to Donate</string>
+    <string name="about_donate_title">Feel free to donate</string>
     <string name="about_donate_1">1 Manna</string>
     <string name="about_donate_3">3 Manna</string>
     <string name="about_donate_5">5 Manna</string>
