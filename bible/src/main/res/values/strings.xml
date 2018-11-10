@@ -123,11 +123,10 @@
         <h1>Dove Bible is clearly offline, and just free.</h1>
         <p>The dove is a symbol for both meekness and purity, and the Holy Spirit descend out of the heavens and reset upon Jesus in the form of a dove. —— TPT, Matthew 3:16</p>
 
-        <p>Most modern Bible Translations (including TPT) are copyrighted to make sure that translators are fairly reimbursed for their hard work. You cannot download copyrighted Bible Translations in Dove Bible directly.<br />
-        Normally, you can just unzip <code>bibledata-&lt;lang&gt;-&lt;translation&gt;.zip</code>, and put the <code>.sqlite3</code> file into <code>&lt;SDCARD&gt;/Android/data/me.piebridge.bible/files</code>.</p>
+        <p>Most modern Bible Translations (including TPT) are copyrighted to make sure that translators are fairly reimbursed for their hard work.</p>
 
         <p>Feel free to donate, and you can refund in 1 month.<br />
-        For donation, Google Play will take 30% as Transaction fee, then at least 30% will be donate to Bible Translation copyright owner.</p>
+        For donation, Google Play will take 30% as Transaction fee, then at least 30% will be donate to Bible Translations copyright owner.</p>
 
         <p>Our Daily Bread&reg; is from <a href="https://ourdailybread.org/">Our Daily Bread Ministries</a>, and thanks them for &quot;Bible in a year&quot;.</p>
         <p>Dove Bible is developed by Jianyu Studio since 2012, and renamed in 2018. Dove Bible depends on <a href="https://developer.android.com/studio/">Android&trade; SDK</a>, <a href="https://developer.android.com/jetpack/androidx/">AndroidX</a>, some features require <a href="https://open.weixin.qq.com">Wechat SDK for Android</a>. Creative Commons License Icons (in Translations page) are from <a href="https://creativecommons.org/about/downloads/">Downloads - Creative Commons</a>.</p>

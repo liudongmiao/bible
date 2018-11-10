@@ -121,8 +121,7 @@
         <h1>如鸽圣经，真正离线，完全免费。</h1>
         <p>鸽子是温柔和纯洁的象征，圣灵曾像鸽子一样降临在耶稣身上。 —— TPT，马太福音 3:16</p>
 
-        <p>绝大部分现代圣经译本都有版权，用于补贴翻译人员的辛苦工作。您无法在如鸽圣经中直接下载受版权保护的译本。<br />
-        手动安装也比较简单，解压 <code>bibledata-&lt;lang&gt;-&lt;translation&gt;.zip</code>，把 <code>.sqlite3</code> 文件放入 <code>&lt;SDCARD&gt;/Android/data/me.piebridge.bible/files</code> 即可。</p>
+        <p>绝大部分现代圣经译本都有版权，用于补贴翻译人员的辛苦工作。</p>
 
         <p>如果喜欢，请随意奉献；如果改变主意，可 1 月内退款。<br />
         您奉献以后，Google Play 会收取 30% 交易手续费，余下部分至少 30% 会转赠给译本版权方。</p>
