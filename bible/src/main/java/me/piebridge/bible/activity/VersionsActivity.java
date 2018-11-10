@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.os.ParcelFileDescriptor;
-import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -345,8 +343,7 @@ public class VersionsActivity extends ToolbarPaymentActivity
                 boolean canDownload = canDownload(versionItem.copy);
                 if (!canDownload) {
                     showCopyright(versionItem);
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                    canDownload = sharedPreferences.getInt(AboutActivity.KEY_DONATE_AMOUNT, 0) > 0x5;
+                    canDownload = application.getAmount() > 0x5;
                 }
                 if (canDownload) {
                     downloadVersion(versionItem, action == R.string.translation_update);

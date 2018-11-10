@@ -106,6 +106,9 @@ public class AboutActivity extends ToolbarPaymentActivity {
             case R.id.action_toggle:
                 toggleShowDonate();
                 return true;
+            case android.R.id.home:
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

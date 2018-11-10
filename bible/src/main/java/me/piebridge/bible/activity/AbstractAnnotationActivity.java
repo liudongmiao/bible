@@ -120,6 +120,8 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
                 return updateSort(AnnotationComponent.SORT_TIME);
             case android.R.id.home:
                 setResult();
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
