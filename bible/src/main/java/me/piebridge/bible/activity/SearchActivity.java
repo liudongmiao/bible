@@ -14,7 +14,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -30,7 +32,8 @@ import me.piebridge.bible.utils.LogUtils;
 /**
  * Created by thom on 2018/10/19.
  */
-public class SearchActivity extends DrawerActivity implements SearchView.OnQueryTextListener, View.OnFocusChangeListener {
+public class SearchActivity extends DrawerActivity
+        implements SearchView.OnQueryTextListener, View.OnFocusChangeListener, DrawerLayout.DrawerListener {
 
     public static final String OSIS_FROM = "osisFrom";
 
@@ -86,7 +89,8 @@ public class SearchActivity extends DrawerActivity implements SearchView.OnQuery
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.search, menu);
-        return !mHasFocus;
+        menu.findItem(R.id.action_clear).setVisible(!mHasFocus);
+        return true;
     }
 
     @Override
@@ -264,8 +268,11 @@ public class SearchActivity extends DrawerActivity implements SearchView.OnQuery
     }
 
     public void hideSoftInput() {
-        mSearchView.clearFocus();
-        mHasFocus = false;
+        if (mHasFocus || mSearchView.hasFocus()) {
+            mSearchView.clearFocus();
+            mHasFocus = false;
+            invalidateOptionsMenu();
+        }
     }
 
     @Override
@@ -289,6 +296,43 @@ public class SearchActivity extends DrawerActivity implements SearchView.OnQuery
         super.onResume();
         setTitle(getString(R.string.manifest_search));
         setCheckedItem(R.id.menu_search);
+    }
+
+    @Override
+    public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+        // do nothing
+    }
+
+    @Override
+    public void onDrawerOpened(@NonNull View drawerView) {
+        // do nothing
+    }
+
+    @Override
+    public void onDrawerClosed(@NonNull View drawerView) {
+        // do nothing
+    }
+
+    @Override
+    public void onDrawerStateChanged(int newState) {
+        // tap: settling -> idle
+        // swipe: dragging -> settling -> idle
+        if (newState != DrawerLayout.STATE_IDLE) {
+            hideSoftInput();
+        }
+    }
+
+    private String state(int state) {
+        switch (state) {
+            case DrawerLayout.STATE_DRAGGING:
+                return "dragging";
+            case DrawerLayout.STATE_IDLE:
+                return "idle";
+            case DrawerLayout.STATE_SETTLING:
+                return "settling";
+            default:
+                return "unknown(" + state + ")";
+        }
     }
 
 }

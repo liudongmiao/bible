@@ -128,4 +128,7 @@
         ]]>
     </string>
 
+    <string name="drawer_open">打開抽屜菜單</string>
+    <string name="drawer_close">關閉抽屜菜單</string>
+
 </resources>

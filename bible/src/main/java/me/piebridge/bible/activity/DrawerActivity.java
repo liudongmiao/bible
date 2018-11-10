@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.IdRes;
@@ -23,6 +24,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Locale;
 
 import me.piebridge.bible.BuildConfig;
@@ -48,11 +50,8 @@ public abstract class DrawerActivity extends ToolbarActivity
 
     protected void setupDrawer() {
         drawer = findViewById(R.id.drawer);
-        if (drawerToggle == null) {
-            drawerToggle = new ActionBarDrawerToggle(this, drawer, R.string.translation_install,
-                    R.string.translation_uninstall);
-            drawer.addDrawerListener(drawerToggle);
-        }
+        drawerToggle = new BibleDrawerToggle(this, drawer);
+        drawer.addDrawerListener(drawerToggle);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -235,5 +234,50 @@ public abstract class DrawerActivity extends ToolbarActivity
         }
     }
 
+    private static class BibleDrawerToggle extends ActionBarDrawerToggle {
 
+        private final WeakReference<DrawerActivity> mReference;
+
+        public BibleDrawerToggle(DrawerActivity activity, DrawerLayout drawer) {
+            super(activity, drawer, R.string.drawer_open, R.string.drawer_close);
+            this.mReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+            super.onDrawerSlide(drawerView, slideOffset);
+            DrawerActivity drawerActivity = mReference.get();
+            if (drawerActivity instanceof DrawerLayout.DrawerListener) {
+                ((DrawerLayout.DrawerListener) drawerActivity).onDrawerSlide(drawerView, slideOffset);
+            }
+        }
+
+        @Override
+        public void onDrawerOpened(@NonNull View drawerView) {
+            super.onDrawerOpened(drawerView);
+            DrawerActivity drawerActivity = mReference.get();
+            if (drawerActivity instanceof DrawerLayout.DrawerListener) {
+                ((DrawerLayout.DrawerListener) drawerActivity).onDrawerOpened(drawerView);
+            }
+        }
+
+        @Override
+        public void onDrawerClosed(@NonNull View drawerView) {
+            super.onDrawerClosed(drawerView);
+            DrawerActivity drawerActivity = mReference.get();
+            if (drawerActivity instanceof DrawerLayout.DrawerListener) {
+                ((DrawerLayout.DrawerListener) drawerActivity).onDrawerClosed(drawerView);
+            }
+        }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
+            super.onDrawerStateChanged(newState);
+            DrawerActivity drawerActivity = mReference.get();
+            if (drawerActivity instanceof DrawerLayout.DrawerListener) {
+                ((DrawerLayout.DrawerListener) drawerActivity).onDrawerStateChanged(newState);
+            }
+        }
+
+    }
 }
