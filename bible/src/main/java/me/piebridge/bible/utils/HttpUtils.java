@@ -53,6 +53,10 @@ public class HttpUtils {
     }
 
     public static String retrieveContent(String spec, Map<String, String> headers) throws IOException {
+        return retrieveContent(spec, headers, false);
+    }
+
+    public static String retrieveContent(String spec, Map<String, String> headers, boolean head) throws IOException {
         SSLSocketFactory factory = null;
         URL url = new URL(spec);
         if (isLetsEncrypt(url)) {
@@ -64,10 +68,10 @@ public class HttpUtils {
                 throw new RuntimeException("Can't getSocketFactory", e);
             }
         }
-        return retrieveContent(url, factory, headers, 1);
+        return retrieveContent(url, factory, headers, head, 1);
     }
 
-    private static String retrieveContent(URL url, SSLSocketFactory factory, Map<String, String> headers, int count)
+    static String retrieveContent(URL url, SSLSocketFactory factory, Map<String, String> headers, boolean head, int count)
             throws IOException {
         if (count > MAX_REDIRECT) {
             return null;
@@ -83,15 +87,18 @@ public class HttpUtils {
                     connection.setRequestProperty(entry.getKey(), entry.getValue());
                 }
             }
+            if (head) {
+                connection.setRequestMethod("HEAD");
+            }
             connection.addRequestProperty("Accept-Encoding", "gzip");
             int code = connection.getResponseCode();
             LogUtils.d("url: " + url + ", code: " + code);
             if (code == STATUS_304) {
                 return null;
-            } else if (isRedirected(code)) {
+            } else if (isRedirected(code) && !head) {
                 String location = connection.getHeaderField("Location");
                 LogUtils.d("redirect to " + location);
-                return retrieveContent(new URL(location), factory, headers, count + 1);
+                return retrieveContent(new URL(location), factory, headers, false, count + 1);
             }
             String etag = connection.getHeaderField(ETAG);
             String encoding = connection.getContentEncoding();

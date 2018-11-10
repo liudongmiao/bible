@@ -96,6 +96,7 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
     private static final int UPDATE_VERSIONS = 2;
     private static final int UPDATE_ACTIONS = 3;
     private static final int ADDED_VERSION = 4;
+    private static final int CHECK_TRANSLATION = 5;
 
     private BroadcastReceiver receiver;
 
@@ -330,6 +331,7 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
                     updateActionsLater();
                 } else {
                     showCopyright(versionItem);
+                    workHandler.obtainMessage(CHECK_TRANSLATION, versionItem).sendToTarget();
                 }
                 break;
             case R.string.translation_cancel:
@@ -409,6 +411,11 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
         BibleApplication application = (BibleApplication) getApplication();
         application.download(item.filename(), force);
         updateActionsLater();
+    }
+
+    void checkTranslation(VersionItem item) {
+        BibleApplication application = (BibleApplication) getApplication();
+        application.check(item.filename());
     }
 
     private void updateActionsLater() {
@@ -574,6 +581,9 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
                     break;
                 case UPDATE_VERSIONS:
                     activity.updateVersions();
+                    break;
+                case CHECK_TRANSLATION:
+                    activity.checkTranslation((VersionItem) msg.obj);
                     break;
                 default:
                     break;

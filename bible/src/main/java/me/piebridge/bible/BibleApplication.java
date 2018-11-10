@@ -54,6 +54,10 @@ public class BibleApplication extends PaymentApplication {
         return mDownload.download(filename, force);
     }
 
+    public void check(String filename) {
+        mDownload.check(filename);
+    }
+
     public void cancelDownload(String filename) {
         mDownload.cancel(filename);
     }

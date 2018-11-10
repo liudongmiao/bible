@@ -148,19 +148,11 @@ public class DownloadComponent extends Handler {
         if (externalCacheDir == null) {
             return 0;
         }
-        StringBuilder url = new StringBuilder();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // https for 5.X
-            url.append(HTTPS);
-        } else {
-            url.append(HTTP);
-        }
-        url.append(URL_PREFIX);
-        url.append(filename);
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url.toString()));
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(buildUrl(filename)));
         request.setTitle(filename);
         File file = new File(externalCacheDir, filename);
         request.setDestinationUri(Uri.fromFile(file));
-        request.addRequestHeader(X_SDK, Integer.toString(Build.VERSION.SDK_INT)); // custom x-sdk
+        request.addRequestHeader(X_SDK, Integer.toString(Build.VERSION.SDK_INT));
         request.addRequestHeader(X_VERSION, Integer.toString(BuildConfig.VERSION_CODE));
         DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
         if (downloadManager != null) {
@@ -177,6 +169,14 @@ public class DownloadComponent extends Handler {
             }
         }
         return 0;
+    }
+
+    public void check(String filename) {
+        try {
+            HttpUtils.retrieveContent(buildUrl(filename), null, true);
+        } catch (IOException ignore) {
+            // do nothing
+        }
     }
 
     private String checkStatus(DownloadManager downloadManager, long id) {
@@ -308,6 +308,18 @@ public class DownloadComponent extends Handler {
         return FileUtils.readAsString(is);
     }
 
+    private String buildUrl(String path) {
+        StringBuilder url = new StringBuilder();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // https for 5.X
+            url.append(HTTPS);
+        } else {
+            url.append(HTTP);
+        }
+        url.append(URL_PREFIX);
+        url.append(path);
+        return url.toString();
+    }
+
     public String getRemoteVersions() throws IOException {
         final String keyEtag = "versions_etag";
 
@@ -317,17 +329,9 @@ public class DownloadComponent extends Handler {
         if (!TextUtils.isEmpty(etag)) {
             headers.put("If-None-Match", etag);
         }
-        StringBuilder url = new StringBuilder();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // https for 5.X
-            url.append(HTTPS);
-        } else {
-            url.append(HTTP);
-        }
-        url.append(URL_PREFIX);
-        url.append(TRANSLATIONS_JSON);
         headers.put(X_SDK, Integer.toString(Build.VERSION.SDK_INT)); // custom x-sdk
         headers.put(X_VERSION, Integer.toString(BuildConfig.VERSION_CODE));
-        String json = HttpUtils.retrieveContent(url.toString(), headers);
+        String json = HttpUtils.retrieveContent(buildUrl(TRANSLATIONS_JSON), headers);
         if (json == null) {
             return null;
         }
