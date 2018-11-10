@@ -22,7 +22,7 @@ public class HighlightActivity extends AbstractAnnotationActivity {
 
     @Override
     protected int getContentLayout() {
-        return R.layout.drawer_highlight;
+        return R.layout.activity_highlight;
     }
 
     @Override
@@ -32,9 +32,18 @@ public class HighlightActivity extends AbstractAnnotationActivity {
     }
 
     @Override
+    protected void onHighlightChanged() {
+        search();
+    }
+
+    @Override
+    protected void onNoteChanged() {
+        // do nothing
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        setCheckedItem(R.id.menu_highlight);
         setTitle(getString(R.string.menu_highlight));
     }
 

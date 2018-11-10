@@ -14,7 +14,7 @@ public abstract class PaymentApplication extends GenuineApplication {
 
     private String prepayId;
 
-    private int amount;
+    private int amount = -1;
 
     public final String getWxState() {
         return wxState;
@@ -55,7 +55,7 @@ public abstract class PaymentApplication extends GenuineApplication {
     }
 
     public int getAmount() {
-        return amount;
+        return this.amount;
     }
 
 }

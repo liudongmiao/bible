@@ -12,8 +12,6 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import androidx.appcompat.app.ActionBar;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,10 +29,7 @@ public class SelectVersionActivity extends ToolbarActivity implements GridAdapte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_version);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        showBack(true);
 
         BibleApplication application = (BibleApplication) getApplication();
         version = application.getVersion();

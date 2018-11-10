@@ -1,18 +1,13 @@
 package me.piebridge.payment;
 
 import android.app.DialogFragment;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.graphics.drawable.Drawable;
 import android.os.HandlerThread;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -25,9 +20,7 @@ import org.json.JSONObject;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import me.piebridge.GenuineActivity;
@@ -37,7 +30,7 @@ import me.piebridge.GenuineActivity;
  * <p>
  * Created by thom on 2017/2/9.
  */
-public abstract class PaymentActivity extends GenuineActivity implements View.OnClickListener {
+public abstract class PaymentActivity extends GenuineActivity {
 
     private static final byte[] SHA_EXPECTED = {-23, -73, -17, -27, 64, -2, -89, 121, 97, -67,
             59, -119, 71, 50, -47, -2, 119, 72, -48, 80};
@@ -50,14 +43,9 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
 
     private static final String FRAGMENT_PAYMENT_PROGRESS = "fragment_payment_progress";
 
-    private View mPayment;
-    private TextView mPaymentTip;
-
     private PlayServiceConnection activateConnection;
 
     private PlayServiceConnection paymentConnection;
-
-    private List<String> mSkus;
 
     private volatile boolean mShowPayment = true;
 
@@ -66,10 +54,6 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
     @Override
     protected void onStart() {
         super.onStart();
-        if (mPayment == null) {
-            mPayment = findViewById(R.id.payment);
-            mPaymentTip = findViewById(R.id.payment_tip);
-        }
         updatePayment();
     }
 
@@ -100,15 +84,10 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
     }
 
     public final void updatePayment() {
-        if (acceptPayment()) {
-            if (!usePlayCache()) {
-                activatePlay();
-            }
-            if (!isPlayInstaller()) {
-                activatePayment();
-            }
-        } else {
+        if (!acceptPayment()) {
             showPayment(false);
+        } else if (!usePlayCache()) {
+            activatePlay();
         }
     }
 
@@ -124,8 +103,7 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
         showPayment();
     }
 
-    void showPayment() {
-        mPayment.setVisibility(mShowPayment ? View.VISIBLE : View.GONE);
+    protected void showPayment() {
     }
 
     private synchronized void activatePlay() {
@@ -174,17 +152,6 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
         }
     }
 
-    @Override
-    @CallSuper
-    public void onClick(View v) {
-        int id = v.getId();
-        if (id == R.id.wechat) {
-            payViaWechat();
-        } else if (id == R.id.play) {
-            payViaPlay();
-        }
-    }
-
     public synchronized void payViaPlay() {
         HandlerThread thread = new HandlerThread("PaymentService");
         thread.start();
@@ -222,15 +189,6 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
         }
     }
 
-    protected void startPaymentActivity(Intent intent, String type) {
-        showPaymentDialog();
-        try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            hidePaymentDialog();
-        }
-    }
-
     void hidePaymentDialog() {
         DialogFragment fragment = (DialogFragment) getFragmentManager()
                 .findFragmentByTag(FRAGMENT_PAYMENT_PROGRESS);
@@ -242,31 +200,6 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
     private void showPaymentDialog() {
         if (!isStopped()) {
             new ProgressFragment().show(getFragmentManager(), FRAGMENT_PAYMENT_PROGRESS);
-        }
-    }
-
-    protected void activatePayment() {
-        Collection<PaymentItem> items = new ArrayList<>(0x1);
-        if (findViewById(R.id.wechat) != null
-                && WxApiActivity.init((PaymentApplication) getApplication(), getWxId()) != null) {
-            checkPackage(items, R.id.wechat, PACKAGE_WECHAT);
-        }
-        if (!items.isEmpty()) {
-            mPaymentTip.setText(R.string.payment);
-            new PaymentTask(this).execute(items.toArray(new PaymentItem[items.size()]));
-        }
-    }
-
-    private void checkPackage(Collection<PaymentItem> items, int resId, String packageName) {
-        Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
-        if (intent != null) {
-            PaymentItem item = new PaymentItem();
-            item.intent = intent;
-            item.imageView = findViewById(resId);
-            item.imageView.setOnClickListener(this);
-            if (items != null) {
-                items.add(item);
-            }
         }
     }
 
@@ -284,6 +217,8 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
 
     protected abstract BigInteger getPlayModulus();
 
+    protected abstract String getSku();
+
     protected boolean acceptPayment() {
         return true;
     }
@@ -299,22 +234,6 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
     @CallSuper
     public void showPlay(@Nullable Collection<String> purchased) {
         unbindActivateService();
-        if (purchased == null) {
-            if (isPlayInstaller()) {
-                mPaymentTip.setText(R.string.payment_play_unavailable);
-                mPayment.setVisibility(View.GONE);
-            }
-        } else if (canPayViaPlay(purchased)) {
-            Collection<PaymentItem> items = new ArrayList<>(0x1);
-            checkPackage(items, R.id.play, PACKAGE_PLAY);
-            if (!items.isEmpty()) {
-                mPaymentTip.setText(R.string.payment);
-                new PaymentTask(this).execute(items.toArray(new PaymentItem[items.size()]));
-            } else if (isPlayInstaller()) {
-                mPaymentTip.setText(R.string.payment_play_unavailable);
-                mPayment.setVisibility(View.GONE);
-            }
-        }
     }
 
     protected String getTag() {
@@ -323,34 +242,7 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
 
     @CallSuper
     public void showPlayCheck() {
-        if (isPlayInstaller()) {
-            mPaymentTip.setText(R.string.payment_play_checking);
-            findViewById(R.id.play).setVisibility(View.GONE);
-        }
-    }
 
-    protected abstract List<String> getAllSkus();
-
-    @NonNull
-    protected List<String> getPlaySkus() {
-        if (mSkus == null) {
-            mSkus = getAllSkus();
-        }
-        return mSkus;
-    }
-
-    protected boolean canPayViaPlay(Collection<String> purchased) {
-        if (mSkus == null) {
-            mSkus = getAllSkus();
-        }
-        Iterator<String> iterator = mSkus.iterator();
-        while (iterator.hasNext()) {
-            String next = iterator.next();
-            if (purchased.contains(next)) {
-                iterator.remove();
-            }
-        }
-        return !mSkus.isEmpty();
     }
 
     public synchronized void unbindService() {
@@ -364,16 +256,6 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
         } catch (IntentSender.SendIntentException e) {
             Log.w(getTag(), "Can't pay", e);
         }
-    }
-
-    public String getSku() {
-        List<String> skus = new ArrayList<>(getPlaySkus());
-        for (String sku : skus) {
-            if (mSkus.contains(sku)) {
-                return sku;
-            }
-        }
-        return mSkus.get(0);
     }
 
     @NonNull
@@ -449,12 +331,4 @@ public abstract class PaymentActivity extends GenuineActivity implements View.On
     private static boolean isEmpty(List<String> collection) {
         return collection == null || collection.isEmpty();
     }
-
-    static class PaymentItem {
-        Intent intent;
-        Drawable icon;
-        CharSequence label;
-        ImageView imageView;
-    }
-
 }

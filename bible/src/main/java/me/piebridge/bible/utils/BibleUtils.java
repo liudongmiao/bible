@@ -1,6 +1,7 @@
 package me.piebridge.bible.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import me.piebridge.bible.BuildConfig;
 import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.AbstractReadingActivity;
@@ -162,6 +164,19 @@ public class BibleUtils {
             if (TextUtils.isEmpty(item.chapter)) {
                 it.remove();
             }
+        }
+    }
+
+    public static void startLauncher(Context context, Bundle bundle) {
+        Intent launcher = context.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID);
+        if (launcher != null) {
+            Intent intent = new Intent();
+            intent.setComponent(launcher.getComponent());
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            if (bundle != null) {
+                intent.putExtras(bundle);
+            }
+            context.startActivity(intent);
         }
     }
 

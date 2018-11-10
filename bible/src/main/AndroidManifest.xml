@@ -39,7 +39,6 @@
             android:name=".activity.VersionsActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:label="@string/manifest_translation"
-            android:parentActivityName=".Chapter"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="me.piebridge.bible.intent.action.DOWNLOAD" />
@@ -67,22 +66,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/zip" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Chapter" />
         </activity>
 
         <activity
             android:name=".activity.ReadingItemsActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
-            android:parentActivityName=".activity.SearchActivity"
-            android:theme="@style/light">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.SearchActivity" />
-        </activity>
+            android:theme="@style/light" />
 
         <activity
             android:name=".activity.ReadingCrossActivity"
@@ -93,40 +83,24 @@
             android:name=".activity.SelectActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
-            android:parentActivityName=".Chapter"
-            android:theme="@style/light">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Chapter" />
-        </activity>
+            android:theme="@style/light" />
 
         <activity
             android:name=".activity.SelectVersionActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
-            android:parentActivityName=".Chapter"
-            android:theme="@style/light">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Chapter" />
-        </activity>
+            android:theme="@style/light" />
 
         <activity
             android:name=".activity.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:label="@string/manifest_settings"
-            android:parentActivityName=".Chapter"
-            android:theme="@style/light">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Chapter" />
-        </activity>
+            android:theme="@style/light" />
 
         <activity
             android:name=".activity.SearchActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:label="@string/manifest_search"
-            android:parentActivityName=".Chapter"
             android:theme="@style/light"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -194,77 +168,43 @@
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Chapter" />
         </activity>
 
         <activity
             android:name=".activity.ResultsActivity"
-            android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:parentActivityName=".activity.SearchActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.SearchActivity" />
-        </activity>
+            android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
 
         <activity
             android:name=".activity.HighlightActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="@string/menu_highlight"
-            android:parentActivityName=".Chapter"
-            android:theme="@style/light">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Chapter" />
-        </activity>
+            android:theme="@style/light" />
 
         <activity
             android:name=".activity.NotesActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="@string/menu_notes"
-            android:parentActivityName=".Chapter"
-            android:theme="@style/light">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Chapter" />
-        </activity>
+            android:theme="@style/light" />
 
         <activity
             android:name=".activity.WebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
-            android:parentActivityName=".Chapter"
-            android:theme="@style/light">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Chapter" />
-        </activity>
+            android:theme="@style/light" />
 
         <activity
             android:name=".activity.PlanActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
-            android:parentActivityName=".Chapter"
-            android:theme="@style/light">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Chapter" />
-        </activity>
+            android:theme="@style/light" />
 
         <activity
             android:name=".activity.AboutActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
-            android:parentActivityName=".Chapter"
-            android:theme="@style/light">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Chapter" />
-        </activity>
+            android:theme="@style/light" />
 
         <provider
             android:name=".provider.VersionProvider"

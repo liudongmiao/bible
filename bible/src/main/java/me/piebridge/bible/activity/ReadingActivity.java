@@ -49,6 +49,7 @@ public class ReadingActivity extends AbstractReadingActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        LogUtils.d("ReadingActivity, onCreate");
         selectVersion(getIntent());
         super.onCreate(savedInstanceState);
         receiver = new Receiver(this);
@@ -168,14 +169,14 @@ public class ReadingActivity extends AbstractReadingActivity {
     }
 
     @Override
-    protected void openSettings() {
-        Intent intent = new Intent(this, SettingsActivity.class);
-        ReadingFragment currentFragment = getCurrentFragment();
-        if (currentFragment != null) {
-            intent.putExtra(WEBVIEW_DATA, FileUtils.compress(currentFragment.getBody()));
+    public void startActivityForResult(Intent intent, int requestCode) {
+        if (requestCode == REQUEST_CODE_SETTINGS) {
+            ReadingFragment currentFragment = getCurrentFragment();
+            if (currentFragment != null) {
+                intent.putExtra(WEBVIEW_DATA, FileUtils.compress(currentFragment.getBody()));
+            }
         }
-
-        startActivityForResult(intent, REQUEST_CODE_SETTINGS);
+        super.startActivityForResult(intent, requestCode);
     }
 
     @Override
@@ -186,12 +187,18 @@ public class ReadingActivity extends AbstractReadingActivity {
                 LogUtils.d("settings changed, refresh");
                 refresh();
             }
+        } else if (requestCode == REQUEST_CODE_ANNOTATION && data != null) {
+            if (data.getBooleanExtra(NOTE_CHANGED, false) || data.getBooleanExtra(HIGHLIGHT_CHANGED, false)) {
+                LogUtils.d("annotation changed, refresh");
+                refresh();
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
-    public void onNewIntent(Intent intent) {
+    public void onNewIntent(Intent intent) { // from VersionsActivity
+        LogUtils.d("onNewIntent: intent: " + intent);
         super.onNewIntent(intent);
         if (selectVersion(intent)) {
             refreshAdapter();

@@ -14,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -32,8 +31,7 @@ import me.piebridge.bible.utils.LogUtils;
 /**
  * Created by thom on 2018/10/19.
  */
-public class SearchActivity extends DrawerActivity
-        implements SearchView.OnQueryTextListener, View.OnFocusChangeListener, DrawerLayout.DrawerListener {
+public class SearchActivity extends ToolbarActivity implements SearchView.OnQueryTextListener, View.OnFocusChangeListener {
 
     public static final String OSIS_FROM = "osisFrom";
 
@@ -53,9 +51,10 @@ public class SearchActivity extends DrawerActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LogUtils.d("SearchActivity, onCreate");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.drawer_search);
-        setupDrawer();
+        setContentView(R.layout.activity_search);
+        showBack(true);
 
         mSuggestions = new SearchRecentSuggestions(this,
                 SearchProvider.AUTHORITY, SearchProvider.MODE);
@@ -80,6 +79,7 @@ public class SearchActivity extends DrawerActivity
 
     @Override
     protected void onNewIntent(Intent intent) {
+        LogUtils.d("SearchActivity, onNewIntent");
         super.onNewIntent(intent);
         setIntent(intent);
         handleIntent(intent);
@@ -295,31 +295,6 @@ public class SearchActivity extends DrawerActivity
     public void onResume() {
         super.onResume();
         setTitle(getString(R.string.manifest_search));
-        setCheckedItem(R.id.menu_search);
-    }
-
-    @Override
-    public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-        // do nothing
-    }
-
-    @Override
-    public void onDrawerOpened(@NonNull View drawerView) {
-        // do nothing
-    }
-
-    @Override
-    public void onDrawerClosed(@NonNull View drawerView) {
-        // do nothing
-    }
-
-    @Override
-    public void onDrawerStateChanged(int newState) {
-        // tap: settling -> idle
-        // swipe: dragging -> settling -> idle
-        if (newState != DrawerLayout.STATE_IDLE) {
-            hideSoftInput();
-        }
     }
 
     private String state(int state) {
@@ -334,5 +309,4 @@ public class SearchActivity extends DrawerActivity
                 return "unknown(" + state + ")";
         }
     }
-
 }

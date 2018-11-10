@@ -3,13 +3,12 @@ package me.piebridge.bible.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import androidx.appcompat.app.ActionBar;
 
 import java.util.List;
 
@@ -34,14 +33,14 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
     private Spinner spinner;
     private TextView itemsView;
 
+    private boolean mNoteChanged;
+    private boolean mHighlightChanged;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         initItems();
         super.onCreate(savedInstanceState);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        showBack(true);
     }
 
     protected void initItems() {
@@ -187,6 +186,48 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         } else {
             super.onClick(v);
         }
+    }
+
+    @Override
+    public void saveNotes(long id, String verses, String content) {
+        super.saveNotes(id, verses, content);
+        mNoteChanged = true;
+    }
+
+    @Override
+    public void deleteNote(long id, String verses) {
+        super.deleteNote(id, verses);
+        mNoteChanged = true;
+    }
+
+    @Override
+    public void saveHighlight(String verses) {
+        super.saveHighlight(verses);
+        mHighlightChanged = true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                setResult();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void finish() {
+        setResult();
+        super.finish();
+    }
+
+    private void setResult() {
+        Intent data = new Intent();
+        data.putExtra(NOTE_CHANGED, mNoteChanged);
+        data.putExtra(HIGHLIGHT_CHANGED, mHighlightChanged);
+        LogUtils.d("set result, data: " + data.getExtras());
+        setResult(RESULT_OK, data);
     }
 
 }

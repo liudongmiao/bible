@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.widget.CompoundButton;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -56,10 +55,7 @@ public class SelectActivity extends ToolbarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        showBack(true);
 
         Intent intent = getIntent();
 

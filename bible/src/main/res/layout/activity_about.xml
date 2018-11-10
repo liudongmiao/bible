@@ -26,8 +26,4 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <include
-        layout="@layout/payment"
-        android:visibility="gone" />
-
 </LinearLayout>

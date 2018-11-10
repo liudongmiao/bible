@@ -41,10 +41,13 @@ import me.piebridge.bible.utils.LocaleUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
+import static me.piebridge.bible.activity.AbstractReadingActivity.HIGHLIGHT_CHANGED;
+import static me.piebridge.bible.activity.AbstractReadingActivity.NOTE_CHANGED;
+
 /**
  * Created by thom on 2018/11/6.
  */
-public abstract class AbstractAnnotationActivity extends DrawerActivity implements View.OnClickListener,
+public abstract class AbstractAnnotationActivity extends ToolbarActivity implements View.OnClickListener,
         SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
     private static final String KEY_SORT_ANNOTATION = "sort_annoation";
@@ -53,6 +56,11 @@ public abstract class AbstractAnnotationActivity extends DrawerActivity implemen
     private static final int RESULT = 1;
 
     private static final int REQUEST_CODE_VERSION = 1002;
+
+    private static final int REQUEST_CODE_ANNOTATION = 1003;
+
+    private boolean mNoteChanged;
+    private boolean mHighlightChanged;
 
     private String mQuery;
 
@@ -67,6 +75,7 @@ public abstract class AbstractAnnotationActivity extends DrawerActivity implemen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getContentLayout());
+        showBack(true);
 
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -86,18 +95,6 @@ public abstract class AbstractAnnotationActivity extends DrawerActivity implemen
         mainHandler = new MainHandler(this);
         workHandler = new WorkHandler(this);
 
-        setupDrawer();
-        handleIntent();
-    }
-
-    @Override
-    public void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        handleIntent();
-    }
-
-    private void handleIntent() {
         updateVersion();
         search();
     }
@@ -121,10 +118,25 @@ public abstract class AbstractAnnotationActivity extends DrawerActivity implemen
                 return updateSort(AnnotationComponent.SORT_BOOK);
             case R.id.action_sort_by_time:
                 return updateSort(AnnotationComponent.SORT_TIME);
+            case android.R.id.home:
+                setResult();
             default:
-                break;
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void finish() {
+        setResult();
+        super.finish();
+    }
+
+    private void setResult() {
+        Intent data = new Intent();
+        data.putExtra(NOTE_CHANGED, mNoteChanged);
+        data.putExtra(HIGHLIGHT_CHANGED, mHighlightChanged);
+        LogUtils.d("set result, data: " + data.getExtras());
+        setResult(RESULT_OK, data);
     }
 
     private boolean updateSort(String newSort) {
@@ -138,6 +150,7 @@ public abstract class AbstractAnnotationActivity extends DrawerActivity implemen
     }
 
     protected void search() {
+        LogUtils.d(getClass().getSimpleName() + ", search");
         workHandler.sendEmptyMessage(SEARCH);
     }
 
@@ -151,6 +164,7 @@ public abstract class AbstractAnnotationActivity extends DrawerActivity implemen
     }
 
     protected void showResult(Cursor cursor) {
+        LogUtils.d(getClass().getSimpleName() + ", showResult");
         if (cursor == null) {
             if (recyclerView.getItemDecorationCount() > 0) {
                 recyclerView.removeItemDecoration(itemDecoration);
@@ -206,6 +220,7 @@ public abstract class AbstractAnnotationActivity extends DrawerActivity implemen
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        LogUtils.d("requestCode: " + requestCode + ", resultCode: " + resultCode);
         if (requestCode == REQUEST_CODE_VERSION && data != null) {
             BibleApplication application = (BibleApplication) getApplication();
             String version = data.getStringExtra(AbstractReadingActivity.VERSION);
@@ -215,8 +230,26 @@ public abstract class AbstractAnnotationActivity extends DrawerActivity implemen
                     search();
                 }
             }
+        } else if (requestCode == REQUEST_CODE_ANNOTATION && data != null) {
+            Bundle extras = data.getExtras();
+            if (extras != null) {
+                extras.size();
+                LogUtils.d("extra: " + extras);
+            }
+            if (data.getBooleanExtra(NOTE_CHANGED, false)) {
+                mNoteChanged = true;
+                onNoteChanged();
+            }
+            if (data.getBooleanExtra(HIGHLIGHT_CHANGED, false)) {
+                mHighlightChanged = true;
+                onHighlightChanged();
+            }
         }
     }
+
+    protected abstract void onHighlightChanged();
+
+    protected abstract void onNoteChanged();
 
     private void showItem(OsisItem item) {
         Intent intent = new Intent(this, ReadingItemsActivity.class);
@@ -231,7 +264,7 @@ public abstract class AbstractAnnotationActivity extends DrawerActivity implemen
             items.add(item);
         }
         intent.putParcelableArrayListExtra(ReadingItemsActivity.ITEMS, items);
-        startActivity(setFinished(intent, false));
+        startActivityForResult(setFinished(intent, false), REQUEST_CODE_ANNOTATION);
     }
 
     @Override

@@ -13,21 +13,16 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.collection.ArraySet;
 
-import org.json.JSONObject;
-
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import me.piebridge.bible.BibleApplication;
-import me.piebridge.bible.BuildConfig;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.DonateFragment;
 import me.piebridge.bible.utils.DeprecationUtils;
 import me.piebridge.bible.utils.HideApiWrapper;
 import me.piebridge.bible.utils.LogUtils;
-import me.piebridge.payment.NetworkResponse;
 
 public class AboutActivity extends ToolbarPaymentActivity {
 
@@ -47,8 +42,8 @@ public class AboutActivity extends ToolbarPaymentActivity {
             'o', 'p', 'e', 'r', 'a', 't', 'o', 'r', '.', 'n', 'u', 'm', 'e', 'r', 'i', 'c'
     });
 
-    private static final String KEY_DONATE_SHOW = "donate_show";
-    private static final String KEY_DONATE_AMOUNT = "donate_amount";
+    static final String KEY_DONATE_SHOW = "donate_show";
+    static final String KEY_DONATE_AMOUNT = "donate_amount";
 
     private boolean mPlayAvailable;
 
@@ -117,64 +112,24 @@ public class AboutActivity extends ToolbarPaymentActivity {
     }
 
     @Override
-    protected String getWxId() {
-        return null;
-    }
-
-    @Override
-    protected NetworkResponse loginWechat(String wxCode) {
-        return null;
-    }
-
-    @Override
-    protected void onWechatLogin(JSONObject login) {
-
-    }
-
-    @Override
-    protected NetworkResponse makeWechatPrepay() {
-        return null;
-    }
-
-    @Override
-    protected NetworkResponse checkWechatPayment(String prepayId) {
-        return null;
-    }
-
-    @Override
-    protected void onWechatPayment(JSONObject wechat) {
-
-    }
-
-    @Override
-    protected BigInteger getPlayModulus() {
-        return new BigInteger(1, BuildConfig.PLAY);
-    }
-
-    @Override
     public void showPlay(@Nullable Collection<String> purchased) {
         super.showPlay(purchased);
         LogUtils.d("showPlay, purchased: " + purchased);
         mPurchased.clear();
-        int amount = 0;
-        BibleApplication application = (BibleApplication) getApplication();
         if (purchased != null) {
             mPurchased.addAll(purchased);
-            invalidateOptionsMenu();
-            for (String s : purchased) {
-                amount += parse(s);
-            }
+            BibleApplication application = (BibleApplication) getApplication();
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             int oldAmount = sharedPreferences.getInt(KEY_DONATE_AMOUNT, 0);
+            int amount = application.getAmount();
             LogUtils.d("amount: " + amount);
-            if (oldAmount != amount) {
+            if (amount > 0 && oldAmount != amount) {
                 String text = getString(R.string.about_donate_play, amount);
                 LogUtils.d("toast: " + text);
                 Toast.makeText(this, text, Toast.LENGTH_LONG).show();
                 sharedPreferences.edit().putInt(KEY_DONATE_AMOUNT, amount).apply();
             }
         }
-        application.setAmount(amount);
         boolean playAvailable = purchased != null;
         if (playAvailable != mPlayAvailable) {
             mPlayAvailable = playAvailable;
@@ -182,35 +137,9 @@ public class AboutActivity extends ToolbarPaymentActivity {
         }
     }
 
-    static int parse(String p) {
-        int i = p.indexOf('_');
-        if (i > 0) {
-            String t = p.substring(i + 1);
-            if (t.length() > 0) {
-                try {
-                    return Integer.parseInt(t);
-                } catch (NumberFormatException ignore) {
-                    // do nothing
-                }
-            }
-        }
-        return 0;
-    }
-
     @Override
     protected boolean usePlayCache() {
         return false;
-    }
-
-    @Override
-    protected List<String> getAllSkus() {
-        List<String> skus = new ArrayList<>();
-        int[] vv = new int[] {1, 3, 5};
-        for (int v : vv) {
-            skus.addAll(getSkus(v));
-        }
-        LogUtils.d("skus: " + skus);
-        return skus;
     }
 
     private List<String> getSkus(int v) {

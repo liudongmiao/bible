@@ -30,6 +30,7 @@ import java.util.Locale;
 import me.piebridge.bible.BuildConfig;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.FeedbackFragment;
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LocaleUtils;
 
 /**
@@ -39,6 +40,8 @@ public abstract class DrawerActivity extends ToolbarActivity
         implements NavigationView.OnNavigationItemSelectedListener, ReportAsyncTask.Report {
 
     static final int REQUEST_CODE_SETTINGS = 1190;
+
+    static final int REQUEST_CODE_ANNOTATION = 1191;
 
     private static final int DELAY = 250;
 
@@ -81,42 +84,48 @@ public abstract class DrawerActivity extends ToolbarActivity
     protected void navigate(final int itemId) {
         switch (itemId) {
             case R.id.menu_reading:
-                onSupportNavigateUp();
+                BibleUtils.startLauncher(this, null);
                 break;
             case R.id.menu_search:
-                startActivity(new Intent(this, SearchActivity.class));
+                startActivity(SearchActivity.class);
                 break;
             case R.id.menu_highlight:
-                startActivity(new Intent(this, HighlightActivity.class));
+                startActivityForResult(HighlightActivity.class, REQUEST_CODE_ANNOTATION);
                 break;
             case R.id.menu_notes:
-                startActivity(new Intent(this, NotesActivity.class));
+                startActivityForResult(NotesActivity.class, REQUEST_CODE_ANNOTATION);
                 break;
             case R.id.menu_odb:
-                startActivity(new Intent(this, WebViewActivity.class));
+                startActivity(WebViewActivity.class);
                 break;
             case R.id.menu_plan:
-                startActivity(new Intent(this, PlanActivity.class));
-                break;
-            case R.id.menu_settings:
-                openSettings();
+                startActivity(PlanActivity.class);
                 break;
             case R.id.menu_download:
-                startActivity(new Intent(this, VersionsActivity.class));
+                startActivity(VersionsActivity.class);
+                break;
+            case R.id.menu_settings:
+                startActivityForResult(SettingsActivity.class, REQUEST_CODE_SETTINGS);
                 break;
             case R.id.menu_feedback:
                 new FeedbackFragment().show(getSupportFragmentManager(), "fragment-feedback");
                 break;
             case R.id.menu_about:
-                startActivity(new Intent(this, AboutActivity.class));
+                startActivity(AboutActivity.class);
                 break;
             default:
                 break;
         }
     }
 
-    protected void openSettings() {
-        startActivityForResult(new Intent(this, SettingsActivity.class), REQUEST_CODE_SETTINGS);
+    private void startActivity(Class<?> clazz) {
+        startActivityForResult(clazz, -1);
+    }
+
+    private void startActivityForResult(Class<?> clazz, int code) {
+        Intent intent = new Intent(this, clazz);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivityForResult(intent, code);
     }
 
     @Override

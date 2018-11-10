@@ -26,18 +26,12 @@ public class PlanActivity extends ReadingItemsActivity {
 
     SimpleArrayMap<Integer, String> mPlans;
 
-    private boolean drawerSetup;
-
     private Calendar mCalendar;
 
     private TextView mDate;
 
     @Override
     protected void initializeHeader(View header) {
-        if (!drawerSetup) {
-            setupDrawer();
-            drawerSetup = true;
-        }
         super.initializeHeader(header);
         mDate = header.findViewById(R.id.plan_date);
         updateDate();
@@ -45,7 +39,7 @@ public class PlanActivity extends ReadingItemsActivity {
 
     @Override
     protected int getContentLayout() {
-        return R.layout.drawer_plan;
+        return R.layout.activity_plan;
     }
 
     @Override

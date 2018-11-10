@@ -12,7 +12,7 @@ public class NotesActivity extends AbstractAnnotationActivity {
 
     @Override
     protected int getContentLayout() {
-        return R.layout.drawer_notes;
+        return R.layout.activity_notes;
     }
 
     @Override
@@ -22,9 +22,18 @@ public class NotesActivity extends AbstractAnnotationActivity {
     }
 
     @Override
+    protected void onHighlightChanged() {
+        // do nothing
+    }
+
+    @Override
+    protected void onNoteChanged() {
+        search();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        setCheckedItem(R.id.menu_notes);
         setTitle(getString(R.string.menu_notes));
     }
 

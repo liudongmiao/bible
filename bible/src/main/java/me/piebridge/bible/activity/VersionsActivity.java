@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.os.ParcelFileDescriptor;
+import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -63,6 +65,7 @@ import me.piebridge.bible.R;
 import me.piebridge.bible.component.DownloadComponent;
 import me.piebridge.bible.fragment.CopyrightFragment;
 import me.piebridge.bible.fragment.DeleteVersionConfirmFragment;
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.DeprecationUtils;
 import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LocaleUtils;
@@ -70,7 +73,7 @@ import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
-public class VersionsActivity extends DrawerActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener,
+public class VersionsActivity extends ToolbarPaymentActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener,
         View.OnClickListener {
 
     private static final int CC_UNKNOWN = 0;
@@ -102,9 +105,10 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LogUtils.d("VersionsActivity, onCreate");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.drawer_versions);
-        setupDrawer();
+        setContentView(R.layout.activity_versions);
+        showBack(true);
 
         versionsAdaper = new VersionAdapter(this);
 
@@ -134,6 +138,7 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
 
     @Override
     public void onNewIntent(Intent intent) {
+        LogUtils.d("VersionsActivity, onNewIntent");
         super.onNewIntent(intent);
         handleIntent(intent);
     }
@@ -330,8 +335,10 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
                 boolean canDownload = canDownload(versionItem.copy);
                 if (!canDownload) {
                     showCopyright(versionItem);
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                    canDownload = sharedPreferences.getInt(AboutActivity.KEY_DONATE_AMOUNT, 0) > 0x5;
                 }
-                if (canDownload || application.getAmount() >= 0x5) {
+                if (canDownload) {
                     downloadVersion(versionItem, action == R.string.translation_update);
                 } else {
                     workHandler.obtainMessage(CHECK_TRANSLATION, versionItem).sendToTarget();
@@ -350,15 +357,9 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
     }
 
     private void launchVersion(String version) {
-        Intent parentIntent = super.getSupportParentActivityIntent();
-        if (parentIntent != null) {
-            Intent intent = new Intent();
-            intent.setComponent(parentIntent.getComponent());
-            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra(AbstractReadingActivity.VERSION, version);
-            LogUtils.d("launch 2, intent: " + intent);
-            startActivity(intent);
-        }
+        Bundle bundle = new Bundle();
+        bundle.putString(AbstractReadingActivity.VERSION, version);
+        BibleUtils.startLauncher(this, bundle);
     }
 
     @Override
@@ -375,6 +376,11 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
         workHandler.removeCallbacksAndMessages(null);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onStop();
+    }
+
+    @Override
+    protected String getSku() {
+        return null;
     }
 
     @WorkerThread
@@ -498,7 +504,6 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
     @Override
     public void onResume() {
         super.onResume();
-        setCheckedItem(R.id.menu_download);
         if (mSearchView == null || mSearchView.isIconified()) {
             updateTitle();
         }

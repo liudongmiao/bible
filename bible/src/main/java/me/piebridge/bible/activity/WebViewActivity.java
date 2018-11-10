@@ -32,7 +32,7 @@ import me.piebridge.bible.utils.ObjectUtils;
 /**
  * Created by thom on 2018/11/7.
  */
-public class WebViewActivity extends DrawerActivity implements AppBarLayout.OnOffsetChangedListener {
+public class WebViewActivity extends ToolbarActivity implements AppBarLayout.OnOffsetChangedListener {
 
     private WebView webView;
 
@@ -50,8 +50,9 @@ public class WebViewActivity extends DrawerActivity implements AppBarLayout.OnOf
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.drawer_webview);
-        setupDrawer();
+        setContentView(R.layout.activity_webview);
+        showBack(true);
+
         AppBarLayout appBarLayout = findViewById(R.id.appbar);
         if (appBarLayout != null) {
             appBarLayout.addOnOffsetChangedListener(this);
@@ -104,7 +105,6 @@ public class WebViewActivity extends DrawerActivity implements AppBarLayout.OnOf
     @Override
     public void onResume() {
         super.onResume();
-        setCheckedItem(R.id.menu_odb);
         if (loading && currentDate != null) {
             updateTitle();
         }

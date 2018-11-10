@@ -52,6 +52,9 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         implements ReadingBridge.Bridge, View.OnClickListener, ViewPager.OnPageChangeListener,
         AppBarLayout.OnOffsetChangedListener {
 
+    public static final String NOTE_CHANGED = "note_changed";
+    public static final String HIGHLIGHT_CHANGED = "highlight_changed";
+
     private ActionMode actionMode;
 
     public static final String CSS = "css";
