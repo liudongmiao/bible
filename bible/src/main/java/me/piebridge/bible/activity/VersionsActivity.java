@@ -323,19 +323,21 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
 
     private void onClickAction(VersionItem versionItem) {
         int action = versionItem.action;
+        BibleApplication application = (BibleApplication) getApplication();
         switch (action) {
             case R.string.translation_install:
             case R.string.translation_update:
-                if (canDownload(versionItem.copy)) {
-                    downloadVersion(versionItem, action == R.string.translation_update);
-                    updateActionsLater();
-                } else {
+                boolean canDownload = canDownload(versionItem.copy);
+                if (!canDownload) {
                     showCopyright(versionItem);
+                }
+                if (canDownload || application.getAmount() >= 0x5) {
+                    downloadVersion(versionItem, action == R.string.translation_update);
+                } else {
                     workHandler.obtainMessage(CHECK_TRANSLATION, versionItem).sendToTarget();
                 }
                 break;
             case R.string.translation_cancel:
-                BibleApplication application = (BibleApplication) getApplication();
                 application.cancelDownload(versionItem.filename());
                 updateActionsLater();
                 break;

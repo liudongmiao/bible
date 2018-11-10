@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.BuildConfig;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.DonateFragment;
@@ -69,7 +70,7 @@ public class AboutActivity extends ToolbarPaymentActivity {
     @Override
     public void onResume() {
         super.onResume();
-        setTitle(getString(R.string.menu_about));
+        setTitle(getString(R.string.about_about));
     }
 
     @Override
@@ -79,7 +80,7 @@ public class AboutActivity extends ToolbarPaymentActivity {
         MenuItem toggle = menu.findItem(R.id.action_toggle);
         if (shouldShowDonate()) {
             toggle.setTitle(R.string.about_donate_hide);
-            donate.setVisible(mPlayAvailable);
+            donate.setVisible(mPlayAvailable && canPlay());
         } else {
             toggle.setTitle(R.string.about_donate_show);
             donate.setVisible(false);
@@ -155,10 +156,11 @@ public class AboutActivity extends ToolbarPaymentActivity {
         super.showPlay(purchased);
         LogUtils.d("showPlay, purchased: " + purchased);
         mPurchased.clear();
+        int amount = 0;
+        BibleApplication application = (BibleApplication) getApplication();
         if (purchased != null) {
             mPurchased.addAll(purchased);
             invalidateOptionsMenu();
-            int amount = 0;
             for (String s : purchased) {
                 amount += parse(s);
             }
@@ -172,6 +174,7 @@ public class AboutActivity extends ToolbarPaymentActivity {
                 sharedPreferences.edit().putInt(KEY_DONATE_AMOUNT, amount).apply();
             }
         }
+        application.setAmount(amount);
         boolean playAvailable = purchased != null;
         if (playAvailable != mPlayAvailable) {
             mPlayAvailable = playAvailable;
@@ -265,6 +268,10 @@ public class AboutActivity extends ToolbarPaymentActivity {
 
     @Override
     protected boolean isPlayAvailable() {
+        return true;
+    }
+
+    private boolean canPlay() {
         if ("true".equals(HideApiWrapper.getProperty(KEY_PLAY, ""))) {
             return true;
         }
