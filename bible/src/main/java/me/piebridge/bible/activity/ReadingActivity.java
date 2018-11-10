@@ -49,6 +49,7 @@ public class ReadingActivity extends AbstractReadingActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        selectVersion(getIntent());
         super.onCreate(savedInstanceState);
         receiver = new Receiver(this);
     }
@@ -192,12 +193,18 @@ public class ReadingActivity extends AbstractReadingActivity {
     @Override
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if (selectVersion(intent)) {
+            refreshAdapter();
+        }
+    }
+
+    private boolean selectVersion(Intent intent) {
         String version = intent.getStringExtra(AbstractReadingActivity.VERSION);
         if (!TextUtils.isEmpty(version) && !ObjectUtils.equals(version, getCurrentVersion())) {
             BibleApplication application = (BibleApplication) getApplication();
-            if (application.setVersion(version)) {
-                refreshAdapter();
-            }
+            return application.setVersion(version);
+        } else {
+            return false;
         }
     }
 

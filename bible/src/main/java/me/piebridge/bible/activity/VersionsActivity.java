@@ -350,11 +350,14 @@ public class VersionsActivity extends DrawerActivity implements SearchView.OnQue
     }
 
     private void launchVersion(String version) {
-        Intent intent = super.getSupportParentActivityIntent();
-        if (intent != null) {
+        Intent parentIntent = super.getSupportParentActivityIntent();
+        if (parentIntent != null) {
+            Intent intent = new Intent();
+            intent.setComponent(parentIntent.getComponent());
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra(AbstractReadingActivity.VERSION, version);
+            LogUtils.d("launch 2, intent: " + intent);
             startActivity(intent);
-            finish();
         }
     }
 
