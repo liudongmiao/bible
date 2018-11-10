@@ -1,0 +1,30 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+task addFiles {
+    doLast {
+        rootProject.hiddenApi.from fileTree('build/intermediates').include('**/release/**.jar')
+    }
+}
+
+afterEvaluate {
+    assembleRelease.finalizedBy addFiles
+}
+
+dependencies {
+    // implementation "com.android.support:support-annotations:${rootProject.supportLibraryVersion}"
+}
