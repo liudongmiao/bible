@@ -161,7 +161,7 @@ public class WebViewActivity extends ToolbarActivity implements AppBarLayout.OnO
         }
         Intent intent = new Intent(this, ReadingItemsActivity.class);
         intent.putParcelableArrayListExtra(ReadingItemsActivity.ITEMS, items);
-        startActivity(setFinished(intent, false));
+        startActivity(intent);
     }
 
     void onPageFinished(String title) {

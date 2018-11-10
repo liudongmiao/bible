@@ -211,6 +211,8 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         switch (item.getItemId()) {
             case android.R.id.home:
                 setResult();
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

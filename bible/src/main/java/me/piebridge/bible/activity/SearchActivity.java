@@ -99,10 +99,29 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
             case R.id.action_clear:
                 mSuggestions.clearHistory();
                 return true;
+            case android.R.id.home:
+                BibleUtils.startLauncher(this, null);
+                finish();
+                return true;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isShortcut()) {
+            BibleUtils.startLauncher(this, null);
+            finish();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private boolean isShortcut() {
+        Intent intent = getIntent();
+        return intent.getAction() != null || parseQuery(intent) != null;
     }
 
     @Override
@@ -124,11 +143,11 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         return false;
     }
 
-    private void doSearch(String query, boolean auto, Uri data) {
+    private void doSearch(String query, boolean finished, Uri data) {
         mSuggestions.saveRecentQuery(query, null);
 
         ArrayList<OsisItem> items;
-        if (auto) {
+        if (finished) {
             items = new ArrayList<>();
         } else {
             items = OsisItem.parseSearch(query, (BibleApplication) getApplication());
@@ -142,14 +161,14 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
             intent.putExtra(SearchManager.QUERY, query);
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            if (!auto) {
+            if (!finished) {
                 intent.putExtra(OSIS_FROM, sharedPreferences.getString(SearchFragment.KEY_SEARCH_FROM, null));
                 intent.putExtra(OSIS_TO, sharedPreferences.getString(SearchFragment.KEY_SEARCH_TO, null));
             }
             intent.putExtra(URL, data);
 
             LogUtils.d("intent: " + intent + ", extra: " + intent.getExtras());
-            super.startActivity(setFinished(intent, auto));
+            super.startActivity(setFinished(intent, finished));
         }
     }
 
@@ -272,16 +291,6 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
             mSearchView.clearFocus();
             mHasFocus = false;
             invalidateOptionsMenu();
-        }
-    }
-
-    @Override
-    protected boolean hasFinished() {
-        Intent intent = getIntent();
-        if (intent.getAction() == null || intent.getBooleanExtra(CROSS, false)) {
-            return false;
-        } else {
-            return super.hasFinished();
         }
     }
 

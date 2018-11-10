@@ -264,7 +264,7 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
             items.add(item);
         }
         intent.putParcelableArrayListExtra(ReadingItemsActivity.ITEMS, items);
-        startActivityForResult(setFinished(intent, false), REQUEST_CODE_ANNOTATION);
+        startActivityForResult(intent, REQUEST_CODE_ANNOTATION);
     }
 
     @Override

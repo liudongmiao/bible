@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
@@ -75,23 +74,6 @@ public abstract class ToolbarActivity extends GenuineActivity {
         } else {
             super.setTitle(title);
         }
-    }
-
-    @Override
-    @CallSuper
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (hasFinished()) {
-                    onSupportNavigateUp();
-                } else {
-                    finish();
-                }
-                return true;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     protected boolean hasFinished() {

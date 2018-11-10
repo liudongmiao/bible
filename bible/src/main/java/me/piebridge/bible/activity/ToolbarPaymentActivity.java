@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
@@ -36,8 +35,6 @@ import me.piebridge.payment.PaymentActivity;
 public abstract class ToolbarPaymentActivity extends PaymentActivity {
 
     private TextView titleView;
-
-    private static final String FINISHED = "finished";
 
     private Locale locale;
 
@@ -86,42 +83,10 @@ public abstract class ToolbarPaymentActivity extends PaymentActivity {
         }
     }
 
-    @Override
-    @CallSuper
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (hasFinished()) {
-                    onSupportNavigateUp();
-                } else {
-                    finish();
-                }
-                return true;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    protected boolean hasFinished() {
-        return getIntent().getBooleanExtra(FINISHED, false);
-    }
-
-    public Intent setFinished(Intent intent, boolean finished) {
-        intent.putExtra(FINISHED, finished);
-        return intent;
-    }
-
     protected void showBack(boolean show) {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(show);
-        }
-    }
-
-    protected void updateTaskDescription(String label) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // TaskDescription since 5.X
-            setTaskDescription(new ActivityManager.TaskDescription(label));
         }
     }
 
@@ -156,21 +121,6 @@ public abstract class ToolbarPaymentActivity extends PaymentActivity {
         overridePendingTransition(0, 0);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
-    }
-
-    public void updateLocale() {
-        super.recreate();
-    }
-
-    public void updateTheme() {
-        super.recreate();
-    }
-
-    public void togglePreference(String key) {
-        SharedPreferences preferences = PreferencesUtils.getPreferences(this);
-        boolean oldValue = preferences.getBoolean(key, false);
-        preferences.edit().putBoolean(key, !oldValue).apply();
-        super.recreate();
     }
 
     @Override

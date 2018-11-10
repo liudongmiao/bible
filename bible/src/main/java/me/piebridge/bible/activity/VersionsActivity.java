@@ -73,7 +73,8 @@ import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
-public class VersionsActivity extends ToolbarPaymentActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener,
+public class VersionsActivity extends ToolbarPaymentActivity
+        implements SearchView.OnQueryTextListener, SearchView.OnCloseListener,
         View.OnClickListener {
 
     private static final int CC_UNKNOWN = 0;
@@ -271,9 +272,16 @@ public class VersionsActivity extends ToolbarPaymentActivity implements SearchVi
     public void onBackPressed() {
         if (!mSearchView.isIconified()) {
             mSearchView.setIconified(true);
+        } else if (isShortcut()) {
+            BibleUtils.startLauncher(this, null);
+            finish();
         } else {
             super.onBackPressed();
         }
+    }
+
+    private boolean isShortcut() {
+        return getIntent().getAction() != null;
     }
 
     @Override
@@ -282,9 +290,11 @@ public class VersionsActivity extends ToolbarPaymentActivity implements SearchVi
             case android.R.id.home:
                 if (!mSearchView.isIconified()) {
                     mSearchView.setIconified(true);
-                    return true;
+                } else {
+                    BibleUtils.startLauncher(this, null);
+                    finish();
                 }
-                break;
+                return true;
             default:
                 break;
         }

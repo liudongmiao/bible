@@ -208,9 +208,4 @@ public class AboutActivity extends ToolbarPaymentActivity {
                 && !HideApiWrapper.getProperty(KEY_GSM_SIM, "").startsWith("460");
     }
 
-    @Override
-    protected boolean hasFinished() {
-        return false;
-    }
-
 }

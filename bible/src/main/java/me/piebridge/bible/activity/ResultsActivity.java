@@ -136,7 +136,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         }
         intent.putParcelableArrayListExtra(ReadingItemsActivity.ITEMS, items);
         intent.putExtra(ReadingItemsActivity.SEARCH, mQuery);
-        startActivity(setFinished(intent, false));
+        startActivity(intent);
     }
 
     @Override
@@ -246,9 +246,17 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_theme) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_theme) {
             ThemeUtils.toggle(this);
             recreate();
+            return true;
+        } else if (itemId == android.R.id.home) {
+            Intent intent = new Intent(this, SearchActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra(SearchManager.QUERY, mQuery);
+            startActivity(intent);
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
