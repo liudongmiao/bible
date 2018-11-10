@@ -18,8 +18,8 @@ public class Genuine {
 
     }
 
-    public static native String version();
-
     private static native Object invoke(Member m, int i, Object a, Object t, Object[] as) throws Throwable;
+
+    public static native int version();
 
 }

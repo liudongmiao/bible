@@ -3,6 +3,5 @@
 /.externalNativeBuild
 /src/main/obj
 /src/main/libs
-/SimpleApkV2.java
 /SimpleApkV2.class
 /src/main/jni/genuine.h

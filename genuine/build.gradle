@@ -14,7 +14,7 @@ android {
         }
         externalNativeBuild {
             ndkBuild {
-                cFlags '-DVERSION="' + rootProject.versionName + '"'
+                cFlags '-DVERSION=' + rootProject.versionCode
             }
         }
     }

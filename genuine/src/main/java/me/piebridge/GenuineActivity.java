@@ -27,6 +27,8 @@ public class GenuineActivity extends AppCompatActivity {
 
     private int magic;
 
+    private boolean mFake;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,9 +61,14 @@ public class GenuineActivity extends AppCompatActivity {
             }
         }
         magic = -Integer.parseInt("f86r4y", Character.MAX_RADIX);
-        if (!apkSignV2 || !BuildConfig.VERSION_NAME.equals(Genuine.version())) {
+        if (!apkSignV2 || BuildConfig.VERSION_CODE != Genuine.version()) {
+            mFake = true;
             showFake(R.string.unsupported_modified ^ MAGIC);
         }
+    }
+
+    protected final boolean isFake() {
+        return mFake;
     }
 
     private void showFake(int resId) {

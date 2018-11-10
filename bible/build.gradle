@@ -117,7 +117,6 @@ afterEvaluate {
     generateReleaseAssets.dependsOn minifyJs
     compileReleaseJavaWithJavac.dependsOn ':hidden-api:assembleRelease'
     packageRelease.finalizedBy copyReleaseApk
-    compileReleaseNdk.dependsOn ':genuine:externalNativeBuildCleanRelease'
 }
 
 project.gradle.addListener(new TaskExecutionListener() {

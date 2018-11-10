@@ -43,23 +43,13 @@ static jobject invoke(JNIEnv *env, jclass, jobject m, jint i, jobject, jobject t
     return result;
 }
 
-#define STR_HELPER(x) #x
-#define STR(x) STR_HELPER(x)
-
-static jobject version(JNIEnv *env, jclass) {
+static jint version(JNIEnv *, jclass) {
     if (genuine) {
-        return env->NewStringUTF(STR(VERSION));
+        return VERSION;
     } else {
-        return NULL;
+        return 0;
     }
 }
-
-#define XPOSED_INVOKE_SIGNATURE "(Ljava/lang/reflect/Member;ILjava/lang/Object;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;"
-
-static JNINativeMethod methods[] = {
-        {"invoke", XPOSED_INVOKE_SIGNATURE, reinterpret_cast<void *>(invoke)},
-        {"version", "()Ljava/lang/String;", reinterpret_cast<void *>(version)},
-};
 
 static inline void fill_proc_self_maps(char maps[]) {
     // /proc/self/maps
@@ -881,7 +871,8 @@ static inline void fill_libartso(char v[]) {
 
 static jboolean antiXposed(JNIEnv *env, jclass clazz) {
     jboolean result = JNI_FALSE;
-    char v1[64], v2[64];
+    // current max is 0x77
+    char v1[0x80], v2[0x80];
 
     if (!checkXposed()) {
         return JNI_TRUE;
@@ -1109,6 +1100,20 @@ static jboolean checkGenuine() {
 #define NELEM(x) static_cast<int>(sizeof(x) / sizeof((x)[0]))
 #endif
 
+// invoke length is 7
+static char xposedInvokeName[0x10];
+// signature length is 0x66
+static char xposedInvokeSignature[0x80];
+
+// FIXME: define methods in your own class
+static JNINativeMethod methods[] = {
+        // FIXME: private static native Object invoke(Member m, int i, Object a, Object t, Object[] as) throws Throwable;
+        {xposedInvokeName, xposedInvokeSignature, reinterpret_cast<void *>(invoke)},
+        // FIXME: public static native int version();
+        {"version",        "()I",                 reinterpret_cast<void *>(version)},
+        // TODO: other methods if exists
+};
+
 jint JNI_OnLoad(JavaVM *jvm, void *) {
     JNIEnv *env;
     jclass clazz;
@@ -1122,7 +1127,8 @@ jint JNI_OnLoad(JavaVM *jvm, void *) {
         return JNI_ERR;
     }
 
-    // FIXME: private static native Object invoke(Member m, int i, Object a, Object t, Object[] as) throws Throwable;
+    fill_invoke((char *) methods[0].name);
+    fill_xposed_invoke_signature((char *) methods[0].signature);
     if (env->RegisterNatives(clazz, methods, NELEM(methods)) < 0) {
         return JNI_ERR;
     }
