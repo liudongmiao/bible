@@ -1261,12 +1261,6 @@
       "name": "和合本修订版 2017"
     },
     {
-      "code": "rcuvss",
-      "date": "20151216",
-      "lang": "zh-cn",
-      "name": "和合本修订版"
-    },
-    {
       "code": "ccbt",
       "date": "20181031",
       "lang": "zh-tw",
@@ -1305,12 +1299,6 @@
       "date": "20181112",
       "lang": "zh-tw",
       "name": "和合本修訂版 2017"
-    },
-    {
-      "code": "rcuvts",
-      "date": "20151216",
-      "lang": "zh-tw",
-      "name": "和合本修訂版"
     },
     {
       "code": "zomi",
