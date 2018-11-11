@@ -30,6 +30,7 @@
             android:maxLines="1"
             android:textColor="@color/grey_50"
             android:textSize="@dimen/text_size_toolbar"
+            app:fontFamily="sans-serif-condensed"
             tools:text="Title" />
 
         <TextView
@@ -42,7 +43,8 @@
             android:gravity="center_vertical"
             android:text="@string/reading_show_verses"
             android:textColor="@color/grey_50"
-            android:textSize="@dimen/text_size_menu" />
+            android:textSize="@dimen/text_size_menu"
+            app:fontFamily="sans-serif-condensed" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/verse_switch"

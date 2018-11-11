@@ -7,15 +7,18 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:layout_margin="1dp"
-        android:foreground="?attr/selectableItemBackground">
+        android:foreground="?attr/selectableItemBackground"
+        android:minHeight="48dp">
 
         <TextView
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
+            android:gravity="center"
+            android:padding="8dp"
             android:textSize="@dimen/text_size_cell"
             tools:text="Genesis" />
 

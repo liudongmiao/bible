@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/chapter_button"
     style="@style/SelectableButton"
@@ -9,8 +10,9 @@
     <TextView
         android:id="@+id/chapter"
         style="@style/SelectableButtonText"
-        android:gravity="right|end"
+        android:gravity="end"
         android:minEms="1"
+        app:fontFamily="sans-serif-condensed"
         tools:text="3:16" />
 
     <include layout="@layout/view_dropdown" />

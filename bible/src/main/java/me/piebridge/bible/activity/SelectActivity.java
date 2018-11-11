@@ -97,7 +97,14 @@ public class SelectActivity extends ToolbarActivity
         String title;
         switch (position) {
             case BOOK:
-                title = ((BibleApplication) getApplication()).getFullname();
+                BibleApplication application = (BibleApplication) getApplication();
+                String version = application.getVersion();
+                String fullname = application.getFullname(version);
+                if (fullname.length() <= 0x10) {
+                    title = fullname;
+                } else {
+                    title = application.getName(version);
+                }
                 break;
             case CHAPTER:
                 title = getBookName();
