@@ -84,6 +84,13 @@
   },
   "versions": [
     {
+      "code": "aba",
+      "date": "20181111",
+      "lang": "af",
+      "meta": "<p>© 2007 Bybelgenootskap van Suid-Afrika. Gebruik met toestemming. Alle regte voorbehou.</p><h5>Meer inligting oor hierdie Titel</h5><p>Die Bybel vir almal is oorspronklik deur die Bybelgenootskap van Suid-Afrika uitgegee as Die Bybel vir Dowes. Dit is uit die brontekste in maklik leesbare Afrikaans vertaal sonder dat enigiets uit die oorspronklike tekste verlore gegaan het. Hierdie Bybel is in groot druk gedruk wat dit maklik leesbaar maak. Die groot verskeidenheid voetnote in die gedrukte weergawe sit woorde, begrippe en interessante inligting uiteen. Besoek gerus <a href=\"http://www.bybelgenootskap.co.za\">www.bybelgenootskap.co.za</a> om ‘n gedrukte weergawe van hierdie Bybel te bestel.</p><h5>Kopiereg inligting</h5><p>Die teks van die Bybel vir Almal (ABA) wat in hierdie elektroniese formaat of webblad verskyn is slegs vir persoonlike gebruik.</p><p>Tot vyfhonderd (500) verse van hierdie Bybel in enige formaat (geskrewe, visueel, elektronies of oudio) mag sonder toestemming aangehaal word. Die aangehaalde verse mag egter nie meer as 50% van ‘n volledige boek van die Bybel, of meer as 25% van die totale teks van die werk waarin hulle aangehaal word uitmaak nie, anders moet voorafgaande skriftelike toestemming verkry word. Kopieregerkenning moet in alle gevalle op die titel- of kopieregblad verskyn.</p><p>Vir meer inligting oor kopieregvoorwaardes of om aansoek te doen, besoek gerus <a href=\"http://www.bybelgenootskap.co.za\">www.bybelgenootskap.co.za</a>.</p>🔗<a href=\"https://bibles.org/versions/afr-ABA\">bibles.org</a>",
+      "name": "Bybel vir almal"
+    },
+    {
       "code": "afr53",
       "date": "20181020",
       "lang": "af",
@@ -1009,7 +1016,7 @@
       "copy": "nc",
       "date": "20181109",
       "lang": "smk",
-      "meta": "<p>© 2012, Wycliffe Bible Translators, Inc. All rights reserved.<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/3.0/\">CC BY-NC-ND 3.0</a></p>🔗<a href=\"https://bibles.org/versions/smk-SMKNT\">Bibles.org</a>",
+      "meta": "<p>© 2012, Wycliffe Bible Translators, Inc. All rights reserved.<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/3.0/\">CC BY-NC-ND 3.0</a> for bibles.org</p>🔗<a href=\"https://bibles.org/versions/smk-SMKNT\">Bibles.org</a>",
       "name": "Si Biblia"
     },
     {
@@ -1229,7 +1236,7 @@
       "code": "csbs",
       "copy": "nc",
       "date": "20181101",
-      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球圣经促进会<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p><a href=\"http://www.chinesestandardbible.com/\">《中文标准译本》</a>是一本全新的中文圣经译本；是从圣经原文（希伯来文、亚兰文和希腊文）直接翻译过来，最大程度上忠实于原文，保持原有的语言风格，符合现代汉语规范，适合于各种文化程度的人士；是现今最为准确、可读性最强的中文圣经译本之一。《中文标准译本》是由<a href=\"http://www.globalbibleinitiative.org/\">全球圣经促进会</a> (Global Bible Initiative) 和<a href=\"http://www.bhpublishinggroup.com\">霍尔曼圣经出版社</a> (Holman Bible Publishers) 组织的海内外圣经学者和语言专家团队，配合先进的计算机技术，倾注多年心血的项目。</p>🔗<a href=\"https://www.biblegateway.com/versions/Youngs-Literal-Translation-YLT-Bible/\">Bible Gateway</a>",
+      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球圣经促进会<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a> for Jianyu Studio</p><p><a href=\"http://www.chinesestandardbible.com/\">《中文标准译本》</a>是一本全新的中文圣经译本；是从圣经原文（希伯来文、亚兰文和希腊文）直接翻译过来，最大程度上忠实于原文，保持原有的语言风格，符合现代汉语规范，适合于各种文化程度的人士；是现今最为准确、可读性最强的中文圣经译本之一。《中文标准译本》是由<a href=\"http://www.globalbibleinitiative.org/\">全球圣经促进会</a> (Global Bible Initiative) 和<a href=\"http://www.bhpublishinggroup.com\">霍尔曼圣经出版社</a> (Holman Bible Publishers) 组织的海内外圣经学者和语言专家团队，配合先进的计算机技术，倾注多年心血的项目。</p>🔗<a href=\"https://www.biblegateway.com/versions/Youngs-Literal-Translation-YLT-Bible/\">Bible Gateway</a>",
       "lang": "zh-cn",
       "name": "中文标准译本"
     },
@@ -1243,7 +1250,7 @@
       "code": "cuvmps",
       "copy": "nc",
       "date": "20181031",
-      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球圣经促进会<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p>《和合本》是华人中占权威地位的中文圣经译本。《现代标点和合本》在《和合本》的基础上采用了现代标点规范。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Union-Version-Modern-Punctuation-Simplified-CUVMPS/\">Bible Gateway</a>",
+      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球圣经促进会<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a> for Jianyu Studio</p><p>《和合本》是华人中占权威地位的中文圣经译本。《现代标点和合本》在《和合本》的基础上采用了现代标点规范。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Union-Version-Modern-Punctuation-Simplified-CUVMPS/\">Bible Gateway</a>",
       "lang": "zh-cn",
       "name": "现代标点和合本"
     },
@@ -1275,7 +1282,7 @@
       "code": "csbt",
       "copy": "nc",
       "date": "20181101",
-      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球聖經促進會<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p><a href=\"http://www.chinesestandardbible.com/\">《中文標準譯本》</a>是一本全新的中文聖經譯本；是從聖經原文（希伯來文、亞蘭文和希臘文）直接翻譯過來，最大程度上忠實於原文，保持原有的語言風格，符合現代漢語規範，適合於各種文化程度的人士；是現今最為準確、可讀性最強的中文聖經譯本之一。《中文標準譯本》是由<a href=\"http://www.globalbibleinitiative.org/\">全球聖經促進會</a> (Global Bible Initiative) 和<a href=\"http://www.bhpublishinggroup.com\">霍爾曼聖經出版社</a> (Holman Bible Publishers) 組織的海內外聖經學者和語言專家團隊，配合先進的電腦技術，傾注多年心血的項目。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Standard-Bible-Traditional-CSBT/\">Bible Gateway</a>",
+      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球聖經促進會<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a> for Jianyu Studio</p><p><a href=\"http://www.chinesestandardbible.com/\">《中文標準譯本》</a>是一本全新的中文聖經譯本；是從聖經原文（希伯來文、亞蘭文和希臘文）直接翻譯過來，最大程度上忠實於原文，保持原有的語言風格，符合現代漢語規範，適合於各種文化程度的人士；是現今最為準確、可讀性最強的中文聖經譯本之一。《中文標準譯本》是由<a href=\"http://www.globalbibleinitiative.org/\">全球聖經促進會</a> (Global Bible Initiative) 和<a href=\"http://www.bhpublishinggroup.com\">霍爾曼聖經出版社</a> (Holman Bible Publishers) 組織的海內外聖經學者和語言專家團隊，配合先進的電腦技術，傾注多年心血的項目。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Standard-Bible-Traditional-CSBT/\">Bible Gateway</a>",
       "lang": "zh-tw",
       "name": "中文標準譯本"
     },
@@ -1289,7 +1296,7 @@
       "code": "cuvmpt",
       "copy": "nc",
       "date": "20181031",
-      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球聖經促進會<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a></p><p>《和合本》是華人中占權威地位的中文聖經譯本。《現代標點和合本》在《和合本》的基礎上採用了現代標點規範。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Union-Version-Modern-Punctuation-Traditional-CUVMPT/\">Bible Gateway</a>",
+      "info": "<p>© 2011 Global Bible Initiative<br />© 2011 全球聖經促進會<br /><a href=\"https://creativecommons.org/licenses/by-nc-nd/4.0/\">CC BY-NC-ND 4.0</a> for Jianyu Studio</p><p>《和合本》是華人中占權威地位的中文聖經譯本。《現代標點和合本》在《和合本》的基礎上採用了現代標點規範。</p>🔗<a href=\"https://www.biblegateway.com/versions/Chinese-Union-Version-Modern-Punctuation-Traditional-CUVMPT/\">Bible Gateway</a>",
       "lang": "zh-tw",
       "name": "現代標點和合本"
     },
