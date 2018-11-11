@@ -343,7 +343,7 @@ public class VersionsActivity extends ToolbarPaymentActivity
                 boolean canDownload = canDownload(versionItem.copy);
                 if (!canDownload) {
                     showCopyright(versionItem);
-                    canDownload = application.getAmount() > 0x5;
+                    canDownload = application.getAmount() >= 0x5;
                 }
                 if (canDownload) {
                     downloadVersion(versionItem, action == R.string.translation_update);
@@ -648,21 +648,21 @@ public class VersionsActivity extends ToolbarPaymentActivity
         public synchronized void updateActions() {
             VersionsActivity activity = mReference.get();
             boolean changed = false;
-            List<VersionItem> items = new ArrayList<>(mItems);
-            for (VersionItem item : items) {
+            for (VersionItem item : mItems) {
                 if (item.isVersion()) {
                     int action = getAction(activity, item);
                     if (action != item.action) {
                         LogUtils.d("item: " + item.code + ", old: " + item.action + ", new: " + action);
                         item.action = action;
                         changed = true;
+                        item.changed = true;
+                    } else {
+                        item.changed = false;
                     }
                 }
             }
             if (changed) {
-                DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffCallback(mItems, items));
-                mItems.clear();
-                mItems.addAll(items);
+                DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffCallback(mItems, mItems));
                 result.dispatchUpdatesTo(this);
             }
         }
@@ -958,6 +958,8 @@ public class VersionsActivity extends ToolbarPaymentActivity
 
         String info;
 
+        boolean changed;
+
         @Override
         public int hashCode() {
             return (code + "-" + lang + "-" + name).hashCode();
@@ -982,10 +984,10 @@ public class VersionsActivity extends ToolbarPaymentActivity
         }
 
         public boolean isSame(VersionItem other) {
-            return !ObjectUtils.equals(date, other.date)
-                    || !ObjectUtils.equals(action, other.action)
-                    || !ObjectUtils.equals(copy, other.copy)
-                    || !ObjectUtils.equals(info, info);
+            return ObjectUtils.equals(date, other.date)
+                    && ObjectUtils.equals(action, other.action)
+                    && ObjectUtils.equals(copy, other.copy)
+                    && ObjectUtils.equals(info, other.info);
         }
 
         public boolean isVersion() {
@@ -994,6 +996,11 @@ public class VersionsActivity extends ToolbarPaymentActivity
 
         public String filename() {
             return String.format("bibledata-%s-%s.zip", lang, code);
+        }
+
+        @Override
+        public String toString() {
+            return "{code=" + code + ", date: " + date + ", action: 0x" + Integer.toHexString(action) + "}";
         }
     }
 
@@ -1022,14 +1029,14 @@ public class VersionsActivity extends ToolbarPaymentActivity
         public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
             VersionItem oldItem = mOldList.get(oldItemPosition);
             VersionItem newItem = mNewList.get(newItemPosition);
-            return oldItem.equals(newItem);
+            return oldItem == newItem || oldItem.equals(newItem);
         }
 
         @Override
         public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
             VersionItem oldItem = mOldList.get(oldItemPosition);
             VersionItem newItem = mNewList.get(newItemPosition);
-            return oldItem.equals(newItem) && oldItem.isSame(newItem);
+            return oldItem == newItem ? !oldItem.changed : oldItem.equals(newItem) && oldItem.isSame(newItem);
         }
 
     }
