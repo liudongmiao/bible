@@ -1,7 +1,6 @@
 package me.piebridge.bible.activity;
 
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.collection.SimpleArrayMap;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -16,6 +16,7 @@ import java.util.Locale;
 import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
+import me.piebridge.bible.utils.LocaleUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 
@@ -69,8 +70,9 @@ public class PlanActivity extends ReadingItemsActivity {
     }
 
     private void updateDate() {
-        String text = DateUtils.formatDateTime(this,
-                mCalendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_DATE);
+        Locale locale = LocaleUtils.getOverrideLocale(this);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getString(R.string.plan_date_pattern), locale);
+        String text = simpleDateFormat.format(mCalendar.getTime());
         if (mDate != null) {
             LogUtils.d("text: " + text);
             mDate.setText(text);

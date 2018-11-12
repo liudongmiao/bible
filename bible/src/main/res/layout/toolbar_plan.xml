@@ -37,12 +37,13 @@
             android:id="@+id/plan_date"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_toRightOf="@id/items_button"
-            android:layout_toEndOf="@id/items_button"
-            android:layout_toLeftOf="@id/version_button"
             android:layout_toStartOf="@id/version_button"
+            android:layout_toLeftOf="@id/version_button"
+            android:layout_toEndOf="@id/items_button"
+            android:layout_toRightOf="@id/items_button"
+            android:gravity="center"
             android:textColor="@color/grey_50"
+            app:fontFamily="sans-serif-condensed"
             tools:text="11/08" />
 
     </RelativeLayout>

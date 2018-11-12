@@ -139,4 +139,6 @@
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
 
+    <string name="plan_date_pattern">MMM d</string>
+
 </resources>
