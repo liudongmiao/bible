@@ -405,6 +405,7 @@
         <item>Jude|猶</item>
         <item>Rev|啟</item>
     </string-array>
+
     <string-array name="osis">
         <item>Gen|Gen.</item>
         <item>Exod|Ex.</item>
@@ -472,6 +473,75 @@
         <item>3John|3 John</item>
         <item>Jude|Jude</item>
         <item>Rev|Rev.</item>
+    </string-array>
+
+    <string-array name="human">
+        <item>Gen|Genesis</item>
+        <item>Exod|Exodus</item>
+        <item>Lev|Leviticus</item>
+        <item>Num|Numbers</item>
+        <item>Deut|Deuteronomy</item>
+        <item>Josh|Joshua</item>
+        <item>Judg|Judges</item>
+        <item>Ruth|Ruth</item>
+        <item>1Sam|1 Samuel</item>
+        <item>2Sam|2 Samuel</item>
+        <item>1Kgs|1 Kings</item>
+        <item>2Kgs|2 Kings</item>
+        <item>1Chr|1 Chronicles</item>
+        <item>2Chr|2 Chronicles</item>
+        <item>Ezra|Ezra</item>
+        <item>Neh|Nehemiah</item>
+        <item>Esth|Esther</item>
+        <item>Job|Job</item>
+        <item>Ps|Psalm</item>
+        <item>Prov|Proverbs</item>
+        <item>Eccl|Ecclesiastes</item>
+        <item>Song|Song of Songs</item>
+        <item>Isa|Isaiah</item>
+        <item>Jer|Jeremiah</item>
+        <item>Lam|Lamentations</item>
+        <item>Ezek|Ezekiel</item>
+        <item>Dan|Daniel</item>
+        <item>Hos|Hosea</item>
+        <item>Joel|Joel</item>
+        <item>Amos|Amos</item>
+        <item>Obad|Obadiah</item>
+        <item>Jonah|Jonah</item>
+        <item>Mic|Micah</item>
+        <item>Nah|Nahum</item>
+        <item>Hab|Habakkuk</item>
+        <item>Zeph|Zephaniah</item>
+        <item>Hag|Haggai</item>
+        <item>Zech|Zechariah</item>
+        <item>Mal|Malachi</item>
+        <item>Matt|Matthew</item>
+        <item>Mark|Mark</item>
+        <item>Luke|Luke</item>
+        <item>John|John</item>
+        <item>Acts|Acts</item>
+        <item>Rom|Romans</item>
+        <item>1Cor|1 Corinthians</item>
+        <item>2Cor|2 Corinthians</item>
+        <item>Gal|Galatians</item>
+        <item>Eph|Ephesians</item>
+        <item>Phil|Philippians</item>
+        <item>Col|Colossians</item>
+        <item>1Thess|1 Thessalonians</item>
+        <item>2Thess|2 Thessalonians</item>
+        <item>1Tim|1 Timothy</item>
+        <item>2Tim|2 Timothy</item>
+        <item>Titus|Titus</item>
+        <item>Phlm|Philemon</item>
+        <item>Heb|Hebrews</item>
+        <item>Jas|James</item>
+        <item>1Pet|1 Peter</item>
+        <item>2Pet|2 Peter</item>
+        <item>1John|1 John</item>
+        <item>2John|2 John</item>
+        <item>3John|3 John</item>
+        <item>Jude|Jude</item>
+        <item>Rev|Revelation</item>
     </string-array>
 
     <string-array name="theme_entries">
@@ -909,6 +979,375 @@
         <item>1229|Zech. 9–12; Rev. 20</item>
         <item>1230|Zech. 13–14; Rev. 21</item>
         <item>1231|Malachi 1–4; Rev. 22</item>
+    </string-array>
+
+    <string-array name="votd">
+        <item>0101|2 Corinthians 5:17</item>
+        <item>0102|Psalm 90:12</item>
+        <item>0103|Titus 2:11-12</item>
+        <item>0104|Micah 6:8</item>
+        <item>0105|Isaiah 1:16-17</item>
+        <item>0106|1 Peter 1:13</item>
+        <item>0107|Ephesians 5:1-2</item>
+        <item>0108|Amos 5:14-15</item>
+        <item>0109|Matthew 6:19-21</item>
+        <item>0110|1 Peter 1:15-16</item>
+        <item>0111|Psalm 118:5-6</item>
+        <item>0112|Galatians 3:26-28</item>
+        <item>0113|2 Corinthians 5:19-20</item>
+        <item>0114|1 John 4:20-21</item>
+        <item>0115|John 8:31-32</item>
+        <item>0116|Galatians 5:16</item>
+        <item>0117|Philippians 2:14-16</item>
+        <item>0118|1 Corinthians 10:13</item>
+        <item>0119|Matthew 7:12</item>
+        <item>0120|James 1:2-3</item>
+        <item>0121|Galatians 6:7-8</item>
+        <item>0122|Matthew 7:7-8</item>
+        <item>0123|James 1:5</item>
+        <item>0124|Galatians 6:1</item>
+        <item>0125|Philippians 4:8</item>
+        <item>0126|James 4:10</item>
+        <item>0127|Ephesians 6:12-13</item>
+        <item>0128|John 4:24</item>
+        <item>0129|Mark 9:35</item>
+        <item>0130|Ephesians 4:2</item>
+        <item>0131|Psalm 86:5</item>
+        <item>0201|Deuteronomy 6:4-5</item>
+        <item>0202|1 Corinthians 2:9</item>
+        <item>0203|Psalm 59:16</item>
+        <item>0204|Psalm 18:1-2</item>
+        <item>0205|Psalm 33:4-5</item>
+        <item>0206|Proverbs 21:21</item>
+        <item>0207|Psalm 97:10</item>
+        <item>0208|Matthew 5:43-45</item>
+        <item>0209|2 Thessalonians 1:3</item>
+        <item>0210|1 Corinthians 13:1-3</item>
+        <item>0211|1 Corinthians 13:4-5</item>
+        <item>0212|1 Corinthians 13:6-7</item>
+        <item>0213|John 3:16</item>
+        <item>0214|John 13:34-35</item>
+        <item>0215|1 John 4:10</item>
+        <item>0216|1 John 3:11</item>
+        <item>0217|Romans 8:35,37</item>
+        <item>0218|Romans 8:38-39</item>
+        <item>0219|1 John 4:11-12</item>
+        <item>0220|Proverbs 17:9</item>
+        <item>0221|Romans 13:9-10</item>
+        <item>0222|1 John 4:18</item>
+        <item>0223|Proverbs 14:22</item>
+        <item>0224|Jeremiah 29:11-13</item>
+        <item>0225|Matthew 22:37-39</item>
+        <item>0226|1 John 4:9</item>
+        <item>0227|1 John 3:18</item>
+        <item>0228|2 Timothy 1:7</item>
+        <item>0229|Psalm 120:1</item>
+        <item>0301|Psalm 73:25-26</item>
+        <item>0302|Job 23:10-11</item>
+        <item>0303|Isaiah 55:8-9</item>
+        <item>0304|Joshua 1:9</item>
+        <item>0305|Deuteronomy 6:6-7</item>
+        <item>0306|Isaiah 25:1</item>
+        <item>0307|Psalm 139:23-24</item>
+        <item>0308|2 Corinthians 1:3-4</item>
+        <item>0309|2 Timothy 1:9</item>
+        <item>0310|1 Peter 3:15</item>
+        <item>0311|Deuteronomy 7:9</item>
+        <item>0312|2 Peter 1:4</item>
+        <item>0313|Romans 8:28</item>
+        <item>0314|2 Peter 1:5-8</item>
+        <item>0315|Acts 4:10,12</item>
+        <item>0316|Colossians 3:12</item>
+        <item>0317|Psalm 23:1-3</item>
+        <item>0318|Romans 15:13</item>
+        <item>0319|Galatians 5:22-23</item>
+        <item>0320|1 Peter 2:2-3</item>
+        <item>0321|Jeremiah 17:7-8</item>
+        <item>0322|Ephesians 6:10-11</item>
+        <item>0323|James 1:12</item>
+        <item>0324|Romans 6:23</item>
+        <item>0325|1 John 1:9</item>
+        <item>0326|Philippians 1:29</item>
+        <item>0327|Psalm 62:7</item>
+        <item>0328|1 Timothy 2:5-6</item>
+        <item>0329|2 Corinthians 5:21</item>
+        <item>0330|Isaiah 53:3-4</item>
+        <item>0331|Isaiah 53:5-6</item>
+        <item>0401|Psalm 14:1</item>
+        <item>0402|Matthew 20:17-19</item>
+        <item>0403|Hebrews 12:2</item>
+        <item>0404|Ephesians 1:7</item>
+        <item>0405|2 Corinthians 5:14-15</item>
+        <item>0406|1 John 3:16</item>
+        <item>0407|Galatians 2:20</item>
+        <item>0408|Romans 5:10</item>
+        <item>0409|Hebrews 1:3</item>
+        <item>0410|Romans 5:6-8</item>
+        <item>0411|1 Peter 2:24</item>
+        <item>0412|Luke 9:23-24</item>
+        <item>0413|Romans 3:23-24</item>
+        <item>0414|1 Corinthians 15:1,3-4</item>
+        <item>0415|Romans 13:6-7</item>
+        <item>0416|Romans 13:8</item>
+        <item>0417|1 Corinthians 1:18</item>
+        <item>0418|Romans 10:9-10</item>
+        <item>0419|1 Corinthians 15:20-22</item>
+        <item>0420|1 Corinthians 15:55-57</item>
+        <item>0421|John 10:28-30</item>
+        <item>0422|Romans 1:20</item>
+        <item>0423|Romans 14:11</item>
+        <item>0424|1 Peter 1:18-19</item>
+        <item>0425|Colossians 1:27-28</item>
+        <item>0426|Hebrews 7:25</item>
+        <item>0427|Luke 19:10</item>
+        <item>0428|Philippians 2:5-8</item>
+        <item>0429|Job 19:25</item>
+        <item>0430|Ephesians 4:15</item>
+        <item>0501|Hebrews 11:6</item>
+        <item>0502|1 John 5:14-15</item>
+        <item>0503|Romans 12:12</item>
+        <item>0504|2 Chronicles 7:14</item>
+        <item>0505|Philippians 4:6-7</item>
+        <item>0506|James 5:16</item>
+        <item>0507|1 Thessalonians 5:16-18</item>
+        <item>0508|Colossians 4:5-6</item>
+        <item>0509|Romans 8:1-2</item>
+        <item>0510|Matthew 18:15</item>
+        <item>0511|Ephesians 4:32</item>
+        <item>0512|Proverbs 31:10,27-28</item>
+        <item>0513|Proverbs 31:30</item>
+        <item>0514|Psalm 139:13-14</item>
+        <item>0515|Ecclesiastes 11:5</item>
+        <item>0516|Zephaniah 3:17</item>
+        <item>0517|Romans 11:33</item>
+        <item>0518|Hebrews 6:10</item>
+        <item>0519|James 3:17-18</item>
+        <item>0520|Romans 15:5-6</item>
+        <item>0521|1 Corinthians 1:10</item>
+        <item>0522|Galatians 5:13</item>
+        <item>0523|Romans 15:2</item>
+        <item>0524|Romans 12:10</item>
+        <item>0525|James 1:19</item>
+        <item>0526|John 3:17</item>
+        <item>0527|Acts 20:24</item>
+        <item>0528|Romans 12:15</item>
+        <item>0529|Psalm 103:17-18</item>
+        <item>0530|Psalm 56:4</item>
+        <item>0531|1 Thessalonians 4:16-17</item>
+        <item>0601|Revelation 21:2-4</item>
+        <item>0602|Hebrews 9:28</item>
+        <item>0603|Proverbs 15:1</item>
+        <item>0604|1 Chronicles 29:11</item>
+        <item>0605|1 Thessalonians 5:11</item>
+        <item>0606|Ephesians 3:17-19</item>
+        <item>0607|Psalm 90:2,4</item>
+        <item>0608|Habakkuk 3:19</item>
+        <item>0609|Matthew 7:13-14</item>
+        <item>0610|Colossians 3:13</item>
+        <item>0611|Psalm 46:10</item>
+        <item>0612|Psalm 19:1-2</item>
+        <item>0613|Luke 11:13</item>
+        <item>0614|Philippians 3:20</item>
+        <item>0615|Proverbs 23:24</item>
+        <item>0616|Psalm 103:13</item>
+        <item>0617|Psalm 68:4-5</item>
+        <item>0618|Ephesians 6:4</item>
+        <item>0619|Ephesians 5:25-26</item>
+        <item>0620|Mark 8:36</item>
+        <item>0621|Psalm 91:1</item>
+        <item>0622|Psalm 121:7-8</item>
+        <item>0623|Isaiah 40:31</item>
+        <item>0624|2 Thessalonians 3:3</item>
+        <item>0625|Jeremiah 23:24</item>
+        <item>0626|Leviticus 19:18</item>
+        <item>0627|Matthew 16:25</item>
+        <item>0628|2 Peter 3:9</item>
+        <item>0629|Psalm 138:8</item>
+        <item>0630|Zechariah 14:9</item>
+        <item>0701|Romans 12:3</item>
+        <item>0702|Jeremiah 17:9-10</item>
+        <item>0703|Proverbs 14:34</item>
+        <item>0704|Psalm 33:12</item>
+        <item>0705|Isaiah 12:4</item>
+        <item>0706|Matthew 24:35</item>
+        <item>0707|Psalm 18:30</item>
+        <item>0708|Psalm 138:2</item>
+        <item>0709|Ephesians 3:20-21</item>
+        <item>0710|Philippians 1:6</item>
+        <item>0711|Jeremiah 32:17</item>
+        <item>0712|Matthew 4:4</item>
+        <item>0713|Philippians 2:9-11</item>
+        <item>0714|John 15:10</item>
+        <item>0715|James 1:21</item>
+        <item>0716|Colossians 2:9-10</item>
+        <item>0717|Romans 1:16</item>
+        <item>0718|Psalm 119:7</item>
+        <item>0719|Isaiah 41:10</item>
+        <item>0720|1 John 1:7</item>
+        <item>0721|Psalm 119:30</item>
+        <item>0722|Matthew 16:15-16</item>
+        <item>0723|Matthew 19:14</item>
+        <item>0724|Psalm 112:5</item>
+        <item>0725|Psalm 119:60</item>
+        <item>0726|Hebrews 11:1</item>
+        <item>0727|Hebrews 12:1</item>
+        <item>0728|Philippians 3:14</item>
+        <item>0729|Psalm 119:93</item>
+        <item>0730|Matthew 5:14,16</item>
+        <item>0731|John 1:12-13</item>
+        <item>0801|Psalm 119:114</item>
+        <item>0802|James 1:22</item>
+        <item>0803|1 Samuel 16:7</item>
+        <item>0804|Jeremiah 33:2-3</item>
+        <item>0805|Psalm 119:130</item>
+        <item>0806|Psalm 119:160</item>
+        <item>0807|Isaiah 33:22</item>
+        <item>0808|Psalm 149:4</item>
+        <item>0809|Luke 12:6-7</item>
+        <item>0810|Psalm 46:1</item>
+        <item>0811|Psalm 119:14</item>
+        <item>0812|1 Corinthians 6:19-20</item>
+        <item>0813|Ephesians 2:10</item>
+        <item>0814|Revelation 3:14,20</item>
+        <item>0815|Romans 14:8</item>
+        <item>0816|2 Corinthians 7:1</item>
+        <item>0817|2 Corinthians 10:17-18</item>
+        <item>0818|Philippians 1:21</item>
+        <item>0819|1 John 5:12</item>
+        <item>0820|Psalm 16:8</item>
+        <item>0821|Psalm 42:8</item>
+        <item>0822|Romans 8:32</item>
+        <item>0823|Psalm 94:18-19</item>
+        <item>0824|Psalm 116:1-2</item>
+        <item>0825|Psalm 119:165</item>
+        <item>0826|Romans 12:4-5</item>
+        <item>0827|Isaiah 26:3</item>
+        <item>0828|John 6:29</item>
+        <item>0829|Galatians 3:28</item>
+        <item>0830|Ephesians 2:19</item>
+        <item>0831|Psalm 95:6-7</item>
+        <item>0901|Proverbs 22:6</item>
+        <item>0902|Psalm 119:64</item>
+        <item>0903|Isaiah 48:17</item>
+        <item>0904|2 Timothy 1:13-14</item>
+        <item>0905|Matthew 28:18-20</item>
+        <item>0906|John 14:23</item>
+        <item>0907|Colossians 1:28</item>
+        <item>0908|Psalm 143:10</item>
+        <item>0909|Titus 2:2</item>
+        <item>0910|Isaiah 46:4</item>
+        <item>0911|Psalm 121:1-2</item>
+        <item>0912|Philippians 4:4</item>
+        <item>0913|1 Peter 3:8</item>
+        <item>0914|Philippians 2:1-2</item>
+        <item>0915|1 John 4:16</item>
+        <item>0916|James 3:13</item>
+        <item>0917|Ephesians 5:1</item>
+        <item>0918|Philippians 2:3-4</item>
+        <item>0919|Ephesians 4:29</item>
+        <item>0920|Joel 2:23</item>
+        <item>0921|2 Corinthians 13:14</item>
+        <item>0922|Romans 15:7</item>
+        <item>0923|Romans 5:3-4</item>
+        <item>0924|Hebrews 10:35-36</item>
+        <item>0925|1 John 2:1</item>
+        <item>0926|Hebrews 10:30-31</item>
+        <item>0927|Matthew 6:33</item>
+        <item>0928|1 Corinthians 2:14</item>
+        <item>0929|John 3:20-21</item>
+        <item>0930|Philippians 1:9-10</item>
+        <item>1001|Matthew 5:11-12</item>
+        <item>1002|Proverbs 29:25</item>
+        <item>1003|1 Peter 1:3</item>
+        <item>1004|Proverbs 27:1</item>
+        <item>1005|Isaiah 55:6</item>
+        <item>1006|Isaiah 26:4</item>
+        <item>1007|Psalm 63:1</item>
+        <item>1008|Isaiah 43:11-12</item>
+        <item>1009|Deuteronomy 13:4</item>
+        <item>1010|Proverbs 19:20-21</item>
+        <item>1011|Psalm 62:1</item>
+        <item>1012|Proverbs 1:8-9</item>
+        <item>1013|Jeremiah 29:11</item>
+        <item>1014|Romans 12:2</item>
+        <item>1015|2 Samuel 7:22</item>
+        <item>1016|Psalm 19:14</item>
+        <item>1017|Psalm 25:14-15</item>
+        <item>1018|Psalm 27:14</item>
+        <item>1019|Psalm 37:4</item>
+        <item>1020|Psalm 51:12</item>
+        <item>1021|Psalm 40:8</item>
+        <item>1022|Proverbs 15:23</item>
+        <item>1023|Galatians 6:2</item>
+        <item>1024|Proverbs 9:10</item>
+        <item>1025|Ephesians 5:19-20</item>
+        <item>1026|2 Timothy 3:16-17</item>
+        <item>1027|Hebrews 4:12</item>
+        <item>1028|1 Peter 1:24-25</item>
+        <item>1029|Romans 12:1</item>
+        <item>1030|Ephesians 2:8-9</item>
+        <item>1031|1 Peter 5:8-9</item>
+        <item>1101|Ephesians 1:18</item>
+        <item>1102|1 Peter 2:9</item>
+        <item>1103|Romans 13:1</item>
+        <item>1104|2 Corinthians 3:6</item>
+        <item>1105|Romans 13:6</item>
+        <item>1106|Ephesians 1:9-10</item>
+        <item>1107|1 Timothy 2:1-2</item>
+        <item>1108|Joshua 24:15</item>
+        <item>1109|Isaiah 1:18</item>
+        <item>1110|Job 37:5-6</item>
+        <item>1111|1 John 2:15-16</item>
+        <item>1112|Colossians 1:9</item>
+        <item>1113|1 Peter 2:15-16</item>
+        <item>1114|1 Peter 3:18</item>
+        <item>1115|Psalm 119:143</item>
+        <item>1116|Psalm 119:18</item>
+        <item>1117|Psalm 119:105</item>
+        <item>1118|John 17:17</item>
+        <item>1119|Psalm 1:1-2</item>
+        <item>1120|Psalm 95:1-2</item>
+        <item>1121|1 Corinthians 1:4-5</item>
+        <item>1122|Colossians 3:15</item>
+        <item>1123|Psalm 100:4-5</item>
+        <item>1124|Colossians 2:6-7</item>
+        <item>1125|Colossians 3:17</item>
+        <item>1126|Hebrews 12:28</item>
+        <item>1127|Colossians 3:16</item>
+        <item>1128|1 Chronicles 16:8</item>
+        <item>1129|Psalm 136:1,26</item>
+        <item>1130|2 Peter 3:10-11</item>
+        <item>1201|John 1:1-2,14</item>
+        <item>1202|Hebrews 1:1-2</item>
+        <item>1203|John 6:35</item>
+        <item>1204|John 8:12</item>
+        <item>1205|John 10:7,9-10</item>
+        <item>1206|John 10:14-15</item>
+        <item>1207|John 11:25</item>
+        <item>1208|John 14:6</item>
+        <item>1209|John 15:5,8</item>
+        <item>1210|Deuteronomy 18:15</item>
+        <item>1211|Isaiah 7:14</item>
+        <item>1212|Galatians 4:4-5</item>
+        <item>1213|Matthew 2:4-6</item>
+        <item>1214|Luke 1:26-28</item>
+        <item>1215|Luke 1:30-33</item>
+        <item>1216|Luke 1:46-47,49</item>
+        <item>1217|Matthew 1:20-21</item>
+        <item>1218|Luke 1:68-70</item>
+        <item>1219|Luke 1:76-78</item>
+        <item>1220|Luke 2:1,4-5</item>
+        <item>1221|Luke 2:6-7</item>
+        <item>1222|Luke 2:8-11</item>
+        <item>1223|Luke 2:11-14</item>
+        <item>1224|Luke 2:16-20</item>
+        <item>1225|Isaiah 9:6</item>
+        <item>1226|Luke 2:28-32</item>
+        <item>1227|Psalm 103:1-2</item>
+        <item>1228|Matthew 11:28</item>
+        <item>1229|John 14:1-3</item>
+        <item>1230|John 16:33</item>
+        <item>1231|Isaiah 43:16,18-19</item>
     </string-array>
 
     <string-array name="donate_list">

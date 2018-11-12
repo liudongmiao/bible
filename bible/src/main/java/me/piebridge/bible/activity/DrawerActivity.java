@@ -101,6 +101,9 @@ public abstract class DrawerActivity extends ToolbarActivity
             case R.id.menu_plan:
                 startActivity(PlanActivity.class);
                 break;
+            case R.id.menu_votd:
+                startActivity(VotdActivity.class);
+                break;
             case R.id.menu_download:
                 startActivity(VersionsActivity.class);
                 break;
@@ -146,6 +149,9 @@ public abstract class DrawerActivity extends ToolbarActivity
 
         boolean plan = sharedPreferences.getBoolean("plan", true);
         menu.findItem(R.id.menu_plan).setVisible(plan);
+
+        boolean votd = sharedPreferences.getBoolean("votd", false);
+        menu.findItem(R.id.menu_votd).setVisible(votd);
     }
 
     @Override

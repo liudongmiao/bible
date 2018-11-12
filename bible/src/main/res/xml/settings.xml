@@ -85,10 +85,16 @@
             android:title="@string/menu_plan" />
 
         <androidx.preference.SwitchPreferenceCompat
-            android:defaultValue="odb"
+            android:defaultValue="false"
             android:key="odb"
             android:summary="@string/odb_copyright"
             android:title="@string/menu_odb_link" />
+
+        <androidx.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="votd"
+            android:summary="@string/votd_copyright"
+            android:title="@string/menu_votd" />
 
     </androidx.preference.PreferenceCategory>
 

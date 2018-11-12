@@ -39,6 +39,7 @@
     <string name="menu_translations">Translations</string>
     <string name="menu_odb_link">Our Daily Bread&#174;</string>
     <string name="menu_plan">Bible in a year</string>
+    <string name="menu_votd">Verse of the Day</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_feedback">Feedback</string>
     <string name="menu_about">About &amp; Donate</string>
@@ -103,6 +104,7 @@
     <string name="odb_about">About</string>
     <string name="odb_about_detail">Throughout the day, in countless locations and in dozens of countries around the world, Our Daily Bread is read by millions of people. And for every person who opens its pages, one thing is always true: It points to the joy of a relationship with Jesus Christ and the timeless wisdom found in God’s holy Word.\n\nOur Daily Bread is published and distributed worldwide in more than 55 languages by affiliated ministries around the globe.</string>
     <string name="odb_copyright">&#169; Our Daily Bread Ministries</string>
+    <string name="votd_copyright">&#169; Bible Gateway</string>
 
     <string name="settings_interface">Interface</string>
     <string name="settings_translation">Translation</string>
@@ -128,7 +130,7 @@
         <p>Feel free to donate, and you can refund in 1 month.<br />
         For donation, Google Play will take 30% as Transaction fee, then at least 30% will be donate to Bible Translations copyright owner.</p>
 
-        <p>Our Daily Bread&reg; is from <a href="https://ourdailybread.org/">Our Daily Bread Ministries</a>, and thanks them for &quot;Bible in a year&quot;.</p>
+        <p>Our Daily Bread&reg; is from <a href="https://ourdailybread.org/">Our Daily Bread Ministries</a>, and thanks them for &quot;Bible in a year&quot;. &quot;Verse of the Day&quot; is from <a href="https://www.biblegateway.com/usage/votd/votdlist/">Bible Gateway</a>.</p>
         <p>Dove Bible is developed by Jianyu Studio since 2012, and renamed in 2018. Dove Bible depends on <a href="https://developer.android.com/studio/">Android&trade; SDK</a>, <a href="https://developer.android.com/jetpack/androidx/">AndroidX</a>, some features require <a href="https://open.weixin.qq.com">Wechat SDK for Android</a>. Creative Commons License Icons (in Translations page) are from <a href="https://creativecommons.org/about/downloads/">Downloads - Creative Commons</a>.</p>
 
         <p>Our Daily Bread is a trademark of Our Daily Bread Ministries. Android is a trademark of Google LLC. </p>

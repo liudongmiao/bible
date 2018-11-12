@@ -39,6 +39,7 @@
     <string name="menu_translations">管理译本</string>
     <string name="menu_odb_link">灵命日粮</string>
     <string name="menu_plan">全年读经</string>
+    <string name="menu_votd">每日金句</string>
     <string name="menu_settings">设置</string>
     <string name="menu_feedback">反馈</string>
     <string name="menu_about">关于及奉献</string>
@@ -126,7 +127,7 @@
         <p>如果喜欢，请随意奉献；如果改变主意，可 1 月内退款。<br />
         您奉献以后，Google Play 会收取 30% 交易手续费，余下部分至少 30% 会转赠给译本版权方。</p>
 
-        <p>灵命日粮源自 <a href="https://ourdailybread.org/">灵命日粮事工</a>，同时感谢他们为如鸽圣经提供“全年读经”。</p>
+        <p>灵命日粮源自 <a href="https://ourdailybread.org/">灵命日粮事工</a>，同时感谢他们为如鸽圣经提供“全年读经”。“每日金句”源自 <a href="https://www.biblegateway.com/usage/votd/votdlist/">Bible Gateway</a>。</p>
         <p>如鸽圣经由简域工作室开发，始自 2012 年，于 2018 年更名。如鸽圣经依赖 <a href="https://developer.android.com/studio/">Android&trade; SDK</a>，<a href="https://developer.android.com/jetpack/androidx/">AndroidX</a>，部分功能依赖 <a href="https://open.weixin.qq.com">微信 SDK</a>。知识共享许可图标（译本页面）从 <a href="https://creativecommons.org/about/downloads/">Downloads - Creative Commons</a> 下载。</p>
 
         <p>Android 为 Google LLC 的商标。</p>

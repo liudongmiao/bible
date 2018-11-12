@@ -46,6 +46,11 @@
             android:icon="@drawable/ic_local_florist_black_24dp"
             android:title="@string/menu_odb_link" />
 
+        <item
+            android:id="@+id/menu_votd"
+            android:icon="@drawable/ic_card_giftcard_black_24dp"
+            android:title="@string/menu_votd" />
+
     </group>
 
     <group

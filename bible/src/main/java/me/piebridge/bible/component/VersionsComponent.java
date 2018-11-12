@@ -94,6 +94,7 @@ public class VersionsComponent {
         loadOverride();
 
         setResourceValuesReverse(mBooks, R.array.osis);
+        setResourceValuesReverse(mBooks, R.array.human);
         setResourceValuesReverse(mBooks, R.array.osiszhcn);
         setResourceValuesReverse(mBooks, R.array.osiszhtw);
         setResourceValuesReverse(mBooks, R.array.searchfullzhcn);

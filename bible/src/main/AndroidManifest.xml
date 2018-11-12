@@ -201,6 +201,12 @@
             android:theme="@style/light" />
 
         <activity
+            android:name=".activity.VotdActivity"
+            android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:exported="false"
+            android:theme="@style/light" />
+
+        <activity
             android:name=".activity.AboutActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
