@@ -115,20 +115,19 @@
     <string name="about_donate_5">5 嗎哪</string>
     <string name="about_donate_play">感謝您透過 Play 商店奉獻 %d 嗎哪</string>
     <string name="about_donate_of_stock">無法繼續奉獻 %d 嗎哪</string>
-    <string name="about_detail">
+    <string name="about_detail" formatted="false">
         <![CDATA[
         <h1>如鴿聖經，真正離線，完全免費。</h1>
         <p>鴿子是溫柔和純潔的象徵，聖靈曾像鴿子一樣降臨在耶穌身上。 —— TPT，馬太福音 3:16</p>
 
         <p>絕大部分現代聖經譯本都有版權，用於補貼翻譯人員的辛苦工作。您無法在如鴿聖經中直接下載受版權保護的譯本。</p>
 
-        <p>如果喜歡，請隨意奉獻；如果改變主意，可 1 月內退款。<br />
-        您奉獻以後，Google Play 會收取 30% 交易手續費，餘下部分至少 30% 會轉贈給譯本版權方。</p>
+        <p>如果喜歡，請隨意奉獻；如果改變主意，可 1 月內退款。您奉獻以後，Google Play 會收取 30% 交易手續費，餘下部分至少 30% 會轉贈給譯本版權方。</p>
 
         <p>靈命日糧源自 <a href="https://ourdailybread.org/">靈命日糧事工</a>，同時感謝他們為如鴿聖經提供「全年讀經」。「每日金句」源自 <a href="https://www.biblegateway.com/usage/votd/votdlist/">Bible Gateway</a>。</p>
         <p>如鴿聖經由簡域工作室開發，始自 2012 年，於 2018 年更名。如鴿聖經依賴 <a href="https://developer.android.com/studio/">Android&trade; SDK</a>，<a href="https://developer.android.com/jetpack/androidx/">AndroidX</a>，部分功能依賴 <a href="https://open.weixin.qq.com">微信 SDK</a>。知識共享許可圖標（譯本頁面）從 <a href="https://creativecommons.org/about/downloads/">Downloads - Creative Commons</a> 下載。</p>
 
-        <p>Android 為 Google LLC 的商標。</p>
+        <p>Android、Google Play 為 Google LLC 的商標。</p>
         &copy; 2018 南京簡域網絡科技工作室
         ]]>
     </string>
