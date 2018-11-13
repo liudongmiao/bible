@@ -2,6 +2,7 @@ package me.piebridge.bible.activity;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -107,6 +108,10 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.annotation, menu);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) { // sort by book requires instr, since 5.X
+            // https://developer.android.com/reference/android/database/sqlite/package-summary
+            menu.removeItem(R.id.action_sort_by_book);
+        }
         return true;
     }
 
@@ -185,8 +190,12 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
     }
 
     private String getSort() {
-        return PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(KEY_SORT_ANNOTATION, AnnotationComponent.SORT_TIME);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // sort by book requires instr, since 5.X
+            return PreferenceManager.getDefaultSharedPreferences(this)
+                    .getString(KEY_SORT_ANNOTATION, AnnotationComponent.SORT_TIME);
+        } else {
+            return AnnotationComponent.SORT_TIME;
+        }
     }
 
     private String getBook() {

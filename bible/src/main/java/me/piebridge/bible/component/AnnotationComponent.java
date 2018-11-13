@@ -240,13 +240,12 @@ public class AnnotationComponent {
         sb.append("type = ? and verses != ''");
         arguments.add("highlight");
         if (!TextUtils.isEmpty(book)) {
-            sb.append(" and substr(osis, 1, instr(osis, '.') - 1) = ?");
-            arguments.add(book);
+            sb.append(" and osis like ?");
+            arguments.add(book + ".%");
         }
         Cursor cursor = db.query(TABLE_ANNOTATIONS, null,
                 sb.toString(), arguments.toArray(new String[0]),
-                null, null,
-                TextUtils.isEmpty(book) ? "updatetime desc" : "cast(substr(a.osis, instr(a.osis, '.') + 1) as int) asc");
+                null, null, "updatetime desc");
         if (cursor == null) {
             return null;
         }
@@ -258,7 +257,7 @@ public class AnnotationComponent {
     }
 
     public Cursor searchHighlight(String book, String sort) {
-        if (ObjectUtils.equals(SORT_BOOK, sort) && TextUtils.isEmpty(book)) {
+        if (ObjectUtils.equals(SORT_BOOK, sort)) {
             return searchHighlightBook();
         } else {
             return searchHighlightTime(book);
@@ -296,8 +295,8 @@ public class AnnotationComponent {
         sb.append("type = ? and verses != ''");
         arguments.add("note");
         if (!TextUtils.isEmpty(book)) {
-            sb.append(" and substr(osis, 1, instr(osis, '.') - 1) = ?");
-            arguments.add(book);
+            sb.append(" and osis like = ?");
+            arguments.add(book + ".%");
         }
         if (TextUtils.isEmpty(query)) {
             sb.append(" and content != ''");
@@ -307,8 +306,7 @@ public class AnnotationComponent {
         }
         Cursor cursor = db.query(TABLE_ANNOTATIONS, null,
                 sb.toString(), arguments.toArray(new String[0]),
-                null, null,
-                TextUtils.isEmpty(book) ? "updatetime desc" : "cast(substr(a.osis, instr(a.osis, '.') + 1) as int) asc");
+                null, null, "updatetime desc");
         if (cursor == null) {
             return null;
         }
@@ -320,7 +318,7 @@ public class AnnotationComponent {
     }
 
     public Cursor searchNotes(String book, String query, String sort) {
-        if (ObjectUtils.equals(SORT_BOOK, sort) && TextUtils.isEmpty(book)) {
+        if (ObjectUtils.equals(SORT_BOOK, sort)) {
             return searchNotesName(query);
         } else {
             return searchNotesTime(book, query);
