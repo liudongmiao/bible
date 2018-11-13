@@ -329,7 +329,7 @@ public class DownloadComponent extends Handler {
         if (!TextUtils.isEmpty(etag)) {
             headers.put("If-None-Match", etag);
         }
-        headers.put(X_SDK, Integer.toString(Build.VERSION.SDK_INT)); // custom x-sdk
+        headers.put(X_SDK, Integer.toString(Build.VERSION.SDK_INT));
         headers.put(X_VERSION, Integer.toString(BuildConfig.VERSION_CODE));
         String json = HttpUtils.retrieveContent(buildUrl(TRANSLATIONS_JSON), headers);
         if (json == null) {

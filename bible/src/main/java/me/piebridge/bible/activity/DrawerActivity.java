@@ -144,7 +144,12 @@ public abstract class DrawerActivity extends ToolbarActivity
         Menu menu = navigation.getMenu();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        boolean odb = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && sharedPreferences.getBoolean("odb", false);
+        boolean odb;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) { // odb requires https, since 5.X
+            odb = false;
+        } else {
+            odb = sharedPreferences.getBoolean("odb", false);
+        }
         menu.findItem(R.id.menu_odb).setVisible(odb);
 
         boolean plan = sharedPreferences.getBoolean("plan", true);
