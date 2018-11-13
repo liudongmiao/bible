@@ -18,7 +18,6 @@ import java.util.Locale;
 import me.piebridge.GenuineActivity;
 import me.piebridge.bible.R;
 import me.piebridge.bible.utils.LocaleUtils;
-import me.piebridge.bible.utils.PreferencesUtils;
 import me.piebridge.bible.utils.ThemeUtils;
 
 /**
@@ -148,13 +147,6 @@ public abstract class ToolbarActivity extends GenuineActivity {
     }
 
     public void updateTheme() {
-        super.recreate();
-    }
-
-    public void togglePreference(String key) {
-        SharedPreferences preferences = PreferencesUtils.getPreferences(this);
-        boolean oldValue = preferences.getBoolean(key, false);
-        preferences.edit().putBoolean(key, !oldValue).apply();
         super.recreate();
     }
 

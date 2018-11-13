@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.LocaleList;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import java.util.Locale;
@@ -16,6 +18,12 @@ public class LocaleUtils {
 
     private static final String OVERRIDE_LANGUAGE = "override_language";
 
+    private static final Locale[] LOCALES = new Locale[] {
+            new Locale("zh", "CN"),
+            new Locale("zh", "TW"),
+            new Locale("en"),
+    };
+
     private LocaleUtils() {
 
     }
@@ -25,7 +33,7 @@ public class LocaleUtils {
     }
 
     public static Locale getOverrideLocale(Context context) {
-        String language = PreferencesUtils.getDevicePreferences(context)
+        String language = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(OVERRIDE_LANGUAGE, "");
         return getLocale(language);
     }
@@ -46,15 +54,34 @@ public class LocaleUtils {
         try {
             return isChanged(getLocale(language), activity);
         } finally {
-            PreferencesUtils.getPreferences(activity)
+            PreferenceManager.getDefaultSharedPreferences(activity)
                     .edit().putString(OVERRIDE_LANGUAGE, language).apply();
         }
     }
 
     public static Locale getSystemLocale() {
         Configuration configuration = Resources.getSystem().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return configuration.getLocales().get(0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // multi locale since 7.X
+            LocaleList locales = configuration.getLocales();
+            int size = locales.size();
+            for (int i = 0; i < size; ++i) {
+                Locale locale = locales.get(i);
+                for (Locale provide : LOCALES) {
+                    if (ObjectUtils.equals(locale.getLanguage(), provide.getLanguage())
+                            && ObjectUtils.equals(locale.getCountry(), provide.getCountry())) {
+                        return locale;
+                    }
+                }
+            }
+            for (int i = 0; i < size; ++i) {
+                Locale locale = locales.get(i);
+                for (Locale provide : LOCALES) {
+                    if (ObjectUtils.equals(locale.getLanguage(), provide.getLanguage())) {
+                        return locale;
+                    }
+                }
+            }
+            return locales.get(0);
         } else {
             return getLocaleDeprecated(configuration);
         }
@@ -72,10 +99,10 @@ public class LocaleUtils {
         Locale.setDefault(locale);
         Resources resources = context.getResources();
         Configuration configuration = resources.getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) { // layout direction
             configuration.setLayoutDirection(locale);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // createConfigurationContext
             configuration.setLocale(locale);
             return context.createConfigurationContext(configuration);
         } else {
