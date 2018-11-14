@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
@@ -94,7 +95,10 @@ public class OsisItem implements Parcelable {
         sb.append(book);
         sb.append(" ");
         sb.append(chapter);
-        if (!TextUtils.isEmpty(verseStart)) {
+        if (!TextUtils.isEmpty(verses)) {
+            sb.append(":");
+            sb.append(verses);
+        } else if (!TextUtils.isEmpty(verseStart)) {
             sb.append(":");
             sb.append(verseStart);
             if (!TextUtils.isEmpty(verseEnd)) {
@@ -256,14 +260,38 @@ public class OsisItem implements Parcelable {
             } else if ("".equals(end_chapter) || (!"".equals(start_verse) && "".equals(end_verse))) {
                 // 3, 3:16, 3:16-17
                 OsisItem newItem = new OsisItem(osis, start_chapter, start_verse, end_chapter);
-                if (ObjectUtils.equals(osis, prevosis) && prevgroup.endsWith("-") && !items.isEmpty()) {
-                    int index = items.size() - 1;
-                    OsisItem oldItem = items.get(index);
-                    if (ObjectUtils.equals(oldItem.chapter, start_chapter)
-                            && TextUtils.isEmpty(oldItem.verseEnd)
-                            && TextUtils.isEmpty(newItem.verseEnd)) {
-                        oldItem.verseEnd = newItem.verseStart;
-                        newItem = null;
+                if (ObjectUtils.equals(osis, prevosis) && !items.isEmpty()) {
+                    if (prevgroup.endsWith("-")) {
+                        int index = items.size() - 1;
+                        OsisItem oldItem = items.get(index);
+                        if (ObjectUtils.equals(oldItem.chapter, start_chapter)
+                                && TextUtils.isEmpty(oldItem.verseEnd)
+                                && TextUtils.isEmpty(newItem.verseEnd)) {
+                            oldItem.verseEnd = newItem.verseStart;
+                            newItem = null;
+                        }
+                    } else if (group.startsWith(",")) {
+                        int index = items.size() - 1;
+                        OsisItem oldItem = items.get(index);
+                        if (ObjectUtils.equals(oldItem.chapter, start_chapter)) {
+                            //noinspection StringConcatenationInLoop
+                            StringBuilder verses = new StringBuilder(oldItem.verses);
+                            if (TextUtils.isEmpty(verses)) {
+                                verses.append(oldItem.verseStart);
+                                if (!TextUtils.isEmpty(oldItem.verseEnd)) {
+                                    verses.append("-");
+                                    verses.append(oldItem.verseEnd);
+                                }
+                            }
+                            verses.append(",");
+                            verses.append(start_verse);
+                            if (!TextUtils.isEmpty(end_chapter)) {
+                                verses.append("-");
+                                verses.append(end_chapter);
+                            }
+                            oldItem.verses = verses.toString();
+                            newItem = null;
+                        }
                     }
                 }
                 if (newItem != null) {
