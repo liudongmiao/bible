@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 
 import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.utils.BibleUtils;
-import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.NumberUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
