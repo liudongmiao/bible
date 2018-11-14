@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
-import android.os.LocaleList;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
@@ -17,12 +16,6 @@ import java.util.Locale;
 public class LocaleUtils {
 
     private static final String OVERRIDE_LANGUAGE = "override_language";
-
-    private static final Locale[] LOCALES = new Locale[] {
-            new Locale("zh", "CN"),
-            new Locale("zh", "TW"),
-            new Locale("en"),
-    };
 
     private LocaleUtils() {
 
@@ -40,7 +33,7 @@ public class LocaleUtils {
 
     private static Locale getLocale(String language) {
         if (TextUtils.isEmpty(language)) {
-            return getSystemLocale();
+            return Locale.getDefault();
         }
         String[] languages = language.split("_", 2);
         if (languages.length == 1) {
@@ -57,42 +50,6 @@ public class LocaleUtils {
             PreferenceManager.getDefaultSharedPreferences(activity)
                     .edit().putString(OVERRIDE_LANGUAGE, language).apply();
         }
-    }
-
-    public static Locale getSystemLocale() {
-        Configuration configuration = Resources.getSystem().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // multi locale since 7.X
-            LocaleList locales = configuration.getLocales();
-            int size = locales.size();
-            for (int i = 0; i < size; ++i) {
-                Locale locale = locales.get(i);
-                for (Locale provide : LOCALES) {
-                    if (ObjectUtils.equals(locale.getLanguage(), provide.getLanguage())
-                            && ObjectUtils.equals(locale.getCountry(), provide.getCountry())) {
-                        return locale;
-                    }
-                }
-            }
-            for (int i = 0; i < size; ++i) {
-                Locale locale = locales.get(i);
-                for (Locale provide : LOCALES) {
-                    if (ObjectUtils.equals(locale.getLanguage(), provide.getLanguage())) {
-                        return locale;
-                    }
-                }
-            }
-            return locales.get(0);
-        } else {
-            return getLocaleDeprecated(configuration);
-        }
-    }
-
-    public static Context getSystemContext(Context context) {
-        return updateResources(context, getSystemLocale());
-    }
-
-    private static Locale getLocaleDeprecated(Configuration configuration) {
-        return configuration.locale;
     }
 
     public static Context updateResources(Context context, Locale locale) {
