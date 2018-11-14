@@ -179,6 +179,19 @@ public class ReadingActivity extends AbstractReadingActivity {
                 LogUtils.d("annotation changed, refresh");
                 refresh();
             }
+        } else if (requestCode == REQUEST_CODE_OSIS && data != null) {
+            String osis = data.getStringExtra(OSIS);
+            if (!TextUtils.isEmpty(osis)) {
+                LogUtils.d("continue reading " + osis);
+                int position = getCurrentPosition();
+                Bundle bundle = retrieveOsis(position, osis);
+                if (!TextUtils.isEmpty(bundle.getString(CURR))) {
+                    position = bundle.getInt(ID) - 1;
+                    mAdapter.notifyDataSetChanged();
+                    refresh(position, bundle, true);
+                    mPager.setCurrentItem(position);
+                }
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

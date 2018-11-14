@@ -224,7 +224,7 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         super.finish();
     }
 
-    private void setResult() {
+    protected void setResult() {
         Intent data = new Intent();
         data.putExtra(NOTE_CHANGED, mNoteChanged);
         data.putExtra(HIGHLIGHT_CHANGED, mHighlightChanged);

@@ -43,6 +43,8 @@ public abstract class DrawerActivity extends ToolbarActivity
 
     static final int REQUEST_CODE_ANNOTATION = 1191;
 
+    static final int REQUEST_CODE_OSIS = 1192;
+
     private static final int DELAY = 250;
 
     private DrawerLayout drawer;
@@ -99,10 +101,10 @@ public abstract class DrawerActivity extends ToolbarActivity
                 startActivity(WebViewActivity.class);
                 break;
             case R.id.menu_plan:
-                startActivity(PlanActivity.class);
+                startActivityForResult(PlanActivity.class, REQUEST_CODE_OSIS);
                 break;
             case R.id.menu_votd:
-                startActivity(VotdActivity.class);
+                startActivityForResult(VotdActivity.class, REQUEST_CODE_OSIS);
                 break;
             case R.id.menu_download:
                 startActivity(VersionsActivity.class);

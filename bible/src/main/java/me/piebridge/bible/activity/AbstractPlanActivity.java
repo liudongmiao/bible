@@ -1,5 +1,6 @@
 package me.piebridge.bible.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -103,6 +104,20 @@ public abstract class AbstractPlanActivity extends ReadingItemsActivity {
     protected void onStop() {
         super.saveOsis();
         super.onStop();
+    }
+
+    @Override
+    public void finish() {
+        setResult();
+        super.finish();
+    }
+
+    @Override
+    protected void setResult() {
+        Intent data = new Intent();
+        data.putExtra(OSIS, getCurrentOsis());
+        LogUtils.d("set result, data: " + data.getExtras());
+        setResult(RESULT_OK, data);
     }
 
 }
