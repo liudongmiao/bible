@@ -126,7 +126,7 @@ public class ReadingActivity extends AbstractReadingActivity {
 
     @Override
     protected void onStop() {
-        saveOsis();
+        super.saveOsis();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onStop();
     }
@@ -152,19 +152,6 @@ public class ReadingActivity extends AbstractReadingActivity {
                     application.download(filename, true);
                 }
             }
-        }
-    }
-
-    private void saveOsis() {
-        String osis = getCurrentOsis();
-        if (!TextUtils.isEmpty(osis)) {
-            String book = BibleUtils.getBook(osis);
-            String chapter = BibleUtils.getChapter(osis);
-            BibleApplication application = (BibleApplication) getApplication();
-            PreferenceManager.getDefaultSharedPreferences(this).edit()
-                    .putString(OSIS, osis)
-                    .putString(book, chapter)
-                    .putString("version", application.getVersion()).apply();
         }
     }
 

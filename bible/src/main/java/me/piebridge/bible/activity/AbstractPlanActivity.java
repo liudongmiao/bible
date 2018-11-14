@@ -99,4 +99,10 @@ public abstract class AbstractPlanActivity extends ReadingItemsActivity {
         mPager.setCurrentItem(position);
     }
 
+    @Override
+    protected void onStop() {
+        super.saveOsis();
+        super.onStop();
+    }
+
 }

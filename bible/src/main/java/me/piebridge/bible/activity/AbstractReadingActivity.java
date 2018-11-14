@@ -770,4 +770,17 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         super.onSupportActionModeFinished(actionMode);
     }
 
+    protected void saveOsis() {
+        String osis = getCurrentOsis();
+        if (!TextUtils.isEmpty(osis)) {
+            String book = BibleUtils.getBook(osis);
+            String chapter = BibleUtils.getChapter(osis);
+            BibleApplication application = (BibleApplication) getApplication();
+            PreferenceManager.getDefaultSharedPreferences(this).edit()
+                    .putString(OSIS, osis)
+                    .putString(book, chapter)
+                    .putString("version", application.getVersion()).apply();
+        }
+    }
+
 }
