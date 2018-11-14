@@ -209,15 +209,18 @@ public class ReadingFragment extends Fragment {
         String linkColor = getString(bundle, COLOR_LINK);
         String fontFamily = getString(bundle, FONT_FAMILY);
         String verses = getString(bundle, VERSES);
+        String selectedVerses = formatSelected(highlighted, verses, verseStart, verseEnd);
+        LogUtils.d("highlighted: " + highlighted + ", verses: " + verses + ", start: " + verseStart
+                + ", end: " + verseEnd + ", selected: " + selectedVerses);
         return String.format(template, fontFamily, css,
                 backgroundColor, textColor, linkColor,
                 verseBegin, verseStart, verseEnd,
-                search, formatSelected(highlighted, verses, verseStart, verseEnd), highlighted,
+                search, selectedVerses, highlighted,
                 Arrays.toString(notes), title, body);
     }
 
     private String formatSelected(String highlighted, String verses, int verseStart, int verseEnd) {
-        if (ObjectUtils.equals(highlighted, verses)) {
+        if (!TextUtils.isEmpty(highlighted) && ObjectUtils.equals(highlighted, verses)) {
             return "";
         }
         if (!TextUtils.isEmpty(verses)) {

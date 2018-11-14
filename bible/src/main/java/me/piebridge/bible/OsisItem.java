@@ -338,4 +338,15 @@ public class OsisItem implements Parcelable {
             return new OsisItem[size];
         }
     };
+
+    public String forceVerses() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(verseStart);
+        if (!TextUtils.isEmpty(verseEnd)) {
+            sb.append("-");
+            sb.append(verseEnd);
+        }
+        return sb.toString();
+    }
+
 }
