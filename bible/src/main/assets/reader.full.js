@@ -586,8 +586,11 @@
         });
     }
 
-    function selectVerses(verses, clear) {
+    function selectVerses(verses, clear, result) {
         highlightVerses(verses, clear, selection);
+        if (result === true) {
+            getCopyText();
+        }
     }
 
     function setHighlightVerses(verses, added) {

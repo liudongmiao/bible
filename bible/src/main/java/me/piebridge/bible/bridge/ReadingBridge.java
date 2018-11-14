@@ -127,8 +127,8 @@ public class ReadingBridge {
         webView.loadUrl(url);
     }
 
-    public void selectVerses(WebView webView, String verses, boolean added) {
-        String url = "javascript:selectVerses(\"" + verses + "\", " + added + ");";
+    public void selectVerses(WebView webView, String verses, boolean added, boolean result) {
+        String url = "javascript:selectVerses(\"" + verses + "\", " + added + ", " + result + ");";
         LogUtils.d("url: " + url);
         webView.loadUrl(url);
     }
@@ -171,6 +171,10 @@ public class ReadingBridge {
         if (bridge != null) {
             bridge.updateBundle(bundle);
         }
+    }
+
+    public void setSelectedVerses(String initialSelected) {
+        this.selectedVerses = initialSelected;
     }
 
     public interface Bridge {

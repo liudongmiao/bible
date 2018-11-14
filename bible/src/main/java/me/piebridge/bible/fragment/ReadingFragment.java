@@ -74,6 +74,8 @@ public class ReadingFragment extends Fragment {
     private String selectedVerses = "";
     private String selectedContent = "";
 
+    private String initialSelected;
+
     @Override
     @SuppressWarnings("deprecation")
     public void onAttach(Activity activity) {
@@ -163,6 +165,7 @@ public class ReadingFragment extends Fragment {
             webView.getSettings().setDefaultFontSize(fontSize);
             webView.getSettings().setDefaultFixedFontSize(fontSize);
             webView.loadDataWithBaseURL("file:///android_asset/", body, "text/html", FileUtils.UTF_8, null);
+            readingBridge.setSelectedVerses(initialSelected);
             return true;
         } else {
             LogUtils.w("body is empty!");
@@ -209,13 +212,13 @@ public class ReadingFragment extends Fragment {
         String linkColor = getString(bundle, COLOR_LINK);
         String fontFamily = getString(bundle, FONT_FAMILY);
         String verses = getString(bundle, VERSES);
-        String selectedVerses = formatSelected(highlighted, verses, verseStart, verseEnd);
+        initialSelected = formatSelected(highlighted, verses, verseStart, verseEnd);
         LogUtils.d("highlighted: " + highlighted + ", verses: " + verses + ", start: " + verseStart
-                + ", end: " + verseEnd + ", selected: " + selectedVerses);
+                + ", end: " + verseEnd + ", initialSelected: " + initialSelected);
         return String.format(template, fontFamily, css,
                 backgroundColor, textColor, linkColor,
                 verseBegin, verseStart, verseEnd,
-                search, selectedVerses, highlighted,
+                search, initialSelected, highlighted,
                 Arrays.toString(notes), title, body);
     }
 
@@ -362,8 +365,8 @@ public class ReadingFragment extends Fragment {
         }
     }
 
-    public void selectVerses(String verses, boolean added) {
-        readingBridge.selectVerses(webView, verses, added);
+    public void selectVerses(String verses, boolean added, boolean result) {
+        readingBridge.selectVerses(webView, verses, added, result);
     }
 
     public void onSelected(boolean highlight, String verses, String content) {
@@ -386,6 +389,10 @@ public class ReadingFragment extends Fragment {
     private boolean isCurrent() {
         AbstractReadingActivity activity = (AbstractReadingActivity) getActivity();
         return activity != null && ObjectUtils.equals(activity.getCurrentOsis(), osis);
+    }
+
+    public String getSelectedVerses() {
+        return readingBridge.getSelectedVerses(null);
     }
 
 }

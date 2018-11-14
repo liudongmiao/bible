@@ -629,7 +629,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         application.saveNote(id, osis, verse, verses, content);
         getCurrentFragment().getArguments().putBundle(NOTES, application.getNoteVerses(osis));
         setNote(verse, !TextUtils.isEmpty(content));
-        getCurrentFragment().selectVerses(verses, false);
+        getCurrentFragment().selectVerses(verses, false, false);
     }
 
     public void deleteNote(long id, String verses) {
@@ -780,6 +780,16 @@ public abstract class AbstractReadingActivity extends DrawerActivity
                     .putString(OSIS, osis)
                     .putString(book, chapter)
                     .putString("version", application.getVersion()).apply();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        ReadingFragment currentFragment = getCurrentFragment();
+        if (currentFragment != null && !TextUtils.isEmpty(currentFragment.getSelectedVerses())) {
+            currentFragment.selectVerses(currentFragment.getSelectedVerses(), false, true);
+        } else {
+            super.onBackPressed();
         }
     }
 
