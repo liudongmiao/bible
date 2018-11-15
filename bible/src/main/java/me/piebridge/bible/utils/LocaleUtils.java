@@ -33,7 +33,7 @@ public class LocaleUtils {
 
     private static Locale getLocale(String language) {
         if (TextUtils.isEmpty(language)) {
-            return Locale.getDefault();
+            return getSystemLocale();
         }
         String[] languages = language.split("_", 2);
         if (languages.length == 1) {
@@ -50,6 +50,19 @@ public class LocaleUtils {
             PreferenceManager.getDefaultSharedPreferences(activity)
                     .edit().putString(OVERRIDE_LANGUAGE, language).apply();
         }
+    }
+
+    public static Locale getSystemLocale() {
+        Configuration configuration = Resources.getSystem().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return configuration.getLocales().get(0);
+        } else {
+            return getLocaleDeprecated(configuration);
+        }
+    }
+
+    private static Locale getLocaleDeprecated(Configuration configuration) {
+        return configuration.locale;
     }
 
     public static Context updateResources(Context context, Locale locale) {
