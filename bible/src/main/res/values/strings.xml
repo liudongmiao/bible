@@ -103,7 +103,7 @@
     <string name="odb_next">Next day</string>
     <string name="odb_about">About</string>
     <string name="odb_about_detail">Throughout the day, in countless locations and in dozens of countries around the world, Our Daily Bread is read by millions of people. And for every person who opens its pages, one thing is always true: It points to the joy of a relationship with Jesus Christ and the timeless wisdom found in God’s holy Word.\n\nOur Daily Bread is published and distributed worldwide in more than 55 languages by affiliated ministries around the globe.</string>
-    <string name="odb_copyright">&#169; Our Daily Bread Ministries</string>
+    <string name="odb_copyright">&#169; Our Daily Bread Ministries (Requires internet)</string>
     <string name="votd_copyright">&#169; Bible Gateway</string>
 
     <string name="settings_interface">Interface</string>

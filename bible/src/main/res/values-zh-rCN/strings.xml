@@ -101,7 +101,7 @@
     <string name="odb_next">后一天</string>
     <string name="odb_about">关于</string>
     <string name="odb_about_detail">英文《灵命日粮》始于 1956 年，如今全球有数百万的读者以《灵命日粮》作为每日的灵修材料。第一本中文《灵命日粮》于 1995 年出版，其中改变生命、激励人心的小品帮助读者每日阅读上帝的话语，与上帝同行，并从祂永不改变的话语中认识祂的智慧与应许。\n\n《灵命日粮》是灵命日粮事工的主要出版刊物，以英文写作，目前已经翻译超过 40 种语文，供应全球千万读者每日灵修的需要。</string>
-    <string name="odb_copyright">&#169; 灵命日粮事工</string>
+    <string name="odb_copyright">&#169; 灵命日粮事工（需要互联网）</string>
 
     <string name="settings_interface">界面</string>
     <string name="settings_translation">译本</string>

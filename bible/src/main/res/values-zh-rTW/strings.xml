@@ -101,7 +101,7 @@
     <string name="odb_next">后一天</string>
     <string name="odb_about">關於</string>
     <string name="odb_about_detail">英文《靈命日糧》始於 1956 年，如今全球有數百萬的讀者以《靈命日糧》作為每日的靈修材料。第一本中文《靈命日糧》於 1995 年出版，其中改變生命、激勵人心的小品幫助讀者每日閱讀上帝的話語，與上帝同行，並從祂永不改變的話語中認識祂的智慧與應許。\n\n《靈命日糧》是靈命日糧事工的主要出版刊物，以英文寫作，目前已經翻譯超過 40 種語文，供應全球千万讀者每日靈修的需要。</string>
-    <string name="odb_copyright">&#169; 靈命日糧事工</string>
+    <string name="odb_copyright">&#169; 靈命日糧事工（需要網際網路）</string>
 
     <string name="settings_interface">介面</string>
     <string name="settings_translation">譯本</string>
