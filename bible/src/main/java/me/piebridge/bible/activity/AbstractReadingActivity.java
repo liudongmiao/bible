@@ -719,7 +719,9 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         }
         if (mAutoCopy) {
             String text = getText(selection);
-            copy(text);
+            if (!TextUtils.isEmpty(text)) {
+                copy(text);
+            }
         }
     }
 
@@ -737,7 +739,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
     private String getText(ReadingHandler.Selection selection) {
         ReadingFragment currentFragment = getCurrentFragment();
-        if (currentFragment == null) {
+        if (currentFragment == null || TextUtils.isEmpty(selection.getVerses())) {
             return null;
         }
         return getVersionName() + " " + currentFragment.getTitle() + ":"
