@@ -157,7 +157,7 @@ public abstract class DrawerActivity extends ToolbarActivity
         boolean plan = sharedPreferences.getBoolean("plan", true);
         menu.findItem(R.id.menu_plan).setVisible(plan);
 
-        boolean votd = sharedPreferences.getBoolean("votd", false);
+        boolean votd = sharedPreferences.getBoolean("votd", true);
         menu.findItem(R.id.menu_votd).setVisible(votd);
     }
 

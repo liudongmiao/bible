@@ -319,8 +319,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         bundle.putBoolean(CROSS, sharedPreferences.getBoolean(CROSS, false));
         bundle.putBoolean(SHANGTI, sharedPreferences.getBoolean(SHANGTI, false));
         bundle.putBoolean(RED, sharedPreferences.getBoolean(RED, true));
-        bundle.putBoolean(JUSTIFY, sharedPreferences.getBoolean(JUSTIFY, true));
-        bundle.putString(FONT_FAMILY, sharedPreferences.getString(FONT_FAMILY, "serif"));
+        bundle.putBoolean(JUSTIFY, sharedPreferences.getBoolean(JUSTIFY, false));
+        bundle.putString(FONT_FAMILY, sharedPreferences.getString(FONT_FAMILY, "sans-serif"));
         updateBundle(bundle);
         return bundle;
     }
@@ -335,8 +335,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
                 || !ObjectUtils.equals(bundle.getBoolean(CROSS), sharedPreferences.getBoolean(CROSS, false))
                 || !ObjectUtils.equals(bundle.getBoolean(SHANGTI), sharedPreferences.getBoolean(SHANGTI, false))
                 || !ObjectUtils.equals(bundle.getBoolean(RED), sharedPreferences.getBoolean(RED, true))
-                || !ObjectUtils.equals(bundle.getBoolean(JUSTIFY), sharedPreferences.getBoolean(JUSTIFY, true))
-                || !ObjectUtils.equals(bundle.getString(FONT_FAMILY), sharedPreferences.getString(FONT_FAMILY, "serif"));
+                || !ObjectUtils.equals(bundle.getBoolean(JUSTIFY), sharedPreferences.getBoolean(JUSTIFY, false))
+                || !ObjectUtils.equals(bundle.getString(FONT_FAMILY), sharedPreferences.getString(FONT_FAMILY, "sans-serif"));
     }
 
     private int getFontsize(SharedPreferences sharedPreferences, String version) {
