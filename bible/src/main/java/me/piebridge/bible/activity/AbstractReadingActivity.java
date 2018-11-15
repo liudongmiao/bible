@@ -135,9 +135,14 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         mPager = findViewById(R.id.pager);
         fontPath = BibleUtils.getFontPath(this);
         mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount());
-        mPager.setAdapter(mAdapter);
-        mPager.addOnPageChangeListener(this);
-        initialize();
+        if (isFake()) {
+            mPager.setVisibility(View.GONE);
+            mHeader.setVisibility(View.GONE);
+        } else {
+            mPager.setAdapter(mAdapter);
+            mPager.addOnPageChangeListener(this);
+            initialize();
+        }
     }
 
     @Override
@@ -284,6 +289,9 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     public Bundle retrieveOsis(int position, String osis) {
         Bundle bundle = new Bundle();
         bundle.putString(OSIS, osis);
+        if (isFake()) {
+            return bundle;
+        }
         BibleApplication application = (BibleApplication) getApplication();
         Uri uri = VersionProvider.CONTENT_URI_CHAPTER.buildUpon().appendEncodedPath(osis).build();
         try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
