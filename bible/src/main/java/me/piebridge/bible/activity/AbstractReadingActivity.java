@@ -301,7 +301,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
                 bundle.putString(CURR, curr);
                 bundle.putString(NEXT, getString(cursor, VersionProvider.COLUMN_NEXT));
                 bundle.putString(PREV, getString(cursor, VersionProvider.COLUMN_PREVIOUS));
-                bundle.putString(HUMAN, getString(cursor, VersionProvider.COLUMN_HUMAN));
+                bundle.putString(HUMAN, application.getHuman(curr));
                 bundle.putByteArray(CONTENT, FileUtils.compress(getString(cursor, VersionProvider.COLUMN_CONTENT)));
                 bundle.putString(OSIS, curr);
 
