@@ -190,7 +190,10 @@ public class SelectActivity extends ToolbarActivity
     public void setBook(String book) {
         this.book = book;
         Map<String, String> chapters = prepareChapters(book);
-        this.chapter = chapters.keySet().iterator().next();
+        this.chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(book, null);
+        if (TextUtils.isEmpty(this.chapter)) {
+            this.chapter = chapters.keySet().iterator().next();
+        }
         selectChapter.setItems(chapters, this.chapter);
         updateTitle(CHAPTER);
         mPager.setCurrentItem(CHAPTER);
