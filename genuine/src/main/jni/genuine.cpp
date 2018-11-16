@@ -2,9 +2,7 @@
 #include <string.h>
 #include <jni.h>
 #include <fcntl.h>
-#include <dirent.h>
 #include <stdlib.h>
-#include <time.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dlfcn.h>
@@ -19,7 +17,11 @@
 #error "please define genuine.h"
 #endif
 
+#include "genuine_extra.h"
+
+#ifndef TAG
 #define TAG "Genuine"
+#endif
 #define LOGI(...) (__android_log_print(ANDROID_LOG_INFO, TAG, __VA_ARGS__))
 #define LOGW(...) (__android_log_print(ANDROID_LOG_WARN, TAG, __VA_ARGS__))
 #define LOGE(...) (__android_log_print(ANDROID_LOG_ERROR, TAG, __VA_ARGS__))
@@ -1285,14 +1287,19 @@ static char xposedInvokeName[0x10];
 static char xposedInvokeSignature[0x80];
 
 // FIXME: define methods in your own class
+// FIXME: private static native Object invoke(Member m, int i, Object a, Object t, Object[] as) throws Throwable;
+// FIXME: public static native int version();
+
+#ifndef GENUINE_CLAZZ
+#define GENUINE_CLAZZ "me/piebridge/Genuine"
+#endif
+
 static JNINativeMethod methods[] = {
-        // FIXME: private static native Object invoke(Member m, int i, Object a, Object t, Object[] as) throws Throwable;
         {xposedInvokeName, xposedInvokeSignature, reinterpret_cast<void *>(invoke)},
-        // FIXME: public static native int version();
         {"version",        "()I",                 reinterpret_cast<void *>(version)},
-        // TODO: other methods if exists
 };
 
+#ifndef JNI_ONLOAD
 jint JNI_OnLoad(JavaVM *jvm, void *) {
     JNIEnv *env;
     jclass clazz;
@@ -1300,25 +1307,38 @@ jint JNI_OnLoad(JavaVM *jvm, void *) {
 #ifdef DEBUG
     LOGI("JNI_OnLoad start");
 #endif
+
     if (jvm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) != JNI_OK) {
         return JNI_ERR;
     }
 
-    // FIXME: use your own class
-    if ((clazz = env->FindClass("me/piebridge/Genuine")) == NULL) {
+    if ((clazz = env->FindClass(GENUINE_CLAZZ)) == NULL) {
         return JNI_ERR;
     }
 
-    fill_invoke((char *) methods[0].name);
-    fill_xposed_invoke_signature((char *) methods[0].signature);
+    fill_invoke(const_cast<char *>( methods[0].name));
+    fill_xposed_invoke_signature(const_cast<char *>(methods[0].signature));
     if (env->RegisterNatives(clazz, methods, NELEM(methods)) < 0) {
         return JNI_ERR;
     }
 
+#ifdef DEBUG
+    LOGI("JNI_OnLoad_Extra start");
+#endif
+    if (JNI_OnLoad_Extra(env, clazz) < 0) {
+        return JNI_ERR;
+    }
+
+#ifdef DEBUG
+    LOGI("antiXposed start");
+#endif
     if (!antiXposed(env, clazz)) {
         return JNI_ERR;
     }
 
+#ifdef DEBUG
+    LOGI("checkGenuine start");
+#endif
     genuine = checkGenuine();
 
     env->DeleteLocalRef(clazz);
@@ -1329,3 +1349,4 @@ jint JNI_OnLoad(JavaVM *jvm, void *) {
 
     return JNI_VERSION_1_6;
 }
+#endif
