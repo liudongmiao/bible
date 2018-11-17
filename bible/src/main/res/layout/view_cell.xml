@@ -9,16 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
-        android:foreground="?attr/selectableItemBackground"
-        android:minHeight="48dp">
+        android:foreground="?attr/selectableItemBackground">
 
         <TextView
             android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center_horizontal|center_vertical"
             android:gravity="center"
-            android:padding="8dp"
+            android:minHeight="48dp"
             android:textSize="@dimen/text_size_cell"
             tools:text="Genesis" />
 

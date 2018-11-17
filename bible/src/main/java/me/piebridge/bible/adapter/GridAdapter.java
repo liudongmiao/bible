@@ -2,6 +2,7 @@ package me.piebridge.bible.adapter;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.View;
@@ -55,8 +56,10 @@ public class GridAdapter extends ArrayAdapter<String> {
         textView.setEnabled(gridChecker.isGridEnabled(item));
         if (!gridChecker.isGridChecked(item)) {
             textView.setTextColor(textColor);
+            textView.setBackgroundColor(Color.TRANSPARENT);
         } else {
             textView.setTextColor(textColorSelected);
+            textView.setBackgroundResource(R.color.yellow_alpha);
         }
         if (typeface != null) {
             textView.setTypeface(typeface);

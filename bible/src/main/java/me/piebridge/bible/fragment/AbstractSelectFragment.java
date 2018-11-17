@@ -20,12 +20,17 @@ import me.piebridge.bible.R;
 import me.piebridge.bible.activity.SelectActivity;
 import me.piebridge.bible.adapter.GridAdapter;
 import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.utils.LogUtils;
 
 /**
  * Created by thom on 16/7/6.
  */
 public abstract class AbstractSelectFragment extends Fragment
         implements AdapterView.OnItemClickListener, GridAdapter.GridChecker {
+
+    private boolean mResumed;
+
+    private boolean mVisible;
 
     private static final int COLUMN_5 = 5;
 
@@ -110,6 +115,31 @@ public abstract class AbstractSelectFragment extends Fragment
     @Override
     public boolean isGridChecked(String key) {
         return key.equals(selected);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mResumed = true;
+        scroll();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        mVisible = true;
+        scroll();
+    }
+
+    private void scroll() {
+        if (mResumed && mVisible && gridView != null && selected != null) {
+            GridAdapter gridAdapter = (GridAdapter) gridView.getAdapter();
+            int position = gridAdapter.getPosition(selected);
+            int last = gridView.getLastVisiblePosition();
+            if (last < position) {
+                gridView.smoothScrollToPosition(position);
+            }
+        }
     }
 
 }
