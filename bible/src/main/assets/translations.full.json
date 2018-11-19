@@ -603,7 +603,7 @@
     },
     {
       "code": "kr92",
-      "date": "20181008",
+      "date": "20181108",
       "lang": "fi",
       "meta": "<p>© Suomennoksen tekijänoikeudet: Kirkon keskusrahasto, Evangelical Lutheran Church of Finland</p><p>This translation has been published by the Finnish Bible Society.</p><p>If you are interested in obtaining a printed copy, please contact the Finnish Bible Society at <a href=\"http://www.piplia.fi/\"> www.piplia.fi</a>.</p>🔗<a href=\"https://bibles.org/versions/fin-FIN92\">bibles.org</a>",
       "name": "Kirkkoraamattu 1992"
@@ -657,7 +657,7 @@
     {
       "code": "tr1550",
       "copy": "pd",
-      "date": "20181107",
+      "date": "20151216",
       "lang": "grc",
       "meta": "🔗<a href=\"https://www.biblegateway.com/versions/1550-Stephanus-Greek-New-Testament-TR1550/\">Bible Gateway</a>",
       "name": "1550 Stephanus New Testament"
@@ -665,7 +665,7 @@
     {
       "code": "tr1894",
       "copy": "pd",
-      "date": "20181107",
+      "date": "20151216",
       "lang": "grc",
       "meta": "🔗<a href=\"https://www.biblegateway.com/versions/1894-Scrivener-Greek-New-Testament-TR1894/\">Bible Gateway</a>",
       "name": "1894 Scrivener New Testament"
@@ -908,7 +908,7 @@
     },
     {
       "code": "bl92",
-      "date": "20151216",
+      "date": "20181101",
       "lang": "ny",
       "meta": "<p>©The Bible Society of Malawi, 1992</p><h5>Buku Lopatulika ndilo Mau A Mulungu 1992 (Nyanja/Chewa) Bible</h5><p>This translation, was published by Zambia Bible Society, Malawi Bible Society and Zimbabwe Bible Society in 1992.</p>🔗<a href=\"https://bibles.org/versions/nya-NYCB92/\">bibles.org</a>",
       "name": "Buku Lopatulika 1992"
@@ -1012,7 +1012,7 @@
       "name": "Slovenský Ekumenický Biblia"
     },
     {
-      "code": "SMKNT",
+      "code": "smknt",
       "copy": "nc",
       "date": "20181109",
       "lang": "smk",

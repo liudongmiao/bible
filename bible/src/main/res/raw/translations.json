@@ -91,7 +91,7 @@
     {
       "code": "tr1550",
       "copy": "pd",
-      "date": "20181107",
+      "date": "20151216",
       "lang": "grc",
       "meta": "🔗<a href=\"https://www.biblegateway.com/versions/1550-Stephanus-Greek-New-Testament-TR1550/\">Bible Gateway</a>",
       "name": "1550 Stephanus New Testament"
@@ -99,7 +99,7 @@
     {
       "code": "tr1894",
       "copy": "pd",
-      "date": "20181107",
+      "date": "20151216",
       "lang": "grc",
       "meta": "🔗<a href=\"https://www.biblegateway.com/versions/1894-Scrivener-Greek-New-Testament-TR1894/\">Bible Gateway</a>",
       "name": "1894 Scrivener New Testament"
@@ -153,7 +153,7 @@
       "name": "Det Norsk Bibelselskap 1930"
     },
     {
-      "code": "SMKNT",
+      "code": "smknt",
       "copy": "nc",
       "date": "20181109",
       "lang": "smk",
