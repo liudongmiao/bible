@@ -215,11 +215,12 @@ public class ReadingFragment extends Fragment {
         initialSelected = formatSelected(highlighted, verses, verseStart, verseEnd);
         LogUtils.d("highlighted: " + highlighted + ", verses: " + verses + ", start: " + verseStart
                 + ", end: " + verseEnd + ", initialSelected: " + initialSelected);
+        String extraClass = NumberUtils.parseInt(BibleUtils.getChapter(osis)) >= 0x64 ? "chapter-large" : "";
         return String.format(template, fontFamily, css,
                 backgroundColor, textColor, linkColor,
                 verseBegin, verseStart, verseEnd,
                 search, initialSelected, highlighted,
-                Arrays.toString(notes), title, body);
+                Arrays.toString(notes), title, extraClass, body);
     }
 
     private String formatSelected(String highlighted, String verses, int verseStart, int verseEnd) {

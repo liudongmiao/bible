@@ -7,13 +7,12 @@ u.person { text-decoration: none; }
 .d { font-style: italic; margin-bottom: 4pt; margin-top: 4pt; }
 .ms { font-size: 1.2em; font-weight: bold; text-align: center; margin-bottom: 4pt; margin-top: 16pt; }
 .p { text-indent: 0em; }
-.q1 { margin-left: 1em; margin-top: 0em; margin-bottom: 0.1em; line-height: 1.2em; }
 .qs { font-style: italic; margin-bottom: 0px; }
 .r { font-style: italic; margin-top: -2pt; margin-bottom: 4pt; }
 .s { font-weight: bold; margin-bottom: 4pt; margin-top: 8pt; }
 .s2 { font-style: italic; margin-bottom: 4pt; margin-top: 8pt; }
 .sp { font-style: italic; margin-bottom: 4pt; margin-top: 8pt; }
-.li, .li1, .q2, .q3 { margin-left: 1em; margin-top: 0em; margin-bottom: 0.1em; line-height: 1.2em; }
+.li, .li1, .q2, .q3 { margin-left: 1em; margin-top: 0em; margin-bottom: 0em }
 span.level1 { display: block; margin-left: 0; padding: 0; }
 span.level2 { display: block; margin-left: 15px; padding: 0; }
 span.level3 { display: block; margin-left: 30px; padding: 0; }
@@ -21,14 +20,23 @@ span.level4 { display: block; margin-left: 45px; padding: 0; }
 span.para { display: block; padding: 0; padding-bottom: 10px; }
 .title-passage { display: block; font-weight: bold; padding-bottom: 10px; }
 sup { line-height: 0 }
-sup.footnote, sup.crossreference { font-weight: normal }
-.chapternum { float: left; padding-top: 0.3em; font-size: 2.4em; font-weight: bold; }
+a.notelink, sup.footnote, sup.crossreference { padding: 0 0.2em; font-size: small }
+a.notelink { line-height: 1em; vertical-align: text-top }
 .introduction .iot { border-bottom: 1px solid; text-transform: uppercase; }
 .introduction .io1 { font-size: 0.8em; margin: 0; padding: 8px 5px 8px 20px; }
 a.notelink, .footnote a, .crossreference a { text-decoration: none; }
 @font-face { font-family: 'annotation'; src: url('annotation.ttf') format('truetype'); }
 .icon-footnote:before { font-family: "annotation"; content: '\e800'; } 
 .icon-crossreference:before { font-family: "annotation"; content: '\e801'; }
-a.notelink { padding: 0 0.2em }
-img.note { height: 1em }
+a.notelink, sup.footnote, sup.crossreference { padding: 0 0.2em; font-size: small }
+img.note { height: 1.3em; vertical-align: text-top; padding: 0 0.2em }
 @font-face { font-family: 'GentiumPlus'; src: url('GentiumPlus-R.ttf') format('truetype'); }
+.poetry { clear: left }
+.q1 sup, .poetry sup.versenum { display: inline-block; margin-left: -3ex; width: 3ex; text-align: right; padding-right: 0.3ex }
+.q1, .poetry .line { margin-top: 0em; margin-bottom: 0em }
+.chapternum { float: left; font-size: 2em; text-align: right; font-weight: bold; line-height: initial; }
+.poetry .line > span { display: inline-block; }
+.q1, .poetry .line > span { text-indent: -1em; margin-left: 3em; }
+.q1 .chapternum, .poetry .chapternum { width: 1.5em; margin-left: -2em;}
+.chapter-large .q1, .chapter-large .poetry .line > span { text-indent: -1em; margin-left: 4em; }
+.chapter-large .q1 .chapternum, .chapter-large .poetry .chapternum { width: 2.5em; margin-left: -3em;}
