@@ -555,6 +555,7 @@
     </string-array>
 
     <string-array name="font_family_values">
+        <item>GentiumPlus</item>
         <item>serif</item>
         <item>sans-serif</item>
         <item>sans-serif-light</item>
@@ -562,6 +563,7 @@
     </string-array>
 
     <string-array name="font_family_entries">
+        <item>Gentium Plus</item>
         <item>Serif</item>
         <item>Sans Serif</item>
         <item>Sans Serif Light</item>

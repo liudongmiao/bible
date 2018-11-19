@@ -55,6 +55,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     public static final String NOTE_CHANGED = "note_changed";
     public static final String HIGHLIGHT_CHANGED = "highlight_changed";
 
+    private static final String DEFAULT_FONT_FAMILY = "GentiumPlus";
+
     private ActionMode actionMode;
 
     public static final String CSS = "css";
@@ -320,7 +322,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         bundle.putBoolean(SHANGTI, sharedPreferences.getBoolean(SHANGTI, false));
         bundle.putBoolean(RED, sharedPreferences.getBoolean(RED, true));
         bundle.putBoolean(JUSTIFY, sharedPreferences.getBoolean(JUSTIFY, false));
-        bundle.putString(FONT_FAMILY, sharedPreferences.getString(FONT_FAMILY, "sans-serif"));
+        bundle.putString(FONT_FAMILY, sharedPreferences.getString(FONT_FAMILY, DEFAULT_FONT_FAMILY));
         updateBundle(bundle);
         return bundle;
     }
@@ -336,7 +338,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
                 || !ObjectUtils.equals(bundle.getBoolean(SHANGTI), sharedPreferences.getBoolean(SHANGTI, false))
                 || !ObjectUtils.equals(bundle.getBoolean(RED), sharedPreferences.getBoolean(RED, true))
                 || !ObjectUtils.equals(bundle.getBoolean(JUSTIFY), sharedPreferences.getBoolean(JUSTIFY, false))
-                || !ObjectUtils.equals(bundle.getString(FONT_FAMILY), sharedPreferences.getString(FONT_FAMILY, "sans-serif"));
+                || !ObjectUtils.equals(bundle.getString(FONT_FAMILY),
+                sharedPreferences.getString(FONT_FAMILY, DEFAULT_FONT_FAMILY));
     }
 
     private int getFontsize(SharedPreferences sharedPreferences, String version) {
