@@ -422,6 +422,10 @@
                     e.preventDefault();
                     android.showAnnotation("cross", element.outerHTML);
                     return;
+                } else if (element.nodeName == "A" && hasClass(element, "r")) {
+                    e.preventDefault();
+                    android.showAnnotation("search", element.textContent);
+                    return;
                 } else if (element.nodeName == "SPAN" && (hasClass(element, "text") || hasClass(element, prefix, false))) {
                     removeHighlight(selection);
                     selectVerse(element);

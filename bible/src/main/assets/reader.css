@@ -24,11 +24,10 @@ a.notelink, sup.footnote, sup.crossreference { padding: 0 0.2em; font-size: smal
 a.notelink { line-height: 1em; vertical-align: text-top }
 .introduction .iot { border-bottom: 1px solid; text-transform: uppercase; }
 .introduction .io1 { font-size: 0.8em; margin: 0; padding: 8px 5px 8px 20px; }
-a.notelink, .footnote a, .crossreference a { text-decoration: none; }
+a.notelink, .footnote a, .crossreference a, a.r { text-decoration: none; }
 @font-face { font-family: 'annotation'; src: url('annotation.ttf') format('truetype'); }
 .icon-footnote:before { font-family: "annotation"; content: '\e800'; } 
 .icon-crossreference:before { font-family: "annotation"; content: '\e801'; }
-a.notelink, sup.footnote, sup.crossreference { padding: 0 0.2em; font-size: small }
 img.note { height: 1.3em; vertical-align: text-top; padding: 0 0.2em }
 @font-face { font-family: 'GentiumPlus'; src: url('GentiumPlus-R.ttf') format('truetype'); }
 .poetry { clear: left }

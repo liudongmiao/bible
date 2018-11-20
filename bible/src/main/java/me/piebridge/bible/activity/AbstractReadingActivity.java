@@ -25,7 +25,10 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.appbar.AppBarLayout;
 
+import java.util.ArrayList;
+
 import me.piebridge.bible.BibleApplication;
+import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.adapter.ReadingAdapter;
 import me.piebridge.bible.bridge.ReadingBridge;
@@ -680,6 +683,10 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     }
 
     public void doShowAnnotation(ReadingHandler.Annotation annotation) {
+        if ("search".equals(annotation.getLink())) {
+            search(annotation.getMessage());
+            return;
+        }
         String message = annotation.getMessage();
         if (TextUtils.isEmpty(message)) {
             BibleApplication application = (BibleApplication) getApplication();
@@ -687,6 +694,17 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         }
         if (message != null) {
             doShowAnnotation(annotation.getLink(), message);
+        }
+    }
+
+    protected void search(String message) {
+        BibleApplication application = (BibleApplication) getApplication();
+        ArrayList<OsisItem> osisItems = OsisItem.parseSearch(message, application, getCurrentOsis());
+        LogUtils.d("search: " + message + ", items: " + osisItems);
+        if (!osisItems.isEmpty()) {
+            Intent intent = new Intent(this, ReadingCrossActivity.class);
+            intent.putParcelableArrayListExtra(ReadingItemsActivity.ITEMS, osisItems);
+            startActivity(setFinished(intent, false));
         }
     }
 
