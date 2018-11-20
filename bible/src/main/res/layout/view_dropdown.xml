@@ -8,4 +8,4 @@
     android:layout_gravity="center_vertical"
     app:alpha="0.54"
     app:srcCompat="@drawable/ic_arrow_drop_down_black_24dp"
-    app:tint="@color/grey_50" />
+    app:tint="@color/abc_primary_text_material_dark" />
