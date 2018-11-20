@@ -139,7 +139,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         mHeader = findHeader();
         mPager = findViewById(R.id.pager);
         fontPath = BibleUtils.getFontPath(this);
-        mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount());
+        mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount(), shouldRemove());
         if (isFake()) {
             mPager.setVisibility(View.GONE);
             mHeader.setVisibility(View.GONE);
@@ -149,6 +149,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
             initialize();
         }
     }
+
+    protected abstract boolean shouldRemove();
 
     @Override
     public void onRestart() {
@@ -376,6 +378,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
             bundle.putAll(retrieveOsis(position, osis));
             ReadingFragment fragment = mAdapter.getFragment(position);
             if (fragment != null) {
+                LogUtils.d("reload, position: " + position + ", osis: " + osis);
                 fragment.reloadData();
             }
         }
@@ -551,6 +554,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         Bundle bundle = fragment.getArguments();
         if (bundle != null) {
             bundle.putAll(mAdapter.getData(position));
+            LogUtils.d("reload, position: " + position + ", verse: " + verse);
             if (!fragment.reloadData()) {
                 mAdapter.notifyDataSetChanged();
             }

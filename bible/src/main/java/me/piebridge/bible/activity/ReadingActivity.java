@@ -56,6 +56,11 @@ public class ReadingActivity extends AbstractReadingActivity {
     }
 
     @Override
+    protected boolean shouldRemove() {
+        return true;
+    }
+
+    @Override
     protected void initializeHeader(View header) {
         setupDrawer();
         bookView = header.findViewById(R.id.book);

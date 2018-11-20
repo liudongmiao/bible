@@ -26,11 +26,14 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
 
     private final SparseArray<ReadingFragment> mFragments;
 
-    public ReadingAdapter(FragmentManager fm, int size) {
+    private final boolean mRemove;
+
+    public ReadingAdapter(FragmentManager fm, int size, boolean remove) {
         super(fm);
         mSize = size;
         mBundles = new SparseArray<>();
         mFragments = new SparseArray<>();
+        mRemove = remove;
     }
 
     public void setSize(int size) {
@@ -63,9 +66,11 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        super.destroyItem(container, position, object);
-        mFragments.remove(position);
-        mBundles.remove(position);
+        if (mRemove) {
+            super.destroyItem(container, position, object);
+            mFragments.remove(position);
+            mBundles.remove(position);
+        }
     }
 
     @Override

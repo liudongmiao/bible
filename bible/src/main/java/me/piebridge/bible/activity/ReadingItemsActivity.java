@@ -18,6 +18,7 @@ import me.piebridge.bible.R;
 import me.piebridge.bible.adapter.HiddenArrayAdapter;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.ObjectUtils;
 
 /**
  * Created by thom on 16/7/1.
@@ -167,8 +168,12 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Bundle bundle = retrieveOsis(position, null);
-        mAdapter.setData(position, bundle);
+        Bundle bundle = mAdapter.getData(position);
+        OsisItem item = items.get(position);
+        LogUtils.d("item.osis: " + item.toOsis() + ", curr: " + bundle.getString(CURR));
+        if (!ObjectUtils.equals(item.toOsis(), bundle.getString(CURR))) {
+            mAdapter.setData(position, retrieveOsis(position, null));
+        }
         prepare(position);
         mPager.setCurrentItem(position);
     }
@@ -230,6 +235,16 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         data.putExtra(HIGHLIGHT_CHANGED, mHighlightChanged);
         LogUtils.d("set result, data: " + data.getExtras());
         setResult(RESULT_OK, data);
+    }
+
+    @Override
+    public boolean isChanged(Bundle bundle) {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldRemove() {
+        return false;
     }
 
 }
