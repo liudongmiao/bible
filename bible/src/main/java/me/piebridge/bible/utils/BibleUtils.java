@@ -180,4 +180,31 @@ public class BibleUtils {
         }
     }
 
+    public static String fixPunctuation(String version, String content) {
+        if (isZhCN(version)) {
+            return content.replaceAll("「", "“").replaceAll("」", "”")
+                    .replaceAll("『", "‘").replaceAll("』", "’");
+        } else {
+            return content;
+        }
+    }
+
+    private static boolean isZhCN(String version) {
+        switch (version) {
+            case "ccb":
+            case "cnvs":
+            case "csbs":
+            case "cunpss":
+            case "cuvmps":
+            case "cuvmpsdemo":
+            case "rcu17ss":
+            case "cu89s":
+            case "cu89sdemo":
+                return true;
+            default:
+                return false;
+        }
+
+    }
+
 }

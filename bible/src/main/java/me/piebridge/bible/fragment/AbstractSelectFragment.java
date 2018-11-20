@@ -20,7 +20,6 @@ import me.piebridge.bible.R;
 import me.piebridge.bible.activity.SelectActivity;
 import me.piebridge.bible.adapter.GridAdapter;
 import me.piebridge.bible.utils.BibleUtils;
-import me.piebridge.bible.utils.LogUtils;
 
 /**
  * Created by thom on 16/7/6.

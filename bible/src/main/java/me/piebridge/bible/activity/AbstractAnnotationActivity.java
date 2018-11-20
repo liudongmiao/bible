@@ -38,7 +38,6 @@ import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.component.AnnotationComponent;
 import me.piebridge.bible.utils.BibleUtils;
-import me.piebridge.bible.utils.LocaleUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
@@ -439,10 +438,8 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
                 content = activity.getString(R.string.annotation_no_book, bookChapterVerse, application.getFullname());
                 holder.contentView.setText(content);
             } else {
-                if (LocaleUtils.getOverrideLocale(activity).equals(Locale.SIMPLIFIED_CHINESE)) {
-                    content = content.replaceAll("「", "“").replaceAll("」", "”");
-                    content = content.replaceAll("『", "‘").replaceAll("』", "’");
-                }
+                String version = ((BibleApplication) activity.getApplication()).getVersion();
+                content = BibleUtils.fixPunctuation(version, content);
                 holder.contentView.setText(content, TextView.BufferType.SPANNABLE);
                 if (!TextUtils.isEmpty(mQuery)) {
                     selectQuery(holder.contentView, content);

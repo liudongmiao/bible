@@ -37,7 +37,6 @@ import me.piebridge.bible.R;
 import me.piebridge.bible.provider.VersionProvider;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.ChooserUtils;
-import me.piebridge.bible.utils.LocaleUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 import me.piebridge.bible.utils.ThemeUtils;
@@ -490,10 +489,8 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
 
         private void bindUnformatted(ResultsActivity activity, TextView textView) {
             String content = verseCursor.getString(verseUnformatted);
-            if (LocaleUtils.getOverrideLocale(activity).equals(Locale.SIMPLIFIED_CHINESE)) {
-                content = content.replaceAll("「", "“").replaceAll("」", "”");
-                content = content.replaceAll("『", "‘").replaceAll("』", "’");
-            }
+            String version = ((BibleApplication) activity.getApplication()).getVersion();
+            content = BibleUtils.fixPunctuation(version, content);
             textView.setText(content, TextView.BufferType.SPANNABLE);
             selectQuery(textView, content);
         }
