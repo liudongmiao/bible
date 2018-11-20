@@ -147,7 +147,7 @@ public abstract class DrawerActivity extends ToolbarActivity
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         boolean odb;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) { // odb requires https, since 5.X
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // odb requires https in webview, since 4.4
             odb = false;
         } else {
             odb = sharedPreferences.getBoolean("odb", false);

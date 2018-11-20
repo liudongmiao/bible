@@ -49,7 +49,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
             fontsizeVersionPreference.setSummary(Integer.toString(versionFontsizeValue));
         }
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) { // odb requires https, since 5.X
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) { // odb requires https in webview, since 4.4
             removePreferences(findPreference("odb"));
         }
     }
