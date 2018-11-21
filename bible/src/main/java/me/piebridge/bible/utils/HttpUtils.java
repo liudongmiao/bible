@@ -1,9 +1,15 @@
 package me.piebridge.bible.utils;
 
+import android.os.Build;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.net.URL;
-import java.security.KeyManagementException;
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -13,6 +19,7 @@ import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -53,32 +60,33 @@ public class HttpUtils {
     }
 
     public static String retrieveContent(String spec, Map<String, String> headers) throws IOException {
-        return retrieveContent(spec, headers, false);
-    }
-
-    public static String retrieveContent(String spec, Map<String, String> headers, boolean head) throws IOException {
-        SSLSocketFactory factory = null;
-        URL url = new URL(spec);
-        if (isLetsEncrypt(url)) {
-            try {
-                SSLContext context = SSLContext.getInstance("TLS");
-                context.init(null, Sha1TrustManager.LETS_ENCRYPT, null);
-                factory = context.getSocketFactory();
-            } catch (NoSuchAlgorithmException | KeyManagementException e) {
-                throw new RuntimeException("Can't getSocketFactory", e);
-            }
-        }
-        return retrieveContent(url, factory, headers, head, 1);
-    }
-
-    static String retrieveContent(URL url, SSLSocketFactory factory, Map<String, String> headers, boolean head, int count)
-            throws IOException {
-        if (count > MAX_REDIRECT) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        if (retrieveContent(spec, headers, baos)) {
+            return baos.toString(FileUtils.UTF_8);
+        } else {
             return null;
+        }
+    }
+
+    public static boolean retrieveContent(String spec, Map<String, String> headers, OutputStream os)
+            throws IOException {
+        return retrieveContent(new URL(spec), headers, os, 1);
+    }
+
+    static boolean retrieveContent(URL url, Map<String, String> headers, OutputStream os, int count)
+            throws IOException {
+        if (Thread.currentThread().isInterrupted()) {
+            LogUtils.d("cancel " + url);
+            return false;
+        }
+        if (count > MAX_REDIRECT) {
+            return false;
         }
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         if (isLetsEncrypt(url)) {
-            ((HttpsURLConnection) connection).setSSLSocketFactory(factory);
+            ((HttpsURLConnection) connection).setSSLSocketFactory(TlsSocketFactory.LETS_ENCRYPT);
+        } else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) { // force tls 1.2
+            ((HttpsURLConnection) connection).setSSLSocketFactory(TlsSocketFactory.FORCE_TLS1_2);
         }
         connection.setInstanceFollowRedirects(false);
         try {
@@ -87,18 +95,18 @@ public class HttpUtils {
                     connection.setRequestProperty(entry.getKey(), entry.getValue());
                 }
             }
-            if (head) {
+            if (os == null) {
                 connection.setRequestMethod("HEAD");
             }
             connection.addRequestProperty("Accept-Encoding", "gzip");
             int code = connection.getResponseCode();
             LogUtils.d("url: " + url + ", code: " + code);
             if (code == STATUS_304) {
-                return null;
-            } else if (isRedirected(code) && !head) {
+                return false;
+            } else if (isRedirected(code) && os != null) {
                 String location = connection.getHeaderField("Location");
                 LogUtils.d("redirect to " + location);
-                return retrieveContent(new URL(location), factory, headers, false, count + 1);
+                return retrieveContent(new URL(location), headers, os, count + 1);
             }
             String etag = connection.getHeaderField(ETAG);
             String encoding = connection.getContentEncoding();
@@ -109,10 +117,13 @@ public class HttpUtils {
                     headers.put(ETAG, etag);
                 }
             }
+            if (os == null) {
+                return true;
+            }
             if ("gzip".equals(encoding)) {
-                return FileUtils.readAsString(new GZIPInputStream(connection.getInputStream()));
+                return FileUtils.copy(new GZIPInputStream(connection.getInputStream()), os, true);
             } else {
-                return FileUtils.readAsString(connection.getInputStream());
+                return FileUtils.copy(connection.getInputStream(), os, true);
             }
         } finally {
             connection.disconnect();
@@ -188,6 +199,69 @@ public class HttpUtils {
                 sb.append(HEX[b & 0xf]);
             }
             return sb.toString();
+        }
+
+    }
+
+    private static class TlsSocketFactory extends SSLSocketFactory {
+
+        static final SSLSocketFactory FORCE_TLS1_2 = new TlsSocketFactory(null);
+
+        static final SSLSocketFactory LETS_ENCRYPT = new TlsSocketFactory(Sha1TrustManager.LETS_ENCRYPT);
+
+        private final SSLSocketFactory socketFactory;
+
+        private TlsSocketFactory(TrustManager[] trustManagers) {
+            try {
+                SSLContext context = SSLContext.getInstance("TLS");
+                context.init(null, trustManagers, null);
+                socketFactory = context.getSocketFactory();
+            } catch (GeneralSecurityException e) {
+                throw new UnsupportedOperationException(e);
+            }
+        }
+
+        @Override
+        public String[] getDefaultCipherSuites() {
+            return socketFactory.getDefaultCipherSuites();
+        }
+
+        @Override
+        public String[] getSupportedCipherSuites() {
+            return socketFactory.getSupportedCipherSuites();
+        }
+
+        @Override
+        public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
+            return wrapTls(socketFactory.createSocket(s, host, port, autoClose));
+        }
+
+        @Override
+        public Socket createSocket(String host, int port) throws IOException {
+            return wrapTls(socketFactory.createSocket(host, port));
+        }
+
+        @Override
+        public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException {
+            return wrapTls(socketFactory.createSocket(host, port, localHost, localPort));
+        }
+
+        @Override
+        public Socket createSocket(InetAddress host, int port) throws IOException {
+            return wrapTls(socketFactory.createSocket(host, port));
+        }
+
+        @Override
+        public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
+            return wrapTls(socketFactory.createSocket(address, port, localAddress, localPort));
+        }
+
+        private Socket wrapTls(Socket socket) {
+            if (socket instanceof SSLSocket) {
+                SSLSocket sslSocket = (SSLSocket) socket;
+                sslSocket.setEnabledProtocols(sslSocket.getSupportedProtocols());
+            }
+            return socket;
         }
 
     }

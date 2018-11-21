@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -25,10 +26,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.BuildConfig;
@@ -43,6 +46,8 @@ import me.piebridge.bible.utils.LogUtils;
  */
 public class DownloadComponent extends Handler {
 
+    private static final AtomicLong ID = new AtomicLong(0x640);
+
     private static final int CHECK = 0;
 
     private static final int STATUS_DOWNLOADING = DownloadManager.STATUS_PENDING
@@ -50,14 +55,14 @@ public class DownloadComponent extends Handler {
 
     private volatile SimpleArrayMap<String, DownloadInfo> downloads = null;
 
+    private SimpleArrayMap<String, DownloadTask> downloadTasks = null;
+
     private final Object downloadsLock = new Object();
+
+    private final Object downloadTasksLock = new Object();
 
     private static final char[] HTTPS = new char[] {
             'h', 't', 't', 'p', 's', ':', '/', '/',
-    };
-
-    private static final char[] HTTP = new char[] {
-            'h', 't', 't', 'p', ':', '/', '/',
     };
 
     private static final char[] URL_PREFIX = new char[] {
@@ -104,6 +109,9 @@ public class DownloadComponent extends Handler {
     private synchronized void doCheckDownloading() {
         if (downloads == null) {
             downloads = new SimpleArrayMap<>();
+            if (useDownloadTask()) {
+                downloadTasks = new SimpleArrayMap<>();
+            }
             DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
             if (downloadManager != null) {
                 DownloadManager.Query query = new DownloadManager.Query().setFilterByStatus(STATUS_DOWNLOADING);
@@ -125,8 +133,12 @@ public class DownloadComponent extends Handler {
                     info.title = cursor.getString(titleIndex);
                     info.status = cursor.getInt(statusIndex);
                     LogUtils.d("info: " + info);
-                    synchronized (downloadsLock) {
-                        downloads.put(info.title, info);
+                    if (useDownloadTask()) {
+                        downloadManager.remove(info.id);
+                    } else {
+                        synchronized (downloadsLock) {
+                            downloads.put(info.title, info);
+                        }
                     }
                     title = info.title;
                 } while (cursor.moveToNext());
@@ -139,7 +151,10 @@ public class DownloadComponent extends Handler {
         if (downloads == null) {
             checkDownloading();
         }
-        DownloadInfo downloadInfo = downloads.get(filename);
+        DownloadInfo downloadInfo;
+        synchronized (downloadsLock) {
+            downloadInfo = downloads.get(filename);
+        }
         if (downloadInfo != null && !force) {
             LogUtils.d(filename + " status: " + downloadInfo.getStatus());
             return downloadInfo.id;
@@ -147,6 +162,9 @@ public class DownloadComponent extends Handler {
         File externalCacheDir = mContext.getExternalCacheDir();
         if (externalCacheDir == null) {
             return 0;
+        }
+        if (useDownloadTask()) {
+            return downloadAsyncTask(filename);
         }
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(buildUrl(filename)));
         request.setTitle(filename);
@@ -173,7 +191,7 @@ public class DownloadComponent extends Handler {
 
     public void check(String filename) {
         try {
-            HttpUtils.retrieveContent(buildUrl(filename), null, true);
+            HttpUtils.retrieveContent(buildUrl(filename), null, null);
         } catch (IOException ignore) {
             // do nothing
         }
@@ -210,14 +228,17 @@ public class DownloadComponent extends Handler {
             if (downloads == null) {
                 checkDownloading();
             }
-            String title = checkStatus(downloadManager, id);
-            Intent intent = new Intent(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-            intent.putExtra(DownloadManager.EXTRA_DOWNLOAD_ID, id);
-            intent.putExtra(Intent.EXTRA_TEXT, title);
-            LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(mContext);
-            if (!localBroadcastManager.sendBroadcast(intent) && !TextUtils.isEmpty(title)) {
-                addBibleData(new File(mContext.getExternalCacheDir(), title));
-            }
+            sendTitle(id, checkStatus(downloadManager, id));
+        }
+    }
+
+    private void sendTitle(long id, String title) {
+        Intent intent = new Intent(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        intent.putExtra(DownloadManager.EXTRA_DOWNLOAD_ID, id);
+        intent.putExtra(Intent.EXTRA_TEXT, title);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(mContext);
+        if (!localBroadcastManager.sendBroadcast(intent) && !TextUtils.isEmpty(title)) {
+            addBibleData(new File(mContext.getExternalCacheDir(), title));
         }
     }
 
@@ -273,7 +294,14 @@ public class DownloadComponent extends Handler {
         if (downloads == null) {
             checkDownloading();
         }
-        DownloadInfo downloadInfo = downloads.get(filename);
+        if (useDownloadTask()) {
+            cancelAsyncTask(filename);
+            return;
+        }
+        DownloadInfo downloadInfo;
+        synchronized (downloadsLock) {
+            downloadInfo = downloads.get(filename);
+        }
         if (downloadInfo != null) {
             DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
             if (downloadManager != null) {
@@ -289,7 +317,10 @@ public class DownloadComponent extends Handler {
         if (downloads == null) {
             checkDownloading();
         }
-        DownloadInfo downloadInfo = downloads.get(filename);
+        DownloadInfo downloadInfo;
+        synchronized (downloadsLock) {
+            downloadInfo = downloads.get(filename);
+        }
         return downloadInfo != null && (downloadInfo.status & STATUS_DOWNLOADING) != 0;
     }
 
@@ -308,13 +339,9 @@ public class DownloadComponent extends Handler {
         return FileUtils.readAsString(is);
     }
 
-    private String buildUrl(String path) {
+    static String buildUrl(String path) {
         StringBuilder url = new StringBuilder();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // https for 5.X
-            url.append(HTTPS);
-        } else {
-            url.append(HTTP);
-        }
+        url.append(HTTPS);
         url.append(URL_PREFIX);
         url.append(path);
         return url.toString();
@@ -359,6 +386,81 @@ public class DownloadComponent extends Handler {
         return json;
     }
 
+    Context getContext() {
+        return mContext;
+    }
+
+    private boolean useDownloadTask() {
+        return Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT; // no download manager for 4.X
+    }
+
+    void updateStatus(String title, int status) {
+        DownloadInfo downloadInfo;
+        synchronized (downloadsLock) {
+            downloadInfo = downloads.get(title);
+        }
+        if (downloadInfo != null) {
+            downloadInfo.status = status;
+            switch (status) {
+                case DownloadManager.STATUS_PENDING:
+                case DownloadManager.STATUS_RUNNING:
+                case DownloadManager.STATUS_PAUSED:
+                    break;
+                case DownloadManager.STATUS_SUCCESSFUL:
+                    sendTitle(downloadInfo.id, title);
+                    break;
+                case DownloadManager.STATUS_FAILED:
+                    sendTitle(downloadInfo.id, null);
+                    break;
+                default:
+                    break;
+
+            }
+        }
+    }
+
+    private long downloadAsyncTask(String filename) {
+        DownloadInfo info = new DownloadInfo();
+        info.id = ID.getAndIncrement();
+        info.title = filename;
+        info.status = DownloadManager.STATUS_PENDING;
+        LogUtils.d("info: " + info);
+        synchronized (downloadsLock) {
+            downloads.put(filename, info);
+        }
+        DownloadTask downloadTask = new DownloadTask(this, filename);
+        synchronized (downloadTasksLock) {
+            DownloadTask oldTask = downloadTasks.get(filename);
+            if (oldTask != null) {
+                oldTask.cancel(true);
+            }
+            downloadTasks.put(filename, downloadTask);
+        }
+        downloadTask.execute();
+        return info.id;
+    }
+
+    void cancelAsyncTask(String filename) {
+        DownloadInfo downloadInfo;
+        synchronized (downloadsLock) {
+            int index = downloads.indexOfKey(filename);
+            downloadInfo = downloads.valueAt(index);
+            downloads.removeAt(index);
+        }
+        DownloadTask downloadTask;
+        synchronized (downloadTasksLock) {
+            int index = downloadTasks.indexOfKey(filename);
+            downloadTask = downloadTasks.valueAt(index);
+            downloadTasks.removeAt(index);
+        }
+        if (downloadTask != null) {
+            LogUtils.d("cancel " + filename + ", task: " + downloadTask);
+            downloadTask.cancel(true);
+            sendTitle(downloadInfo != null ? downloadInfo.id : -1, null);
+        }
+    }
+
+
     private static class DownloadInfo {
         public long id;
         public int status;
@@ -385,6 +487,84 @@ public class DownloadComponent extends Handler {
                     return "unknown(" + status + ")";
             }
         }
+    }
+
+    private static class DownloadTask extends AsyncTask<Void, Integer, Boolean> {
+
+        private final WeakReference<DownloadComponent> mReference;
+
+        private final String mTitle;
+
+        public DownloadTask(DownloadComponent downloadComponent, String filename) {
+            this.mReference = new WeakReference<>(downloadComponent);
+            this.mTitle = filename;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            if (isCancelled()) {
+                return false;
+            }
+            Map<String, String> headers = new LinkedHashMap<>();
+            headers.put(X_SDK, Integer.toString(Build.VERSION.SDK_INT));
+            headers.put(X_VERSION, Integer.toString(BuildConfig.VERSION_CODE));
+
+            DownloadComponent downloadComponent = mReference.get();
+            if (downloadComponent == null) {
+                return false;
+            }
+            Context context = downloadComponent.getContext();
+            if (context == null) {
+                return false;
+            }
+            File externalCacheDir = context.getExternalCacheDir();
+            if (externalCacheDir == null) {
+                return false;
+            }
+            File file = new File(externalCacheDir, mTitle);
+            File fileTmp = new File(file.getParent(), file.getName() + ".tmp");
+            try {
+                FileOutputStream os = new FileOutputStream(fileTmp);
+                publishProgress(0);
+                if (HttpUtils.retrieveContent(buildUrl(mTitle), headers, os)) {
+                    return fileTmp.renameTo(file);
+                }
+            } catch (IOException e) {
+                LogUtils.w("cannot download " + mTitle, e);
+            } finally {
+                if (fileTmp.exists()) {
+                    //noinspection ResultOfMethodCallIgnored
+                    fileTmp.delete();
+                }
+            }
+            return false;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            DownloadComponent downloadComponent = mReference.get();
+            if (downloadComponent != null) {
+                downloadComponent.updateStatus(mTitle, DownloadManager.STATUS_RUNNING);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            LogUtils.d("filename: " + mTitle + ", result: " + result);
+            if (result == null) {
+                return;
+            }
+            DownloadComponent downloadComponent = mReference.get();
+            if (downloadComponent == null) {
+                return;
+            }
+            downloadComponent.updateStatus(mTitle, result ? DownloadManager.STATUS_SUCCESSFUL : DownloadManager.STATUS_FAILED);
+            Context context = downloadComponent.getContext();
+            if (context == null) {
+                return;
+            }
+        }
+
     }
 
 }

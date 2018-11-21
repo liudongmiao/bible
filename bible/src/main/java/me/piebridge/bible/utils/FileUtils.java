@@ -33,12 +33,21 @@ public class FileUtils {
         return baos.toString(UTF_8);
     }
 
-    public static void copy(InputStream is, OutputStream os) throws IOException {
+    public static boolean copy(InputStream is, OutputStream os) throws IOException {
+        return copy(is, os, false);
+    }
+
+    public static boolean copy(InputStream is, OutputStream os, boolean cancellable) throws IOException {
         int length;
         byte[] bytes = new byte[CACHE_SIZE];
         while ((length = is.read(bytes)) != -1) {
+            if (cancellable && Thread.currentThread().isInterrupted()) {
+                LogUtils.d("cancel copy, is: " + is + ", os: " + os);
+                return false;
+            }
             os.write(bytes, 0, length);
         }
+        return true;
     }
 
     public static byte[] compress(String string) {

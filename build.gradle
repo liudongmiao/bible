@@ -34,7 +34,7 @@ def getBibleVersion = { ->
 }
 
 project.ext.buildToolsVersion = '28.0.3'
-project.ext.minSdkVersion = 14
+project.ext.minSdkVersion = 16
 project.ext.compileSdkVersion = 28
 project.ext.targetSdkVersion = 28
 project.ext.versionCode = 112
