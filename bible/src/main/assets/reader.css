@@ -33,6 +33,7 @@ img.note { height: 1.3em; vertical-align: text-top; padding: 0 0.2em }
 .poetry { clear: left }
 .q1 sup, .poetry sup.versenum { display: inline-block; margin-left: -3ex; width: 3ex; text-align: right; padding-right: 0.3ex }
 .q1, .poetry .line { margin-top: 0em; margin-bottom: 0em }
+.versenum, .chapternum, .chapter sup { font-family: GentiumPlus; }
 .chapternum { float: left; font-size: 2em; text-align: right; font-weight: bold; line-height: initial; }
 .poetry .line > span { display: inline-block; }
 .q1, .poetry .line > span { text-indent: -1em; margin-left: 3em; }
