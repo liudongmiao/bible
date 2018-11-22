@@ -37,7 +37,7 @@ project.ext.buildToolsVersion = '28.0.3'
 project.ext.minSdkVersion = 16
 project.ext.compileSdkVersion = 28
 project.ext.targetSdkVersion = 28
-project.ext.versionCode = 112
+project.ext.versionCode = 113
 project.ext.simpleVersionName = getBibleVersion()
 project.ext.versionName = project.ext.simpleVersionName
 
