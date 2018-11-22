@@ -11,7 +11,7 @@
 
     <include
         android:id="@+id/left"
-        layout="@layout/view_grid" />
+        layout="@layout/view_recycler" />
 
     <View
         android:layout_width="4dp"
@@ -19,6 +19,6 @@
 
     <include
         android:id="@+id/right"
-        layout="@layout/view_grid" />
+        layout="@layout/view_recycler" />
 
 </LinearLayout>

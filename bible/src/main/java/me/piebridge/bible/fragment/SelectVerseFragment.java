@@ -8,7 +8,7 @@ import me.piebridge.bible.activity.SelectActivity;
 /**
  * Created by thom on 16/7/6.
  */
-public class SelectVerseFragment extends AbstractSelectFragment {
+public class SelectVerseFragment extends AbstractSelectChapterVerseFragment {
 
     private Map<String, Boolean> verses;
 
@@ -29,6 +29,11 @@ public class SelectVerseFragment extends AbstractSelectFragment {
     @Override
     protected void onSelected(SelectActivity activity, String selected) {
         activity.setVerse(selected);
+    }
+
+    @Override
+    public String toString() {
+        return "SelectVerse";
     }
 
 }

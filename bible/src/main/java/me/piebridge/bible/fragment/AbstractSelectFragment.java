@@ -1,104 +1,97 @@
 package me.piebridge.bible.fragment;
 
-import android.app.Activity;
-import android.graphics.Typeface;
+import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
-import me.piebridge.bible.R;
 import me.piebridge.bible.activity.SelectActivity;
-import me.piebridge.bible.adapter.GridAdapter;
-import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.adapter.SelectAdapter;
 
 /**
  * Created by thom on 16/7/6.
  */
-public abstract class AbstractSelectFragment extends Fragment
-        implements AdapterView.OnItemClickListener, GridAdapter.GridChecker {
+public abstract class AbstractSelectFragment extends Fragment implements SelectAdapter.OnSelectedListener {
 
-    private boolean mResumed;
-
-    private boolean mVisible;
-
-    private static final int COLUMN_5 = 5;
-
-    private GridView gridView;
-
-    protected Typeface typeface;
-    protected WeakReference<SelectActivity> wr;
+    private WeakReference<SelectActivity> wr;
 
     protected String selected;
+
     protected Map<String, String> items;
 
     @Override
-    @SuppressWarnings("deprecation")
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        String font = BibleUtils.getFontPath(activity);
-        if (!TextUtils.isEmpty(font)) {
-            typeface = Typeface.createFromFile(font);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (wr == null) {
+            SelectActivity activity = (SelectActivity) getActivity();
+            if (activity != null) {
+                wr = new WeakReference<>(activity);
+            }
         }
-        wr = new WeakReference<>((SelectActivity) activity);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_select, container, false);
-        gridView = view.findViewById(R.id.gridView);
-        gridView.setNumColumns(COLUMN_5);
-        SelectActivity selectActivity = wr.get();
-        if (selectActivity != null) {
-            gridView.setAdapter(new GridAdapter(selectActivity, this, typeface));
-        }
-        gridView.setOnItemClickListener(this);
-        updateAdapter();
-        return view;
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        scroll();
+        super.onViewCreated(view, savedInstanceState);
     }
 
-    protected void updateAdapter() {
-        if (gridView != null && items != null) {
-            GridAdapter gridAdapter = (GridAdapter) gridView.getAdapter();
-            gridAdapter.setData(new ArrayList<>(items.keySet()));
-            gridView.setSelection(gridAdapter.getPosition(selected));
+    protected int setData(SelectAdapter adapter, Collection<String> keys) {
+        List<SelectAdapter.SelectItem> selectItemList = new ArrayList<>();
+        int position = -1;
+        for (String key : keys) {
+            String value = getGridName(key);
+            boolean checked = isGridChecked(key);
+            boolean enabled = isGridEnabled(key);
+            if (checked) {
+                position = selectItemList.size();
+            }
+            selectItemList.add(new SelectAdapter.SelectItem(key, value, checked, enabled));
         }
+        adapter.setData(selectItemList);
+        return position;
     }
 
     public void setItems(Map<String, String> items, String selected) {
         this.items = items;
         this.selected = selected;
-        updateAdapter();
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        SelectActivity selectActivity = wr.get();
-        if (selectActivity != null) {
-            GridAdapter adapter = (GridAdapter) parent.getAdapter();
-            selected = String.valueOf(adapter.getItem(position));
-            onSelected(selectActivity, selected);
-            notifyDataSetChanged();
+        if (wr != null) {
+            updateAdapter();
+            scroll();
         }
     }
 
-    protected void notifyDataSetChanged() {
-        ((GridAdapter) gridView.getAdapter()).notifyDataSetChanged();
+    @Override
+    public void onSelected(String key) {
+        if (items.containsKey(key)) {
+            selected = key;
+            updateChecked();
+            SelectActivity selectActivity = wr.get();
+            if (selectActivity != null) {
+                onSelected(selectActivity, selected);
+            }
+        }
     }
+
+    protected abstract void updateAdapter();
+
+    protected abstract void scroll();
+
+    protected abstract void updateChecked();
 
     protected abstract void onSelected(SelectActivity activity, String selected);
 
-    @Override
-    public String getGridName(String key) {
+    protected String getGridName(String key) {
         if (items != null) {
             return items.get(key);
         } else {
@@ -106,38 +99,17 @@ public abstract class AbstractSelectFragment extends Fragment
         }
     }
 
-    @Override
-    public boolean isGridEnabled(String key) {
+    protected boolean isGridEnabled(String key) {
         return true;
     }
 
-    @Override
-    public boolean isGridChecked(String key) {
+    protected boolean isGridChecked(String key) {
         return key.equals(selected);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mResumed = true;
-        scroll();
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        mVisible = true;
-        scroll();
-    }
-
-    private void scroll() {
-        if (mResumed && mVisible && gridView != null && selected != null) {
-            GridAdapter gridAdapter = (GridAdapter) gridView.getAdapter();
-            int position = gridAdapter.getPosition(selected);
-            int last = gridView.getLastVisiblePosition();
-            if (last < position) {
-                gridView.smoothScrollToPosition(position);
-            }
+    protected void scroll(RecyclerView recyclerView, int position) {
+        if (recyclerView != null && position >= 0) {
+            recyclerView.scrollToPosition(position);
         }
     }
 

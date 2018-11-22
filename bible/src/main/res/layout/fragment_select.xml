@@ -10,7 +10,7 @@
     android:paddingBottom="12dp">
 
     <include
-        android:id="@+id/gridView"
-        layout="@layout/view_grid" />
+        android:id="@+id/recycler"
+        layout="@layout/view_recycler" />
 
 </LinearLayout>

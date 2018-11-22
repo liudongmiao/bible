@@ -9,7 +9,7 @@ import android.widget.CompoundButton;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
@@ -190,10 +190,7 @@ public class SelectActivity extends ToolbarActivity
     public void setBook(String book) {
         this.book = book;
         Map<String, String> chapters = prepareChapters(book);
-        this.chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(book, null);
-        if (TextUtils.isEmpty(this.chapter)) {
-            this.chapter = chapters.keySet().iterator().next();
-        }
+        this.chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(book, "");
         selectChapter.setItems(chapters, this.chapter);
         updateTitle(CHAPTER);
         mPager.setCurrentItem(CHAPTER);
@@ -241,7 +238,7 @@ public class SelectActivity extends ToolbarActivity
         }
     }
 
-    private static class SelectAdapter extends FragmentStatePagerAdapter {
+    private static class SelectAdapter extends FragmentPagerAdapter {
 
         private boolean showVerses;
 

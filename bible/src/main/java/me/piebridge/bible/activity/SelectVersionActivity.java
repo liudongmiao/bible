@@ -7,10 +7,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Adapter;
-import android.widget.AdapterView;
-import android.widget.GridView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,10 +17,11 @@ import java.util.List;
 
 import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.R;
-import me.piebridge.bible.adapter.GridAdapter;
+import me.piebridge.bible.adapter.SelectAdapter;
 import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.utils.ObjectUtils;
 
-public class SelectVersionActivity extends ToolbarActivity implements GridAdapter.GridChecker, AdapterView.OnItemClickListener {
+public class SelectVersionActivity extends ToolbarActivity implements SelectAdapter.OnSelectedListener {
 
     private String version;
 
@@ -38,38 +38,31 @@ public class SelectVersionActivity extends ToolbarActivity implements GridAdapte
 
         String font = BibleUtils.getFontPath(this);
         Typeface typeface = TextUtils.isEmpty(font) ? null : Typeface.createFromFile(font);
-        GridAdapter versionAdapter = new GridAdapter(this, this, typeface);
-        versionAdapter.setData(versions);
+        SelectAdapter versionAdapter = new SelectAdapter(this, typeface);
+        List<SelectAdapter.SelectItem> items = new ArrayList<>();
+        int position = -1;
+        for (String key : versions) {
+            String value = application.getFullname(key);
+            boolean checked = ObjectUtils.equals(key, version);
+            if (checked) {
+                position = items.size();
+            }
+            items.add(new SelectAdapter.SelectItem(key, value, checked, true));
+        }
+        versionAdapter.setData(items);
 
-        GridView gridView = findViewById(R.id.gridView);
-        gridView.setNumColumns(1);
-        gridView.setAdapter(versionAdapter);
-        gridView.setOnItemClickListener(this);
-        gridView.setSelection(versions.indexOf(version));
+        RecyclerView recyclerView = findViewById(R.id.recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(versionAdapter);
+        if (position >= 0) {
+            recyclerView.scrollToPosition(position);
+        }
     }
 
     @Override
-    public String getGridName(String key) {
-        BibleApplication application = (BibleApplication) getApplication();
-        return application.getFullname(key);
-    }
-
-    @Override
-    public boolean isGridEnabled(String key) {
-        return true;
-    }
-
-    @Override
-    public boolean isGridChecked(String key) {
-        return key.equals(version);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Adapter adapter = parent.getAdapter();
-        String newVersion = String.valueOf(adapter.getItem(position));
-        if (!newVersion.equals(version)) {
-            setResult(newVersion);
+    public void onSelected(String key) {
+        if (!ObjectUtils.equals(key, version)) {
+            setResult(key);
         }
         finish();
     }
@@ -101,6 +94,11 @@ public class SelectVersionActivity extends ToolbarActivity implements GridAdapte
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public String toString() {
+        return "SelectTranslation";
     }
 
 }

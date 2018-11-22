@@ -1,60 +1,71 @@
 package me.piebridge.bible.fragment;
 
+import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.SelectActivity;
-import me.piebridge.bible.adapter.GridAdapter;
+import me.piebridge.bible.adapter.SelectAdapter;
+import me.piebridge.bible.utils.BibleUtils;
 
 /**
  * Created by thom on 16/7/6.
  */
 public class SelectBookFragment extends AbstractSelectFragment {
 
-    private GridView left;
-    private GridView right;
+    private SelectAdapter selectAdapterLeft;
+    private SelectAdapter selectAdapterRight;
+
+    private RecyclerView recyclerViewLeft;
+    private RecyclerView recyclerViewRight;
+
+    private int positionLeft = -1;
+    private int positionRight = -1;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_select_book, container, false);
-        left = view.findViewById(R.id.left);
-        right = view.findViewById(R.id.right);
-        SelectActivity selectActivity = wr.get();
-        if (selectActivity != null) {
-            left.setAdapter(new GridAdapter(selectActivity, this, typeface));
-            right.setAdapter(new GridAdapter(selectActivity, this, typeface));
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (selectAdapterLeft == null) {
+            String font = BibleUtils.getFontPath(context);
+            Typeface typeface = !TextUtils.isEmpty(font) ? Typeface.createFromFile(font) : null;
+            selectAdapterLeft = new SelectAdapter(this, typeface);
+            selectAdapterRight = new SelectAdapter(this, typeface);
         }
-        left.setOnItemClickListener(this);
-        right.setOnItemClickListener(this);
-        updateAdapter();
+        if (items != null) {
+            updateAdapter();
+        }
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_select_book, container, false);
+        recyclerViewLeft = view.findViewById(R.id.left);
+        recyclerViewLeft.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerViewLeft.setAdapter(selectAdapterLeft);
+
+        recyclerViewRight = view.findViewById(R.id.right);
+        recyclerViewRight.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerViewRight.setAdapter(selectAdapterRight);
+
         return view;
     }
 
     @Override
     protected void updateAdapter() {
-        if (left != null && right != null && items != null) {
-            GridAdapter leftAdapter = (GridAdapter) left.getAdapter();
-            GridAdapter rightAdapter = (GridAdapter) right.getAdapter();
-            @SuppressWarnings("unchecked")
-            List<String>[] data = (List<String>[]) convertItems(items.keySet());
-            leftAdapter.setData(data[0]);
-            rightAdapter.setData(data[1]);
-            left.setSelection(leftAdapter.getPosition(selected));
-            right.setSelection(rightAdapter.getPosition(selected));
-        }
-    }
-
-    private List[] convertItems(Collection<String> items) {
-        List<String> keys = new ArrayList<>(items);
+        List<String> keys = new ArrayList<>(items.keySet());
         int matt = keys.indexOf("Matt");
         int gen = keys.indexOf("Gen");
         List<String> oldData;
@@ -69,20 +80,30 @@ public class SelectBookFragment extends AbstractSelectFragment {
             oldData = Collections.emptyList();
             newData = keys;
         }
-        return new List[] {
-            oldData, newData
-        };
+        positionLeft = setData(selectAdapterLeft, oldData);
+        positionRight = setData(selectAdapterRight, newData);
     }
 
     @Override
-    protected void notifyDataSetChanged() {
-        ((GridAdapter) left.getAdapter()).notifyDataSetChanged();
-        ((GridAdapter) right.getAdapter()).notifyDataSetChanged();
+    protected void updateChecked() {
+        selectAdapterLeft.updateChecked(selected);
+        selectAdapterRight.updateChecked(selected);
     }
 
     @Override
     protected void onSelected(SelectActivity activity, String selected) {
         activity.setBook(selected);
+    }
+
+    @Override
+    protected void scroll() {
+        scroll(recyclerViewLeft, positionLeft);
+        scroll(recyclerViewRight, positionRight);
+    }
+
+    @Override
+    public String toString() {
+        return "SelectBook";
     }
 
 }
