@@ -570,8 +570,8 @@
         <item>Sans Serif Condensed</item>
     </string-array>
 
-    <string name="cuvmps" tools:keep="@string/cuvmps">bibledata-zh-cn-cuvmps.zip</string>
-    <string name="cuvmpt" tools:keep="@string/cuvmpt">bibledata-zh-tw-cuvmpt.zip</string>
+    <string name="cu89s" tools:keep="@string/cu89s">bibledata-zh-cn-cu89s.zip</string>
+    <string name="cu89t" tools:keep="@string/cu89t">bibledata-zh-tw-cu89t.zip</string>
     <string name="asv" tools:keep="@string/asv">bibledata-en-asv.zip</string>
 
     <string-array name="version_fullname">
@@ -586,8 +586,8 @@
         <item>cunpts|和合</item>
         <item>rcuvss|和修</item>
         <item>rcuvts|和修</item>
-        <item>cuvmps|和合</item>
-        <item>cuvmpt|和合</item>
+        <item>cu89s|和合</item>
+        <item>cu89t|和合</item>
     </string-array>
 
     <string-array name="version_fullname_zh">
@@ -596,8 +596,8 @@
         <item>cunpts|新標點和合本</item>
         <item>rcuvss|和合本修订版</item>
         <item>rcuvts|和合本修訂版</item>
-        <item>cuvmpsdemo|现代标点和合本（演示）</item>
-        <item>cuvmptdemo|現代標點和合本（演示）</item>
+        <item>cu89sdemo|新标点和合本（演示）</item>
+        <item>cu89tdemo|新標點和合本（演示）</item>
     </string-array>
 
     <string-array name="language_values">

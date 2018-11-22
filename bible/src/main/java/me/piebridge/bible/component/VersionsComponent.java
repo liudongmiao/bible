@@ -278,6 +278,7 @@ public class VersionsComponent {
         if (!versionChecked) {
             versionChecked = true;
         }
+        checkUpdated(versions);
         mPreferenceVersions.edit().putStringSet(KEY_VERSIONS, versions).apply();
         Set<String> oldVersions = mPreferenceVersions.getStringSet(KEY_VERSIONS, null);
         if (oldVersions != null) {
@@ -294,6 +295,18 @@ public class VersionsComponent {
             return checkDemoVersions();
         } else {
             return versions;
+        }
+    }
+
+    private void checkUpdated(Set<String> versions) {
+        checkUpdated(versions, "cunpss", "cu89s");
+        checkUpdated(versions, "cunpts", "cu89t");
+    }
+
+    private void checkUpdated(Set<String> versions, String oldName, String newName) {
+        if (versions.contains(oldName) && versions.contains(newName)) {
+            versions.remove(oldName);
+            LogUtils.d("[fixed] ignore " + oldName + ", replaced by " + newName);
         }
     }
 
@@ -314,24 +327,24 @@ public class VersionsComponent {
 
     private Collection<String> checkDemoVersions() {
         final String asvdemo = "asvdemo";
-        final String cuvmpsdemo = "cuvmpsdemo";
-        final String cuvmptdemo = "cuvmptdemo";
+        final String cu89sdemo = "cu89sdemo";
+        final String cu89tdemo = "cu89tdemo";
         checkDemoVersion(R.raw.asvdemo, asvdemo);
-        checkDemoVersion(R.raw.cuvmpsdemo, cuvmpsdemo);
-        checkDemoVersion(R.raw.cuvmptdemo, cuvmptdemo);
+        checkDemoVersion(R.raw.cu89sdemo, cu89sdemo);
+        checkDemoVersion(R.raw.cu89tdemo, cu89tdemo);
         Locale locale = LocaleUtils.getOverrideLocale(mContext);
         switch (locale.getLanguage()) {
             case "zh":
                 switch (locale.getCountry()) {
                     case "TW":
-                        return Arrays.asList(cuvmptdemo, cuvmpsdemo, asvdemo);
+                        return Arrays.asList(cu89tdemo, cu89sdemo, asvdemo);
                     case "CN":
                     default:
-                        return Arrays.asList(cuvmpsdemo, cuvmptdemo, asvdemo);
+                        return Arrays.asList(cu89sdemo, cu89tdemo, asvdemo);
                 }
             case "en":
             default:
-                return Arrays.asList(asvdemo, cuvmpsdemo, cuvmptdemo);
+                return Arrays.asList(asvdemo, cu89sdemo, cu89tdemo);
         }
     }
 

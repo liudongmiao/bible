@@ -1241,9 +1241,11 @@
       "name": "中文标准译本"
     },
     {
-      "code": "cunpss",
-      "date": "20150607",
+      "code": "cu89s",
+      "copy": "pd",
+      "date": "20181122",
       "lang": "zh-cn",
+      "meta": "<p>以 eBible.org 为底本，参照 <a href=\"http://rcuv.hkbs.org.hk/\">HKBS</a> 校对，共修改 203 处（不计空格）；另修改全部“　<u>神</u>”为“<u>　神</u>”。</p>🔗<a href=\"https://ebible.org/Scriptures/details.php?id=cmn-cu89s\">eBible.org</a>",
       "name": "新标点和合本"
     },
     {
@@ -1281,9 +1283,11 @@
       "name": "中文標準譯本"
     },
     {
-      "code": "cunpts",
-      "date": "20160720",
+      "code": "cu89t",
+      "copy": "pd",
+      "date": "20181122",
       "lang": "zh-tw",
+      "meta": "<p>以 eBible.org 為底本，參照 <a href=\"http://rcuv.hkbs.org.hk/\">HKBS</a> 校對，共調整 92 處（不計空格）；另修改全部「着」為「著」。</p>🔗<a href=\"https://ebible.org/Scriptures/details.php?id=cmn-cu89t\">eBible.org</a>",
       "name": "新標點和合本"
     },
     {
