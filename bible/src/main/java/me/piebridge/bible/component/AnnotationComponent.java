@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.database.Cursor;
+import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -325,7 +326,7 @@ public class AnnotationComponent {
         }
     }
 
-    private class AnnotationsDatabaseHelper extends SQLiteOpenHelper {
+    private static class AnnotationsDatabaseHelper extends SQLiteOpenHelper {
 
         private static final int DATABASE_VERSION = 3;
         private static final String DATABASE_NAME = "annotations.db";
@@ -456,6 +457,25 @@ public class AnnotationComponent {
 
         public Wrapper(Context base) {
             super(base);
+        }
+
+        @Override
+        public SQLiteDatabase openOrCreateDatabase(String name, int mode, SQLiteDatabase.CursorFactory factory) {
+            return openOrCreateDatabase(name, mode, factory, null);
+        }
+
+        @Override
+        public SQLiteDatabase openOrCreateDatabase(String name, int mode, SQLiteDatabase.CursorFactory factory,
+                                                   DatabaseErrorHandler errorHandler) {
+            File path = getDatabasePath(name);
+            int flags = SQLiteDatabase.CREATE_IF_NECESSARY;
+            if ((mode & MODE_ENABLE_WRITE_AHEAD_LOGGING) != 0) {
+                flags |= SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING;
+            }
+            if ((mode & MODE_NO_LOCALIZED_COLLATORS) != 0) {
+                flags |= SQLiteDatabase.NO_LOCALIZED_COLLATORS;
+            }
+            return SQLiteDatabase.openDatabase(path.getPath(), factory, flags, errorHandler);
         }
 
         @Override
