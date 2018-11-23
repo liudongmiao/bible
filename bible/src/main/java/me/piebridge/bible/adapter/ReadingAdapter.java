@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.fragment.ReadingFragment;
 import me.piebridge.bible.utils.LogUtils;
+import me.piebridge.bible.utils.ObjectUtils;
 
 import static me.piebridge.bible.activity.AbstractReadingActivity.POSITION;
 
@@ -55,7 +56,7 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
     @Override
     public ReadingFragment getItem(int position) {
         ReadingFragment fragment = new ReadingFragment();
-        fragment.setArguments(getData(position));
+        ObjectUtils.requireNonNull(fragment.getArguments()).putAll(getData(position));
         return fragment;
     }
 
@@ -91,7 +92,12 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
 
     public synchronized void setData(int position, Bundle bundle) {
         bundle.putInt(POSITION, position);
-        mBundles.put(position, bundle);
+        Bundle oldBundle = mBundles.get(position);
+        if (oldBundle == null) {
+            mBundles.put(position, bundle);
+        } else {
+            oldBundle.putAll(bundle);
+        }
     }
 
     public synchronized Bundle getData(int position) {

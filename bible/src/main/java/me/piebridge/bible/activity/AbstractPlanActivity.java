@@ -2,6 +2,8 @@ package me.piebridge.bible.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -92,6 +94,7 @@ public abstract class AbstractPlanActivity extends ReadingItemsActivity {
         int position = 0;
         int count = retrieveOsisCount();
 
+        mAdapter.clearData();
         String osis = getCurrentOsis();
         Bundle bundle = retrieveOsis(position, osis);
         mAdapter.setSize(count);
@@ -118,6 +121,28 @@ public abstract class AbstractPlanActivity extends ReadingItemsActivity {
         data.putExtra(OSIS, getCurrentOsis());
         LogUtils.d("set result, data: " + data.getExtras());
         setResult(RESULT_OK, data);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.plan, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_yesterday:
+                loadData(-1);
+                refreshAdapter();
+                return true;
+            case R.id.action_tomorrow:
+                loadData(1);
+                refreshAdapter();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

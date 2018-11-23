@@ -379,6 +379,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
             ReadingFragment fragment = mAdapter.getFragment(position);
             if (fragment != null) {
                 LogUtils.d("reload, position: " + position + ", osis: " + osis);
+                ObjectUtils.requireNonNull(fragment.getArguments()).putAll(bundle);
                 fragment.reloadData();
             }
         }
@@ -502,6 +503,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         String osis = getCurrentOsis();
         LogUtils.d("oldCount: " + oldCount + ", newCount: " + newCount
                 + ", position: " + osis);
+        mAdapter.clearData();
         if (oldCount == newCount) {
             refresh(position, osis);
         } else {
@@ -551,13 +553,11 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         if (verse > 0) {
             fragment.setForceVerse(verse);
         }
-        Bundle bundle = fragment.getArguments();
-        if (bundle != null) {
-            bundle.putAll(mAdapter.getData(position));
-            LogUtils.d("reload, position: " + position + ", verse: " + verse);
-            if (!fragment.reloadData()) {
-                mAdapter.notifyDataSetChanged();
-            }
+        Bundle bundle = ObjectUtils.requireNonNull(fragment.getArguments());
+        bundle.putAll(mAdapter.getData(position));
+        LogUtils.d("reload, position: " + position + ", verse: " + verse);
+        if (!fragment.reloadData()) {
+            mAdapter.notifyDataSetChanged();
         }
     }
 

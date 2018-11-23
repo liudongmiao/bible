@@ -74,6 +74,10 @@ public class ReadingFragment extends Fragment {
 
     private String initialSelected;
 
+    public ReadingFragment() {
+        setArguments(new Bundle());
+    }
+
     @Override
     @SuppressWarnings("deprecation")
     public void onAttach(Activity activity) {
@@ -140,7 +144,12 @@ public class ReadingFragment extends Fragment {
             LogUtils.w("webView is null");
             return false;
         }
-        Bundle bundle = getArguments();
+        webView.loadUrl("about:blank");
+        Bundle bundle = ObjectUtils.requireNonNull(getArguments());
+        if (bundle.isEmpty() || bundle.getByteArray(CONTENT) == null) {
+            LogUtils.w("bundle is null");
+            return false;
+        }
         String currentOsis = bundle.getString(CURR);
         if (!TextUtils.isEmpty(osis) && osis.equals(currentOsis)) {
             saveState();
@@ -172,7 +181,7 @@ public class ReadingFragment extends Fragment {
     }
 
     public String getBody() {
-        Bundle bundle = getArguments();
+        Bundle bundle = ObjectUtils.requireNonNull(getArguments());
         String content = FileUtils.uncompressAsString(bundle.getByteArray(CONTENT));
         if (TextUtils.isEmpty(content)) {
             return null;
