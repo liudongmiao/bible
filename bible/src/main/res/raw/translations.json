@@ -195,10 +195,18 @@
     {
       "code": "cu89s",
       "copy": "pd",
-      "date": "20181122",
+      "date": "20181124",
       "lang": "zh-cn",
-      "meta": "<p>以 eBible.org 为底本，参照 <a href=\"http://rcuv.hkbs.org.hk/\">HKBS</a> 校对，共修改 203 处（不计空格）；另修改全部“　<u>神</u>”为“<u>　神</u>”。</p>🔗<a href=\"https://ebible.org/Scriptures/details.php?id=cmn-cu89s\">eBible.org</a>",
+      "meta": "<p>以 <a href=\"https://ebible.org/Scriptures/details.php?id=cmn-cu89s\">eBible.org</a> 为底本，参照 <a href=\"http://rcuv.hkbs.org.hk/\">HKBS</a> 校对。</p>🔗<a href=\"https://github.com/dove-bible/cu89s\">CU89S - Dove Bible - GitHub</a>",
       "name": "新标点和合本"
+    },
+    {
+      "code": "cuv",
+      "copy": "pd",
+      "date": "20181124",
+      "info": "<p>© 2009 中国基督教三自爱国运动委员会 中国基督教协会</p>🔗<a href=\"http://www.ccctspm.org\">中国基督教网</a>",
+      "lang": "zh-cn",
+      "name": "简体和合本"
     },
     {
       "code": "cuvmps",
@@ -219,9 +227,9 @@
     {
       "code": "cu89t",
       "copy": "pd",
-      "date": "20181122",
+      "date": "20181124",
       "lang": "zh-tw",
-      "meta": "<p>以 eBible.org 為底本，參照 <a href=\"http://rcuv.hkbs.org.hk/\">HKBS</a> 校對，共調整 92 處（不計空格）；另修改全部「着」為「著」。</p>🔗<a href=\"https://ebible.org/Scriptures/details.php?id=cmn-cu89t\">eBible.org</a>",
+      "meta": "<p>以 <a href=\"https://ebible.org/Scriptures/details.php?id=cmn-cu89t\">eBible.org</a> 為底本，參照 <a href=\"http://rcuv.hkbs.org.hk/\">HKBS</a> 校對。</p>🔗<a href=\"https://github.com/dove-bible/cu89t\">CU89T - Dove Bible - GitHub</a>",
       "name": "新標點和合本"
     },
     {
