@@ -2,6 +2,7 @@ package me.piebridge.bible.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -205,6 +206,10 @@ public class BibleUtils {
 
     public static String fix(String content, String version, boolean shangti) {
         String fixed = content;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            fixed = fixed.replaceAll("\uD863\uDC54", "鐏")
+                    .replaceAll("\uD84C\uDFB4", "墩");
+        }
         if (isZhCN(version)) {
             fixed = fixed.replaceAll("「", "“").replaceAll("」", "”")
                     .replaceAll("『", "‘").replaceAll("』", "’");
