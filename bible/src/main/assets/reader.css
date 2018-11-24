@@ -1,6 +1,6 @@
 *, *::before, *::after { box-sizing: border-box; }
 u.person { text-decoration: none; }
-.pn, .person { border-bottom: 1px solid; }
+.pn, .person, .name { border-bottom: 1px solid; }
 .add { border-bottom: 1px dotted; }
 .addpn { border-bottom: 1px dotted; box-shadow: 0 1px 0; }
 .b { font-size: 1em; }
