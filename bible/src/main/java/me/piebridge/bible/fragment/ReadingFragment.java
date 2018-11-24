@@ -295,13 +295,8 @@ public class ReadingFragment extends Fragment {
 
     private String fixIfNeeded(Bundle bundle, String content) {
         String version = bundle.getString(VERSION);
-        String body = BibleUtils.fixPunctuation(version, content);
-        if (bundle.getBoolean(SHANGTI, false)) {
-            body = body.replace("　神", "上帝");
-        } else {
-            body = body.replace("上帝", "　神");
-        }
-        return body;
+        boolean shangti = bundle.getBoolean(SHANGTI, false);
+        return BibleUtils.fix(content, version, shangti);
     }
 
     @Override

@@ -489,8 +489,8 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
 
         private void bindUnformatted(ResultsActivity activity, TextView textView) {
             String content = verseCursor.getString(verseUnformatted);
-            String version = ((BibleApplication) activity.getApplication()).getVersion();
-            content = BibleUtils.fixPunctuation(version, content);
+            BibleApplication application = (BibleApplication) activity.getApplication();
+            content = BibleUtils.fix(application, content);
             textView.setText(content, TextView.BufferType.SPANNABLE);
             selectQuery(textView, content);
         }

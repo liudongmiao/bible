@@ -438,8 +438,7 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
                 content = activity.getString(R.string.annotation_no_book, bookChapterVerse, application.getFullname());
                 holder.contentView.setText(content);
             } else {
-                String version = ((BibleApplication) activity.getApplication()).getVersion();
-                content = BibleUtils.fixPunctuation(version, content);
+                content = BibleUtils.fix((BibleApplication) activity.getApplication(), content);
                 holder.contentView.setText(content, TextView.BufferType.SPANNABLE);
                 if (!TextUtils.isEmpty(mQuery)) {
                     selectQuery(holder.contentView, content);

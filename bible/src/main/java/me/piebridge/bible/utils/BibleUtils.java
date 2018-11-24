@@ -3,6 +3,7 @@ package me.piebridge.bible.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import java.io.File;
@@ -10,12 +11,15 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.BuildConfig;
 import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.component.VersionComponent;
 import me.piebridge.bible.provider.VersionProvider;
+
+import static me.piebridge.bible.activity.AbstractReadingActivity.SHANGTI;
 
 /**
  * Created by thom on 16/7/1.
@@ -180,14 +184,6 @@ public class BibleUtils {
         }
     }
 
-    public static String fixPunctuation(String version, String content) {
-        if (isZhCN(version)) {
-            return content.replaceAll("「", "“").replaceAll("」", "”")
-                    .replaceAll("『", "‘").replaceAll("』", "’");
-        } else {
-            return content;
-        }
-    }
 
     private static boolean isZhCN(String version) {
         switch (version) {
@@ -205,6 +201,25 @@ public class BibleUtils {
                 return false;
         }
 
+    }
+
+    public static String fix(String content, String version, boolean shangti) {
+        String fixed = content;
+        if (isZhCN(version)) {
+            fixed = fixed.replaceAll("「", "“").replaceAll("」", "”")
+                    .replaceAll("『", "‘").replaceAll("』", "’");
+        }
+        if (shangti) {
+            return fixed.replaceAll("　神", "上帝")
+                    .replaceAll("　<span class=\"add\">神", "<span class=\"add\">上帝");
+        } else {
+            return fixed.replaceAll("上帝", "　神");
+        }
+    }
+
+    public static String fix(BibleApplication application, String content) {
+        boolean shangti = PreferenceManager.getDefaultSharedPreferences(application).getBoolean(SHANGTI, false);
+        return fix(content, application.getVersion(), shangti);
     }
 
 }
