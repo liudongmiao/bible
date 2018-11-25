@@ -5,15 +5,21 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
+
+import androidx.collection.ArraySet;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import me.piebridge.bible.component.AnnotationComponent;
 import me.piebridge.bible.component.DownloadComponent;
@@ -41,7 +47,20 @@ public class BibleApplication extends PaymentApplication {
 
     private VersionComponent mVersion;
 
+    private Collection<String> mSortedVersions = new LinkedHashSet<>();
+
     public void onCreate() {
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .permitDiskReads()
+                    .penaltyLog()
+                    .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
+        }
         super.onCreate();
         mDownload = new DownloadComponent(this);
         mAnnotation = new AnnotationComponent(this);
@@ -125,6 +144,18 @@ public class BibleApplication extends PaymentApplication {
 
     public Collection<String> getVersions() {
         return mVersions.getVersions();
+    }
+
+    public Collection<String> getSortedVersions() {
+        Set<String> versions = new ArraySet<>(getVersions());
+        if (versions.equals(mSortedVersions)) {
+            return mSortedVersions;
+        }
+        List<String> sortedVersions = new ArrayList<>(versions);
+        Collections.sort(sortedVersions, this::compareFullname);
+        mSortedVersions.clear();
+        mSortedVersions.addAll(sortedVersions);
+        return mSortedVersions;
     }
 
     public String getOsis(String query) {

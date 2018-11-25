@@ -9,7 +9,6 @@ import androidx.preference.ListPreference;
 import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import me.piebridge.bible.BibleApplication;
@@ -30,8 +29,7 @@ public class VersionPreference extends ListPreference {
         BibleApplication application = (BibleApplication) getContext().getApplicationContext();
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(getKey(), application.getVersion()).apply();
 
-        List<String> versions = new ArrayList<>(application.getVersions());
-        Collections.sort(versions, application::compareFullname);
+        List<String> versions = new ArrayList<>(application.getSortedVersions());
         setEntryValues(versions.toArray(new String[0]));
         int length = versions.size();
         String[] humanVersions = new String[versions.size()];
