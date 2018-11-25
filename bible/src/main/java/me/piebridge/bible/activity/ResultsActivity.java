@@ -207,6 +207,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
     }
 
     private void showResults(Cursor[] cursors) {
+        closeAdapter();
         if (cursors[0] == null && cursors[1] == null) {
             Uri url = getIntent().getParcelableExtra(SearchActivity.URL);
             if (url != null) {
@@ -228,12 +229,16 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         }
     }
 
-    @Override
-    public void finish() {
+    private void closeAdapter() {
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         if (adapter instanceof ResultAdapter) {
             ((ResultAdapter) adapter).close();
         }
+    }
+
+    @Override
+    public void finish() {
+        closeAdapter();
         super.finish();
     }
 
@@ -553,10 +558,10 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         }
 
         public void close() {
-            if (bookCursor != null) {
+            if (bookCursor != null && !bookCursor.isClosed()) {
                 bookCursor.close();
             }
-            if (verseCursor != null) {
+            if (verseCursor != null && !verseCursor.isClosed()) {
                 verseCursor.close();
             }
         }

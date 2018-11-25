@@ -134,6 +134,7 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
     @Override
     public void finish() {
         setResult();
+        closeAdapter();
         super.finish();
     }
 
@@ -170,6 +171,7 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
     }
 
     protected void showResult(Cursor cursor) {
+        closeAdapter();
         LogUtils.d(getClass().getSimpleName() + ", showResult");
         if (cursor == null) {
             if (recyclerView.getItemDecorationCount() > 0) {
@@ -181,6 +183,13 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
                 recyclerView.addItemDecoration(itemDecoration);
             }
             recyclerView.setAdapter(new ResultAdapter(this, cursor));
+        }
+    }
+
+    private void closeAdapter() {
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        if (adapter instanceof ResultAdapter) {
+            ((ResultAdapter) adapter).close();
         }
     }
 
@@ -462,7 +471,7 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
         }
 
         public void close() {
-            if (mCursor.isClosed()) {
+            if (mCursor != null && !mCursor.isClosed()) {
                 mCursor.close();
             }
         }
