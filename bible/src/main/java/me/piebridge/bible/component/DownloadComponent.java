@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -50,6 +52,8 @@ public class DownloadComponent extends Handler {
 
     private static final int CHECK = 0;
 
+    private static final int ADDED = 1;
+
     private static final int STATUS_DOWNLOADING = DownloadManager.STATUS_PENDING
             | DownloadManager.STATUS_RUNNING | DownloadManager.STATUS_PAUSED;
 
@@ -85,8 +89,14 @@ public class DownloadComponent extends Handler {
     private Context mContext;
 
     public DownloadComponent(Context context) {
-        super(context.getMainLooper());
+        super(newLooper());
         this.mContext = context;
+    }
+
+    private static Looper newLooper() {
+        HandlerThread thread = new HandlerThread("Download");
+        thread.start();
+        return thread.getLooper();
     }
 
     @Override
@@ -94,6 +104,9 @@ public class DownloadComponent extends Handler {
         switch (msg.what) {
             case CHECK:
                 checkStatus((Long) msg.obj);
+                break;
+            case ADDED:
+                addBibleData((File) msg.obj);
                 break;
             default:
                 break;
@@ -238,7 +251,8 @@ public class DownloadComponent extends Handler {
         intent.putExtra(Intent.EXTRA_TEXT, title);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(mContext);
         if (!localBroadcastManager.sendBroadcast(intent) && !TextUtils.isEmpty(title)) {
-            addBibleData(new File(mContext.getExternalCacheDir(), title));
+            File file = new File(mContext.getExternalCacheDir(), title);
+            obtainMessage(ADDED, file).sendToTarget();
         }
     }
 
@@ -523,21 +537,23 @@ public class DownloadComponent extends Handler {
             }
             File file = new File(externalCacheDir, mTitle);
             File fileTmp = new File(file.getParent(), file.getName() + ".tmp");
-            try {
-                FileOutputStream os = new FileOutputStream(fileTmp);
+            boolean downloaded = false;
+            try (
+                    FileOutputStream os = new FileOutputStream(fileTmp)
+            ) {
                 publishProgress(0);
-                if (HttpUtils.retrieveContent(buildUrl(mTitle), headers, os)) {
-                    return fileTmp.renameTo(file);
-                }
+                downloaded = HttpUtils.retrieveContent(buildUrl(mTitle), headers, os);
             } catch (IOException e) {
                 LogUtils.w("cannot download " + mTitle, e);
+            }
+            try {
+                return downloaded && fileTmp.renameTo(file);
             } finally {
                 if (fileTmp.exists()) {
                     //noinspection ResultOfMethodCallIgnored
                     fileTmp.delete();
                 }
             }
-            return false;
         }
 
         @Override

@@ -1,5 +1,6 @@
 package me.piebridge.bible.utils;
 
+import android.net.TrafficStats;
 import android.os.Build;
 
 import java.io.ByteArrayOutputStream;
@@ -82,6 +83,7 @@ public class HttpUtils {
         if (count > MAX_REDIRECT) {
             return false;
         }
+        TrafficStats.setThreadStatsTag(0x2af158fd);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         if (isLetsEncrypt(url)) {
             ((HttpsURLConnection) connection).setSSLSocketFactory(TlsSocketFactory.LETS_ENCRYPT);

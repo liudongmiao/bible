@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -96,9 +97,11 @@ public class VersionsActivity extends ToolbarPaymentActivity
     private static final int ADD_VERSION = 0;
     private static final int DELETE_VERSION = 1;
     private static final int UPDATE_VERSIONS = 2;
-    private static final int UPDATE_ACTIONS = 3;
+    private static final int CHECK_ACTIONS = 3;
     private static final int ADDED_VERSION = 4;
     private static final int CHECK_TRANSLATION = 5;
+    private static final int UPDATE_ACTIONS = 6;
+    private static final int DOWNLOAD_ITEM = 7;
 
     private BroadcastReceiver receiver;
 
@@ -126,8 +129,8 @@ public class VersionsActivity extends ToolbarPaymentActivity
         try {
             BibleApplication application = (BibleApplication) getApplication();
             versionsAdaper.setVersions(application.getLocalVersions());
-        } catch (JSONException | IOException ignore) {
-            // do nothing
+        } catch (IOException e) {
+            LogUtils.w("cannot set translations", e);
         }
 
         workHandler.sendEmptyMessage(UPDATE_VERSIONS);
@@ -226,11 +229,7 @@ public class VersionsActivity extends ToolbarPaymentActivity
     }
 
     public void updateQuery(String query) {
-        try {
-            versionsAdaper.setQuery(query == null ? null : query.toLowerCase(Locale.US));
-        } catch (JSONException ignore) {
-            // do nothing
-        }
+        versionsAdaper.setQuery(query == null ? null : query.toLowerCase(Locale.US));
         mSearchView.clearFocus();
     }
 
@@ -346,7 +345,7 @@ public class VersionsActivity extends ToolbarPaymentActivity
                     canDownload = application.getAmount() >= 0x5;
                 }
                 if (canDownload) {
-                    downloadVersion(versionItem, action == R.string.translation_update);
+                    downloadVersion(versionItem, true);
                 } else {
                     workHandler.obtainMessage(CHECK_TRANSLATION, versionItem).sendToTarget();
                 }
@@ -405,18 +404,21 @@ public class VersionsActivity extends ToolbarPaymentActivity
 
     @MainThread
     void updateVersions(String versions) {
-        try {
-            if (versionsAdaper.setVersions(versions)) {
-                Snackbar.make(findViewById(R.id.coordinator), R.string.translation_metadata_updated,
-                        Snackbar.LENGTH_LONG).show();
-            }
-        } catch (JSONException ignore) {
-            // do nothing
+        if (versionsAdaper.setVersions(versions)) {
+            Snackbar.make(findViewById(R.id.coordinator), R.string.translation_metadata_updated,
+                    Snackbar.LENGTH_LONG).show();
         }
     }
 
-    @MainThread
+    boolean checkActions() {
+        return versionsAdaper.checkActions();
+    }
+
     void updateActions() {
+        mainHandler.obtainMessage(UPDATE_ACTIONS).sendToTarget();
+    }
+
+    void doUpdateActions() {
         versionsAdaper.updateActions();
     }
 
@@ -426,8 +428,7 @@ public class VersionsActivity extends ToolbarPaymentActivity
     }
 
     void downloadVersion(VersionItem item, boolean force) {
-        BibleApplication application = (BibleApplication) getApplication();
-        application.download(item.filename(), force);
+        workHandler.obtainMessage(DOWNLOAD_ITEM, force ? 1 : 0, 0, item.filename()).sendToTarget();
         updateActionsLater();
     }
 
@@ -437,8 +438,8 @@ public class VersionsActivity extends ToolbarPaymentActivity
     }
 
     private void updateActionsLater() {
-        mainHandler.removeMessages(UPDATE_ACTIONS);
-        mainHandler.sendEmptyMessageDelayed(UPDATE_ACTIONS, LATER);
+        workHandler.removeMessages(CHECK_ACTIONS);
+        workHandler.sendEmptyMessageDelayed(CHECK_ACTIONS, LATER);
     }
 
     boolean isDownloading(VersionItem item) {
@@ -555,7 +556,7 @@ public class VersionsActivity extends ToolbarPaymentActivity
                     removeMessages(UPDATE_VERSIONS);
                     break;
                 case UPDATE_ACTIONS:
-                    activity.updateActions();
+                    activity.doUpdateActions();
                     removeMessages(UPDATE_ACTIONS);
                     break;
                 case ADDED_VERSION:
@@ -602,6 +603,16 @@ public class VersionsActivity extends ToolbarPaymentActivity
                 case CHECK_TRANSLATION:
                     activity.checkTranslation((VersionItem) msg.obj);
                     break;
+                case CHECK_ACTIONS:
+                    if (activity.checkActions()) {
+                        activity.updateActions();
+                    }
+                    removeMessages(CHECK_ACTIONS);
+                    break;
+                case DOWNLOAD_ITEM:
+                    BibleApplication application = (BibleApplication) activity.getApplication();
+                    application.download((String) msg.obj, msg.arg1 != 0);
+                    break;
                 default:
                     break;
             }
@@ -610,6 +621,8 @@ public class VersionsActivity extends ToolbarPaymentActivity
     }
 
     private static class VersionAdapter extends RecyclerView.Adapter {
+
+        private PrepareTask mTask;
 
         private static final int TYPE_VERSION = 0;
 
@@ -628,7 +641,7 @@ public class VersionsActivity extends ToolbarPaymentActivity
             this.mReference = new WeakReference<>(activity);
         }
 
-        public boolean setVersions(String json) throws JSONException {
+        public boolean setVersions(String json) {
             if (!ObjectUtils.equals(this.mJson, json)) {
                 this.mJson = json;
                 prepareData();
@@ -638,14 +651,14 @@ public class VersionsActivity extends ToolbarPaymentActivity
             }
         }
 
-        public void setQuery(String query) throws JSONException {
+        public void setQuery(String query) {
             if (!ObjectUtils.equals(this.mQuery, query)) {
                 this.mQuery = query;
                 prepareData();
             }
         }
 
-        public synchronized void updateActions() {
+        public boolean checkActions() {
             VersionsActivity activity = mReference.get();
             boolean changed = false;
             for (VersionItem item : mItems) {
@@ -661,13 +674,23 @@ public class VersionsActivity extends ToolbarPaymentActivity
                     }
                 }
             }
-            if (changed) {
-                DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffCallback(mItems, mItems));
-                result.dispatchUpdatesTo(this);
-            }
+            return changed;
         }
 
-        private synchronized void prepareData() throws JSONException {
+        public void updateActions() {
+            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffCallback(mItems, mItems));
+            result.dispatchUpdatesTo(this);
+        }
+
+        void prepareData() {
+            if (mTask != null) {
+                mTask.cancel(false);
+            }
+            mTask = new PrepareTask(this);
+            mTask.execute();
+        }
+
+        List<VersionItem> doPrepareData() throws JSONException {
             List<VersionItem> items = new ArrayList<>();
 
             JSONObject jsons = new JSONObject(mJson);
@@ -689,7 +712,7 @@ public class VersionsActivity extends ToolbarPaymentActivity
                 item.info = formatInfo(version);
                 item.action = getAction(activity, item);
                 if (item.action == R.string.translation_update && canDownload(item.copy)) {
-                    activity.downloadVersion(item, true);
+                    activity.downloadVersion(item, false);
                     item.action = R.string.translation_cancel;
                 }
 
@@ -715,40 +738,11 @@ public class VersionsActivity extends ToolbarPaymentActivity
                 item.code = Integer.toString(value);
                 items.add(item);
             }
-            Collections.sort(items, new Comparator<VersionItem>() {
+            Collections.sort(items, new VersionComparor(LocaleUtils.getOverrideLocale(mReference.get())));
+            return items;
+        }
 
-                @Override
-                public int compare(VersionItem o1, VersionItem o2) {
-                    if (ObjectUtils.equals(o1.lang, o2.lang)) {
-                        return Collator.getInstance().compare(o1.code, o2.code);
-                    } else {
-                        final Locale locale = LocaleUtils.getOverrideLocale(mReference.get());
-                        final String lang = locale.getLanguage().toLowerCase(Locale.US);
-                        final String langFull = lang + "-" + locale.getCountry().toLowerCase(Locale.US);
-                        if (ObjectUtils.equals(langFull, o1.lang)) {
-                            return -1;
-                        } else if (ObjectUtils.equals(langFull, o2.lang)) {
-                            return 1;
-                        }
-
-                        if (o1.lang.startsWith(lang)) {
-                            return -1;
-                        } else if (o2.lang.startsWith(lang)) {
-                            return 1;
-                        }
-
-                        if (o1.lang.startsWith("en")) {
-                            return -1;
-                        } else if (o2.lang.startsWith("en")) {
-                            return 1;
-                        }
-
-                        return Collator.getInstance().compare(o1.lang, o2.lang);
-                    }
-                }
-
-            });
-
+        void onPrepareData(List<VersionItem> items) {
             if (mItems.isEmpty()) {
                 mItems.addAll(items);
                 notifyItemRangeInserted(0, items.size());
@@ -940,6 +934,37 @@ public class VersionsActivity extends ToolbarPaymentActivity
             }
         }
 
+        private static class PrepareTask extends AsyncTask<Void, Void, List<VersionItem>> {
+
+            private final WeakReference<VersionAdapter> mReference;
+
+            public PrepareTask(VersionAdapter adapter) {
+                this.mReference = new WeakReference<>(adapter);
+            }
+
+            @Override
+            protected List<VersionItem> doInBackground(Void... voids) {
+                VersionAdapter adapter = mReference.get();
+                if (adapter == null || isCancelled()) {
+                    return null;
+                }
+                try {
+                    return adapter.doPrepareData();
+                } catch (JSONException e) {
+                    LogUtils.w("cannot parse data", e);
+                    return Collections.emptyList();
+                }
+            }
+
+            protected void onPostExecute(List<VersionItem> result) {
+                VersionAdapter adapter = mReference.get();
+                if (adapter != null && result != null && !isCancelled()) {
+                    adapter.onPrepareData(result);
+                }
+            }
+
+        }
+
     }
 
     private static class VersionItem {
@@ -1062,6 +1087,44 @@ public class VersionsActivity extends ToolbarPaymentActivity
             this.nameView = view.findViewById(R.id.name);
         }
 
+    }
+
+    private static class VersionComparor implements Comparator<VersionItem> {
+
+        private final Locale locale;
+
+        public VersionComparor(Locale local) {
+            this.locale = local;
+        }
+
+        @Override
+        public int compare(VersionItem o1, VersionItem o2) {
+            if (ObjectUtils.equals(o1.lang, o2.lang)) {
+                return Collator.getInstance().compare(o1.code, o2.code);
+            } else {
+                final String lang = locale.getLanguage().toLowerCase(Locale.US);
+                final String langFull = lang + "-" + locale.getCountry().toLowerCase(Locale.US);
+                if (ObjectUtils.equals(langFull, o1.lang)) {
+                    return -1;
+                } else if (ObjectUtils.equals(langFull, o2.lang)) {
+                    return 1;
+                }
+
+                if (o1.lang.startsWith(lang)) {
+                    return -1;
+                } else if (o2.lang.startsWith(lang)) {
+                    return 1;
+                }
+
+                if (o1.lang.startsWith("en")) {
+                    return -1;
+                } else if (o2.lang.startsWith("en")) {
+                    return 1;
+                }
+
+                return Collator.getInstance().compare(o1.lang, o2.lang);
+            }
+        }
     }
 
 }
