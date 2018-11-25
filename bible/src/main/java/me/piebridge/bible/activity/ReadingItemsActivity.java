@@ -17,6 +17,7 @@ import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.adapter.HiddenArrayAdapter;
 import me.piebridge.bible.utils.BibleUtils;
+import me.piebridge.bible.utils.FileUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
@@ -76,8 +77,24 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
     @Override
     public Bundle retrieveOsis(int position, String x) {
         OsisItem item = items.get(position);
-        Bundle bundle = super.retrieveOsis(position, item.toOsis());
-        LogUtils.d("retrieveOsis, position: " + position + ", osis: " + item.toOsis());
+        String osis = item.toOsis();
+        Bundle bundle = super.retrieveOsis(position, osis);
+        LogUtils.d("retrieveOsis, position: " + position + ", osis: " + osis);
+
+        if (!bundle.containsKey(CONTENT)) {
+            BibleApplication application = (BibleApplication) getApplication();
+            String version = application.getVersion();
+            LogUtils.w("no " + osis + " in " + version);
+            String content = getString(R.string.reading_no_chapter_info, application.getFullname(version), osis);
+            bundle.putInt(ID, -1);
+            bundle.putString(CURR, osis);
+            bundle.putString(OSIS, osis);
+            bundle.putString(HUMAN, BibleUtils.getBook(osis));
+            bundle.putByteArray(CONTENT, FileUtils.compress(content));
+            bundle.putString(HIGHLIGHTED, "");
+            bundle.putBundle(NOTES, new Bundle());
+        }
+
         bundle.putString(VERSE_START, item.verseStart);
         bundle.putString(VERSE_END, item.verseEnd);
         bundle.putString(PREV, getOsis(position - 1));
@@ -87,7 +104,7 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
         return bundle;
     }
 
-    private String getOsis(int index) {
+    protected String getOsis(int index) {
         if (index >= 0 && index < items.size()) {
             return items.get(index).toOsis();
         } else {
@@ -99,18 +116,21 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
     protected void initializeHeader(View header) {
         itemsView = header.findViewById(R.id.items);
         spinner = header.findViewById(R.id.spinner);
+        updateSpinner(header, 0);
+        initializeVersion(header);
+    }
+
+    protected void updateSpinner(View header, int position) {
         ArrayAdapter adapter = new HiddenArrayAdapter(this, R.layout.view_spinner_item, convertItems(items));
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        spinner.setSelection(0);
+        spinner.setSelection(position);
         spinner.setOnItemSelectedListener(this);
         if (items.size() <= 1) {
             header.findViewById(R.id.dropdown).setVisibility(View.GONE);
         } else {
             header.findViewById(R.id.items_button).setOnClickListener(this);
         }
-
-        initializeVersion(header);
     }
 
     @Override
@@ -130,7 +150,8 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
 
     @Override
     protected void updateHeader(Bundle bundle, String osis) {
-        String title = getTitle(bundle, osis);
+        int position = bundle.getInt(POSITION);
+        String title = getTitle(bundle, getOsis(position));
         itemsView.setText(title);
         updateTaskDescription(title);
     }
@@ -168,14 +189,65 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        int currentItem = mPager.getCurrentItem();
+        LogUtils.d("selected " + position + ", current " + currentItem);
+        if (currentItem != position) {
+            prepare(position);
+        }
+    }
+
+    @Override
+    protected void prepareOnWork(int position) {
         Bundle bundle = mAdapter.getData(position);
         OsisItem item = items.get(position);
         LogUtils.d("item.osis: " + item.toOsis() + ", curr: " + bundle.getString(CURR));
         if (!ObjectUtils.equals(item.toOsis(), bundle.getString(CURR))) {
-            mAdapter.setData(position, retrieveOsis(position, null));
+            bundle.putAll(retrieveOsis(position, null));
         }
-        prepare(position);
-        mPager.setCurrentItem(position);
+        prepareOnWork(bundle);
+    }
+
+    @Override
+    protected int loadData(int position, String osis) {
+        LogUtils.d("load data, position: " + position);
+        Bundle bundle = retrieveOsis(position, osis);
+        mAdapter.setData(position, bundle);
+        prepareOnWork(bundle);
+        return position;
+    }
+
+    @Override
+    protected void prepareOnMain(Bundle bundle) {
+        super.prepareOnMain(bundle);
+        mPager.setCurrentItem(bundle.getInt(POSITION));
+    }
+
+    @Override
+    protected void refreshAdapterOnWork() {
+        refreshAdapterOnWork(getCurrentPosition());
+    }
+
+    protected void refreshAdapterOnWork(int position) {
+        int count = retrieveOsisCount();
+        String osis = getOsis(position);
+        Bundle bundle = retrieveOsis(position, osis);
+        mAdapter.clearData();
+        mAdapter.setData(position, bundle);
+        preparePrev(position, bundle.getString(PREV));
+        prepareNext(position, bundle.getString(NEXT), count);
+
+        LogUtils.d("refreshAdapterOnWork, position: " + position + ", count: " + count);
+        afterRefreshAdapterOnWork(position, count);
+    }
+
+    @Override
+    protected void refreshAdapterOnMain(int position, int count) {
+        LogUtils.d("refreshAdapterOnMain, position: " + position + ", count: " + count);
+        updateSpinner(findHeader(), position);
+        Bundle bundle = mAdapter.getData(position);
+        updateHeader(bundle, getOsis(position));
+        updateVersion();
+        prepareOnMain(position);
     }
 
     @Override

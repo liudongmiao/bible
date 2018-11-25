@@ -93,6 +93,10 @@ public class ReadingBridge {
 
     @JavascriptInterface
     public boolean onLoaded() {
+        Bridge bridge = wr.get();
+        if (bridge != null) {
+            bridge.onLoaded();
+        }
         loaded = true;
         return true;
     }
@@ -188,6 +192,8 @@ public class ReadingBridge {
         void updateBundle(Bundle bundle);
 
         void saveHighlight(String verses);
+
+        void onLoaded();
 
     }
 

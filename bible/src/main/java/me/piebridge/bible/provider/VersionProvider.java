@@ -237,8 +237,10 @@ public class VersionProvider extends ContentProvider {
         }
 
         String version = uri.getFragment();
-        LogUtils.d("query uri: " + uri + ", version: " + version);
-        if (!TextUtils.isEmpty(version)) {
+        if (TextUtils.isEmpty(version)) {
+            LogUtils.d("query uri: " + uri + ", current version: " + application.getVersion());
+        } else {
+            LogUtils.d("query uri: " + uri + ", version: " + version);
             String normalizedVersion = version.toLowerCase(Locale.US);
             if (!normalizedVersion.equalsIgnoreCase(application.getVersion()) && !application.setVersion(normalizedVersion)) {
                 LogUtils.w("cannot switch to version " + normalizedVersion);

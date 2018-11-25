@@ -1,7 +1,6 @@
 package me.piebridge.bible.adapter;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
@@ -11,9 +10,11 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.fragment.ReadingFragment;
+import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
+import static me.piebridge.bible.activity.AbstractReadingActivity.OSIS;
 import static me.piebridge.bible.activity.AbstractReadingActivity.POSITION;
 
 /**
@@ -27,28 +28,31 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
 
     private final SparseArray<ReadingFragment> mFragments;
 
-    private final boolean mRemove;
-
-    public ReadingAdapter(FragmentManager fm, int size, boolean remove) {
+    public ReadingAdapter(FragmentManager fm, int size) {
         super(fm);
         mSize = size;
         mBundles = new SparseArray<>();
         mFragments = new SparseArray<>();
-        mRemove = remove;
     }
 
     public void setSize(int size) {
         mSize = size;
-        mBundles.clear();
     }
 
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
+        LogUtils.d("instantiateItem, position " + position);
         ReadingFragment fragment = (ReadingFragment) super.instantiateItem(container, position);
         mFragments.put(position, fragment);
-        Bundle arguments = fragment.getArguments();
-        if (arguments == null || TextUtils.isEmpty(arguments.getString(AbstractReadingActivity.CURR))) {
-            LogUtils.w("empty arguments: " + arguments);
+        Bundle arguments = ObjectUtils.requireNonNull(fragment.getArguments());
+        Bundle bundle = getData(position);
+        if (!bundle.containsKey(OSIS)) {
+            LogUtils.w("bundle is null");
+        }
+        if (arguments.isEmpty()) {
+            arguments.putAll(bundle);
+        } else if (BibleUtils.putAll(arguments, bundle)) {
+            fragment.reloadData();
         }
         return fragment;
     }
@@ -67,11 +71,9 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        if (mRemove) {
-            super.destroyItem(container, position, object);
-            mFragments.remove(position);
-            mBundles.remove(position);
-        }
+        super.destroyItem(container, position, object);
+        mFragments.remove(position);
+        mBundles.remove(position);
     }
 
     @Override
@@ -106,11 +108,16 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
             bundle = new Bundle();
             mBundles.put(position, bundle);
         }
+        bundle.putInt(POSITION, position);
         return bundle;
     }
 
     public void clearData() {
         mBundles.clear();
+    }
+
+    public void dump(int position) {
+        LogUtils.d("position: " + position + ", data: " + mBundles.get(position));
     }
 
 }

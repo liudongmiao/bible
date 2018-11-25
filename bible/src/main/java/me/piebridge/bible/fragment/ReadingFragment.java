@@ -42,6 +42,7 @@ import static me.piebridge.bible.activity.AbstractReadingActivity.HIGHLIGHTED;
 import static me.piebridge.bible.activity.AbstractReadingActivity.HUMAN;
 import static me.piebridge.bible.activity.AbstractReadingActivity.JUSTIFY;
 import static me.piebridge.bible.activity.AbstractReadingActivity.NOTES;
+import static me.piebridge.bible.activity.AbstractReadingActivity.POSITION;
 import static me.piebridge.bible.activity.AbstractReadingActivity.RED;
 import static me.piebridge.bible.activity.AbstractReadingActivity.SEARCH;
 import static me.piebridge.bible.activity.AbstractReadingActivity.SHANGTI;
@@ -167,40 +168,34 @@ public class ReadingFragment extends Fragment {
                 LogUtils.d("cannot save " + output, e);
             }
         }
-        if (!TextUtils.isEmpty(body)) {
-            int fontSize = bundle.getInt(FONT_SIZE);
-            webView.getSettings().setDefaultFontSize(fontSize);
-            webView.getSettings().setDefaultFixedFontSize(fontSize);
-            webView.loadDataWithBaseURL("file:///android_asset/", body, "text/html", FileUtils.UTF_8, null);
-            readingBridge.setSelectedVerses(initialSelected);
-            return true;
-        } else {
-            LogUtils.w("body is empty!");
-            return false;
-        }
+        LogUtils.d("reloadData, position: " + bundle.get(POSITION) + ", title: " + getTitle() + ", version: " + getVersion());
+        int fontSize = bundle.getInt(FONT_SIZE);
+        webView.getSettings().setDefaultFontSize(fontSize);
+        webView.getSettings().setDefaultFixedFontSize(fontSize);
+        webView.loadDataWithBaseURL("file:///android_asset/", body, "text/html", FileUtils.UTF_8, null);
+        readingBridge.setSelectedVerses(initialSelected);
+        return true;
     }
 
     public String getBody() {
         Bundle bundle = ObjectUtils.requireNonNull(getArguments());
         String content = FileUtils.uncompressAsString(bundle.getByteArray(CONTENT));
-        if (TextUtils.isEmpty(content)) {
-            return null;
-        }
         return getBody(getTitle(), content);
     }
 
     public String getTitle() {
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            return BibleUtils.getBookChapterVerse(bundle.getString(HUMAN),
-                    BibleUtils.getChapter(bundle.getString(CURR)));
-        } else {
-            return null;
-        }
+        Bundle bundle = ObjectUtils.requireNonNull(getArguments());
+        return BibleUtils.getBookChapterVerse(bundle.getString(HUMAN),
+                BibleUtils.getChapter(bundle.getString(CURR)));
+    }
+
+    public String getVersion() {
+        Bundle bundle = ObjectUtils.requireNonNull(getArguments());
+        return bundle.getString(VERSION);
     }
 
     private String getBody(String title, String content) {
-        Bundle bundle = getArguments();
+        Bundle bundle = ObjectUtils.requireNonNull(getArguments());
         osis = bundle.getString(CURR);
         String body = fixIfNeeded(bundle, content);
         String[] notes = keys(bundle.getBundle(NOTES));
@@ -208,10 +203,6 @@ public class ReadingFragment extends Fragment {
         int verseStart = NumberUtils.parseInt(getString(bundle, VERSE_START));
         int verseEnd = NumberUtils.parseInt(getString(bundle, VERSE_END));
         int verseBegin = getVerseBegin(bundle);
-        LogUtils.d("title: " + title + ", forceVerse: " + forceVerse + ", verse: " + verse
-                + ", verseStart: " + verseStart + ", verseEnd: " + verseEnd
-                + ", VERSE: " + getString(bundle, VERSE)
-                + ", notes: " + Arrays.toString(notes));
         String search = getString(bundle, SEARCH);
         String highlighted = getString(bundle, HIGHLIGHTED);
         String backgroundColor = getString(bundle, COLOR_BACKGROUND);
@@ -220,8 +211,6 @@ public class ReadingFragment extends Fragment {
         String fontFamily = getString(bundle, FONT_FAMILY);
         String verses = getString(bundle, VERSES);
         initialSelected = formatSelected(highlighted, verses, verseStart, verseEnd);
-        LogUtils.d("highlighted: " + highlighted + ", verses: " + verses + ", start: " + verseStart
-                + ", end: " + verseEnd + ", initialSelected: " + initialSelected);
         String extraClass = NumberUtils.parseInt(BibleUtils.getChapter(osis)) >= 0x64 ? "chapter-large" : "";
         return String.format(template, fontFamily, css,
                 backgroundColor, textColor, linkColor,

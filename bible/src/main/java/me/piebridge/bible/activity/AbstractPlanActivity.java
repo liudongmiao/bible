@@ -1,7 +1,6 @@
 package me.piebridge.bible.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +30,8 @@ public abstract class AbstractPlanActivity extends ReadingItemsActivity {
     private Calendar mCalendar;
 
     private TextView mDate;
+
+    private int mForcePosition;
 
     @Override
     protected void initializeHeader(View header) {
@@ -70,6 +71,7 @@ public abstract class AbstractPlanActivity extends ReadingItemsActivity {
         setItems(osisItems);
 
         updateDate();
+        mForcePosition = 0;
     }
 
     private void updateDate() {
@@ -88,19 +90,19 @@ public abstract class AbstractPlanActivity extends ReadingItemsActivity {
         setCheckedItem(R.id.menu_plan);
     }
 
-    protected void refreshAdapter() {
-        super.initializeHeader(findHeader());
+    @Override
+    protected void refreshAdapterOnWork() {
+        if (mForcePosition > -1) {
+            refreshAdapterOnWork(mForcePosition);
+            mForcePosition = -1;
+        } else {
+            super.refreshAdapterOnWork();
+        }
+    }
 
-        int position = 0;
-        int count = retrieveOsisCount();
-
-        mAdapter.clearData();
-        String osis = getCurrentOsis();
-        Bundle bundle = retrieveOsis(position, osis);
-        mAdapter.setSize(count);
-        mAdapter.notifyDataSetChanged();
-        refresh(position, bundle, true);
-        mPager.setCurrentItem(position);
+    @Override
+    protected void refreshAdapterOnMain(int position, int count) {
+        super.refreshAdapterOnMain(position, count);
     }
 
     @Override

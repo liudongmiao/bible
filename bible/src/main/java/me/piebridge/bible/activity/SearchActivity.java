@@ -13,7 +13,6 @@ import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -262,7 +261,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         if (query != null) {
             ArrayList<OsisItem> items = OsisItem.parseSearch(query, (BibleApplication) getApplication());
             BibleUtils.fixItems(items);
-            if (!items.isEmpty() && !application.checkItems(items)) {
+            if (!items.isEmpty()) {
                 LogUtils.d("items: " + items);
                 mSuggestions.saveRecentQuery(query, null);
                 showItems(items, cross, true);

@@ -11,6 +11,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
 
 import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.BuildConfig;
@@ -20,6 +21,7 @@ import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.component.VersionComponent;
 import me.piebridge.bible.provider.VersionProvider;
 
+import static me.piebridge.bible.activity.AbstractReadingActivity.OSIS;
 import static me.piebridge.bible.activity.AbstractReadingActivity.SHANGTI;
 
 /**
@@ -64,7 +66,7 @@ public class BibleUtils {
     }
 
     public static String getChapterVerse(Context context, Bundle bundle) {
-        String osis = bundle.getString(AbstractReadingActivity.OSIS);
+        String osis = bundle.getString(OSIS);
         String chapter = getChapter(osis, context);
         int verseStart = NumberUtils.parseInt(bundle.getString(AbstractReadingActivity.VERSE_START));
         int verseEnd = NumberUtils.parseInt(bundle.getString(AbstractReadingActivity.VERSE_END));
@@ -225,6 +227,17 @@ public class BibleUtils {
     public static String fix(BibleApplication application, String content) {
         boolean shangti = PreferenceManager.getDefaultSharedPreferences(application).getBoolean(SHANGTI, false);
         return fix(content, application.getVersion(), shangti);
+    }
+
+    public static boolean putAll(Bundle oldBundle, Bundle newBundle) {
+        Set<String> keys = newBundle.keySet();
+        for (String key : keys) {
+            if (!ObjectUtils.equals(oldBundle.get(key), newBundle.get(key))) {
+                oldBundle.putAll(newBundle);
+                return true;
+            }
+        }
+        return false;
     }
 
 }

@@ -32,6 +32,24 @@ public abstract class ToolbarActivity extends GenuineActivity {
 
     protected boolean recreated;
 
+    private volatile boolean stopped;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        stopped = false;
+    }
+
+    @Override
+    protected void onStop() {
+        stopped = true;
+        super.onStop();
+    }
+
+    public boolean isStopped() {
+        return stopped;
+    }
+
     @Override
     @CallSuper
     protected void onCreate(Bundle savedInstanceState) {

@@ -35,6 +35,8 @@ import me.piebridge.payment.PaymentApplication;
  */
 public class BibleApplication extends PaymentApplication {
 
+    private boolean initialized;
+
     private static final String VERSION_NIV = "niv";
     private static final String VERSION_NIV1984 = "niv1984";
     private static final String VERSION_NIV2011 = "niv2011";
@@ -66,7 +68,10 @@ public class BibleApplication extends PaymentApplication {
         mAnnotation = new AnnotationComponent(this);
         mVersions = new VersionsComponent(this);
         mVersion = new VersionComponent(this);
-        mVersion.setVersion(mVersions.getDefaultVersion(), true);
+    }
+
+    public String getDefaultVersion() {
+        return mVersions.getDefaultVersion();
     }
 
     public long download(String filename, boolean force) {
@@ -181,6 +186,12 @@ public class BibleApplication extends PaymentApplication {
         return false;
     }
 
+    public boolean setDefaultVersion() {
+        if (!initialized) {
+            initialized = mVersion.setVersion(mVersions.getDefaultVersion(), false);
+        }
+        return initialized;
+    }
 
     public boolean setVersion(String version, boolean force) {
         boolean updated = mVersion.setVersion(version, force);

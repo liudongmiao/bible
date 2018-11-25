@@ -149,6 +149,7 @@ public class VersionComponent {
     }
 
     public boolean hasChapter(String version, String osis) {
+        LogUtils.d("check " + osis + " in " + version);
         File file = getFile(version);
         if (file == null) {
             if (mContext instanceof BibleApplication) {

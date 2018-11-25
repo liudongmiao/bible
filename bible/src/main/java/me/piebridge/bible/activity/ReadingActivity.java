@@ -20,7 +20,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import java.lang.ref.WeakReference;
 
 import me.piebridge.bible.BibleApplication;
-import me.piebridge.bible.BuildConfig;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.ReadingFragment;
 import me.piebridge.bible.fragment.SwitchVersionConfirmFragment;
@@ -46,6 +45,7 @@ public class ReadingActivity extends AbstractReadingActivity {
     private BroadcastReceiver receiver;
 
     private String mTitle;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -140,23 +140,18 @@ public class ReadingActivity extends AbstractReadingActivity {
     public void onResume() {
         super.onResume();
         setCheckedItem(R.id.menu_reading);
+        if (isInitialized()) {
+            checkVersion();
+        }
+    }
+
+    private void checkVersion() {
         String currentVersion = getCurrentVersion();
         BibleApplication application = (BibleApplication) getApplication();
         String databaseVersion = application.getVersion();
         if (currentVersion != null && !currentVersion.equals(databaseVersion)) {
             LogUtils.d("version changed from " + currentVersion + " to " + databaseVersion);
             refreshAdapter();
-        }
-        if (BibleUtils.isDemoVersion(databaseVersion)) {
-            String version = BibleUtils.removeDemo(databaseVersion);
-            int id = getResources().getIdentifier(version, "string", BuildConfig.APPLICATION_ID);
-            if (id != 0) {
-                String filename = getString(id);
-                if (!application.isDownloading(filename)) {
-                    LogUtils.d("will download " + filename + " for " + databaseVersion);
-                    application.download(filename, true);
-                }
-            }
         }
     }
 
@@ -172,6 +167,28 @@ public class ReadingActivity extends AbstractReadingActivity {
     }
 
     @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        if (id == R.id.book_button) {
+            select(SelectActivity.BOOK);
+        } else if (id == R.id.chapter_button) {
+            select(SelectActivity.CHAPTER);
+        } else {
+            super.onClick(view);
+        }
+    }
+
+    private void select(int position) {
+        String currentOsis = getCurrentOsis();
+        if (!TextUtils.isEmpty(currentOsis)) {
+            Intent intent = new Intent(this, SelectActivity.class);
+            intent.putExtra(SelectActivity.POSITION, position);
+            intent.putExtra(OSIS, currentOsis);
+            startActivityForResult(intent, REQUEST_CODE_SELECT);
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_SETTINGS) {
             ReadingFragment currentFragment = getCurrentFragment();
@@ -184,18 +201,14 @@ public class ReadingActivity extends AbstractReadingActivity {
                 LogUtils.d("annotation changed, refresh");
                 refresh();
             }
+
+        } else if (requestCode == REQUEST_CODE_SELECT && data != null) {
+            jump(data.getStringExtra(OSIS), data.getStringExtra(VERSE));
         } else if (requestCode == REQUEST_CODE_OSIS && data != null) {
             String osis = data.getStringExtra(OSIS);
             if (!TextUtils.isEmpty(osis)) {
                 LogUtils.d("continue reading " + osis);
-                int position = getCurrentPosition();
-                Bundle bundle = retrieveOsis(position, osis);
-                if (!TextUtils.isEmpty(bundle.getString(CURR))) {
-                    position = bundle.getInt(ID) - 1;
-                    mAdapter.notifyDataSetChanged();
-                    refresh(position, bundle, true);
-                    mPager.setCurrentItem(position);
-                }
+                jump(osis, null);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -228,16 +241,17 @@ public class ReadingActivity extends AbstractReadingActivity {
 
     @Override
     protected void switchToVersion(String version) {
-        BibleApplication application = (BibleApplication) getApplication();
         String currentOsis = getCurrentOsis();
-        if (TextUtils.isEmpty(currentOsis) || application.hasChapter(version, currentOsis)) {
+        if (TextUtils.isEmpty(currentOsis)) {
             super.switchToVersion(version);
         } else {
-            showSwitchToVersion(version);
+            checkChapter(version);
         }
     }
 
-    private void showSwitchToVersion(String version) {
+    @Override
+    protected void onNoChapter(String version) {
+        LogUtils.d("no " + getCurrentOsis() + " in " + version);
         final String tag = FRAGMENT_CONFIRM;
         FragmentManager manager = getSupportFragmentManager();
         SwitchVersionConfirmFragment fragment = (SwitchVersionConfirmFragment) manager.findFragmentByTag(tag);
