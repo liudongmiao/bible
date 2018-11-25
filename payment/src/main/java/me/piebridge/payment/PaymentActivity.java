@@ -1,6 +1,5 @@
 package me.piebridge.payment;
 
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -13,6 +12,7 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.ArraySet;
+import androidx.fragment.app.DialogFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,6 +54,7 @@ public abstract class PaymentActivity extends GenuineActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        stopped = false;
         updatePayment();
     }
 
@@ -190,7 +191,7 @@ public abstract class PaymentActivity extends GenuineActivity {
     }
 
     void hidePaymentDialog() {
-        DialogFragment fragment = (DialogFragment) getFragmentManager()
+        DialogFragment fragment = (DialogFragment) getSupportFragmentManager()
                 .findFragmentByTag(FRAGMENT_PAYMENT_PROGRESS);
         if (fragment != null && !isStopped()) {
             fragment.dismiss();
@@ -199,7 +200,7 @@ public abstract class PaymentActivity extends GenuineActivity {
 
     private void showPaymentDialog() {
         if (!isStopped()) {
-            new ProgressFragment().show(getFragmentManager(), FRAGMENT_PAYMENT_PROGRESS);
+            new ProgressFragment().show(getSupportFragmentManager(), FRAGMENT_PAYMENT_PROGRESS);
         }
     }
 
