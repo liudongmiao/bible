@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
@@ -31,7 +32,7 @@ import me.piebridge.bible.utils.LogUtils;
 /**
  * Created by thom on 2018/10/19.
  */
-public class SearchActivity extends ToolbarActivity implements SearchView.OnQueryTextListener, View.OnFocusChangeListener {
+public class SearchActivity extends ToolbarActivity implements SearchView.OnQueryTextListener {
 
     public static final String OSIS_FROM = "osisFrom";
 
@@ -40,8 +41,6 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
     public static final String URL = "url";
 
     public static final String CROSS = "cross";
-
-    private boolean mHasFocus;
 
     private SearchView mSearchView;
 
@@ -61,7 +60,6 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
 
         mSearchView = findViewById(R.id.searchView);
         mSearchView.setOnQueryTextListener(this);
-        mSearchView.setOnQueryTextFocusChangeListener(this);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         if (searchManager != null) {
             SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
@@ -89,15 +87,19 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.search, menu);
-        menu.findItem(R.id.action_clear).setVisible(!mHasFocus);
         return true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_clear:
-                mSuggestions.clearHistory();
+                new ClearTask().execute(mSuggestions);
                 return true;
             case android.R.id.home:
                 BibleUtils.startLauncher(this, null);
@@ -278,20 +280,8 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         super.startActivity(setFinished(intent, finished));
     }
 
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        if (v == mSearchView) {
-            mHasFocus = hasFocus;
-            invalidateOptionsMenu();
-        }
-    }
-
     public void hideSoftInput() {
-        if (mHasFocus || mSearchView.hasFocus()) {
-            mSearchView.clearFocus();
-            mHasFocus = false;
-            invalidateOptionsMenu();
-        }
+        mSearchView.clearFocus();
     }
 
     public void updateVersion() {
@@ -318,4 +308,17 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
                 return "unknown(" + state + ")";
         }
     }
+
+    private static class ClearTask extends AsyncTask<SearchRecentSuggestions, Void, Void> {
+
+        @Override
+        protected Void doInBackground(SearchRecentSuggestions... suggestions) {
+            for (SearchRecentSuggestions suggestion : suggestions) {
+                suggestion.clearHistory();
+            }
+            return null;
+        }
+
+    }
+
 }
