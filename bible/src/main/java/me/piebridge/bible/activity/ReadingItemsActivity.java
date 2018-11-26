@@ -208,10 +208,13 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
     }
 
     @Override
-    protected int loadData(int position, String osis) {
+    protected int loadData(int position, String osis, int count) {
         LogUtils.d("load data, position: " + position);
         Bundle bundle = retrieveOsis(position, osis);
         mAdapter.setData(position, bundle);
+        if (count != mAdapter.getCount()) {
+            bundle.putInt(ADAPTER_COUNT, count);
+        }
         prepareOnWork(bundle);
         return position;
     }

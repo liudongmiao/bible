@@ -65,7 +65,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
     private static final int CHECK_DEMO = 1001;
     private static final int INITIALIZE = 1002;
-    private static final int INITIALIZE_COUNT = 1003;
     private static final int INITIALIZE_DATA = 1004;
     private static final int PREPARE_DATA = 1005;
     private static final int REFRESH = 1006;
@@ -77,6 +76,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     private static final int JUMP = 1012;
     private static final int SHOW_PROGRESS = 1013;
     private static final int HIDE_PROGRESS = 1014;
+
+    public static final String ADAPTER_COUNT = "adapter_count";
 
     private static final String FRAGMENT_PROGRESS = "fragment_progress";
 
@@ -178,11 +179,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         mPager.addOnPageChangeListener(this);
 
         fontPath = BibleUtils.getFontPath(this);
-        if (shouldRemove()) {
-            mAdapter = new ReadingAdapter(getSupportFragmentManager(), 0);
-        } else {
-            mAdapter = new ReadingAdapter(getSupportFragmentManager(), retrieveOsisCount());
-        }
+        mAdapter = new ReadingAdapter(getSupportFragmentManager());
         if (isFake()) {
             mPager.setVisibility(View.GONE);
             mHeader.setVisibility(View.GONE);
@@ -312,7 +309,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         String osis = bundle.getString(OSIS);
         LogUtils.d("prepare on work, position: " + position + ", osis: " + osis);
         preparePrev(position, bundle.getString(PREV));
-        prepareNext(position, bundle.getString(NEXT));
+        int count = bundle.getInt(ADAPTER_COUNT, mAdapter.getCount());
+        prepareNext(position, bundle.getString(NEXT), count);
         mainHandler.removeMessages(PREPARE);
         mainHandler.obtainMessage(PREPARE, bundle).sendToTarget();
     }
@@ -355,25 +353,13 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     protected final void initializeOnWork() {
         BibleApplication application = (BibleApplication) getApplication();
         application.setDefaultVersion();
-        if (shouldRemove()) {
-            mainHandler.obtainMessage(INITIALIZE_COUNT, retrieveOsisCount()).sendToTarget();
-        }
-        mainHandler.obtainMessage(INITIALIZE_DATA, initializeData()).sendToTarget();
-    }
-
-    protected void initializeCount(int size) {
-        LogUtils.d("initialize adapter size to " + size);
-        mAdapter.setSize(size);
-        mAdapter.notifyDataSetChanged();
-    }
-
-    protected int initializeData() {
+        int count = retrieveOsisCount();
         int position = getInitialPosition();
         String osis = getInitialOsis();
-        return loadData(position, osis);
+        mainHandler.obtainMessage(INITIALIZE_DATA, count, loadData(position, osis, count)).sendToTarget();
     }
 
-    protected int loadData(int position, String osis) {
+    protected int loadData(int position, String osis, int count) {
         Bundle bundle = retrieveOsis(position, osis);
         if (TextUtils.isEmpty(bundle.getString(CURR))) {
             bundle = retrieveOsis(position, "null");
@@ -381,18 +367,22 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         if (position == POSITION_UNKNOWN) {
             position = bundle.getInt(ID) - 1;
         }
-        LogUtils.d("size: " + mAdapter.getCount());
         mAdapter.setData(position, bundle);
+        if (mAdapter.getCount() != count) {
+            bundle.putInt(ADAPTER_COUNT, count);
+        }
         prepareOnWork(bundle);
         return position;
     }
 
-    protected void initializeData(int position) {
+    protected void initializeOnMain(int count, int position) {
         initialized = true;
         LogUtils.d("initialize position to " + position);
         updateVersion();
         mPager.setAdapter(mAdapter);
+        mAdapter.setSize(count);
         mPager.setCurrentItem(position);
+        mAdapter.notifyDataSetChanged();
         checkDemoVersion();
     }
 
@@ -529,10 +519,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         return cursor.getString(cursor.getColumnIndexOrThrow(columnName));
     }
 
-    protected void prepareNext(int position, String osis) {
-        prepareNext(position, osis, mAdapter.getCount());
-    }
-
     protected void prepareNext(int position, String osis, int count) {
         int nextPosition = position + 1;
         if (nextPosition < count) {
@@ -642,16 +628,19 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     }
 
     protected void switchToVersion(String version) {
+        showProgress();
         workHandler.obtainMessage(SET_VERSION, version).sendToTarget();
     }
 
     protected void checkChapter(String version) {
         LogUtils.d("check chapter in " + version);
+        showProgress();
         workHandler.obtainMessage(CHECK_CHAPTER, version).sendToTarget();
     }
 
     protected void refreshAdapter() {
         LogUtils.d("refresh adapter");
+        showProgress();
         workHandler.obtainMessage(REFRESH_ADAPTER).sendToTarget();
     }
 
@@ -693,14 +682,16 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     }
 
     protected void refresh() {
+        showProgress();
         workHandler.obtainMessage(REFRESH).sendToTarget();
     }
 
     protected void refreshOnWork() {
         int position = getCurrentPosition();
         String osis = getCurrentOsis();
+        int count = mAdapter.getCount();
         mAdapter.clearData();
-        mainHandler.obtainMessage(REFRESH, loadData(position, osis)).sendToTarget();
+        mainHandler.obtainMessage(REFRESH, loadData(position, osis, count)).sendToTarget();
     }
 
     protected void refreshOnMain(int position) {
@@ -980,6 +971,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     }
 
     protected void jump(String osis, String verse) {
+        showProgress();
         workHandler.obtainMessage(JUMP, new String[] {osis, verse}).sendToTarget();
     }
 
@@ -993,7 +985,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         int position = bundle.getInt(ID) - 1;
         mAdapter.setData(position, bundle);
         preparePrev(position, bundle.getString(PREV));
-        prepareNext(position, bundle.getString(NEXT));
+        prepareNext(position, bundle.getString(NEXT), mAdapter.getCount());
         mainHandler.obtainMessage(JUMP, bundle).sendToTarget();
     }
 
@@ -1021,11 +1013,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
                 return;
             }
             switch (msg.what) {
-                case INITIALIZE_COUNT:
-                    activity.initializeCount((Integer) msg.obj);
-                    break;
                 case INITIALIZE_DATA:
-                    activity.initializeData((Integer) msg.obj);
+                    activity.initializeOnMain(msg.arg1, msg.arg2);
                     break;
                 case PREPARE:
                     activity.prepareOnMain((Bundle) msg.obj);
@@ -1087,14 +1076,14 @@ public abstract class AbstractReadingActivity extends DrawerActivity
                     activity.prepareOnWork((Bundle) msg.obj);
                     break;
                 case REFRESH:
-                    activity.showProgress();
                     activity.refreshOnWork();
+                    removeMessages(REFRESH);
+                    removeMessages(REFRESH_ADAPTER);
                     break;
                 case PREPARE_POSITION:
                     activity.prepareOnWork((Integer) msg.obj);
                     break;
                 case CHECK_CHAPTER:
-                    activity.showProgress();
                     if (!application.hasChapter((String) msg.obj, activity.getCurrentOsis())) {
                         activity.hideProgress();
                         activity.onNoChapter((String) msg.obj);
@@ -1102,22 +1091,17 @@ public abstract class AbstractReadingActivity extends DrawerActivity
                     }
                     // fall through
                 case SET_VERSION:
-                    if (msg.what == SET_VERSION) {
-                        activity.showProgress();
-                    }
                     application.setVersion((String) msg.obj);
                     // fall through
                 case REFRESH_ADAPTER:
-                    if (msg.what == REFRESH_ADAPTER) {
-                        activity.showProgress();
-                    }
                     activity.refreshAdapterOnWork();
                     removeMessages(REFRESH_ADAPTER);
                     break;
                 case JUMP:
-                    activity.showProgress();
                     String[] osisVerse = (String[]) msg.obj;
                     activity.jumpOnWork(osisVerse[0], osisVerse[1]);
+                    removeMessages(JUMP);
+                    removeMessages(REFRESH_ADAPTER);
                     break;
                 case CHECK_DEMO:
                     activity.doCheckDemoVersion();

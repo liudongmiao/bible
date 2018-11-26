@@ -46,7 +46,6 @@ public class ReadingActivity extends AbstractReadingActivity {
 
     private String mTitle;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         LogUtils.d("ReadingActivity, onCreate");

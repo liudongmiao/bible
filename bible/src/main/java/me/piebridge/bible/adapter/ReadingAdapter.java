@@ -28,9 +28,8 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
 
     private final SparseArray<ReadingFragment> mFragments;
 
-    public ReadingAdapter(FragmentManager fm, int size) {
+    public ReadingAdapter(FragmentManager fm) {
         super(fm);
-        mSize = size;
         mBundles = new SparseArray<>();
         mFragments = new SparseArray<>();
     }
