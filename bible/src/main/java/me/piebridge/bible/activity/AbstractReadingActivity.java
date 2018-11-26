@@ -676,9 +676,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         mAdapter.notifyDataSetChanged();
         mPager.setCurrentItem(position);
         prepareOnMain(position);
-        if (mainHandler.hasMessages(SHOW_PROGRESS)) {
-            hideProgress();
-        }
+        hideProgress();
     }
 
     protected void refresh() {
@@ -995,6 +993,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         updateHeader(bundle, osis);
         updateVersion();
         mPager.setCurrentItem(position);
+        hideProgress();
     }
 
     private static class MainHandler extends Handler {
