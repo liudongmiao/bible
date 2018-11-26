@@ -25,6 +25,7 @@ import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.OsisItem;
 import me.piebridge.bible.R;
 import me.piebridge.bible.fragment.InfoFragment;
+import me.piebridge.bible.fragment.ProgressFragment;
 import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
@@ -33,6 +34,8 @@ import me.piebridge.bible.utils.ObjectUtils;
  * Created by thom on 2018/11/7.
  */
 public class WebViewActivity extends ToolbarActivity implements AppBarLayout.OnOffsetChangedListener {
+
+    private static final String FRAGMENT_PROGRESS = "fragment-progress";
 
     private WebView webView;
 
@@ -100,6 +103,7 @@ public class WebViewActivity extends ToolbarActivity implements AppBarLayout.OnO
         loading = true;
         invalidateOptionsMenu();
         webView.loadUrl(sb.toString());
+        showProgress();
     }
 
     @Override
@@ -165,12 +169,34 @@ public class WebViewActivity extends ToolbarActivity implements AppBarLayout.OnO
     }
 
     void onPageFinished(String title) {
-        LogUtils.d("onPageFinished, title: " + title + ", previous: " + title);
+        LogUtils.d("onPageFinished, title: " + title + ", previous: " + mTitle);
         if (!TextUtils.isEmpty(title) && !ObjectUtils.equals(title, mTitle) && !title.startsWith("http")) {
             mTitle = title;
             setTitle(title);
             loading = false;
             invalidateOptionsMenu();
+            hideProgress();
+        }
+    }
+
+    private void showProgress() {
+        ProgressFragment fragment = (ProgressFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_PROGRESS);
+        if (fragment == null) {
+            LogUtils.d("show progress");
+            fragment = new ProgressFragment();
+        } else {
+            LogUtils.d("show progress " + fragment);
+        }
+        fragment.show(getSupportFragmentManager(), FRAGMENT_PROGRESS);
+    }
+
+    private void hideProgress() {
+        ProgressFragment fragment = (ProgressFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_PROGRESS);
+        if (fragment != null) {
+            LogUtils.d("hide progress " + fragment);
+            if (!isStopped()) {
+                fragment.dismiss();
+            }
         }
     }
 
