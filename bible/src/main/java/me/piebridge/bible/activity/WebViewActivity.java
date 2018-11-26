@@ -1,5 +1,6 @@
 package me.piebridge.bible.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,7 +34,8 @@ import me.piebridge.bible.utils.ObjectUtils;
 /**
  * Created by thom on 2018/11/7.
  */
-public class WebViewActivity extends ToolbarActivity implements AppBarLayout.OnOffsetChangedListener {
+public class WebViewActivity extends ToolbarActivity implements AppBarLayout.OnOffsetChangedListener,
+        DialogInterface.OnCancelListener {
 
     private static final String FRAGMENT_PROGRESS = "fragment-progress";
 
@@ -187,6 +189,7 @@ public class WebViewActivity extends ToolbarActivity implements AppBarLayout.OnO
         } else {
             LogUtils.d("show progress " + fragment);
         }
+        fragment.setCancelable(true);
         fragment.show(getSupportFragmentManager(), FRAGMENT_PROGRESS);
     }
 
@@ -198,6 +201,11 @@ public class WebViewActivity extends ToolbarActivity implements AppBarLayout.OnO
                 fragment.dismiss();
             }
         }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        webView.stopLoading();
     }
 
     private static class BibleWebViewClient extends WebViewClient {
