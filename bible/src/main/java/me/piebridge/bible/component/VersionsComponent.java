@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteException;
 import android.os.Environment;
 import android.text.TextUtils;
 
+import androidx.collection.ArrayMap;
 import androidx.collection.ArraySet;
 import androidx.collection.SimpleArrayMap;
 import androidx.core.content.ContextCompat;
@@ -76,16 +77,7 @@ public class VersionsComponent {
         mPreferenceBooks = context.getSharedPreferences(PREFERENCE_BOOKS, Context.MODE_PRIVATE);
         mBooks = new SimpleArrayMap<>();
 
-        Map<String, ?> books = mPreferenceBooks.getAll();
-        for (Map.Entry<String, ?> entry : books.entrySet()) {
-            String human = entry.getKey();
-            Object value = entry.getValue();
-            if (value instanceof String) {
-                String book = (String) value;
-                put(book, human);
-            }
-        }
-        versionChecked = !mBooks.isEmpty();
+        versionChecked = !isEmpty(mPreferenceVersions.getStringSet(KEY_VERSIONS, null));
 
         // load overrided names, fullnames
         mOverrideNames = new SimpleArrayMap<>();
@@ -99,6 +91,23 @@ public class VersionsComponent {
         setResourceValuesReverse(mBooks, R.array.osiszhtw);
         setResourceValuesReverse(mBooks, R.array.searchfullzhcn);
         setResourceValuesReverse(mBooks, R.array.searchshortzhcn);
+
+        Map<String, Object> books = new ArrayMap<>();
+        books.putAll(mPreferenceBooks.getAll());
+        for (Map.Entry<String, ?> entry : books.entrySet()) {
+            String human = entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof String) {
+                String book = (String) value;
+                if (!put(book, human)) {
+                    mPreferenceBooks.edit().remove(human).apply();
+                }
+            }
+        }
+    }
+
+    private boolean isEmpty(Set<String> set) {
+        return set == null || set.isEmpty();
     }
 
     private void loadOverride() {
@@ -543,26 +552,31 @@ public class VersionsComponent {
         for (Map.Entry<String, String> entry : books.entrySet()) {
             String book = entry.getKey();
             String human = entry.getValue();
-            put(book, human);
-            editor.putString(human, book);
+            if (put(book, human)) {
+                editor.putString(human, book);
+            }
         }
         editor.apply();
     }
 
-    private void put(String book, String human) {
+    private boolean put(String book, String human) {
         String bookLower = book.toLowerCase(Locale.US);
         String humanLower = human.toLowerCase(Locale.US);
-        putCheck(bookLower, book);
-        putCheck(humanLower, book);
-        putCheck(OsisItem.fixOsis(humanLower), book);
+        return putCheck(bookLower, book)
+                && putCheck(humanLower, book)
+                && putCheck(OsisItem.fixOsis(humanLower), book);
     }
 
-    private void putCheck(String key, String value) {
+    private boolean putCheck(String key, String value) {
         String previous = mBooks.get(key);
         if (TextUtils.isEmpty(previous)) {
             mBooks.put(key, value);
+            return true;
         } else if (!ObjectUtils.equals(previous, value)) {
             LogUtils.w("ignore, " + key + ": " + previous + " != " + value);
+            return false;
+        } else {
+            return true;
         }
     }
 
