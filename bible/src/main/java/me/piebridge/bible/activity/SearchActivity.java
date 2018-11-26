@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
@@ -17,6 +20,7 @@ import android.view.MenuItem;
 import androidx.appcompat.widget.SearchView;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -33,6 +37,10 @@ import me.piebridge.bible.utils.LogUtils;
  */
 public class SearchActivity extends ToolbarActivity implements SearchView.OnQueryTextListener {
 
+    private static final int SEARCH = 1000;
+
+    private static final int CLEAR = 1001;
+
     public static final String OSIS_FROM = "osisFrom";
 
     public static final String OSIS_TO = "osisTo";
@@ -46,6 +54,10 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
     private SearchFragment mSearchFragment;
 
     private SearchRecentSuggestions mSuggestions;
+
+    private Handler workHandler;
+
+    private Handler mainHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +81,9 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content, mSearchFragment)
                 .commit();
+
+        workHandler = new WorkHandler(this);
+        mainHandler = new MainHandler(this);
 
         handleIntent(getIntent());
         updateTaskDescription(getTitle().toString());
@@ -98,7 +113,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_clear:
-                new ClearTask().execute(mSuggestions);
+                clearSuggestions();
                 return true;
             case android.R.id.home:
                 BibleUtils.startLauncher(this, null);
@@ -108,6 +123,14 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void clearSuggestions() {
+        workHandler.obtainMessage(CLEAR).sendToTarget();
+    }
+
+    public void clearSuggestionsOnWork() {
+        mSuggestions.clearHistory();
     }
 
     @Override
@@ -198,6 +221,16 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
     }
 
     private void handleIntent(Intent intent) {
+        workHandler.obtainMessage(SEARCH, intent).sendToTarget();
+    }
+
+    void handleIntentOnWork(Intent intent) {
+        BibleApplication application = (BibleApplication) getApplication();
+        application.setDefaultVersion();
+        mainHandler.obtainMessage(SEARCH, intent).sendToTarget();
+    }
+
+    void handleIntentOnMain(Intent intent) {
         LogUtils.d("intent: " + intent + ", extra: " + intent.getExtras());
         String action = intent.getAction();
         if (action == null) {
@@ -308,14 +341,60 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         }
     }
 
-    private static class ClearTask extends AsyncTask<SearchRecentSuggestions, Void, Void> {
+    private static class WorkHandler extends Handler {
+
+        private final WeakReference<SearchActivity> mReference;
+
+        public WorkHandler(SearchActivity activity) {
+            super(newLooper());
+            this.mReference = new WeakReference<>(activity);
+        }
+
+        private static Looper newLooper() {
+            HandlerThread thread = new HandlerThread("Search");
+            thread.start();
+            return thread.getLooper();
+        }
 
         @Override
-        protected Void doInBackground(SearchRecentSuggestions... suggestions) {
-            for (SearchRecentSuggestions suggestion : suggestions) {
-                suggestion.clearHistory();
+        public void handleMessage(Message msg) {
+            SearchActivity activity = mReference.get();
+            if (activity != null) {
+                switch (msg.what) {
+                    case SEARCH:
+                        activity.handleIntentOnWork((Intent) msg.obj);
+                        break;
+                    case CLEAR:
+                        activity.clearSuggestionsOnWork();
+                        break;
+                    default:
+                        break;
+                }
             }
-            return null;
+
+        }
+    }
+
+    private static class MainHandler extends Handler {
+
+        private final WeakReference<SearchActivity> mReference;
+
+        public MainHandler(SearchActivity activity) {
+            this.mReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            SearchActivity activity = mReference.get();
+            if (activity != null) {
+                switch (msg.what) {
+                    case SEARCH:
+                        activity.handleIntentOnMain((Intent) msg.obj);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
     }
