@@ -559,10 +559,11 @@ public class VersionsComponent {
 
     private void putCheck(String key, String value) {
         String previous = mBooks.get(key);
-        if (!TextUtils.isEmpty(previous) && !ObjectUtils.equals(previous, value)) {
-            LogUtils.w("warning, " + key + ": " + previous + " != " + value);
+        if (TextUtils.isEmpty(previous)) {
+            mBooks.put(key, value);
+        } else if (!ObjectUtils.equals(previous, value)) {
+            LogUtils.w("ignore, " + key + ": " + previous + " != " + value);
         }
-        mBooks.put(key, value);
     }
 
     public String getOsis(String query) {
