@@ -285,7 +285,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     }
 
     protected final void prepare(int position) {
-        LogUtils.d("prepare position: " + position);
+        LogUtils.d("will prepare position: " + position);
         Bundle bundle = mAdapter.getData(position);
         String osis = bundle.getString(OSIS);
         if (TextUtils.isEmpty(osis)) {
@@ -307,7 +307,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     protected void prepareOnWork(Bundle bundle) {
         int position = bundle.getInt(POSITION);
         String osis = bundle.getString(OSIS);
-        LogUtils.d("prepare on work, position: " + position + ", osis: " + osis);
         preparePrev(position, bundle.getString(PREV));
         int count = bundle.getInt(ADAPTER_COUNT, mAdapter.getCount());
         prepareNext(position, bundle.getString(NEXT), count);
@@ -318,7 +317,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     protected void prepareOnMain(Bundle bundle) {
         int position = bundle.getInt(POSITION);
         String osis = bundle.getString(OSIS);
-        LogUtils.d("prepare on main, position: " + position + ", osis: " + osis);
         updateHeader(bundle, osis);
         updateVersion();
         prepareOnMain(position);
@@ -341,7 +339,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         if (fragment != null) {
             Bundle bundle = mAdapter.getData(position);
             if (bundle.containsKey(CONTENT) && BibleUtils.putAll(fragment.getArguments(), bundle)) {
-                fragment.reloadData();
+                fragment.reloadData("reload");
             }
         }
     }
@@ -538,7 +536,6 @@ public abstract class AbstractReadingActivity extends DrawerActivity
 
     protected void prepare(int position, String osis) {
         Bundle bundle = mAdapter.getData(position);
-        LogUtils.d("prepare position: " + position + ", osis: " + osis);
         if (!ObjectUtils.equals(osis, bundle.getString(CURR))) {
             bundle.putString(OSIS, osis);
             bundle.putAll(retrieveOsis(position, osis));
@@ -679,11 +676,9 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         if (count != mAdapter.getCount()) {
             mAdapter.setSize(count);
             mAdapter.notifyDataSetChanged();
-            mPager.setCurrentItem(position);
-        } else {
-            prepareOnMain(position);
-            updatePosition(position);
         }
+        prepareOnMain(position);
+        updatePosition(position);
     }
 
     protected void refresh() {

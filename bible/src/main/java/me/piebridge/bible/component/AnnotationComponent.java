@@ -59,13 +59,12 @@ public class AnnotationComponent {
     }
 
     public Bundle getNoteVerses(String osis) {
-        Bundle bundle = new Bundle();
         if (TextUtils.isEmpty(osis)) {
-            return bundle;
+            return Bundle.EMPTY;
         }
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
         if (!isDatabaseIntegrityOk(db)) {
-            return bundle;
+            return Bundle.EMPTY;
         }
 
         try (
@@ -76,6 +75,7 @@ public class AnnotationComponent {
             if (cursor != null && cursor.moveToFirst()) {
                 int idIndex = cursor.getColumnIndex(COLUMN_ID);
                 int verseIndex = cursor.getColumnIndex(COLUMN_VERSE);
+                Bundle bundle = new Bundle();
                 do {
                     long id = cursor.getInt(idIndex);
                     String verse = cursor.getString(verseIndex);
@@ -85,9 +85,15 @@ public class AnnotationComponent {
                         LogUtils.w("invalid note, osis: " + osis + ", verse: " + verse);
                     }
                 } while (cursor.moveToNext());
+                if (bundle.isEmpty()) {
+                    return Bundle.EMPTY;
+                } else {
+                    return bundle;
+                }
+            } else {
+                return Bundle.EMPTY;
             }
         }
-        return bundle;
     }
 
     public Bundle getNote(long id) {

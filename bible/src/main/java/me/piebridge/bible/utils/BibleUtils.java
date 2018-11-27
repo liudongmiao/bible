@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -21,8 +22,10 @@ import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.component.VersionComponent;
 import me.piebridge.bible.provider.VersionProvider;
 
+import static me.piebridge.bible.activity.AbstractReadingActivity.CONTENT;
 import static me.piebridge.bible.activity.AbstractReadingActivity.OSIS;
 import static me.piebridge.bible.activity.AbstractReadingActivity.SHANGTI;
+import static me.piebridge.bible.activity.AbstractReadingActivity.VERSION;
 
 /**
  * Created by thom on 16/7/1.
@@ -232,12 +235,38 @@ public class BibleUtils {
     public static boolean putAll(Bundle oldBundle, Bundle newBundle) {
         Set<String> keys = newBundle.keySet();
         for (String key : keys) {
-            if (!ObjectUtils.equals(oldBundle.get(key), newBundle.get(key))) {
+            Object oldValue = oldBundle.get(key);
+            Object newValue = newBundle.get(key);
+            boolean same;
+            switch (key) {
+                case VERSION:
+                    same = isSameVersion((String) oldValue, (String) newValue);
+                    break;
+                case CONTENT:
+                    same = isSameContent((byte[]) oldValue, (byte[]) newValue);
+                    break;
+                default:
+                    same = ObjectUtils.equals(oldValue, newValue);
+                    break;
+            }
+            if (!same) {
                 oldBundle.putAll(newBundle);
                 return true;
             }
         }
         return false;
+    }
+
+    private static boolean isSameVersion(String oldValue, String newValue) {
+        String oldVersion = BibleUtils.removeDemo(oldValue);
+        String newVersion = BibleUtils.removeDemo(newValue);
+        return ObjectUtils.equals(oldVersion, newVersion);
+    }
+
+    private static boolean isSameContent(byte[] oldValue, byte[] newValue) {
+        byte[] oldContent = FileUtils.uncompress(oldValue);
+        byte[] newContent = FileUtils.uncompress(newValue);
+        return Arrays.equals(oldContent, newContent);
     }
 
 }

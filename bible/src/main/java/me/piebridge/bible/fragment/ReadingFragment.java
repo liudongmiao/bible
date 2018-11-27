@@ -109,7 +109,7 @@ public class ReadingFragment extends Fragment {
             }
         }
         if (webView != null && bundle != null) {
-            reloadData();
+            reloadData("load");
         }
     }
 
@@ -140,7 +140,7 @@ public class ReadingFragment extends Fragment {
         this.forceVerse = verse;
     }
 
-    public boolean reloadData() {
+    public boolean reloadData(String message) {
         if (webView == null) {
             LogUtils.w("webView is null");
             return false;
@@ -168,7 +168,7 @@ public class ReadingFragment extends Fragment {
                 LogUtils.d("cannot save " + output, e);
             }
         }
-        LogUtils.d("reloadData, position: " + bundle.get(POSITION) + ", title: " + getTitle() + ", version: " + getVersion());
+        LogUtils.d(message + ", position: " + bundle.get(POSITION) + ", title: " + getTitle() + ", version: " + getVersion());
         int fontSize = bundle.getInt(FONT_SIZE);
         webView.getSettings().setDefaultFontSize(fontSize);
         webView.getSettings().setDefaultFixedFontSize(fontSize);

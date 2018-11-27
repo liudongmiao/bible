@@ -15,7 +15,6 @@ import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
 import static me.piebridge.bible.activity.AbstractReadingActivity.CONTENT;
-import static me.piebridge.bible.activity.AbstractReadingActivity.OSIS;
 import static me.piebridge.bible.activity.AbstractReadingActivity.POSITION;
 
 /**
@@ -41,7 +40,6 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        LogUtils.d("instantiateItem, position " + position);
         ReadingFragment fragment = (ReadingFragment) super.instantiateItem(container, position);
         mFragments.put(position, fragment);
         Bundle arguments = ObjectUtils.requireNonNull(fragment.getArguments());
@@ -51,7 +49,7 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
         } else if (arguments.isEmpty()) {
             arguments.putAll(bundle);
         } else if (BibleUtils.putAll(arguments, bundle)) {
-            fragment.reloadData();
+            fragment.reloadData("instantiate");
         }
         return fragment;
     }
