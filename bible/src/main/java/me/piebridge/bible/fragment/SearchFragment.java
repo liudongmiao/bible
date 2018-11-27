@@ -178,6 +178,9 @@ public class SearchFragment extends PreferenceFragmentCompat
         BibleApplication application = (BibleApplication) activity.getApplication();
 
         Map<String, String> books = application.getBooks();
+        if (books == null || books.isEmpty()) {
+            return;
+        }
         String[] osiss = books.keySet().toArray(new String[0]);
         String[] humans = books.values().toArray(new String[0]);
 

@@ -38,8 +38,8 @@ import me.piebridge.bible.utils.LogUtils;
 public class SearchActivity extends ToolbarActivity implements SearchView.OnQueryTextListener {
 
     private static final int SEARCH = 1000;
-
     private static final int CLEAR = 1001;
+    private static final int UPDATE_VERSION = 1002;
 
     public static final String OSIS_FROM = "osisFrom";
 
@@ -226,7 +226,9 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
 
     void handleIntentOnWork(Intent intent) {
         BibleApplication application = (BibleApplication) getApplication();
-        application.setDefaultVersion();
+        if (!application.setDefaultVersion()) {
+            mainHandler.sendEmptyMessage(UPDATE_VERSION);
+        }
         mainHandler.obtainMessage(SEARCH, intent).sendToTarget();
     }
 
@@ -390,6 +392,9 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
                 switch (msg.what) {
                     case SEARCH:
                         activity.handleIntentOnMain((Intent) msg.obj);
+                        break;
+                    case UPDATE_VERSION:
+                        activity.updateVersion();
                         break;
                     default:
                         break;

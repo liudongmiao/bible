@@ -189,8 +189,10 @@ public class BibleApplication extends PaymentApplication {
     public boolean setDefaultVersion() {
         if (!initialized) {
             initialized = mVersion.setVersion(mVersions.getDefaultVersion(), false);
+            return false;
+        } else {
+            return true;
         }
-        return initialized;
     }
 
     public boolean setVersion(String version, boolean force) {
