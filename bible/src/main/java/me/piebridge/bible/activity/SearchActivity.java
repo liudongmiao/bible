@@ -324,6 +324,15 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
         }
     }
 
+    public void updateVersionIfNeeded() {
+        BibleApplication application = (BibleApplication) getApplication();
+        if (BibleUtils.isDemoVersion(application.getVersion())) {
+            BibleUtils.startLauncher(this, null);
+        } else {
+            updateVersion();
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -394,7 +403,7 @@ public class SearchActivity extends ToolbarActivity implements SearchView.OnQuer
                         activity.handleIntentOnMain((Intent) msg.obj);
                         break;
                     case UPDATE_VERSION:
-                        activity.updateVersion();
+                        activity.updateVersionIfNeeded();
                         break;
                     default:
                         break;

@@ -235,7 +235,7 @@ public class SearchFragment extends PreferenceFragmentCompat
         }
         List<String> list = new ArrayList<>(books.keySet());
         int index = list.indexOf(NEW_FIRST);
-        if (index == 0) {
+        if (index <= 0) {
             return "";
         } else {
             return list.get(index - 1);
@@ -248,7 +248,7 @@ public class SearchFragment extends PreferenceFragmentCompat
         }
         List<String> list = new ArrayList<>(books.keySet());
         int index = list.indexOf(NEW_FIRST);
-        if (index == 0) {
+        if (index <= 0) {
             return "";
         } else {
             return list.get(0);
