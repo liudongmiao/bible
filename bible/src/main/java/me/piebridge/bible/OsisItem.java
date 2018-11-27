@@ -192,10 +192,10 @@ public class OsisItem implements Parcelable {
                 continue;
             }
             String book = m.group(1);
-            String start_chapter = m.group(2);
-            String start_verse = m.group(3);
-            String end_chapter = m.group(4);
-            String end_verse = m.group(5);
+            String startChapter = m.group(2);
+            String startVerse = m.group(3);
+            String endChapter = m.group(4);
+            String endVerse = m.group(5);
 
             book = book.replace(":", "");
             if (book.startsWith(",")) {
@@ -204,45 +204,40 @@ public class OsisItem implements Parcelable {
                     book = subbook;
                 } else {
                     book = prevbook;
-                    if ("".equals(start_verse) && !"".equals(prevchap)) {
-                        start_verse = start_chapter;
-                        start_chapter = prevchap;
+                    if ("".equals(startVerse) && !"".equals(prevchap)) {
+                        startVerse = startChapter;
+                        startChapter = prevchap;
                     }
                 }
             } else if (!BibleUtils.isCJK(book) && book.length() < 2) {
-                start_chapter = book + start_chapter;
+                startChapter = book + startChapter;
                 book = prevbook;
             }
 
             prevbook = book;
-            if (!"".equals(start_verse)) {
-                prevchap = start_chapter;
+            if (!"".equals(startVerse)) {
+                prevchap = startChapter;
             } else {
                 prevchap = "";
             }
 
-            String osis;
+            String osis = null;
             if (TextUtils.isEmpty(book) || book.equalsIgnoreCase("ch")) {
-                if ("".equals(prevosis)) {
-                    osis = previous;
-                } else {
+                if (!TextUtils.isEmpty(prevosis)) {
                     osis = prevosis;
+                } else if (!TextUtils.isEmpty(previous)) {
+                    osis = BibleUtils.getBook(previous);
                 }
-                osis = osis.split("\\.")[0];
             } else if (book.equalsIgnoreCase("v") || book.equalsIgnoreCase("vv") || book.equalsIgnoreCase("ver")) {
-                if ("".equals(prevosis) || "".equals(prevchap)) {
-                    osis = previous;
-                } else {
-                    osis = prevosis + "." + prevchap;
-                }
-                if (osis.contains(".")) {
-                    start_verse = start_chapter;
-                    end_verse = end_chapter;
-                    end_chapter = "";
-                    start_chapter = osis.split("\\.")[1];
-                    osis = osis.split("\\.")[0];
-                } else {
-                    continue;
+                startVerse = startChapter;
+                endVerse = endChapter;
+                endChapter = "";
+                if (!TextUtils.isEmpty(prevosis) && !TextUtils.isEmpty(prevchap)) {
+                    osis = prevosis;
+                    startChapter = prevchap;
+                } else if (!TextUtils.isEmpty(previous)) {
+                    osis = BibleUtils.getBook(previous);
+                    startChapter = BibleUtils.getChapter(previous);
                 }
             } else {
                 osis = application.getOsis(book);
@@ -251,21 +246,21 @@ public class OsisItem implements Parcelable {
                 continue;
             }
 
-            if (end_chapter.equals(start_chapter)) {
-                end_chapter = end_verse;
-                end_verse = "";
+            if (endChapter.equals(startChapter)) {
+                endChapter = endVerse;
+                endVerse = "";
             }
 
-            if ("".equals(start_chapter)) {
+            if ("".equals(startChapter)) {
                 items.add(new OsisItem(osis));
-            } else if ("".equals(end_chapter) || (!"".equals(start_verse) && "".equals(end_verse))) {
+            } else if ("".equals(endChapter) || (!"".equals(startVerse) && "".equals(endVerse))) {
                 // 3, 3:16, 3:16-17
-                OsisItem newItem = new OsisItem(osis, start_chapter, start_verse, end_chapter);
+                OsisItem newItem = new OsisItem(osis, startChapter, startVerse, endChapter);
                 if (ObjectUtils.equals(osis, prevosis) && !items.isEmpty()) {
                     if (prevgroup.endsWith("-")) {
                         int index = items.size() - 1;
                         OsisItem oldItem = items.get(index);
-                        if (ObjectUtils.equals(oldItem.chapter, start_chapter)
+                        if (ObjectUtils.equals(oldItem.chapter, startChapter)
                                 && TextUtils.isEmpty(oldItem.verseEnd)
                                 && TextUtils.isEmpty(newItem.verseEnd)) {
                             oldItem.verseEnd = newItem.verseStart;
@@ -274,7 +269,7 @@ public class OsisItem implements Parcelable {
                     } else if (group.startsWith(",")) {
                         int index = items.size() - 1;
                         OsisItem oldItem = items.get(index);
-                        if (ObjectUtils.equals(oldItem.chapter, start_chapter)) {
+                        if (ObjectUtils.equals(oldItem.chapter, startChapter)) {
                             //noinspection StringConcatenationInLoop
                             StringBuilder verses = new StringBuilder(oldItem.verses);
                             if (TextUtils.isEmpty(verses)) {
@@ -285,10 +280,10 @@ public class OsisItem implements Parcelable {
                                 }
                             }
                             verses.append(",");
-                            verses.append(start_verse);
-                            if (!TextUtils.isEmpty(end_chapter)) {
+                            verses.append(startVerse);
+                            if (!TextUtils.isEmpty(endChapter)) {
                                 verses.append("-");
-                                verses.append(end_chapter);
+                                verses.append(endChapter);
                             }
                             oldItem.verses = verses.toString();
                             newItem = null;
@@ -298,16 +293,16 @@ public class OsisItem implements Parcelable {
                 if (newItem != null) {
                     items.add(newItem);
                 }
-            } else if ("".equals(start_verse) || (!"".equals(start_verse) && !"".equals(end_verse))) {
+            } else if ("".equals(startVerse) || (!"".equals(startVerse) && !"".equals(endVerse))) {
                 // 3-4, 3-4:5, 3:16-4:6
-                int start = NumberUtils.parseInt(start_chapter);
-                int end = NumberUtils.parseInt(end_chapter);
-                items.add(new OsisItem(osis, start_chapter, start_verse));
+                int start = NumberUtils.parseInt(startChapter);
+                int end = NumberUtils.parseInt(endChapter);
+                items.add(new OsisItem(osis, startChapter, startVerse));
                 for (int i = start + 1; i < end; i++) {
                     items.add(new OsisItem(osis, i));
                 }
                 if (end > start) {
-                    items.add(new OsisItem(osis, end_chapter, end_verse.equals("") ? "" : "1", end_verse));
+                    items.add(new OsisItem(osis, endChapter, endVerse.equals("") ? "" : "1", endVerse));
                 }
             }
 
