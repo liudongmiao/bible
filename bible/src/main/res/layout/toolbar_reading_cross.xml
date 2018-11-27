@@ -9,7 +9,6 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:contentInsetStart="@dimen/content_padding"
     app:elevation="4dp"
-    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     tools:showIn="@layout/activity_reading_cross">
 
     <include layout="@layout/view_select_items" />

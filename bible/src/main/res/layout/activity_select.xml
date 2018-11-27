@@ -21,8 +21,7 @@
             app:tabGravity="fill"
             app:tabMaxWidth="0dp"
             app:tabMode="fixed"
-            app:tabTextAppearance="@style/tab"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+            app:tabTextAppearance="@style/tab" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

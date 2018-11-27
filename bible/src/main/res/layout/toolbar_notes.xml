@@ -9,8 +9,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:contentInsetStartWithNavigation="?attr/actionBarSize"
     app:elevation="4dp"
-    app:layout_scrollFlags="enterAlways"
-    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+    app:layout_scrollFlags="enterAlways">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,8 +37,8 @@
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                app:queryHint="@string/annotation_search"
-                app:iconifiedByDefault="true" />
+                app:iconifiedByDefault="true"
+                app:queryHint="@string/annotation_search" />
 
         </RelativeLayout>
 

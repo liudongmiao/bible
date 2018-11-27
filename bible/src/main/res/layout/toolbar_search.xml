@@ -5,10 +5,10 @@
     android:id="@+id/toolbar_actionbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:contentInsetStartWithNavigation="?attr/actionBarSize"
     app:elevation="4dp"
-    app:layout_scrollFlags="scroll|enterAlways"
-    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+    app:layout_scrollFlags="scroll|enterAlways">
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
