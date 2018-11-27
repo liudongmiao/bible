@@ -98,6 +98,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
     }
 
     private void refresh() {
+        closeAdapter();
         workHandler.obtainMessage(SEARCH, mQuery).sendToTarget();
     }
 
@@ -105,7 +106,6 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         BibleApplication application = (BibleApplication) getApplication();
         versionView.setText(application.getName(application.getVersion()));
     }
-
 
     @Override
     public void onClick(View v) {
@@ -207,7 +207,6 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
     }
 
     private void showResults(Cursor[] cursors) {
-        closeAdapter();
         if (cursors[0] == null && cursors[1] == null) {
             Uri url = getIntent().getParcelableExtra(SearchActivity.URL);
             if (url != null) {
