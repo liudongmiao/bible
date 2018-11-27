@@ -5,6 +5,7 @@ import android.os.Build;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -119,16 +120,25 @@ public class HttpUtils {
                     headers.put(ETAG, etag);
                 }
             }
-            if (os == null) {
-                return true;
-            }
-            if ("gzip".equals(encoding)) {
-                return FileUtils.copy(new GZIPInputStream(connection.getInputStream()), os, true);
-            } else {
-                return FileUtils.copy(connection.getInputStream(), os, true);
-            }
+            return copy(connection, encoding, os);
         } finally {
             connection.disconnect();
+        }
+    }
+
+    private static boolean copy(HttpURLConnection connection, String encoding, OutputStream os) throws IOException {
+        try (
+                InputStream is = getInputStream(connection, encoding);
+        ) {
+            return os == null || FileUtils.copy(is, os, true);
+        }
+    }
+
+    private static InputStream getInputStream(HttpURLConnection connection, String encoding) throws IOException {
+        if ("gzip".equals(encoding)) {
+            return new GZIPInputStream(connection.getInputStream());
+        } else {
+            return connection.getInputStream();
         }
     }
 
