@@ -222,7 +222,7 @@ public class OsisItem implements Parcelable {
             }
 
             String osis;
-            if (book.equalsIgnoreCase("ch")) {
+            if (TextUtils.isEmpty(book) || book.equalsIgnoreCase("ch")) {
                 if ("".equals(prevosis)) {
                     osis = previous;
                 } else {
