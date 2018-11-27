@@ -14,6 +14,7 @@ import me.piebridge.bible.utils.BibleUtils;
 import me.piebridge.bible.utils.LogUtils;
 import me.piebridge.bible.utils.ObjectUtils;
 
+import static me.piebridge.bible.activity.AbstractReadingActivity.CONTENT;
 import static me.piebridge.bible.activity.AbstractReadingActivity.OSIS;
 import static me.piebridge.bible.activity.AbstractReadingActivity.POSITION;
 
@@ -45,10 +46,9 @@ public class ReadingAdapter extends FragmentStatePagerAdapter {
         mFragments.put(position, fragment);
         Bundle arguments = ObjectUtils.requireNonNull(fragment.getArguments());
         Bundle bundle = getData(position);
-        if (!bundle.containsKey(OSIS)) {
+        if (!bundle.containsKey(CONTENT)) {
             LogUtils.w("bundle is null");
-        }
-        if (arguments.isEmpty()) {
+        } else if (arguments.isEmpty()) {
             arguments.putAll(bundle);
         } else if (BibleUtils.putAll(arguments, bundle)) {
             fragment.reloadData();

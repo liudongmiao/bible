@@ -222,7 +222,7 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
     @Override
     protected void prepareOnMain(Bundle bundle) {
         super.prepareOnMain(bundle);
-        mPager.setCurrentItem(bundle.getInt(POSITION));
+        updatePosition(bundle.getInt(POSITION));
     }
 
     @Override

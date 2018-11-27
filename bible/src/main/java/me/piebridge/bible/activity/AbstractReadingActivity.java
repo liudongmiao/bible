@@ -322,23 +322,26 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         updateHeader(bundle, osis);
         updateVersion();
         prepareOnMain(position);
-        prepareOnMain(position - 1);
-        prepareOnMain(position + 1);
     }
 
     protected void prepareOnMain(int position) {
-        if (position >= 0 && position < mAdapter.getCount()) {
+        reloadOnMain(position);
+        int prevPosition = position - 1;
+        if (prevPosition >= 0) {
+            reloadOnMain(prevPosition);
+        }
+        int nextPosition = position + 1;
+        if (nextPosition < mAdapter.getCount()) {
+            reloadOnMain(nextPosition);
+        }
+    }
+
+    protected void reloadOnMain(int position) {
+        ReadingFragment fragment = mAdapter.getFragment(position);
+        if (fragment != null) {
             Bundle bundle = mAdapter.getData(position);
-            ReadingFragment fragment = mAdapter.getFragment(position);
-            LogUtils.d("prepareOnMain, position: " + position
-                    + ", title: " + (fragment == null ? null : fragment.getTitle())
-                    + ", version: " + (fragment == null ? null : fragment.getVersion()));
-            if (fragment != null) {
-                if (BibleUtils.putAll(fragment.getArguments(), bundle)) {
-                    fragment.reloadData();
-                } else {
-                    hideProgress();
-                }
+            if (bundle.containsKey(CONTENT) && BibleUtils.putAll(fragment.getArguments(), bundle)) {
+                fragment.reloadData();
             }
         }
     }
@@ -667,16 +670,20 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     }
 
     protected void refreshAdapterOnMain(int position, int count) {
-        LogUtils.d("refreshAdapterOnMain, position: " + position + ", count: " + count);
+        LogUtils.d("refreshAdapterOnMain, position: " + position + ", count: " + count
+                + ", original count: " + mAdapter.getCount());
         Bundle bundle = mAdapter.getData(position);
         String osis = bundle.getString(OSIS);
         updateHeader(bundle, osis);
         updateVersion();
-        mAdapter.setSize(count);
-        mAdapter.notifyDataSetChanged();
-        mPager.setCurrentItem(position);
-        prepareOnMain(position);
-        hideProgress();
+        if (count != mAdapter.getCount()) {
+            mAdapter.setSize(count);
+            mAdapter.notifyDataSetChanged();
+            mPager.setCurrentItem(position);
+        } else {
+            prepareOnMain(position);
+            updatePosition(position);
+        }
     }
 
     protected void refresh() {
@@ -693,8 +700,8 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     }
 
     protected void refreshOnMain(int position) {
-        mPager.setCurrentItem(position);
-        hideProgress();
+        prepareOnMain(position);
+        updatePosition(position);
     }
 
     @Override
@@ -992,8 +999,18 @@ public abstract class AbstractReadingActivity extends DrawerActivity
         String osis = bundle.getString(OSIS);
         updateHeader(bundle, osis);
         updateVersion();
-        mPager.setCurrentItem(position);
-        hideProgress();
+        prepareOnMain(position);
+        updatePosition(position);
+    }
+
+    protected void updatePosition(int position) {
+        int currentItem = mPager.getCurrentItem();
+        if (Math.abs(currentItem - position) < mPager.getOffscreenPageLimit()) {
+            hideProgress();
+        }
+        if (currentItem != position) {
+            mPager.setCurrentItem(position);
+        }
     }
 
     private static class MainHandler extends Handler {
