@@ -1,6 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 u.person { text-decoration: none; }
-.pn, .person, .name { border-bottom: 1px solid; }
+.pn, .person, .name, .place { border-bottom: 1px solid; }
+span.pn + span.pn, span.name + span.name, span.person + span.person, span.place + span.place { margin-left: 0.2em; }
 .add { border-bottom: 1px dotted; }
 .addpn { border-bottom: 1px dotted; box-shadow: 0 1px 0; }
 .b { font-size: 1em; }
@@ -30,7 +31,7 @@ a.notelink, .footnote a, .crossreference a, a.r { text-decoration: none; }
 .icon-crossreference:before { font-family: "annotation"; content: '\e801'; }
 img.note { height: 1.3em; vertical-align: text-top; padding: 0 0.2em }
 @font-face { font-family: 'GentiumPlus'; src: url('GentiumPlus-R.ttf') format('truetype'); }
-.poetry { clear: left }
+.hang-1 sup.versenum, .hang-2 sup.versenum, .hang-3 sup.versenum,
 .q1 sup, .poetry sup.versenum { display: inline-block; margin-left: -3ex; width: 3ex; text-align: right; padding-right: 0.3ex }
 .q1, .poetry .line { margin-top: 0em; margin-bottom: 0em }
 .versenum, .chapternum, .chapter sup { font-family: GentiumPlus; }
@@ -40,3 +41,32 @@ img.note { height: 1.3em; vertical-align: text-top; padding: 0 0.2em }
 .q1 .chapternum, .poetry .chapternum { width: 1.5em; margin-left: -2em;}
 .chapter-large .q1, .chapter-large .poetry .line > span { margin-left: 3em; }
 .chapter-large .q1 .chapternum, .chapter-large .poetry .chapternum { width: 2.5em; margin-left: -3em;}
+span.chapternum + sup.versenum { display: none }
+span.selah { font-style: italic; margin-left: 2em }
+.poetry .line > span.indent-1 { padding-left: 2em; }
+.poetry .line > span.indent-2 { padding-left: 3em; }
+.chapter-2, .chapter-3, .hang-1, .hang-2, .hang-3 { margin-bottom: 0em; }
+.top-none, .child-vertical-none p { margin-top: 0em; }
+.poetry .indent-1-breaks, .poetry .indent-2-breaks { display: none }
+.hang-1, .hang-2, .hang-3 { padding-left: 1em;}
+.hang-1 { text-indent: -1em; margin-left: 1em; }
+.hang-2 { text-indent: -2em; margin-left: 2em; }
+.hang-3 { text-indent: -3em; margin-left: 3em; }
+.list.left-1 { padding-left: 1em; }
+p.left-1 { padding-left: 2em; }
+p.left-2 { padding-left: 3em; }
+p.left-3 { padding-left: 4em; }
+.mid-line .poetry .line { padding-left: 1em; }
+.mid-line .poetry .line > span { display: inline; text-indent: 0em; margin-left: initial; padding-left: initial }
+.mid-line .poetry .line { margin-left: 1em; }
+.mid-line .poetry .chapternum { width: 1.5em; margin-left: -1.5em;}
+.chapter-large.mid-line .poetry .line { margin-left: 2em; }
+.chapter-large.mid-line .poetry .chapternum { width: 2.5em; margin-left: -2.5em;}
+sup.versenum.mid-line { display: inline; margin-left: 0; width: initial; }
+.poetry .chapternum, .q1 .chapternum { position: relative; margin-top: -1.5em; top: 1.1em }
+.small-caps { font-variant:small-caps; }
+.text-html .center { text-align:center; }
+.text-html p.right, .text-html div.poetry p.right { margin-left:4em; text-indent:-1em; }
+.text-html span.right { margin-left: 2em; }
+.text-html i.right { margin-left: 2em; }
+.hang-1 .chapternum, .hang-2 .chapternum, .hang-3 .chapternum { float: initial }

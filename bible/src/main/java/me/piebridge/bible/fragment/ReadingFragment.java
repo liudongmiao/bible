@@ -3,6 +3,7 @@ package me.piebridge.bible.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -14,10 +15,15 @@ import android.webkit.WebView;
 
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import me.piebridge.bible.BuildConfig;
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.AbstractReadingActivity;
 import me.piebridge.bible.bridge.ReadingBridge;
@@ -55,6 +61,12 @@ import static me.piebridge.bible.activity.AbstractReadingActivity.VERSION;
  * Created by thom on 15/10/18.
  */
 public class ReadingFragment extends Fragment {
+
+    static {
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
+    }
 
     private static final String VERSE = "verse";
     private static final String SELECTED_VERSES = "selectedVerses";
@@ -156,15 +168,15 @@ public class ReadingFragment extends Fragment {
             saveState();
         }
         String body = getBody();
-        if (false && getActivity() != null) {
-            java.io.File output = new java.io.File(getActivity().getExternalFilesDir(null),
-                    currentOsis + (me.piebridge.bible.utils.ThemeUtils.isDark(getActivity()) ? ".dark" : "") + ".html");
+        FragmentActivity activity = getActivity();
+        if (BuildConfig.DEBUG && activity != null) {
+            File output = new File(activity.getExternalFilesDir(null), currentOsis + ".html");
             try (
-                    java.io.FileOutputStream fos = new java.io.FileOutputStream(output);
+                    FileOutputStream fos = new FileOutputStream(output);
             ) {
-                FileUtils.copy(new java.io.ByteArrayInputStream(body.getBytes(FileUtils.UTF_8)), fos);
+                FileUtils.copy(new ByteArrayInputStream(body.getBytes(FileUtils.UTF_8)), fos);
                 LogUtils.d("save to " + output);
-            } catch (java.io.IOException e) {
+            } catch (IOException e) {
                 LogUtils.d("cannot save " + output, e);
             }
         }
@@ -211,12 +223,26 @@ public class ReadingFragment extends Fragment {
         String fontFamily = getString(bundle, FONT_FAMILY);
         String verses = getString(bundle, VERSES);
         initialSelected = formatSelected(highlighted, verses, verseStart, verseEnd);
-        String extraClass = NumberUtils.parseInt(BibleUtils.getChapter(osis)) >= 0x64 ? "chapter-large" : "";
+        String extraClass = formatExtraClass(body);
         return String.format(template, fontFamily, css,
                 backgroundColor, textColor, linkColor,
                 verseBegin, verseStart, verseEnd,
                 search, initialSelected, highlighted,
                 Arrays.toString(notes), title, extraClass, body);
+    }
+
+    private String formatExtraClass(String body) {
+        StringBuilder sb = new StringBuilder();
+        if (NumberUtils.parseInt(BibleUtils.getChapter(osis)) >= 0x64) {
+            sb.append("chapter-large");
+        }
+        if (body.contains("mid-line")) {
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
+            sb.append("mid-line");
+        }
+        return sb.toString();
     }
 
     private String formatSelected(String highlighted, String verses, int verseStart, int verseEnd) {
