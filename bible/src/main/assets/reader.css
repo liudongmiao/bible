@@ -1,7 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 u.person { text-decoration: none; }
 .pn, .person, .name, .place { border-bottom: 1px solid; }
-span.pn + span.pn, span.name + span.name, span.person + span.person, span.place + span.place { margin-left: 0.2em; }
+.pn-pn, .name-name, .person-person, .place-place { margin-left: 0.2em; }
 .add { border-bottom: 1px dotted; }
 .addpn { border-bottom: 1px dotted; box-shadow: 0 1px 0; }
 .b { font-size: 1em; }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.BuildConfig;
@@ -219,12 +220,38 @@ public class BibleUtils {
             fixed = fixed.replaceAll("「", "“").replaceAll("」", "”")
                     .replaceAll("『", "‘").replaceAll("』", "’");
         }
+        fixed = fixDouble(fixed, "pn");
+        fixed = fixDouble(fixed, "name");
+        fixed = fixDouble(fixed, "place");
         if (shangti) {
             return fixed.replaceAll("　神", "上帝")
                     .replaceAll("　<span class=\"add\">神", "<span class=\"add\">上帝");
         } else {
             return fixed.replaceAll("上帝", "　神");
         }
+    }
+
+    private static String fixDouble(String content, String clazz) {
+        Pattern pattern = null;
+        if (content.contains("span class=\"" + clazz)) {
+            switch (clazz) {
+                case "pn":
+                    pattern = Holder.PN;
+                    break;
+                case "name":
+                    pattern = Holder.NAME;
+                    break;
+                case "place":
+                    pattern = Holder.PLACE;
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (pattern != null) {
+            return pattern.matcher(content).replaceAll("$1" + clazz + "-" + clazz + " $2");
+        }
+        return content;
     }
 
     public static String fix(BibleApplication application, String content) {
@@ -267,6 +294,13 @@ public class BibleUtils {
         byte[] oldContent = FileUtils.uncompress(oldValue);
         byte[] newContent = FileUtils.uncompress(newValue);
         return Arrays.equals(oldContent, newContent);
+    }
+
+    private static class Holder {
+        static final Pattern PN = Pattern.compile("(<span class=\"pn[^\"]*\">[^<>]*</span>\\s*<span class=\")(pn\")");
+        static final Pattern NAME = Pattern.compile("(<span class=\"name[^\"]*\">[^<>]*</span>\\s*<span class=\")(name[^\"]*\")");
+        static final Pattern PLACE = Pattern.compile("(<span class=\"place[^\"]*\">[^<>]*</span>\\s*<(?:u|span) class=\")" +
+                "((?:place|person)[^\"]*\")");
     }
 
 }
