@@ -171,18 +171,25 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
     }
 
     protected void showResult(Cursor cursor) {
-        closeAdapter();
         LogUtils.d(getClass().getSimpleName() + ", showResult");
         if (cursor == null) {
             if (recyclerView.getItemDecorationCount() > 0) {
                 recyclerView.removeItemDecoration(itemDecoration);
             }
-            recyclerView.setAdapter(new NoResultAdapter());
+            updateAdapter(new NoResultAdapter());
         } else {
             if (recyclerView.getItemDecorationCount() == 0) {
                 recyclerView.addItemDecoration(itemDecoration);
             }
-            recyclerView.setAdapter(new ResultAdapter(this, cursor));
+            updateAdapter(new ResultAdapter(this, cursor));
+        }
+    }
+
+    private void updateAdapter(RecyclerView.Adapter newAdapter) {
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        recyclerView.setAdapter(newAdapter);
+        if (adapter instanceof ResultAdapter) {
+            ((ResultAdapter) adapter).close();
         }
     }
 
@@ -375,6 +382,8 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
         private final int columnVersesIndex;
         private final int columnDateIndex;
 
+        private boolean closed;
+
         public ResultAdapter(AbstractAnnotationActivity activity, Cursor cursor) {
             this.mReference = new WeakReference<>(activity);
             this.mCursor = cursor;
@@ -397,6 +406,10 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            if (closed) {
+                LogUtils.w("onBindViewHolder on closed adapter");
+                return;
+            }
             AbstractAnnotationActivity activity = ObjectUtils.requireNonNull(mReference.get());
             mCursor.moveToPosition(position);
             AnnotationViewHolder annotationViewHolder = (AnnotationViewHolder) holder;
@@ -467,6 +480,10 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
 
         @Override
         public int getItemCount() {
+            if (closed) {
+                LogUtils.w("getItemCount on closed adapter");
+                return 0;
+            }
             return mCursor.getCount();
         }
 
@@ -474,6 +491,7 @@ public abstract class AbstractAnnotationActivity extends ToolbarActivity impleme
             if (mCursor != null && !mCursor.isClosed()) {
                 mCursor.close();
             }
+            closed = true;
         }
 
     }

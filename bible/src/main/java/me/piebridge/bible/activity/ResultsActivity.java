@@ -98,7 +98,6 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
     }
 
     private void refresh() {
-        closeAdapter();
         workHandler.obtainMessage(SEARCH, mQuery).sendToTarget();
     }
 
@@ -210,6 +209,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         if (cursors[0] == null && cursors[1] == null) {
             Uri url = getIntent().getParcelableExtra(SearchActivity.URL);
             if (url != null) {
+                closeAdapter();
                 Intent intent = new Intent(Intent.ACTION_VIEW, url);
                 intent.addCategory(Intent.CATEGORY_BROWSABLE);
                 ChooserUtils.startActivityExcludeSelf(this, intent, null);
@@ -217,14 +217,22 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
                 if (recyclerView.getItemDecorationCount() > 0) {
                     recyclerView.removeItemDecoration(itemDecoration);
                 }
-                recyclerView.setAdapter(new NoResultAdapter());
+                updateAdapter(new NoResultAdapter());
             }
         } else {
             int color = ContextCompat.getColor(this, R.color.blue_alpha);
             if (recyclerView.getItemDecorationCount() == 0) {
                 recyclerView.addItemDecoration(itemDecoration);
             }
-            recyclerView.setAdapter(new ResultAdapter(this, cursors, mQuery, color));
+            updateAdapter(new ResultAdapter(this, cursors, mQuery, color));
+        }
+    }
+
+    private void updateAdapter(RecyclerView.Adapter newAdapter) {
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        recyclerView.setAdapter(newAdapter);
+        if (adapter instanceof ResultAdapter) {
+            ((ResultAdapter) adapter).close();
         }
     }
 
@@ -404,6 +412,8 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
         private final String mQuery;
         private final int mColor;
 
+        private boolean closed;
+
         public ResultAdapter(ResultsActivity activity, Cursor[] cursors, String query, int color) {
             this.mReference = new WeakReference<>(activity);
             this.mQuery = query.toLowerCase(Locale.US);
@@ -465,6 +475,10 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
             ResultsActivity activity = mReference.get();
             if (activity == null) {
                 throw new UnsupportedOperationException();
+            }
+            if (closed) {
+                LogUtils.w("onBindViewHolder on closed adapter");
+                return;
             }
             if (position > verseStart && verseStart >= 0) {
                 verseCursor.moveToPosition(position - verseStart - 1);
@@ -532,6 +546,10 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
 
         @Override
         public int getItemCount() {
+            if (closed) {
+                LogUtils.w("getItemCount on closed adapter");
+                return 0;
+            }
             int count = 0;
             if (bookCursor != null) {
                 count += bookCursor.getCount() + 1;
@@ -563,6 +581,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
             if (verseCursor != null && !verseCursor.isClosed()) {
                 verseCursor.close();
             }
+            closed = true;
         }
 
 
