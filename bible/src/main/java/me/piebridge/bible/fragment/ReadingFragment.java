@@ -238,13 +238,9 @@ public class ReadingFragment extends Fragment {
             sb.append("ps");
             if (NumberUtils.parseInt(BibleUtils.getChapter(osis)) >= 0x64) {
                 sb.append(" ps-large");
-            } else {
-                sb.append(" ps-normal");
             }
             if (body.contains("chapternum")) {
                 sb.append(" has-chapternum");
-            } else {
-                sb.append(" no-chapternum");
             }
         }
         return sb.toString();
