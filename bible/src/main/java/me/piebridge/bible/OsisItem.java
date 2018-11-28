@@ -134,6 +134,10 @@ public class OsisItem implements Parcelable {
                 .replaceAll("(\\d?)\\s*(\\D?)", "$1$2");
     }
 
+    private static boolean isDigitsOnly(String s) {
+        return !TextUtils.isEmpty(s) && TextUtils.isDigitsOnly(s);
+    }
+
     public static ArrayList<OsisItem> parseSearch(String query, BibleApplication application, String previous) {
         ArrayList<OsisItem> items = new ArrayList<>();
         if (TextUtils.isEmpty(query)) {
@@ -222,10 +226,10 @@ public class OsisItem implements Parcelable {
             }
 
             String osis = null;
-            if (TextUtils.isEmpty(book) || book.equalsIgnoreCase("ch")) {
+            if (isDigitsOnly(startChapter) && (TextUtils.isEmpty(book) || book.equalsIgnoreCase("ch"))) {
                 if (!TextUtils.isEmpty(prevosis)) {
                     osis = prevosis;
-                } else if (!TextUtils.isEmpty(previous)) {
+                } else if (!TextUtils.isEmpty(previous) && isDigitsOnly(startVerse)) {
                     osis = BibleUtils.getBook(previous);
                 }
             } else if (book.equalsIgnoreCase("v") || book.equalsIgnoreCase("vv") || book.equalsIgnoreCase("ver")) {
