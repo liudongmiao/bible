@@ -37,10 +37,10 @@ img.note { height: 1.3em; vertical-align: text-top; padding: 0 0.2em }
 
 .q1 { margin-top: 0em; margin-bottom: 0em }
 .q1 { margin-left: 2em; padding-left: 1em; text-indent: -1em;  }
-.chapter-large .q1 { margin-left: 3em; }
 .q1 .chapternum { width: 1.5em; margin-left: -2em;}
-.chapter-large .q1 .chapternum { width: 2.5em; margin-left: -3em;}
 .q1 .chapternum { position: relative; margin-top: -1.5em; top: 1.1em }
+.ps-large .q1:first-of-type span.chapternum { width: 2.5em; margin-left: -2.5em; text-indent: 1em }
+.ps-large .q1:first-of-type span { margin-left: 1em }
 .q1 sup { display: inline-block; margin-left: -3ex; width: 3ex; text-align: right; padding-right: 0.3ex }
 
 .text-html .small-caps { font-variant:small-caps; }
@@ -58,6 +58,10 @@ span.selah { font-style: italic; margin-left: 2em }
 .poetry p.line .indent-2-breaks { display: none }
 .poetry p.line .indent-2-breaks + span:before { content: ''; padding-left: 2em }
 .poetry p.line { margin-left: 2em; padding-left: 1em; }
+.ps .poetry p.line { margin-left: 1em; }
+.ps.no-chapternum .poetry p.line { margin-left: 0em; }
+.ps-large.has-chapternum .poetry:first-of-type .line:first-of-type span:first-of-type .chapternum { width: 2.5em; margin-left: -2em; }
+.ps-large.has-chapternum .poetry:first-of-type .line:first-of-type span:first-of-type { margin-left: 0.5em }
 .poetry p.line > span .chapternum { width: 1.5em; margin-left: -1.5em; }
 .poetry p.line > span .chapternum { position: relative; margin-top: -1.5em; top: 1.1em }
 .poetry p.line sup.versenum { display: inline-block; margin-left: -3ex; width: 3ex; text-align: right; padding-right: 0.3ex }

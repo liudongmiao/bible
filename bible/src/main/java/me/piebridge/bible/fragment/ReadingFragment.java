@@ -233,14 +233,19 @@ public class ReadingFragment extends Fragment {
 
     private String formatExtraClass(String body) {
         StringBuilder sb = new StringBuilder();
-        if (NumberUtils.parseInt(BibleUtils.getChapter(osis)) >= 0x64) {
-            sb.append("chapter-large");
-        }
-        if (body.contains("mid-line")) {
-            if (sb.length() > 0) {
-                sb.append(" ");
+        String book = BibleUtils.getBook(osis);
+        if ("Ps".equalsIgnoreCase(book)) {
+            sb.append("ps");
+            if (NumberUtils.parseInt(BibleUtils.getChapter(osis)) >= 0x64) {
+                sb.append(" ps-large");
+            } else {
+                sb.append(" ps-normal");
             }
-            sb.append("mid-line");
+            if (body.contains("chapternum")) {
+                sb.append(" has-chapternum");
+            } else {
+                sb.append(" no-chapternum");
+            }
         }
         return sb.toString();
     }
