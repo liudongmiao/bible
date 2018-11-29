@@ -233,7 +233,8 @@ public class BibleUtils {
 
     private static String fixDouble(String content, String clazz) {
         Pattern pattern = null;
-        if (content.contains("span class=\"" + clazz)) {
+        int index = content.indexOf("class=\"" + clazz);
+        if (index > 0 && content.indexOf("class=\"" + clazz + "2", index + 1) == -1) {
             switch (clazz) {
                 case "pn":
                     pattern = Holder.PN;
@@ -244,11 +245,11 @@ public class BibleUtils {
                 case "place":
                     pattern = Holder.PLACE;
                     break;
+                case "person":
+                    pattern = Holder.PERSON;
                 default:
                     break;
             }
-        } else if (content.contains("u class=\"person")) {
-            pattern = Holder.PERSON;
         }
         if (pattern != null) {
             return pattern.matcher(content).replaceAll("$1" + clazz + "-" + clazz + " $2");

@@ -1,6 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 u.person { text-decoration: none; }
 .pn, .person, .name, .place { border-bottom: 1px solid; }
+.pn2, .name2, .person2, .place2,
 .pn-pn, .name-name, .person-person, .place-place { margin-left: 0.2em; }
 .add { border-bottom: 1px dotted; }
 .addpn { border-bottom: 1px dotted; box-shadow: 0 1px 0; }
