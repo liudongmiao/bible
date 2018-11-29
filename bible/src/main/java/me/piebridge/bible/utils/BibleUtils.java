@@ -223,6 +223,7 @@ public class BibleUtils {
         fixed = fixDouble(fixed, "pn");
         fixed = fixDouble(fixed, "name");
         fixed = fixDouble(fixed, "place");
+        fixed = fixDouble(fixed, "person");
         if (shangti) {
             return fixed.replaceAll("　神", "上帝")
                     .replaceAll("　<span class=\"add\">神", "<span class=\"add\">上帝");
@@ -247,6 +248,8 @@ public class BibleUtils {
                 default:
                     break;
             }
+        } else if (content.contains("u class=\"person")) {
+            pattern = Holder.PERSON;
         }
         if (pattern != null) {
             return pattern.matcher(content).replaceAll("$1" + clazz + "-" + clazz + " $2");
@@ -297,10 +300,14 @@ public class BibleUtils {
     }
 
     private static class Holder {
-        static final Pattern PN = Pattern.compile("(<span class=\"pn[^\"]*\">[^<>]*</span>\\s*<span class=\")(pn\")");
-        static final Pattern NAME = Pattern.compile("(<span class=\"name[^\"]*\">[^<>]*</span>\\s*<span class=\")(name[^\"]*\")");
-        static final Pattern PLACE = Pattern.compile("(<span class=\"place[^\"]*\">[^<>]*</span>\\s*<(?:u|span) class=\")" +
-                "((?:place|person)[^\"]*\")");
+        static final Pattern PN = Pattern.compile("(<span class=\"\\bpn\\b[^<>]*\">[^<>]*</span><span class=\")" +
+                "(\\bpn\\b[^<>]*\")");
+        static final Pattern NAME = Pattern.compile("(<span class=\"\\bname\\b[^<>]*\">[^<>]*</span><span class=\")" +
+                "(\\bname\\b[^<>]*\")");
+        static final Pattern PLACE = Pattern.compile("(<span class=\"\\bplace\\b[^<>]*\">[^<>]*</span><(?:u|span) class=\")" +
+                "(\\b(?:place|person)\\b[^<>]*\")");
+        static final Pattern PERSON = Pattern.compile("(<u class=\"\\bperson\\b[^<>]*\">[^<>]*</u><(?:u|span) class=\")" +
+                "(\\b(?:place|person)\\b[^<>]*\")");
     }
 
 }
