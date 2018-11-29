@@ -35,6 +35,10 @@ img.note { height: 1.3em; vertical-align: text-top; padding: 0 0.2em }
 
 .chapternum { float: left; font-size: 2em; text-align: right; font-weight: bold; line-height: initial; }
 
+.chapter .chapternum:after { content: ''; padding-left: 0.1em }
+.chapter span sup:after { content: ''; padding-left: 0.1em; }
+.chapter p span sup:before { content: ''; padding-right: 0.2em; }
+.chapter p span:first-of-type sup:before { padding-right: 0; }
 .q1 { margin-top: 0em; margin-bottom: 0em }
 .q1 { margin-left: 2em; padding-left: 1em; text-indent: -1em;  }
 .q1 .chapternum { width: 1.5em; margin-left: -2em;}
