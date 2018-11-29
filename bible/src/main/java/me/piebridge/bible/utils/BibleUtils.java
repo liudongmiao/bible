@@ -212,9 +212,8 @@ public class BibleUtils {
 
     private static String fix(String content, String version, boolean shangti) {
         String fixed = content;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            fixed = fixed.replaceAll("\uD863\uDC54", "鐏")
-                    .replaceAll("\uD84C\uDFB4", "墩");
+        if (fixed.contains("\uD84C\uDFB4") && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            fixed = fixed.replaceAll("\uD84C\uDFB4", "墩");
         }
         if (isZhCN(version)) {
             fixed = fixed.replaceAll("「", "“").replaceAll("」", "”")
