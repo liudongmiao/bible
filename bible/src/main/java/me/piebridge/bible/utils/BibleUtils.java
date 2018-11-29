@@ -210,7 +210,7 @@ public class BibleUtils {
 
     }
 
-    public static String fix(String content, String version, boolean shangti) {
+    private static String fix(String content, String version, boolean shangti) {
         String fixed = content;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             fixed = fixed.replaceAll("\uD863\uDC54", "鐏")

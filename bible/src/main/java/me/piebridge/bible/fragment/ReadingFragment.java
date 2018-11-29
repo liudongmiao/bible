@@ -209,7 +209,6 @@ public class ReadingFragment extends Fragment {
     private String getBody(String title, String content) {
         Bundle bundle = ObjectUtils.requireNonNull(getArguments());
         osis = bundle.getString(CURR);
-        String body = fixIfNeeded(bundle, content);
         String[] notes = keys(bundle.getBundle(NOTES));
         String css = fixCSS(bundle);
         int verseStart = NumberUtils.parseInt(getString(bundle, VERSE_START));
@@ -223,12 +222,12 @@ public class ReadingFragment extends Fragment {
         String fontFamily = getString(bundle, FONT_FAMILY);
         String verses = getString(bundle, VERSES);
         initialSelected = formatSelected(highlighted, verses, verseStart, verseEnd);
-        String extraClass = formatExtraClass(body);
+        String extraClass = formatExtraClass(content);
         return String.format(template, fontFamily, css,
                 backgroundColor, textColor, linkColor,
                 verseBegin, verseStart, verseEnd,
                 search, initialSelected, highlighted,
-                Arrays.toString(notes), title, extraClass, body);
+                Arrays.toString(notes), title, extraClass, content);
     }
 
     private String formatExtraClass(String body) {
@@ -307,12 +306,6 @@ public class ReadingFragment extends Fragment {
 
         }
         return css.toString();
-    }
-
-    private String fixIfNeeded(Bundle bundle, String content) {
-        String version = bundle.getString(VERSION);
-        boolean shangti = bundle.getBoolean(SHANGTI, false);
-        return BibleUtils.fix(content, version, shangti);
     }
 
     @Override

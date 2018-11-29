@@ -473,7 +473,9 @@ public abstract class AbstractReadingActivity extends DrawerActivity
                 bundle.putString(NEXT, getString(cursor, VersionProvider.COLUMN_NEXT));
                 bundle.putString(PREV, getString(cursor, VersionProvider.COLUMN_PREVIOUS));
                 bundle.putString(HUMAN, application.getHuman(BibleUtils.getBook(curr)));
-                bundle.putByteArray(CONTENT, FileUtils.compress(getString(cursor, VersionProvider.COLUMN_CONTENT)));
+                String content = getString(cursor, VersionProvider.COLUMN_CONTENT);
+                content = BibleUtils.fix(application, content);
+                bundle.putByteArray(CONTENT, FileUtils.compress(content));
                 bundle.putString(OSIS, curr);
 
                 bundle.putString(HIGHLIGHTED, application.getHighlight(curr));
