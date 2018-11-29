@@ -398,11 +398,9 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     void doShowProgress() {
         ProgressFragment fragment = (ProgressFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_PROGRESS);
         if (fragment == null) {
-            LogUtils.d("show progress");
             fragment = new ProgressFragment();
-        } else {
-            LogUtils.d("show progress " + fragment);
         }
+        LogUtils.d("show progress");
         fragment.show(getSupportFragmentManager(), FRAGMENT_PROGRESS);
     }
 
@@ -414,7 +412,7 @@ public abstract class AbstractReadingActivity extends DrawerActivity
     void doHideProgress() {
         ProgressFragment fragment = (ProgressFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_PROGRESS);
         if (fragment != null) {
-            LogUtils.d("hide progress " + fragment);
+            LogUtils.d("hide progress");
             if (!isStopped()) {
                 fragment.dismiss();
             }

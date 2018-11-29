@@ -184,11 +184,9 @@ public class WebViewActivity extends ToolbarActivity implements AppBarLayout.OnO
     private void showProgress() {
         ProgressFragment fragment = (ProgressFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_PROGRESS);
         if (fragment == null) {
-            LogUtils.d("show progress");
             fragment = new ProgressFragment();
-        } else {
-            LogUtils.d("show progress " + fragment);
         }
+        LogUtils.d("show progress");
         fragment.setCancelable(true);
         fragment.show(getSupportFragmentManager(), FRAGMENT_PROGRESS);
     }
@@ -196,7 +194,7 @@ public class WebViewActivity extends ToolbarActivity implements AppBarLayout.OnO
     private void hideProgress() {
         ProgressFragment fragment = (ProgressFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_PROGRESS);
         if (fragment != null) {
-            LogUtils.d("hide progress " + fragment);
+            LogUtils.d("hide progress");
             if (!isStopped()) {
                 fragment.dismiss();
             }
