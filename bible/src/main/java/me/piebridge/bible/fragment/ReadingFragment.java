@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import me.piebridge.bible.BibleApplication;
 import me.piebridge.bible.BuildConfig;
 import me.piebridge.bible.R;
 import me.piebridge.bible.activity.AbstractReadingActivity;
@@ -51,7 +52,6 @@ import static me.piebridge.bible.activity.AbstractReadingActivity.NOTES;
 import static me.piebridge.bible.activity.AbstractReadingActivity.POSITION;
 import static me.piebridge.bible.activity.AbstractReadingActivity.RED;
 import static me.piebridge.bible.activity.AbstractReadingActivity.SEARCH;
-import static me.piebridge.bible.activity.AbstractReadingActivity.SHANGTI;
 import static me.piebridge.bible.activity.AbstractReadingActivity.VERSES;
 import static me.piebridge.bible.activity.AbstractReadingActivity.VERSE_END;
 import static me.piebridge.bible.activity.AbstractReadingActivity.VERSE_START;
@@ -233,7 +233,16 @@ public class ReadingFragment extends Fragment {
     private String formatExtraClass(String body) {
         StringBuilder sb = new StringBuilder();
         String book = BibleUtils.getBook(osis);
+        Bundle arguments = ObjectUtils.requireNonNull(getArguments());
+        String version = arguments.getString(VERSION);
+        BibleApplication application = (BibleApplication) getActivity().getApplication();
+        if (application.isRtl(version)) {
+            sb.append("rtl");
+        }
         if ("Ps".equalsIgnoreCase(book)) {
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
             sb.append("ps");
             if (NumberUtils.parseInt(BibleUtils.getChapter(osis)) >= 0x64) {
                 sb.append(" ps-large");

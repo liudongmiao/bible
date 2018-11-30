@@ -191,33 +191,10 @@ public class BibleUtils {
         }
     }
 
-
-    private static boolean isZhCN(String version) {
-        switch (version) {
-            case "ccb":
-            case "cnvs":
-            case "csbs":
-            case "cunpss":
-            case "cuvmps":
-            case "cuvmpsdemo":
-            case "rcu17ss":
-            case "cu89s":
-            case "cu89sdemo":
-                return true;
-            default:
-                return false;
-        }
-
-    }
-
-    private static String fix(String content, String version, boolean shangti) {
+    private static String fix(String content, boolean shangti) {
         String fixed = content;
         if (fixed.contains("\uD84C\uDFB4") && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             fixed = fixed.replaceAll("\uD84C\uDFB4", "墩");
-        }
-        if (isZhCN(version)) {
-            fixed = fixed.replaceAll("「", "“").replaceAll("」", "”")
-                    .replaceAll("『", "‘").replaceAll("』", "’");
         }
         fixed = fixDouble(fixed, "pn");
         fixed = fixDouble(fixed, "name");
@@ -259,7 +236,13 @@ public class BibleUtils {
 
     public static String fix(BibleApplication application, String content) {
         boolean shangti = PreferenceManager.getDefaultSharedPreferences(application).getBoolean(SHANGTI, false);
-        return fix(content, application.getVersion(), shangti);
+        String fixed = fix(content, shangti);
+        if (application.isZhCn(application.getVersion())) {
+            return fixed.replaceAll("「", "“").replaceAll("」", "”")
+                    .replaceAll("『", "‘").replaceAll("』", "’");
+        } else {
+            return fixed;
+        }
     }
 
     public static boolean putAll(Bundle oldBundle, Bundle newBundle) {

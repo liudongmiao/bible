@@ -48,9 +48,9 @@ img.note { height: 1.3em; vertical-align: text-top; padding: 0 0.2em }
 .ps-large .q1:first-of-type span { margin-left: 1em }
 .q1 sup { display: inline-block; margin-left: -3ex; width: 3ex; text-align: right; padding-right: 0.3ex }
 
-.text-html .small-caps { font-variant:small-caps; }
-.text-html .center { text-align:center; }
-.text-html p.right { margin-left:4em; text-indent:-1em; }
+.text-html .small-caps { font-variant: small-caps; }
+.text-html .center { text-align: center; }
+.text-html p.right { margin-left: 4em; text-indent: -1em; }
 .text-html span.right { margin-left: 2em; }
 .text-html i.right { margin-left: 2em; }
 span.selah { font-style: italic; margin-left: 2em }
@@ -78,3 +78,39 @@ span.selah { font-style: italic; margin-left: 2em }
 .list .indent-2, .list .hang-2 { text-indent: -2em; padding-left: 2em; }
 .list .indent-3, .list .hang-3 { text-indent: -3em; padding-left: 3em; }
 .list .hang-2.chapter-1 > span:first-child { margin-left: 2em }
+
+.rtl { direction: rtl; overflow-x: hidden; }
+.rtl .chapternum { float: right; text-align: left; }
+
+.rtl .chapter .chapternum:after { padding-right: 0.1em; padding-left: initial; }
+.rtl .chapter span sup:after { padding-right: 0.1em; padding-left: initial; }
+.rtl .chapter p span sup:before { padding-left: 0.2em; padding-right: initial; }
+.rtl .chapter p span:first-of-type sup:before { padding-left: 0; padding-right: initial; }
+.rtl .q1 { margin-right: 2em; padding-right: 1em; margin-left: initial; padding-right: initial; }
+.rtl .q1 .chapternum { margin-right: -1.9em; margin-left: initial; }
+.rtl.ps-large .q1:first-of-type span.chapternum { margin-right: -2.5em; margin-left: initial; }
+.rtl.ps-large .q1:first-of-type span { margin-right: 1em; margin-left: initial; }
+.rtl .q1 sup { margin-right: -3ex; text-align: left; padding-left: 0.3ex; margin-left: initial; padding-right: initial; }
+
+.rtl .text-html p.right { margin-right: 4em; margin-left: initial; }
+.rtl .text-html span.right { margin-right: 2em; margin-left: initial; }
+.rtl .text-html i.right { margin-right: 2em; margin-left: initial; }
+.rtl .text-html span.selah { margin-right: 2em; margin-left: initial; }
+
+.rtl .poetry p.line .indent-1-breaks + span:before { padding-right: 1em; padding-left: initial; }
+.rtl .poetry p.line .indent-2-breaks + span:before { padding-right: 2em; padding-left: initial; }
+.rtl .poetry p.line { margin-right: 1em; padding-right: 1em; margin-left: initial; padding-left: initial; }
+.rtl .list + .poetry p.line { margin-right: 2em; margin-left: initial; }
+.rtl.ps-large.has-chapternum .poetry:first-of-type .line:first-of-type span:first-of-type .chapternum { margin-right: -1.9em; margin-left: initial }
+.rtl.ps-large.has-chapternum .poetry:first-of-type .line:first-of-type span:first-of-type { margin-right: 0.5em; margin-left: initial }
+.rtl .poetry p.line > span .chapternum { margin-right: -1.5em; margin-left: initial; }
+.rtl .poetry p.line sup.versenum { margin-right: -3ex; text-align: left; padding-left: 0.3ex; margin-left: initial; padding-right: initial }
+.rtl .poetry p.line sup.versenum.mid-line { margin-right: 0.3ex; margin-left: initial; }
+
+.rtl .list .left-1 { padding-right: 1em; padding-left: initial; }
+.rtl .list .left-2 { padding-right: 2em; padding-left: initial; }
+.rtl .list .left-3 { padding-right: 3em; padding-left: initial; }
+.rtl .list .indent-1, .list .hang-1 { padding-right: 1em; padding-left: initial; }
+.rtl .list .indent-2, .list .hang-2 { padding-right: 2em; padding-left: initial; }
+.rtl .list .indent-3, .list .hang-3 { padding-right: 3em; padding-left: initial; }
+.rtl .list .hang-2.chapter-1 > span:first-child { margin-right: 2em; margin-left: initial }

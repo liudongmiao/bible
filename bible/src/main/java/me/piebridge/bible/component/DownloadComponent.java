@@ -15,9 +15,11 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import androidx.collection.ArraySet;
 import androidx.collection.SimpleArrayMap;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,6 +35,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import me.piebridge.bible.BibleApplication;
@@ -87,6 +90,10 @@ public class DownloadComponent extends Handler {
     });
 
     private Context mContext;
+
+    private final Set<String> versions_zh_cn = new ArraySet<>();
+
+    private final Set<String> versions_rtl = new ArraySet<>();
 
     public DownloadComponent(Context context) {
         super(newLooper());
@@ -377,9 +384,9 @@ public class DownloadComponent extends Handler {
             return null;
         }
         try {
-            new JSONObject(json);
+            loadJson(json);
         } catch (JSONException e) {
-            LogUtils.d("json: " + json);
+            LogUtils.w("json: " + json, e);
             return null;
         }
         etag = headers.get(HttpUtils.ETAG);
@@ -398,6 +405,34 @@ public class DownloadComponent extends Handler {
         fileTmp.renameTo(file);
 
         return json;
+    }
+
+    private void loadJson(String json) throws JSONException {
+        versions_zh_cn.clear();
+        versions_rtl.clear();
+        JSONObject jsons = new JSONObject(json);
+        JSONArray jsonVersions = jsons.getJSONArray("versions");
+
+        int length = jsonVersions.length();
+        for (int i = 0; i < length; ++i) {
+            JSONObject version = jsonVersions.getJSONObject(i);
+            String code = version.optString("code");
+            String lang = version.optString("lang");
+            switch (lang) {
+                case "zh-cn":
+                    versions_zh_cn.add(code);
+                    break;
+                case "ar":
+                case "ur":
+                case "he":
+                    versions_rtl.add(code);
+                    break;
+                default:
+                    break;
+            }
+        }
+        LogUtils.d("zh_cn: " + versions_zh_cn);
+        LogUtils.d("rtl: " + versions_rtl);
     }
 
     Context getContext() {
@@ -474,6 +509,21 @@ public class DownloadComponent extends Handler {
         }
     }
 
+    public boolean isRtl(String version) {
+        return versions_rtl.contains(version);
+    }
+
+    public boolean isZhCn(String version) {
+        return versions_zh_cn.contains(version);
+    }
+
+    public void loadJson() {
+        try {
+            loadJson(getLocalVersions());
+        } catch (IOException | JSONException e) {
+            LogUtils.d("cannot load json", e);
+        }
+    }
 
     private static class DownloadInfo {
         public long id;

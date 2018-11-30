@@ -189,6 +189,7 @@ public class BibleApplication extends PaymentApplication {
     public boolean setDefaultVersion() {
         if (!initialized) {
             initialized = mVersion.setVersion(mVersions.getDefaultVersion(), false);
+            mDownload.loadJson();
             return false;
         } else {
             return true;
@@ -302,6 +303,14 @@ public class BibleApplication extends PaymentApplication {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(LocaleUtils.updateResources(base));
+    }
+
+    public boolean isRtl(String version) {
+        return mDownload.isRtl(version);
+    }
+
+    public boolean isZhCn(String version) {
+        return mDownload.isZhCn(BibleUtils.removeDemo(version));
     }
 
 }
