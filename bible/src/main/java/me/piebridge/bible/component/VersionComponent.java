@@ -228,9 +228,7 @@ public class VersionComponent {
     }
 
     public Map<String, String> getBooks() {
-        synchronized (mBooks) {
-            return this.mBooks;
-        }
+        return this.mBooks;
     }
 
     public String getFirstBook() {
@@ -242,13 +240,11 @@ public class VersionComponent {
     }
 
     public String getHuman(String book) {
-        synchronized (mBooks) {
-            String human = this.mBooks.get(book);
-            if (TextUtils.isEmpty(human)) {
-                return book;
-            } else {
-                return human;
-            }
+        String human = this.mBooks.get(book);
+        if (TextUtils.isEmpty(human)) {
+            return book;
+        } else {
+            return human;
         }
     }
 

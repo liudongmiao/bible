@@ -265,15 +265,16 @@ public class BibleUtils {
     public static boolean putAll(Bundle oldBundle, Bundle newBundle) {
         Set<String> keys = newBundle.keySet();
         for (String key : keys) {
+            if (CONTENT.equals(key)) {
+                // I don't think need to check content
+                continue;
+            }
             Object oldValue = oldBundle.get(key);
             Object newValue = newBundle.get(key);
             boolean same;
             switch (key) {
                 case VERSION:
                     same = isSameVersion((String) oldValue, (String) newValue);
-                    break;
-                case CONTENT:
-                    same = isSameContent((byte[]) oldValue, (byte[]) newValue);
                     break;
                 default:
                     same = ObjectUtils.equals(oldValue, newValue);

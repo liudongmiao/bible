@@ -162,9 +162,7 @@ public class ReadingItemsActivity extends AbstractReadingActivity implements Ada
     }
 
     protected String getTitle(Bundle bundle, String osis) {
-        String book = BibleUtils.getBook(osis);
-        BibleApplication application = (BibleApplication) getApplication();
-        String bookName = application.getHuman(book);
+        String bookName = bundle.getString(HUMAN);
         String verses = bundle.getString(VERSES);
         if (TextUtils.isEmpty(verses)) {
             String chapterVerse = BibleUtils.getChapterVerse(this, bundle);

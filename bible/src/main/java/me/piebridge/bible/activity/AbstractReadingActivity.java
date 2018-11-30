@@ -671,12 +671,15 @@ public abstract class AbstractReadingActivity extends DrawerActivity
                 + ", original count: " + mAdapter.getCount());
         Bundle bundle = mAdapter.getData(position);
         String osis = bundle.getString(OSIS);
+        LogUtils.d("refreshAdapterOnMain, updateHeader");
         updateHeader(bundle, osis);
+        LogUtils.d("refreshAdapterOnMain, updateVersion");
         updateVersion();
         if (count != mAdapter.getCount()) {
             mAdapter.setSize(count);
             mAdapter.notifyDataSetChanged();
         }
+        LogUtils.d("refreshAdapterOnMain, prepareOnMain " + position);
         prepareOnMain(position);
         updatePosition(position);
     }

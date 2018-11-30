@@ -73,9 +73,7 @@ public class ReadingActivity extends AbstractReadingActivity {
 
     @Override
     protected void updateHeader(Bundle bundle, String osis) {
-        String book = BibleUtils.getBook(osis);
-        BibleApplication application = (BibleApplication) getApplication();
-        String bookName = application.getHuman(book);
+        String bookName = bundle.getString(HUMAN);
         String chapterVerse = BibleUtils.getChapterVerse(this, bundle);
         mTitle = BibleUtils.getBookChapterVerse(bookName, chapterVerse);
 
