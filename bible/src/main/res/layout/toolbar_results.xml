@@ -23,7 +23,7 @@
             android:layout_gravity="center_vertical"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/grey_50"
+            android:textColor="@color/text_toolbar"
             android:textSize="@dimen/text_size_toolbar"
             tools:text="Title" />
 

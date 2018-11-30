@@ -10,6 +10,8 @@
     <color name="grey_100">#fff5f5f5</color>
     <color name="grey_50">#fffafafa</color>
 
+    <color name="text_toolbar">@color/abc_primary_text_material_dark</color>
+
     <color name="background_dark">@color/grey_900</color>
     <color name="background_light">@color/grey_50</color>
 

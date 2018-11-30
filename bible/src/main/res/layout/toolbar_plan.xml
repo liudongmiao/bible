@@ -41,7 +41,7 @@
             android:layout_toEndOf="@id/items_button"
             android:layout_toRightOf="@id/items_button"
             android:gravity="center"
-            android:textColor="@color/grey_50"
+            android:textColor="@color/text_toolbar"
             app:fontFamily="sans-serif-condensed"
             tools:text="11/08" />
 
