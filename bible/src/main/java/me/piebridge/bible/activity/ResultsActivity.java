@@ -70,6 +70,7 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
 
         versionView = findViewById(R.id.version);
         findViewById(R.id.version_button).setOnClickListener(this);
+        findViewById(R.id.toolbar_title).setOnClickListener(this);
 
         recyclerView = findViewById(R.id.recycler);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -108,9 +109,12 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.version_button) {
+        int id = v.getId();
+        if (id == R.id.version_button) {
             Intent intent = new Intent(this, SelectVersionActivity.class);
             startActivityForResult(intent, REQUEST_CODE_VERSION);
+        } else if (id == R.id.toolbar_title) {
+            research();
         } else if (v instanceof CardView) {
             OsisItem item = (OsisItem) v.getTag();
             LogUtils.d("show item: " + item);
@@ -263,14 +267,18 @@ public class ResultsActivity extends ToolbarActivity implements View.OnClickList
             recreate();
             return true;
         } else if (itemId == android.R.id.home) {
-            Intent intent = new Intent(this, SearchActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra(SearchManager.QUERY, mQuery);
-            startActivity(intent);
-            finish();
+            research();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void research() {
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(SearchManager.QUERY, mQuery);
+        startActivity(intent);
+        finish();
     }
 
     String getChapter(String book, int chapterId) {
