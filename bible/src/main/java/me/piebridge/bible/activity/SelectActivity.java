@@ -69,11 +69,13 @@ public class SelectActivity extends ToolbarActivity
 
         selectBook.setItems(prepareBooks(), book);
         selectChapter.setItems(prepareChapters(book), chapter);
-        selectVerse.selectItems(prepareVerses(book, chapter));
 
         mSwitch = findViewById(R.id.verse_switch);
         mSwitch.setChecked(PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SHOW_VERSES, true));
         mSwitch.setOnCheckedChangeListener(this);
+        if (mSwitch.isChecked()) {
+            selectVerse.selectItems(prepareVerses(book, chapter));
+        }
 
         mPager = findViewById(R.id.pager);
         TabLayout tabs = findViewById(R.id.tabs);
@@ -155,6 +157,7 @@ public class SelectActivity extends ToolbarActivity
     }
 
     private Map<String, Boolean> prepareVerses(String book, String chapter) {
+        LogUtils.d("prepareVerses for " + book + "." + chapter);
         if (TextUtils.isEmpty(chapter) || !TextUtils.isDigitsOnly(chapter)) {
             return Collections.emptyMap();
         }
@@ -190,16 +193,23 @@ public class SelectActivity extends ToolbarActivity
     public void setBook(String book) {
         this.book = book;
         Map<String, String> chapters = prepareChapters(book);
-        this.chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(book, "");
-        selectChapter.setItems(chapters, this.chapter);
-        updateTitle(CHAPTER);
-        mPager.setCurrentItem(CHAPTER);
+        if (chapters.size() == 1) {
+            setChapter(chapters.keySet().iterator().next());
+        } else {
+            this.chapter = PreferenceManager.getDefaultSharedPreferences(this).getString(book, "");
+            selectChapter.setItems(chapters, this.chapter);
+            updateTitle(CHAPTER);
+            mPager.setCurrentItem(CHAPTER);
+        }
     }
 
     public void setChapter(String chapter) {
         this.chapter = chapter;
+        if (!mSwitch.isChecked()) {
+            finishSelect();
+        }
         Map<String, Boolean> verses = prepareVerses(book, chapter);
-        if (mAdapter.getCount() > VERSE && !verses.isEmpty()) {
+        if (!verses.isEmpty()) {
             selectVerse.selectItems(verses);
             updateTitle(VERSE);
             mPager.setCurrentItem(VERSE);
@@ -233,6 +243,7 @@ public class SelectActivity extends ToolbarActivity
             if (!isChecked && mPager.getCurrentItem() == VERSE) {
                 finishSelect();
             } else {
+                selectVerse.selectItems(prepareVerses(book, chapter));
                 mAdapter.setShowVerses(isChecked);
             }
         }

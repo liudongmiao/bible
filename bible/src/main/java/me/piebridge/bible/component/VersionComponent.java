@@ -77,6 +77,7 @@ public class VersionComponent {
     }
 
     public static Map<String, String> loadBooks(SQLiteDatabase database, String[] firstAndLast) {
+        LogUtils.d("loadBooks");
         Map<String, String> books = new LinkedHashMap<>();
         try (
                 Cursor cursor = database.query(VersionProvider.TABLE_BOOKS,
@@ -126,6 +127,7 @@ public class VersionComponent {
     }
 
     public List<Integer> getVerses(String book, int chapter) {
+        LogUtils.d("queryVerses for " + book + "." + chapter);
         List<Integer> verses = new ArrayList<>();
         SQLiteDatabase database = acquireDatabase();
         try (
@@ -178,6 +180,7 @@ public class VersionComponent {
         if (TextUtils.isEmpty(osis) || TextUtils.isEmpty(link)) {
             return null;
         }
+        LogUtils.d("load Annotation, osis: " + osis + ", link: " + link);
         SQLiteDatabase database = acquireDatabase();
         try (
                 Cursor cursor = database.query("annotations", new String[] {"content"}, "osis = ? and link = ?",
@@ -249,17 +252,18 @@ public class VersionComponent {
     }
 
     public List<String> getChapters(String book) {
-        synchronized (mChapters) {
-            List<String> chapters = mChapters.get(book);
-            if (chapters == null) {
+        List<String> chapters = mChapters.get(book);
+        if (chapters == null) {
+            synchronized (mChapters) {
                 chapters = fetchChapters(book);
                 mChapters.put(book, chapters);
             }
-            return chapters;
         }
+        return chapters;
     }
 
     private List<String> fetchChapters(String book) {
+        LogUtils.d("fetchChapters for book: " + book);
         SQLiteDatabase database = acquireDatabase();
         List<String> chapters = new ArrayList<>();
         try (
@@ -275,7 +279,7 @@ public class VersionComponent {
                 }
             }
         }
-        LogUtils.d("book: " + book + ", chapters: " + chapters);
+        LogUtils.d("fetchChapters for book: " + book + ", chapters: " + chapters);
         return chapters;
     }
 
